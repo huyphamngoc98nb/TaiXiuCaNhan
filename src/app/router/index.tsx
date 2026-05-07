@@ -9,6 +9,8 @@ import { EditTransactionPage } from '@/modules/transactions/pages/EditTransactio
 import { SettingsPage } from '@/modules/settings/pages/SettingsPage';
 import { BudgetSettingsPage } from '@/modules/budgets/pages/BudgetSettingsPage';
 import { RecurringBillsPage } from '@/modules/recurring-bills/pages/RecurringBillsPage';
+import { BackupPage } from '@/modules/backup/pages/BackupPage';
+import { ExportPage } from '@/modules/export/pages/ExportPage';
 
 export const router = createBrowserRouter([
   {
@@ -21,9 +23,10 @@ export const router = createBrowserRouter([
       { path: ROUTES.TRANSACTIONS_EDIT, element: <EditTransactionPage /> },
       { path: ROUTES.SETTINGS, element: <SettingsPage /> },
       { path: ROUTES.REPORTS, element: <ReportsPage /> },
-      { path: '/budgets', element: <BudgetSettingsPage /> },
+      { path: ROUTES.BUDGETS, element: <BudgetSettingsPage /> },
       { path: ROUTES.RECURRING_BILLS, element: <RecurringBillsPage /> },
+      { path: ROUTES.BACKUP, element: <BackupPage /> },
+      { path: ROUTES.EXPORT, element: <ExportPage /> },
     ],
   },
 ]);
-

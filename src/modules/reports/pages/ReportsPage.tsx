@@ -11,7 +11,12 @@ import { DateRangePicker } from '../components/DateRangePicker';
 import { ExpensePieChart } from '../components/ExpensePieChart';
 import { CashflowBarChart } from '../components/CashflowBarChart';
 
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/shared/constants/routes';
+import { FileText } from 'lucide-react';
+
 export const ReportsPage = () => {
+  const navigate = useNavigate();
   const [preset, setPreset] = useState<DateRangePreset>('this_month');
   const [granularity, setGranularity] = useState<ReportGranularity>('day');
   
@@ -32,7 +37,6 @@ export const ReportsPage = () => {
         const repo = new SQLiteReportRepository();
         const range = buildDateRange(preset);
         
-        // Parallel execution of all required queries
         const [cashflowRes, expensesRes, periodRes] = await Promise.all([
           new GetCashflowSummaryUseCase(repo).execute(range),
           new GetCategorySummaryUseCase(repo).execute(range, 'expense'),
@@ -46,7 +50,7 @@ export const ReportsPage = () => {
         }
       } catch (err: any) {
         if (isMounted) {
-          setError(err.message || 'Failed to load reports. Ensure database is initialized.');
+          setError(err.message || 'Failed to load reports.');
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -61,6 +65,13 @@ export const ReportsPage = () => {
     <div className="max-w-4xl mx-auto p-4 pb-24">
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+        <button
+          onClick={() => navigate(ROUTES.EXPORT)}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium"
+        >
+          <FileText size={18} />
+          <span>Export</span>
+        </button>
       </div>
       
       <DateRangePicker 

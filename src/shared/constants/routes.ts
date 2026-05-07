@@ -5,5 +5,8 @@ export const ROUTES = {
   TRANSACTIONS_EDIT: '/transactions/:id/edit',
   SETTINGS: '/settings',
   REPORTS: '/reports',
+  BUDGETS: '/budgets',
   RECURRING_BILLS: '/recurring-bills',
+  BACKUP: '/backup',
+  EXPORT: '/export',
 } as const;

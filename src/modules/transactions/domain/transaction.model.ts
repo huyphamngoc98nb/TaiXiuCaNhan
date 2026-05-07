@@ -12,6 +12,9 @@ export interface Transaction {
   created_at: number; // timestamp
   updated_at: number; // timestamp
   deleted_at: number | null; // timestamp
+  // Join fields for display/export
+  category_name?: string;
+  wallet_name?: string;
 }
 
 export interface CreateTransactionInput {

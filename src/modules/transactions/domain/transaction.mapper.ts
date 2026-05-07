@@ -13,5 +13,7 @@ export function mapToTransaction(row: any): Transaction {
     created_at: row.created_at,
     updated_at: row.updated_at,
     deleted_at: row.deleted_at ?? null,
+    category_name: row.category_name,
+    wallet_name: row.wallet_name,
   };
 }

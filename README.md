@@ -70,6 +70,41 @@ npx cap open android
 5. It should display **DB Initialized: ✅ Yes**, show the current Schema Version (e.g. 2), show the seeded category count (6), and indicate that all required tables were **✅ Found**.
 6. If it fails, check your browser console for Jeep SQLite WebAssembly errors.
 
+## Data Portability (Phase 6)
+
+The application provides robust tools to ensure your data is never locked in.
+
+### 1. Local Backup & Restore
+- **Format**: `.json` (Portable JSON)
+- **Scope**: Entire database (wallets, categories, transactions, recurring bills, app settings).
+- **Location**: Settings -> Backup & Restore.
+- **Policy**: Transactional "Wipe-and-Reload". Restoring overwrites current local data.
+
+### 2. Human-Readable Exports
+- **PDF Report**: A formatted financial summary including cashflow totals, category distribution, and a detailed transaction log.
+- **Excel (CSV)**: A flat-file spreadsheet of raw transactions for custom analysis in Excel, Google Sheets, or Numbers.
+- **Location**: Reports -> Export.
+
+### 3. Portability Limitations
+- **Receipt Images**: Backup files include **metadata only** (file paths). Physical receipt image files are stored in the device's private storage and are **not** bundled in the JSON backup. 
+- **Migration**: If moving to a new device, you must manually transfer the images from the app's internal folder if you wish to maintain link integrity.
+
+---
+
+## Final Quality Assurance (Phase 6 Hardening)
+
+Before releasing a production build, verify the following:
+
+- [ ] **Initialization**: Diagnostics in Settings show ✅ for all tables and schema v6.
+- [ ] **Transactions**: Add/Edit/Delete works with toast feedback and confirm dialogs.
+- [ ] **Budgets**: Threshold alerts trigger correctly on the Dashboard.
+- [ ] **Bills**: Recurring bill reminders appear at the top of the Dashboard; "Paid" advances the date.
+- [ ] **Language**: UI switches instantly between English and Vietnamese.
+- [ ] **Backup**: Exported JSON contains valid data; Import restores it exactly.
+- [ ] **Export**: PDF and CSV files are generated and shareable on the device.
+
+---
+
 > [!WARNING]
-> If you make changes to the migration `.sql` files, make sure to bump the migration version in `migration-runner.ts` so the engine knows to execute them.
+> Database restore is a destructive operation. Always export a fresh backup before performing a restore.
 

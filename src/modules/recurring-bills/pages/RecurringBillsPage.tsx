@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useRecurringBills } from '../hooks/useRecurringBills';
 import { RecurringBillList } from '../components/RecurringBillList';

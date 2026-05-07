@@ -63,37 +63,43 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async list(filter: TransactionFilter): Promise<Transaction[]> {
     const db = await getDbConnection();
     let sql = `
-      SELECT id, wallet_id, category_id, type, amount, note, receipt_path, transaction_date, created_at, updated_at, deleted_at 
-      FROM transactions 
+      SELECT 
+        t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note, 
+        t.receipt_path, t.transaction_date, t.created_at, t.updated_at, t.deleted_at,
+        c.name as category_name,
+        w.name as wallet_name
+      FROM transactions t
+      LEFT JOIN categories c ON t.category_id = c.id
+      LEFT JOIN wallets w ON t.wallet_id = w.id
       WHERE 1=1
     `;
     const values: any[] = [];
 
     if (!filter.includeDeleted) {
-      sql += ` AND deleted_at IS NULL`;
+      sql += ` AND t.deleted_at IS NULL`;
     }
     if (filter.wallet_id) {
-      sql += ` AND wallet_id = ?`;
+      sql += ` AND t.wallet_id = ?`;
       values.push(filter.wallet_id);
     }
     if (filter.category_id) {
-      sql += ` AND category_id = ?`;
+      sql += ` AND t.category_id = ?`;
       values.push(filter.category_id);
     }
     if (filter.type) {
-      sql += ` AND type = ?`;
+      sql += ` AND t.type = ?`;
       values.push(filter.type);
     }
     if (filter.startDate) {
-      sql += ` AND transaction_date >= ?`;
+      sql += ` AND t.transaction_date >= ?`;
       values.push(filter.startDate);
     }
     if (filter.endDate) {
-      sql += ` AND transaction_date <= ?`;
+      sql += ` AND t.transaction_date <= ?`;
       values.push(filter.endDate);
     }
 
-    sql += ` ORDER BY transaction_date DESC, created_at DESC`;
+    sql += ` ORDER BY t.transaction_date DESC, t.created_at DESC`;
 
     if (filter.limit) {
       sql += ` LIMIT ?`;

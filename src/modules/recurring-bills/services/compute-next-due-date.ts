@@ -26,6 +26,11 @@ export function computeNextDueDate(fromDateMs: number, frequency: Frequency): nu
 
     case 'monthly': {
       const next = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate());
+      // If the resulting day is different from the start day, it means the month rolled over
+      // (e.g., Jan 31 -> Mar 3). In this case, we clamp to the last day of the target month.
+      if (next.getDate() !== d.getDate()) {
+        return new Date(d.getFullYear(), d.getMonth() + 2, 0).getTime();
+      }
       return next.getTime();
     }
 
