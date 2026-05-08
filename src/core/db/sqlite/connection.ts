@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core';
 import { sqlite, applyPragmas } from './pragmas';
 import { logger } from '@/core/telemetry/logger';
 
-export const DB_NAME = 'expense_tracker_db';
+export const DB_NAME = 'taixiu_db';
 
 export async function initDatabaseConnection() {
   try {
@@ -42,6 +42,10 @@ export async function initDatabaseConnection() {
 }
 
 export async function getDbConnection() {
+  const isConn = (await sqlite.isConnection(DB_NAME, false)).result;
+  if (!isConn) {
+    throw new Error(`Database connection for ${DB_NAME} is not ready. Call initDatabaseConnection first.`);
+  }
   return await sqlite.retrieveConnection(DB_NAME, false);
 }
 

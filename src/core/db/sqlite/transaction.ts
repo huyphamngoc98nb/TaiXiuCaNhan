@@ -5,13 +5,23 @@ export async function runInTransaction<T>(
 ): Promise<T> {
   const db = await getDbConnection();
   
-  await db.beginTransaction();
+  const { result: isActive } = await db.isTransactionActive();
+  const shouldManageTransaction = !isActive;
+
+  if (shouldManageTransaction) {
+    await db.beginTransaction();
+  }
+
   try {
     const result = await work(db);
-    await db.commitTransaction();
+    if (shouldManageTransaction) {
+      await db.commitTransaction();
+    }
     return result;
   } catch (error) {
-    await db.rollbackTransaction();
+    if (shouldManageTransaction) {
+      await db.rollbackTransaction();
+    }
     throw error;
   }
 }

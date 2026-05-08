@@ -77,7 +77,8 @@ export async function restoreDatabase(payload: BackupPayload): Promise<void> {
     // On web, we must save to store
     const isWeb = (await import('@capacitor/core')).Capacitor.getPlatform() === 'web';
     if (isWeb) {
-      await (await import('@/core/db/sqlite/pragmas')).sqlite.saveToStore('expense_tracker_db');
+      const { DB_NAME } = await import('@/core/db/sqlite/connection');
+      await (await import('@/core/db/sqlite/pragmas')).sqlite.saveToStore(DB_NAME);
     }
 
     logger.info('Database restore completed successfully.');
