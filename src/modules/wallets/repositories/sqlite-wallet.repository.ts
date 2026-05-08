@@ -19,6 +19,14 @@ export class SQLiteWalletRepository {
     return values[0];
   }
 
+  /**
+   * @deprecated WARN-2: Dùng updateBalanceDelta() thay thế.
+   * updateBalance() ghi đè toàn bộ giá trị — ngũ hiểm với concurrent requests
+   * vì 2 call song song có thể interleave và mất cập nhật.
+   *
+   * Chỉ giữ lại để tương thích ngược với wallet init (set số dư ban đầu).
+   * KHAI BÁO MỚI: không được dùng sau khi wallet đã có transactions.
+   */
   async updateBalance(id: string, newBalance: number, updatedAt: number): Promise<void> {
     const db = await getDbConnection();
     await db.run(
@@ -30,6 +38,7 @@ export class SQLiteWalletRepository {
   /**
    * Atomic balance delta — safe against race conditions.
    * Uses a single SQL statement so concurrent calls cannot interleave.
+   * ✅ Luôn dùng method này thay cho updateBalance() khi điều chỉnh số dư theo giao dịch.
    */
   async updateBalanceDelta(id: string, delta: number, updatedAt: number): Promise<void> {
     const db = await getDbConnection();

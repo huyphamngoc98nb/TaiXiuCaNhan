@@ -33,7 +33,11 @@ export interface BudgetWithCategory extends Budget {
   color?: string;
 }
 
-/** @deprecated Dùng BudgetWithCategory thay thế */
+/**
+ * MINOR-3: CategoryBudget được giữ lại để tương thích ngược với các file chưa migrate.
+ * @deprecated Sử dụng BudgetWithCategory thay thế.
+ * TODO: Xóa sau khi toàn bộ consumer đã chuyển sang BudgetWithCategory.
+ */
 export interface CategoryBudget {
   category_id: string;
   category_name: string;

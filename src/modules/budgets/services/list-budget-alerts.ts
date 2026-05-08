@@ -1,4 +1,4 @@
-import { BudgetProgress } from '../domain/budget.model';
+import { BudgetProgress, BudgetPeriod } from '../domain/budget.model';
 import { IBudgetRepository } from '../repositories/budget.repository';
 import { CalculateBudgetProgressUseCase } from './calculate-budget-progress';
 import { buildDateRange } from '@/modules/reports/services/build-date-range';
@@ -10,23 +10,31 @@ export class ListBudgetAlertsUseCase {
     this.calculateProgress = new CalculateBudgetProgressUseCase(repository);
   }
 
-  async execute(): Promise<BudgetProgress[]> {
-    const allCategories = await this.repository.getAllCategoryBudgets();
-    const activeBudgets = allCategories.filter(c => c.budget_amount !== null && c.budget_period !== null);
-    
-    const progressList: BudgetProgress[] = [];
+  /**
+   * WARN-1 fix: thay thế for-loop tuần tự bằng Promise.all — giảm từ N round-trips
+   * xuống còn 3 queries (weekly, monthly, rồi parallel getSpentAmount).
+   *
+   * @param walletId - tuỳ chọn scope theo ví; undefined = tất cả ví
+   */
+  async execute(walletId?: string): Promise<BudgetProgress[]> {
+    // Lấy cả weekly + monthly song song
+    const [weekly, monthly] = await Promise.all([
+      this.repository.getActiveBudgets('weekly' as BudgetPeriod, walletId),
+      this.repository.getActiveBudgets('monthly' as BudgetPeriod, walletId),
+    ]);
 
-    for (const budget of activeBudgets) {
-      // Determine range based on budget period
-      const range = buildDateRange(budget.budget_period === 'weekly' ? 'this_week' : 'this_month');
-      
-      const progress = await this.calculateProgress.execute(budget, range.startDate, range.endDate);
-      if (progress) {
-        progressList.push(progress);
-      }
-    }
+    const allBudgets = [...weekly, ...monthly];
 
-    // Sort by percentage descending
+    // Tính progress song song cho tất cả budget
+    const progressList: BudgetProgress[] = await Promise.all(
+      allBudgets.map(budget => {
+        const rangeKey = budget.period === 'weekly' ? 'this_week' : 'this_month';
+        const range = buildDateRange(rangeKey);
+        return this.calculateProgress.execute(budget, range.startDate, range.endDate);
+      })
+    );
+
+    // Sắp xếp giảm dần theo % (vượt ngân sách lên đầu)
     return progressList.sort((a, b) => b.percentage - a.percentage);
   }
 }

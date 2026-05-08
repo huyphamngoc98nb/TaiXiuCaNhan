@@ -2,12 +2,19 @@ import { IBudgetRepository } from './budget.repository';
 import { Budget, BudgetWithCategory, BudgetPeriod, CreateBudgetDto } from '../domain/budget.model';
 import { getDbConnection } from '@/core/db/sqlite/connection';
 
-/** Tạo UUID đơn giản dùng crypto nếu có, fallback random */
+/**
+ * MINOR-2 fix: bỏ Math.random() fallback — không đảm bảo uniqueness.
+ * Thay bằng counter đếm tăng + timestamp — đủ unique trong single-user SQLite.
+ * Primary: luôn dùng crypto.randomUUID() nếu available.
+ */
+let _idCounter = 0;
 function generateId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  // Fallback: timestamp ms + counter tăng (monotonic, không bị trùng trong cùng process)
+  _idCounter += 1;
+  return `${Date.now().toString(36)}-${_idCounter.toString(36)}`;
 }
 
 export class SQLiteBudgetRepository implements IBudgetRepository {
@@ -50,7 +57,14 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
 
   async getBudgetById(budgetId: string): Promise<Budget | null> {
     const db = await getDbConnection();
-    const sql = `SELECT * FROM budgets WHERE id = ? LIMIT 1`;
+    // SELECT explicit columns thay vì SELECT * — tránh lấy fields thừa
+    const sql = `
+      SELECT id, category_id, wallet_id, amount, period,
+             start_date, end_date, is_active, created_at, updated_at
+      FROM budgets
+      WHERE id = ?
+      LIMIT 1
+    `;
     const { values } = await db.query(sql, [budgetId]);
     if (!values || values.length === 0) return null;
     const row = values[0] as Record<string, unknown>;
@@ -115,6 +129,10 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
   ): Promise<number> {
     const db = await getDbConnection();
 
+    // BUG-2 / WARN note: khi walletId được cung cấp,
+    // chỉ tính các giao dịch của đúng ví đó (không gộp NULL wallet).
+    // Nhất quán với getActiveBudgets: budget có wallet_id scope →
+    // spent cũng chỉ tính trong wallet đó.
     const walletFilter = walletId ? 'AND wallet_id = ?' : '';
     const params: unknown[] = [categoryId, startDate, endDate];
     if (walletId) params.push(walletId);
