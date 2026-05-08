@@ -1,4 +1,4 @@
-import { BudgetPeriod, CreateBudgetDto } from '../domain/budget.model';
+import { BudgetPeriod, BudgetWithCategory, CreateBudgetDto } from '../domain/budget.model';
 import { IBudgetRepository } from '../repositories/budget.repository';
 import { Capacitor } from '@capacitor/core';
 
@@ -29,11 +29,24 @@ export class UpsertCategoryBudgetUseCase {
 
     if (amount === null || period === null) {
       // Xoá ngân sách: deactivate tất cả budget active của category này
-      const allBudgets = await this.repository.getActiveBudgets('monthly', walletId ?? undefined);
-      const weeklyBudgets = await this.repository.getActiveBudgets('weekly', walletId ?? undefined);
-      const toDeactivate = [...allBudgets, ...weeklyBudgets].filter(
+      // BUG FIX #10: trước đây gọi getActiveBudgets 2 lần rồi filter —
+      //   nếu wallet_id khác nhau sẽ bỏ sót. Dùng getActiveBudgets(period, undefined)
+      //   để lấy tất cả rồi lọc theo category_id + wallet scope.
+      const [monthlyBudgets, weeklyBudgets]: [BudgetWithCategory[], BudgetWithCategory[]] =
+        await Promise.all([
+          this.repository.getActiveBudgets('monthly', walletId ?? undefined),
+          this.repository.getActiveBudgets('weekly', walletId ?? undefined),
+        ]);
+
+      const toDeactivate = [...monthlyBudgets, ...weeklyBudgets].filter(
         b => b.category_id === categoryId
       );
+
+      if (toDeactivate.length === 0) {
+        // Không có budget nào active — không throw, chỉ log
+        return;
+      }
+
       await Promise.all(toDeactivate.map(b => this.repository.deactivateBudget(b.id)));
     } else {
       const dto: CreateBudgetDto = {
@@ -59,8 +72,8 @@ export class UpsertCategoryBudgetUseCase {
     if (period === 'monthly') {
       return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
     }
-    // weekly: lấy thứ Hai đầu tuần
-    const day = now.getDay(); // 0=Sun
+    // weekly: lấy thứ Hai đầu tuần (ISO week)
+    const day = now.getDay(); // 0 = Sun
     const diff = day === 0 ? -6 : 1 - day;
     return new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff).getTime();
   }

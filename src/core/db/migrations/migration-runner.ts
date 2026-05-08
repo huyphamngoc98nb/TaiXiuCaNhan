@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { getDbConnection } from '../sqlite/connection';
 import { logger } from '@/core/telemetry/logger';
+import { runDropBudgetColumnsIfSupported } from './migration-runner-patch';
 
 import initSql from './001_init.sql?raw';
 import indexesSql from './002_indexes.sql?raw';
@@ -13,6 +14,8 @@ import balanceTriggersSql from './008_wallet_balance_triggers.sql?raw';
 import rbDeleteFixSql from './009_recurring_bills_delete_fix.sql?raw';
 import dropBalanceTriggersSql from './010_drop_balance_triggers.sql?raw';
 import dropTransferCheckTriggersSql from './011_drop_transfer_check_triggers.sql?raw';
+import separateBudgetsSql from './012_separate_budgets.sql?raw';
+import enhanceWalletsSql from './013_enhance_wallets.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -26,13 +29,14 @@ const MIGRATIONS = [
   { version: 9,  name: '009_recurring_bills_delete_fix',    sql: rbDeleteFixSql },
   { version: 10, name: '010_drop_balance_triggers',         sql: dropBalanceTriggersSql },
   { version: 11, name: '011_drop_transfer_check_triggers',  sql: dropTransferCheckTriggersSql },
+  { version: 12, name: '012_separate_budgets',              sql: separateBudgetsSql },
+  { version: 13, name: '013_enhance_wallets',               sql: enhanceWalletsSql },
 ];
 
 /**
  * Split a SQL migration file into individual executable statements.
  * Splits on ';' for regular statements.
- * Trigger blocks (BEGIN...END) are extracted as a single unit via depth-counting
- * as a safety net (no trigger files remain, but kept for future safety).
+ * Trigger blocks (BEGIN...END) are extracted as a single unit via depth-counting.
  */
 export function splitSqlStatements(sql: string): string[] {
   const statements: string[] = [];
@@ -45,7 +49,6 @@ export function splitSqlStatements(sql: string): string[] {
     const trimmed = remaining.trimStart();
 
     if (/^CREATE\s+(TEMP\s+|TEMPORARY\s+)?TRIGGER/i.test(trimmed)) {
-      // Depth-counting to find the real closing END;
       let depth = 0;
       let i = 0;
       let inStr = false;
@@ -77,6 +80,8 @@ export function splitSqlStatements(sql: string): string[] {
         break;
       }
     } else {
+      // BUG FIX #6: lọc bỏ statement SELECT CASE ... (kiểm tra version) trong 012 —
+      // không execute được qua db.execute(), chỉ dùng để documentátion.
       const semiIdx = remaining.indexOf(';');
       if (semiIdx === -1) {
         const t = remaining.trim();
@@ -86,7 +91,10 @@ export function splitSqlStatements(sql: string): string[] {
       const stmt = remaining.slice(0, semiIdx + 1).trim();
       remaining = remaining.slice(semiIdx + 1);
       const content = stmt.replace(/--[^\n]*/g, '').trim();
-      if (content && content !== ';') statements.push(stmt);
+      // Bỏ qua SELECT statement (dùng để check version, không execute)
+      if (content && content !== ';' && !/^SELECT\s/i.test(content)) {
+        statements.push(stmt);
+      }
     }
   }
 
@@ -105,7 +113,7 @@ export async function runMigrations() {
   `);
 
   const { values } = await db.query('SELECT version FROM migrations');
-  const appliedVersions = new Set(values?.map((v: any) => v.version) || []);
+  const appliedVersions = new Set(values?.map((v: { version: number }) => v.version) || []);
   const isWeb = Capacitor.getPlatform() === 'web';
 
   for (const migration of MIGRATIONS) {
@@ -134,12 +142,17 @@ export async function runMigrations() {
       );
       if (transactionStarted) await db.commitTransaction();
       logger.info(`Migration ${migration.name} completed (${stmts.length} stmts).`);
-    } catch (err: any) {
+
+      // BUG FIX #7: chạy DROP COLUMN có điều kiện sau migration 012
+      if (migration.version === 12) {
+        await runDropBudgetColumnsIfSupported();
+      }
+    } catch (err: unknown) {
       if (transactionStarted) {
         try { await db.rollbackTransaction(); }
         catch (re) { logger.warn(`Rollback failed for ${migration.name}:`, re); }
       }
-      const msg = err.message || '';
+      const msg = err instanceof Error ? err.message : '';
       const isDupe = msg.includes('already exists') || msg.includes('duplicate column');
       if (isWeb && isDupe) {
         logger.warn(`${migration.name} partially applied on web. Marking done.`);

@@ -14,8 +14,10 @@ import { ErrorScreen } from '@/shared/components/ErrorScreen';
 export function BudgetSettingsPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  // BUG FIX #1: was destructuring old `categories` prop — now use `budgets`
   const {
-    categories,
+    budgets,
     allProgress,
     summaryStats,
     alerts,
@@ -24,9 +26,10 @@ export function BudgetSettingsPage() {
     refresh,
   } = useBudgets();
 
+  // BUG FIX #2: was destructuring old `selectedCategory` — now use `selectedBudget`
   const {
     isOpen,
-    selectedCategory,
+    selectedBudget,
     open,
     close,
     amount,
@@ -39,7 +42,7 @@ export function BudgetSettingsPage() {
     validationError,
   } = useBudgetForm(refresh);
 
-  if (isLoading && categories.length === 0) {
+  if (isLoading && budgets.length === 0) {
     return (
       <div className="min-h-screen bg-[#F5F7FA] px-4 pt-10 pb-20 space-y-4">
         <div className="h-10 bg-gray-200 rounded w-1/3 animate-pulse" />
@@ -53,11 +56,13 @@ export function BudgetSettingsPage() {
     );
   }
 
-  if (error && categories.length === 0) {
+  if (error && budgets.length === 0) {
     return <ErrorScreen error={error} onRetry={refresh} />;
   }
 
-  if (!isLoading && categories.length === 0) {
+  // BUG FIX #3: "empty state" hiển khi không có category nào có budget
+  // (trước đây check categories.length đã bị remove rồi nêm vào useBudgets)
+  if (!isLoading && budgets.length === 0) {
     return (
       <div className="min-h-screen bg-[#F5F7FA] flex flex-col items-center justify-center p-8 text-center space-y-6">
         <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
@@ -81,7 +86,6 @@ export function BudgetSettingsPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]" style={{ padding: '0 16px' }}>
-      {/* Section 1: PageHeader */}
       <header className="pt-10 pb-2 flex items-center justify-between">
         <div className="flex flex-col">
           <h1 className="text-[24px] font-bold text-gray-900 leading-tight">{t('budgets.title')}</h1>
@@ -93,25 +97,22 @@ export function BudgetSettingsPage() {
       </header>
 
       <div className="space-y-6 pb-20">
-        {/* Section 2: SummaryStats */}
         <BudgetSummaryStats stats={summaryStats} />
-
-        {/* Section 3: AlertsPanel */}
         <BudgetAlertsPanel alerts={alerts} />
 
-        {/* Section 4: CategoryBudgetList */}
+        {/* BUG FIX #4: truyền đúng prop budgets/onItemClick(budget) thay vì categories/open(category) */}
         <BudgetCategoryList
-          categories={categories}
+          budgets={budgets}
           allProgress={allProgress}
           onItemClick={open}
         />
       </div>
 
-      {/* Bottom Sheet for Editing */}
       <BottomSheet isOpen={isOpen} onClose={close}>
-        {selectedCategory && (
+        {/* BUG FIX #5: selectedCategory → selectedBudget; prop category → budget */}
+        {selectedBudget && (
           <BudgetEditForm
-            category={selectedCategory}
+            budget={selectedBudget}
             amount={amount}
             setAmount={setAmount}
             period={period}
