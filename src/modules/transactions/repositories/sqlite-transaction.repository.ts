@@ -18,11 +18,12 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     return this.getById(data.id) as Promise<Transaction>;
   }
 
+  // MINOR-1 fix: thay any[] bằng unknown[] — an toàn hơn về type
   async update(id: string, data: UpdateTransactionInput & { updated_at: number }): Promise<Transaction | null> {
     const db = await getDbConnection();
-    
+
     const sets: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
 
     if (data.category_id !== undefined) { sets.push('category_id = ?'); values.push(data.category_id); }
     if (data.type !== undefined) { sets.push('type = ?'); values.push(data.type); }
@@ -30,12 +31,12 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     if (data.note !== undefined) { sets.push('note = ?'); values.push(data.note); }
     if (data.receipt_path !== undefined) { sets.push('receipt_path = ?'); values.push(data.receipt_path); }
     if (data.transaction_date !== undefined) { sets.push('transaction_date = ?'); values.push(data.transaction_date); }
-    
+
     sets.push('updated_at = ?'); values.push(data.updated_at);
     values.push(id);
 
     const sql = `UPDATE transactions SET ${sets.join(', ')} WHERE id = ?`;
-    await db.run(sql, values);
+    await db.run(sql, values as unknown[]);
 
     return this.getById(id);
   }
@@ -55,8 +56,8 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     const db = await getDbConnection();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path,
-             transaction_date, created_at, updated_at, deleted_at 
-      FROM transactions 
+             transaction_date, created_at, updated_at, deleted_at
+      FROM transactions
       WHERE id = ? AND deleted_at IS NULL
     `;
     const { values } = await db.query(sql, [id]);
@@ -72,8 +73,8 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     const db = await getDbConnection();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path,
-             transaction_date, created_at, updated_at, deleted_at 
-      FROM transactions 
+             transaction_date, created_at, updated_at, deleted_at
+      FROM transactions
       WHERE id = ?
     `;
     const { values } = await db.query(sql, [id]);
@@ -84,17 +85,17 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async list(filter: TransactionFilter): Promise<Transaction[]> {
     const db = await getDbConnection();
     let sql = `
-      SELECT 
-        t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note, 
+      SELECT
+        t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note,
         t.receipt_path, t.transaction_date, t.created_at, t.updated_at, t.deleted_at,
-        c.name as category_name,
-        w.name as wallet_name
+        c.name AS category_name,
+        w.name AS wallet_name
       FROM transactions t
       LEFT JOIN categories c ON t.category_id = c.id
       LEFT JOIN wallets w ON t.wallet_id = w.id
       WHERE 1=1
     `;
-    const values: any[] = [];
+    const values: unknown[] = [];
 
     if (!filter.includeDeleted) {
       sql += ` AND t.deleted_at IS NULL`;
@@ -131,7 +132,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       }
     }
 
-    const { values: rows } = await db.query(sql, values);
+    const { values: rows } = await db.query(sql, values as unknown[]);
     return (rows || []).map(mapToTransaction);
   }
 }
