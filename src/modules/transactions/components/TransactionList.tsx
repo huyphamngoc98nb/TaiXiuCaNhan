@@ -1,5 +1,6 @@
 import { Transaction } from '../domain/transaction.model';
 import { TransactionItem } from './TransactionItem';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 interface Props {
   transactions: Transaction[];
@@ -10,51 +11,55 @@ interface Props {
 }
 
 export function TransactionList({ transactions, loading, onEdit, onDelete, viewType = 'day' }: Props) {
+  const { t, language } = useLanguage();
+  const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+
   if (loading) {
-    return <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading transactions...</div>;
+    return <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>{t('transactions.loading')}</div>;
   }
 
   if (transactions.length === 0) {
-    return <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>No transactions found.</div>;
+    return <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>{t('transactions.empty')}</div>;
   }
 
-  // Sort transactions by date descending
   const sortedTransactions = [...transactions].sort((a, b) => b.transaction_date - a.transaction_date);
 
-  // Group transactions based on viewType
-  const groups: { label: string, items: Transaction[], income: number, expense: number }[] = [];
-  let currentGroup: { label: string, items: Transaction[], income: number, expense: number } | null = null;
+  const groups: { label: string; items: Transaction[]; income: number; expense: number }[] = [];
+  let currentGroup: { label: string; items: Transaction[]; income: number; expense: number } | null = null;
 
-  sortedTransactions.forEach(t => {
-    const date = new Date(t.transaction_date);
+  sortedTransactions.forEach(tx => {
+    const date = new Date(tx.transaction_date);
     let label = '';
 
     if (viewType === 'day') {
-      label = date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+      label = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
     } else if (viewType === 'month') {
-      label = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      label = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
     } else if (viewType === 'year') {
-      label = date.toLocaleDateString('en-US', { year: 'numeric' });
+      label = date.toLocaleDateString(locale, { year: 'numeric' });
     }
 
     if (!currentGroup || currentGroup.label !== label) {
       currentGroup = { label, items: [], income: 0, expense: 0 };
       groups.push(currentGroup);
     }
-    
-    currentGroup.items.push(t);
-    if (t.type === 'income') currentGroup.income += t.amount;
-    else currentGroup.expense += t.amount;
+
+    currentGroup.items.push(tx);
+    if (tx.type === 'income') currentGroup.income += tx.amount;
+    else currentGroup.expense += tx.amount;
   });
+
+  const formatCurrency = (value: number, currency = 'USD') =>
+    new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {groups.map((group) => (
         <div key={group.label}>
-          <div style={{ 
-            fontSize: '0.9rem', 
-            fontWeight: 'bold', 
-            color: 'var(--text)', 
+          <div style={{
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+            color: 'var(--text)',
             marginBottom: '12px',
             paddingBottom: '8px',
             borderBottom: '1px solid var(--border)',
@@ -62,30 +67,33 @@ export function TransactionList({ transactions, loading, onEdit, onDelete, viewT
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
               <span style={{ fontSize: '1rem' }}>{group.label}</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
-                {group.items.length} {group.items.length === 1 ? 'record' : 'records'}
+                {group.items.length}{' '}
+                {group.items.length === 1
+                  ? t('transactions.records_one')
+                  : t('transactions.records_many')}
               </span>
             </div>
-            
+
             <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', fontWeight: '500' }}>
               <div style={{ color: '#059669' }}>
-                Income: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(group.income)}
+                {t('transactions.label_income')}: {formatCurrency(group.income)}
               </div>
               <div style={{ color: '#e11d48' }}>
-                Expense: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(group.expense)}
+                {t('transactions.label_expense')}: {formatCurrency(group.expense)}
               </div>
               <div style={{ marginLeft: 'auto', color: 'var(--text-muted)' }}>
-                Balance: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(group.income - group.expense)}
+                {t('transactions.label_balance')}: {formatCurrency(group.income - group.expense)}
               </div>
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {group.items.map(t => (
-              <TransactionItem 
-                key={t.id} 
-                transaction={t} 
-                onEdit={onEdit} 
-                onDelete={onDelete} 
+            {group.items.map(tx => (
+              <TransactionItem
+                key={tx.id}
+                transaction={tx}
+                onEdit={onEdit}
+                onDelete={onDelete}
                 showDate={viewType !== 'day'}
               />
             ))}
