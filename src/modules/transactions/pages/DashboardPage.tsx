@@ -7,7 +7,8 @@ import { ROUTES } from '@/shared/constants/routes';
 import { useLanguage } from '@/shared/context/LanguageContext';
 
 export function DashboardPage() {
-  const { alerts, loading: budgetsLoading } = useBudgets();
+  // useBudgets exposes `isLoading`, not `loading`
+  const { alerts, isLoading: budgetsLoading } = useBudgets();
   const { reminders, loading: billsLoading } = useRecurringBills();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -37,7 +38,8 @@ export function DashboardPage() {
       {/* Budget Alerts */}
       <div>
         <h2 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px', color: 'var(--text)' }}>{t('dashboard.budget_alerts')}</h2>
-        <BudgetAlertsPanel alerts={alerts} loading={budgetsLoading} />
+        {/* BudgetAlertsPanel handles its own empty/loading state internally */}
+        {!budgetsLoading && <BudgetAlertsPanel alerts={alerts} />}
       </div>
     </div>
   );
