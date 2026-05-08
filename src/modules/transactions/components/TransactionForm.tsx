@@ -2,6 +2,7 @@ import { FormEvent } from 'react';
 import { Transaction } from '../domain/transaction.model';
 import { useTransactionForm } from '../hooks/useTransactionForm';
 import { ReceiptCapture } from './ReceiptCapture';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 interface Props {
   existing?: Transaction;
@@ -10,6 +11,7 @@ interface Props {
 
 export function TransactionForm({ existing, onSuccess }: Props) {
   const { formData, setFormData, setReceiptBase64, save, error, submitting, options } = useTransactionForm(existing);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,6 @@ export function TransactionForm({ existing, onSuccess }: Props) {
     if (success) onSuccess();
   };
 
-  // Convert timestamp to YYYY-MM-DDTHH:mm for datetime-local
   const formatDateTimeLocal = (timestamp?: number) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
@@ -33,43 +34,45 @@ export function TransactionForm({ existing, onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {error && <div style={{ color: 'red', fontSize: '0.9rem' }}>{error}</div>}
-      
+
       {/* Segmented Control for Type */}
       <div style={{ display: 'flex', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
         <button
           type="button"
           onClick={() => setFormData({ ...formData, type: 'expense', category_id: '' })}
-          style={{ 
-            flex: 1, padding: '12px', border: 'none', 
+          style={{
+            flex: 1, padding: '12px', border: 'none',
             background: formData.type === 'expense' ? 'var(--primary)' : 'var(--bg)',
             color: formData.type === 'expense' ? 'white' : 'inherit',
             fontWeight: formData.type === 'expense' ? 'bold' : 'normal',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
-          Expense
+          {t('form.type_expense')}
         </button>
         <button
           type="button"
           onClick={() => setFormData({ ...formData, type: 'income', category_id: '' })}
-          style={{ 
-            flex: 1, padding: '12px', border: 'none', 
+          style={{
+            flex: 1, padding: '12px', border: 'none',
             background: formData.type === 'income' ? 'var(--primary)' : 'var(--bg)',
             color: formData.type === 'income' ? 'white' : 'inherit',
             fontWeight: formData.type === 'income' ? 'bold' : 'normal',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
-          Income
+          {t('form.type_income')}
         </button>
       </div>
 
       {/* Date */}
       <div>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Date & Time</label>
-        <input 
-          type="datetime-local" 
-          value={formatDateTimeLocal(formData.transaction_date)} 
+        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          {t('form.label_date')}
+        </label>
+        <input
+          type="datetime-local"
+          value={formatDateTimeLocal(formData.transaction_date)}
           onChange={e => handleDateChange(e.target.value)}
           required
           style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-card)', fontSize: '1rem', color: 'var(--text)' }}
@@ -78,12 +81,14 @@ export function TransactionForm({ existing, onSuccess }: Props) {
 
       {/* Amount */}
       <div>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Amount</label>
-        <input 
-          type="number" 
+        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          {t('form.label_amount')}
+        </label>
+        <input
+          type="number"
           inputMode="decimal"
           step="0.01"
-          value={formData.amount || ''} 
+          value={formData.amount || ''}
           onChange={e => setFormData({ ...formData, amount: Number(e.target.value) })}
           required
           style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-card)', fontSize: '1rem', color: 'var(--text)' }}
@@ -92,14 +97,16 @@ export function TransactionForm({ existing, onSuccess }: Props) {
 
       {/* Category */}
       <div>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Category</label>
-        <select 
-          value={formData.category_id || ''} 
+        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          {t('form.label_category')}
+        </label>
+        <select
+          value={formData.category_id || ''}
           onChange={e => setFormData({ ...formData, category_id: e.target.value })}
           required
           style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-card)', fontSize: '1rem', color: 'var(--text)' }}
         >
-          <option value="" disabled>Select a category</option>
+          <option value="" disabled>{t('form.select_category')}</option>
           {options?.categories
             .filter(c => c.type === formData.type)
             .map(c => (
@@ -111,9 +118,11 @@ export function TransactionForm({ existing, onSuccess }: Props) {
 
       {/* Note */}
       <div>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Note (Optional)</label>
-        <textarea 
-          value={formData.note || ''} 
+        <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          {t('form.label_note')}
+        </label>
+        <textarea
+          value={formData.note || ''}
           onChange={e => setFormData({ ...formData, note: e.target.value })}
           rows={3}
           style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-card)', fontSize: '1rem', color: 'var(--text)' }}
@@ -122,12 +131,12 @@ export function TransactionForm({ existing, onSuccess }: Props) {
 
       <ReceiptCapture existingPath={formData.receipt_path} onImageSelected={setReceiptBase64} />
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         disabled={submitting}
         style={{ padding: '14px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem', marginTop: '8px', cursor: 'pointer' }}
       >
-        {submitting ? 'Saving...' : 'Save Transaction'}
+        {submitting ? t('form.saving') : t('form.save')}
       </button>
     </form>
   );
