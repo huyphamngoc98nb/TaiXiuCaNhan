@@ -1,11 +1,36 @@
-import { Outlet, NavLink } from 'react-router-dom';
-import { Home, List, PlusCircle, Settings, BarChart3, Wallet } from 'lucide-react';
+import { useState } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  List,
+  PlusCircle,
+  PieChart,
+  MoreHorizontal,
+  BarChart3,
+  Wallet,
+  RefreshCcw,
+  Settings,
+  X,
+  Download,
+  Database,
+} from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import './MainLayout.css';
 
 export function MainLayout() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const menuItems = [
+    { icon: <Wallet size={22} />, label: 'Tài khoản', route: ROUTES.WALLETS },
+    { icon: <BarChart3 size={22} />, label: t('navigation.reports'), route: ROUTES.REPORTS },
+    { icon: <RefreshCcw size={22} />, label: 'Hoá đơn định kỳ', route: ROUTES.RECURRING_BILLS },
+    { icon: <Download size={22} />, label: 'Xuất dữ liệu', route: ROUTES.EXPORT },
+    { icon: <Database size={22} />, label: 'Sao lưu & Khôi phục', route: ROUTES.BACKUP },
+    { icon: <Settings size={22} />, label: t('navigation.settings'), route: ROUTES.SETTINGS },
+  ];
 
   return (
     <div className="app-container">
@@ -13,32 +38,62 @@ export function MainLayout() {
         <Outlet />
       </main>
 
+      {/* Bottom Nav — 5 tabs */}
       <nav className="bottom-nav">
         <NavLink to={ROUTES.HOME} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-          <Home size={24} />
+          <Home size={22} />
           <span>{t('navigation.home')}</span>
         </NavLink>
         <NavLink to={ROUTES.TRANSACTIONS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-          <List size={24} />
+          <List size={22} />
           <span>{t('navigation.history')}</span>
         </NavLink>
-        <NavLink to={ROUTES.TRANSACTIONS_NEW} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <PlusCircle size={24} />
-          <span>{t('navigation.add')}</span>
+        <NavLink
+          to={ROUTES.TRANSACTIONS_NEW}
+          className={({ isActive }) => `nav-item nav-item--fab ${isActive ? 'active' : ''}`}
+        >
+          <PlusCircle size={28} />
         </NavLink>
-        <NavLink to={ROUTES.REPORTS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <BarChart3 size={24} />
-          <span>{t('navigation.reports')}</span>
+        <NavLink to={ROUTES.BUDGETS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <PieChart size={22} />
+          <span>Ngân sách</span>
         </NavLink>
-        <NavLink to={ROUTES.WALLETS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Wallet size={24} />
-          <span>Tài khoản</span>
-        </NavLink>
-        <NavLink to={ROUTES.SETTINGS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Settings size={24} />
-          <span>{t('navigation.settings')}</span>
-        </NavLink>
+        <button className="nav-item" onClick={() => setDrawerOpen(true)}>
+          <MoreHorizontal size={22} />
+          <span>Thêm</span>
+        </button>
       </nav>
+
+      {/* Bottom Drawer */}
+      {drawerOpen && (
+        <>
+          <div
+            className="drawer-backdrop"
+            onClick={() => setDrawerOpen(false)}
+          />
+          <div className="drawer-sheet">
+            <div className="drawer-handle" />
+            <div className="drawer-header">
+              <span className="drawer-title">Tiện ích</span>
+              <button className="drawer-close" onClick={() => setDrawerOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="drawer-grid">
+              {menuItems.map(item => (
+                <button
+                  key={item.route}
+                  className="drawer-grid-item"
+                  onClick={() => { navigate(item.route); setDrawerOpen(false); }}
+                >
+                  <div className="drawer-grid-icon">{item.icon}</div>
+                  <span className="drawer-grid-label">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
