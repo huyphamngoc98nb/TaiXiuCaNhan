@@ -13,6 +13,8 @@ import balanceTriggersSql from './008_wallet_balance_triggers.sql?raw';
 import rbDeleteFixSql from './009_recurring_bills_delete_fix.sql?raw';
 import dropBalanceTriggersSql from './010_drop_balance_triggers.sql?raw';
 import dropTransferCheckTriggersSql from './011_drop_transfer_check_triggers.sql?raw';
+import separateBudgetsSql from './012_separate_budgets.sql?raw';
+import enhanceWalletsSql from './013_enhance_wallets.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -26,6 +28,8 @@ const MIGRATIONS = [
   { version: 9,  name: '009_recurring_bills_delete_fix',    sql: rbDeleteFixSql },
   { version: 10, name: '010_drop_balance_triggers',         sql: dropBalanceTriggersSql },
   { version: 11, name: '011_drop_transfer_check_triggers',  sql: dropTransferCheckTriggersSql },
+  { version: 12, name: '012_separate_budgets',              sql: separateBudgetsSql },
+  { version: 13, name: '013_enhance_wallets',               sql: enhanceWalletsSql },
 ];
 
 /**
