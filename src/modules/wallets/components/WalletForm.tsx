@@ -4,7 +4,6 @@ import { Wallet, AccountType, CreateWalletInput, UpdateWalletInput } from '../re
 import { ACCOUNT_TYPE_LABELS, ACCOUNT_TYPE_ICONS } from './WalletCard';
 
 interface Props {
-  /** Pass an existing wallet to edit; omit for create mode. */
   existing?: Wallet;
   onSave: (data: CreateWalletInput | UpdateWalletInput) => Promise<void>;
   onClose: () => void;
@@ -36,7 +35,6 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
   const [error, setError]             = useState<string | null>(null);
   const [saving, setSaving]           = useState(false);
 
-  // Auto-fill default icon when account type changes (only if icon not customised)
   useEffect(() => {
     if (!existing) {
       setIcon(ACCOUNT_TYPE_ICONS[accountType]);
@@ -120,41 +118,44 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-500"
+          className="w-11 h-11 flex items-center justify-center text-gray-400 bg-gray-100 rounded-full active:bg-gray-200 transition-colors"
         >
           <X size={20} />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-5">
+        {/* Error banner */}
         {error && (
-          <p className="text-[13px] text-red-500 bg-red-50 rounded-xl px-3 py-2">{error}</p>
+          <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-[12px] text-[13px] text-red-600 font-medium">
+            {error}
+          </div>
         )}
 
         {/* Name */}
-        <div className="space-y-1">
-          <label className="text-[13px] font-semibold text-gray-700">Tên tài khoản *</label>
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Tên tài khoản *</p>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="VD: MB Bank, Ví MoMo..."
-            className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-indigo-400"
+            className="w-full h-[48px] bg-gray-50 border border-gray-200 rounded-[14px] px-4 text-[14px] text-gray-900 outline-none focus:border-indigo-400 transition-colors"
           />
         </div>
 
         {/* Account type */}
-        <div className="space-y-2">
-          <label className="text-[13px] font-semibold text-gray-700">Loại tài khoản *</label>
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Loại tài khoản *</p>
           <div className="grid grid-cols-3 gap-2">
             {ACCOUNT_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setAccountType(type)}
-                className={`h-11 rounded-xl text-[12px] font-semibold border transition-all ${
+                className={`h-[44px] rounded-[12px] text-[12px] font-semibold border transition-all ${
                   accountType === type
-                    ? 'bg-indigo-500 text-white border-indigo-500'
+                    ? 'bg-indigo-500 text-white border-indigo-500 shadow-sm'
                     : 'bg-gray-50 text-gray-600 border-gray-200'
                 }`}
               >
@@ -165,53 +166,63 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         </div>
 
         {/* Currency */}
-        <div className="space-y-1">
-          <label className="text-[13px] font-semibold text-gray-700">Đơn vị tiền tệ</label>
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-indigo-400"
-          >
-            {['VND', 'USD', 'EUR', 'JPY', 'GBP', 'SGD', 'THB', 'KRW'].map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Đơn vị tiền tệ</p>
+          <div className="relative">
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="w-full h-[48px] px-4 pr-8 bg-gray-50 border border-gray-200 rounded-[12px] text-[14px] text-gray-800 font-medium appearance-none focus:outline-none focus:border-indigo-400"
+            >
+              {['VND', 'USD', 'EUR', 'JPY', 'GBP', 'SGD', 'THB', 'KRW'].map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">▼</span>
+          </div>
         </div>
 
         {/* Initial balance — create mode only */}
         {!isEdit && (
-          <div className="space-y-1">
-            <label className="text-[13px] font-semibold text-gray-700">Số dư ban đầu</label>
-            <input
-              type="number"
-              inputMode="decimal"
-              value={balance}
-              onChange={(e) => setBalance(e.target.value)}
-              className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-indigo-400"
-            />
+          <div className="space-y-1.5">
+            <p className="text-[13px] font-semibold text-gray-700">Số dư ban đầu</p>
+            <div className="flex items-center h-[56px] bg-gray-50 border border-gray-200 rounded-[14px] px-4 transition-colors focus-within:border-indigo-400">
+              <span className="text-[14px] font-semibold text-gray-400 mr-2">VND</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={balance}
+                onChange={(e) => setBalance(e.target.value)}
+                className="flex-1 bg-transparent text-[26px] font-bold text-gray-900 outline-none tabular-nums"
+                placeholder="0"
+              />
+            </div>
           </div>
         )}
 
         {/* Credit-card specific fields */}
         {accountType === 'credit_card' && (
-          <div className="space-y-4 bg-orange-50 rounded-2xl p-4">
+          <div className="space-y-4 bg-orange-50 rounded-[14px] p-4">
             <p className="text-[12px] font-semibold text-orange-600 uppercase tracking-wide">
               Thông tin thẻ tín dụng
             </p>
-            <div className="space-y-1">
-              <label className="text-[13px] font-semibold text-gray-700">Hạn mức tín dụng *</label>
-              <input
-                type="number"
-                inputMode="decimal"
-                value={creditLimit}
-                onChange={(e) => setCreditLimit(e.target.value)}
-                placeholder="VD: 50000000"
-                className="w-full h-12 bg-white border border-orange-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-orange-400"
-              />
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-semibold text-gray-700">Hạn mức tín dụng *</p>
+              <div className="flex items-center h-[48px] bg-white border border-orange-200 rounded-[12px] px-4 transition-colors focus-within:border-orange-400">
+                <span className="text-[14px] font-semibold text-gray-400 mr-2">VND</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={creditLimit}
+                  onChange={(e) => setCreditLimit(e.target.value)}
+                  placeholder="0"
+                  className="flex-1 bg-transparent text-[16px] font-bold text-gray-900 outline-none tabular-nums"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[13px] font-semibold text-gray-700">Ngày sao kê</label>
+              <div className="space-y-1.5">
+                <p className="text-[13px] font-semibold text-gray-700">Ngày sao kê</p>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -220,11 +231,11 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
                   value={statementDay}
                   onChange={(e) => setStatDay(e.target.value)}
                   placeholder="1–31"
-                  className="w-full h-12 bg-white border border-orange-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-orange-400"
+                  className="w-full h-[48px] bg-white border border-orange-200 rounded-[12px] px-4 text-[14px] text-gray-900 outline-none focus:border-orange-400"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[13px] font-semibold text-gray-700">Ngày đến hạn</label>
+              <div className="space-y-1.5">
+                <p className="text-[13px] font-semibold text-gray-700">Ngày đến hạn</p>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -233,7 +244,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
                   value={dueDay}
                   onChange={(e) => setDueDay(e.target.value)}
                   placeholder="1–31"
-                  className="w-full h-12 bg-white border border-orange-200 rounded-xl px-4 text-[15px] text-gray-900 outline-none focus:border-orange-400"
+                  className="w-full h-[48px] bg-white border border-orange-200 rounded-[12px] px-4 text-[14px] text-gray-900 outline-none focus:border-orange-400"
                 />
               </div>
             </div>
@@ -241,15 +252,15 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         )}
 
         {/* Icon picker */}
-        <div className="space-y-2">
-          <label className="text-[13px] font-semibold text-gray-700">Biểu tượng</label>
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Biểu tượng</p>
           <div className="flex flex-wrap gap-2">
             {EMOJI_PRESETS.map((e) => (
               <button
                 key={e}
                 type="button"
                 onClick={() => setIcon(e)}
-                className={`w-10 h-10 rounded-xl text-xl border-2 transition-all ${
+                className={`w-10 h-10 rounded-[12px] text-xl border-2 transition-all ${
                   icon === e ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 bg-gray-50'
                 }`}
               >
@@ -260,8 +271,8 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         </div>
 
         {/* Color picker */}
-        <div className="space-y-2">
-          <label className="text-[13px] font-semibold text-gray-700">Màu sắc</label>
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Màu sắc</p>
           <div className="flex flex-wrap gap-2">
             {COLOR_PRESETS.map((c) => (
               <button
@@ -301,8 +312,9 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
           <button
             type="submit"
             disabled={saving}
-            className={`w-full h-[52px] rounded-2xl bg-indigo-500 text-white text-[15px] font-semibold transition-all ${
-              saving ? 'opacity-40' : 'shadow-lg shadow-indigo-500/20 active:scale-[0.98]'
+            className={`w-full h-[54px] rounded-[14px] bg-indigo-500 text-white text-[16px] font-bold
+              transition-all active:scale-[0.98] ${
+              saving ? 'opacity-50' : 'shadow-lg shadow-indigo-500/20'
             }`}
           >
             {saving ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Tạo tài khoản'}
@@ -313,7 +325,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
               type="button"
               disabled={saving}
               onClick={handleArchive}
-              className="w-full h-11 rounded-2xl border border-red-200 text-red-500 text-[14px] font-semibold"
+              className="w-full h-[48px] rounded-[14px] border border-red-200 text-red-500 text-[14px] font-semibold transition-all active:scale-[0.98]"
             >
               Lưu trữ tài khoản
             </button>
