@@ -1,40 +1,187 @@
+/* ─── Layout ─────────────────────────────────── */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  background: #F5F7FA;
 }
 
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 70px; /* Space for bottom nav */
+  padding-bottom: 72px;
 }
 
+/* ─── Bottom Nav ─────────────────────────────── */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
+  height: 64px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.07);
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
   display: flex;
   justify-content: space-around;
   align-items: center;
+  padding: 0 4px;
   padding-bottom: env(safe-area-inset-bottom);
+  z-index: 50;
 }
 
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  flex: 1;
   text-decoration: none;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  gap: 4px;
+  color: #9CA3AF;
+  font-size: 0.68rem;
+  font-weight: 500;
+  gap: 3px;
+  min-height: 56px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  position: relative;
 }
 
 .nav-item.active {
-  color: var(--primary);
+  color: #6366F1;
+}
+
+/* Active pill indicator */
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 3px;
+  background: #6366F1;
+  border-radius: 0 0 3px 3px;
+}
+
+/* FAB centre button */
+.nav-item--fab {
+  color: #6366F1;
+}
+.nav-item--fab svg {
+  filter: drop-shadow(0 2px 6px rgba(99,102,241,0.35));
+}
+
+/* ─── Bottom Drawer ──────────────────────────── */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 60;
+  animation: fadeIn 0.18s ease;
+}
+
+.drawer-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  z-index: 61;
+  padding: 12px 20px 32px;
+  animation: slideUp 0.22s ease;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+.drawer-handle {
+  width: 36px;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.drawer-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.drawer-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #F3F4F6;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6B7280;
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.drawer-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: 16px;
+  background: #F9FAFB;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.drawer-grid-item:active {
+  background: #EEF2FF;
+}
+
+.drawer-grid-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #EEF2FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366F1;
+}
+
+.drawer-grid-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ─── Animations ─────────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
