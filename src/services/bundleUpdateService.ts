@@ -204,12 +204,8 @@ async function downloadZip(updateData: BundleUpdateInput, zipPath: string): Prom
   let lastFlushedOffset = downloadedBytes;
   let firstChunk = true;
 
-  while (true) {
-    const read = await reader.read();
-    if (read.done) {
-      break;
-    }
-
+  let read = await reader.read();
+  while (!read.done) {
     const chunk = read.value;
     if (firstChunk && !shouldAppend) {
       await Filesystem.writeFile({
@@ -232,6 +228,8 @@ async function downloadZip(updateData: BundleUpdateInput, zipPath: string): Prom
       await setConfig(offsetKey, String(downloadedBytes));
       lastFlushedOffset = downloadedBytes;
     }
+
+    read = await reader.read();
   }
 
   await deleteConfig(offsetKey);
