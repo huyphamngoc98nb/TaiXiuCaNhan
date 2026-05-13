@@ -3,11 +3,12 @@
 # CI/CD: Tự động build OTA bundle sau mỗi push vào main
 #
 # Secrets cần cấu hình trước khi dùng:
-#   BUNDLE_SIGNING_KEY  — Nội dung private_key.pem (RSA 4096-bit)
-#   AWS_ACCESS_KEY_ID   — AWS credentials
-#   AWS_SECRET_ACCESS_KEY
-#   AWS_DEFAULT_REGION  — VD: ap-southeast-1
-#   S3_BUCKET_NAME      — VD: my-ota-bucket
+#   BUNDLE_SIGNING_KEY    — Nội dung private_key.pem (RSA 4096-bit)
+#   R2_ACCOUNT_ID         — Cloudflare Account ID
+#   R2_ACCESS_KEY_ID      — R2 Access Key (tạo trong CF Dashboard)
+#   R2_SECRET_ACCESS_KEY  — R2 Secret Key
+#   R2_BUCKET_NAME        — Tên R2 bucket (VD: ota-bundles)
+#   R2_PUBLIC_URL         — Base URL public bucket (VD: https://cdn.example.com)
 # =============================================================
 name: Build OTA Bundle
 
@@ -65,14 +66,24 @@ jobs:
 
       # ----------------------------------------------------------
       # Step 5: Build bundle (vite build → zip → sha256 → sign)
-      # SKIP_NPM_BUILD=true vì Step 3 đã install, nhưng cần build lại
-      # nên để SKIP_NPM_BUILD=false (để mặc định)
       # ----------------------------------------------------------
       - name: Build OTA bundle
         run: bash scripts/build-bundle.sh
 
       # ----------------------------------------------------------
-      # Step 6: Upload artifacts lên GitHub Actions Artifacts
+      # Step 6: Đọc bundleVersion vào env để dùng ở các step sau
+      # ----------------------------------------------------------
+      - name: Set BUNDLE_VERSION env
+        run: |
+          BUNDLE_VERSION=$(node -e "
+            const v = require('./version.config.json');
+            process.stdout.write(v.bundleVersion);
+          ")
+          echo "BUNDLE_VERSION=${BUNDLE_VERSION}" >> $GITHUB_ENV
+          echo ">> bundleVersion = ${BUNDLE_VERSION}"
+
+      # ----------------------------------------------------------
+      # Step 7: Upload artifacts lên GitHub Actions Artifacts
       # Giữ lại 7 ngày (giảm storage, đủ để debug)
       # ----------------------------------------------------------
       - name: Upload artifacts to GitHub
@@ -84,25 +95,35 @@ jobs:
           if-no-files-found: error
 
       # ----------------------------------------------------------
-      # Step 7: Upload lên S3
+      # Step 8: Upload lên Cloudflare R2
+      # R2 tương thích S3 API — dùng awscli với custom endpoint
+      # Endpoint format: https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+      # Egress (download) miễn phí — không tốn phí khi app tải bundle
       # ----------------------------------------------------------
-      - name: Upload artifacts to S3
+      - name: Upload artifacts to Cloudflare R2
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
         run: |
-          aws s3 cp artifacts/ "s3://${S3_BUCKET_NAME}/bundles/" \
-            --recursive \
-            --no-progress
+          R2_ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
-          # In ra danh sách file đã upload để trace trong log
-          echo ">> Files uploaded to s3://${S3_BUCKET_NAME}/bundles/:"
-          aws s3 ls "s3://${S3_BUCKET_NAME}/bundles/" --human-readable
+          # Upload 3 artifacts lên thư mục bundles/ trong R2 bucket
+          aws s3 cp artifacts/ "s3://${R2_BUCKET_NAME}/bundles/" \
+            --recursive \
+            --no-progress \
+            --endpoint-url "${R2_ENDPOINT}"
+
+          # In public URL của từng artifact để trace
+          echo ">> Artifacts available at:"
+          echo "   ${R2_PUBLIC_URL}/bundles/${{ env.BUNDLE_VERSION }}.zip"
+          echo "   ${R2_PUBLIC_URL}/bundles/${{ env.BUNDLE_VERSION }}.zip.sha256"
+          echo "   ${R2_PUBLIC_URL}/bundles/${{ env.BUNDLE_VERSION }}.zip.sig"
 
       # ----------------------------------------------------------
-      # Step 8: Xóa private key — luôn chạy kể cả khi các step trước fail
+      # Step 9: Xóa private key — luôn chạy kể cả khi các step trước fail
       # ----------------------------------------------------------
       - name: Cleanup signing key
         if: always()
