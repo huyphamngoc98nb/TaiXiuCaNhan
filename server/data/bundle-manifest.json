@@ -1,12 +1,12 @@
 [
   {
-    "channel": "stable",
     "bundleVersion": "0.1.0-b1",
-    "bundleUrl": "https://cdn.example.com/bundles/stable/0.1.0-b1.zip",
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/huyphamngoc98nb/TaiXiuCaNhan/releases/download/bundle-0.1.0-b1/0.1.0-b1.zip",
+    "sha256": "0f1c794a1d7fa8901206c3f32984f8df1fd859a47bcb20841604ea9a1795b512",
+    "sigUrl": "https://github.com/huyphamngoc98nb/TaiXiuCaNhan/releases/download/bundle-0.1.0-b1/0.1.0-b1.zip.sig",
     "minNativeVersion": "0.1.0",
-    "mandatory": false,
-    "releaseNotes": "Bản đầu tiên: chuẩn hoá versioning, sửa lỗi TypeScript, thêm OTA bootstrap",
-    "publishedAt": 1747062000000
+    "releaseNotes": "Auto-built from CI — 0.1.0-b1",
+    "disabled": false,
+    "createdAt": "2026-05-13T02:43:13.074Z"
   }
 ]
