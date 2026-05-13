@@ -36,6 +36,9 @@ jobs:
     name: Build → Sign → GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      BUNDLE_VERSION: ""
+      CHECKSUM: ""
 
     steps:
       # ----------------------------------------------------------
@@ -141,7 +144,6 @@ jobs:
             artifacts/${{ env.BUNDLE_VERSION }}.zip.sha256
             artifacts/${{ env.BUNDLE_VERSION }}.zip.sig
           make_latest: true
-          update_existing_release: true
           fail_on_unmatched_files: true
 
       # ----------------------------------------------------------
