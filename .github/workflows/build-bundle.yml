@@ -1,0 +1,111 @@
+# =============================================================
+# build-bundle.yml
+# CI/CD: Tự động build OTA bundle sau mỗi push vào main
+#
+# Secrets cần cấu hình trước khi dùng:
+#   BUNDLE_SIGNING_KEY  — Nội dung private_key.pem (RSA 4096-bit)
+#   AWS_ACCESS_KEY_ID   — AWS credentials
+#   AWS_SECRET_ACCESS_KEY
+#   AWS_DEFAULT_REGION  — VD: ap-southeast-1
+#   S3_BUCKET_NAME      — VD: my-ota-bucket
+# =============================================================
+name: Build OTA Bundle
+
+on:
+  push:
+    branches:
+      - main
+  # Chạy thủ công từ GitHub UI nếu cần
+  workflow_dispatch:
+
+# Chỉ cho phép 1 workflow chạy cùng lúc trên main
+# Workflow cũ hơn sẽ bị hủy thay vì chờ
+concurrency:
+  group: build-bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    name: Build → Sign → Upload OTA Bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # ----------------------------------------------------------
+      # Step 1: Checkout code
+      # ----------------------------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ----------------------------------------------------------
+      # Step 2: Setup Node.js 20 với npm cache
+      # ----------------------------------------------------------
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ----------------------------------------------------------
+      # Step 3: Cài đặt dependencies (ci = clean install, không sửa lock)
+      # ----------------------------------------------------------
+      - name: Install dependencies
+        run: npm ci
+
+      # ----------------------------------------------------------
+      # Step 4: Ghi BUNDLE_SIGNING_KEY ra private_key.pem
+      # Dùng printf thay echo để tránh platform-specific newline issues
+      # ----------------------------------------------------------
+      - name: Write signing key
+        env:
+          BUNDLE_SIGNING_KEY: ${{ secrets.BUNDLE_SIGNING_KEY }}
+        run: |
+          printf '%s' "${BUNDLE_SIGNING_KEY}" > private_key.pem
+          chmod 600 private_key.pem
+
+      # ----------------------------------------------------------
+      # Step 5: Build bundle (vite build → zip → sha256 → sign)
+      # SKIP_NPM_BUILD=true vì Step 3 đã install, nhưng cần build lại
+      # nên để SKIP_NPM_BUILD=false (để mặc định)
+      # ----------------------------------------------------------
+      - name: Build OTA bundle
+        run: bash scripts/build-bundle.sh
+
+      # ----------------------------------------------------------
+      # Step 6: Upload artifacts lên GitHub Actions Artifacts
+      # Giữ lại 7 ngày (giảm storage, đủ để debug)
+      # ----------------------------------------------------------
+      - name: Upload artifacts to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: ota-bundle-${{ github.sha }}
+          path: artifacts/
+          retention-days: 7
+          if-no-files-found: error
+
+      # ----------------------------------------------------------
+      # Step 7: Upload lên S3
+      # ----------------------------------------------------------
+      - name: Upload artifacts to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          aws s3 cp artifacts/ "s3://${S3_BUCKET_NAME}/bundles/" \
+            --recursive \
+            --no-progress
+
+          # In ra danh sách file đã upload để trace trong log
+          echo ">> Files uploaded to s3://${S3_BUCKET_NAME}/bundles/:"
+          aws s3 ls "s3://${S3_BUCKET_NAME}/bundles/" --human-readable
+
+      # ----------------------------------------------------------
+      # Step 8: Xóa private key — luôn chạy kể cả khi các step trước fail
+      # ----------------------------------------------------------
+      - name: Cleanup signing key
+        if: always()
+        run: |
+          rm -f private_key.pem
+          echo ">> private_key.pem đã được xóa"
