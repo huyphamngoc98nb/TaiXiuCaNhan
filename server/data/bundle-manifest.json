@@ -2,12 +2,12 @@
   {
     "bundleVersion": "0.1.0-b2",
     "url": "https://github.com/huyphamngoc98nb/TaiXiuCaNhan/releases/download/bundle-0.1.0-b2/0.1.0-b2.zip",
-    "sha256": "303edff1f3f19ff4febb2dd64b442955851c653e7fb3bd5d6cb3d4c908e5a579",
+    "sha256": "88e0171868f66f6b46e0353db979fb7f314cf3cea06c967c9817ac88b0cf18ea",
     "sigUrl": "https://github.com/huyphamngoc98nb/TaiXiuCaNhan/releases/download/bundle-0.1.0-b2/0.1.0-b2.zip.sig",
     "minNativeVersion": "0.1.0",
     "releaseNotes": "Auto-built from CI — 0.1.0-b2",
     "disabled": false,
-    "createdAt": "2026-05-14T03:30:47.157Z"
+    "createdAt": "2026-05-14T03:35:43.081Z"
   },
   {
     "bundleVersion": "0.1.0-b1",
