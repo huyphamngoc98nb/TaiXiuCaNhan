@@ -8,6 +8,7 @@ const mockStore: Record<string, string> = {};
 const mocks = vi.hoisted(() => ({
   fetch: vi.fn(),
   getDbConnection: vi.fn(),
+  installApkWithPermissionCheck: vi.fn(),
   writeFile: vi.fn(),
   appendFile: vi.fn(),
   deleteFile: vi.fn(),
@@ -27,6 +28,10 @@ vi.mock('@capacitor/filesystem', () => ({
 vi.mock('@/core/db/sqlite/connection', () => ({
   DB_NAME: 'taixiu_db',
   getDbConnection: mocks.getDbConnection,
+}));
+
+vi.mock('@/plugins/apkInstaller', () => ({
+  installApkWithPermissionCheck: mocks.installApkWithPermissionCheck,
 }));
 
 interface QueryResult {
@@ -118,6 +123,7 @@ describe('apkDownloadService', () => {
     vi.mocked(Filesystem.appendFile).mockResolvedValue(undefined);
     vi.mocked(Filesystem.deleteFile).mockResolvedValue(undefined);
     vi.mocked(Filesystem.getUri).mockResolvedValue({ uri: 'file:///data/update.apk' });
+    mocks.installApkWithPermissionCheck.mockResolvedValue(undefined);
   });
 
   it('should download APK and save progress every 1MB', async () => {
@@ -137,6 +143,7 @@ describe('apkDownloadService', () => {
       'INSERT OR REPLACE INTO app_config (key, value) VALUES (?, ?)',
       ['apkDownloadProgress', String(1024 * 1024)],
     );
+    expect(mocks.installApkWithPermissionCheck).toHaveBeenCalledWith('file:///data/update.apk');
   });
 
   it('should send Range header when downloadedBytes > 0 in SQLite', async () => {

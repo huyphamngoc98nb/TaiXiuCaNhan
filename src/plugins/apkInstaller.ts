@@ -6,7 +6,7 @@ export interface ApkInstallerPlugin {
   requestInstallPermission(): Promise<{ granted: boolean }>;
 }
 
-const ApkInstaller = registerPlugin<ApkInstallerPlugin>('ApkInstaller');
+const ApkInstaller = registerPlugin<ApkInstallerPlugin>('ApkInstallerPlugin');
 
 export async function installApk(filePath: string): Promise<void> {
   if (typeof filePath !== 'string' || !filePath.trim()) {

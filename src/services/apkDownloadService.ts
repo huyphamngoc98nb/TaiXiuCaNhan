@@ -1,5 +1,7 @@
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { getDbConnection } from '@/core/db/sqlite/connection';
+import { logger } from '@/core/telemetry/logger';
+import { installApkWithPermissionCheck } from '@/plugins/apkInstaller';
 
 const PROGRESS_KEY = 'apkDownloadProgress';
 const URL_KEY = 'apkDownloadUrl';
@@ -168,6 +170,16 @@ async function resolveApkFilePath(): Promise<string> {
   return APK_PATH;
 }
 
+async function openApkInstaller(filePath: string): Promise<void> {
+  try {
+    await installApkWithPermissionCheck(filePath);
+  } catch (error) {
+    logger.warn(
+      `[ApkDownloadService] APK installer did not open: ${error instanceof Error ? error.message : 'unknown error'}`,
+    );
+  }
+}
+
 async function persistProgress(downloadedBytes: number): Promise<void> {
   await setConfig(PROGRESS_KEY, String(downloadedBytes));
   await setConfig(URL_KEY, state.apkUrl ?? '');
@@ -228,6 +240,7 @@ async function download(input: ApkDownloadInput, abortController: AbortControlle
     const filePath = await resolveApkFilePath();
     await clearStoredProgress();
     patchState({ status: 'completed', downloadedBytes, totalBytes, bytesPerSecond: 0, filePath });
+    await openApkInstaller(filePath);
     return { filePath, downloadedBytes, totalBytes };
   }
 
@@ -285,6 +298,7 @@ async function download(input: ApkDownloadInput, abortController: AbortControlle
   const filePath = await resolveApkFilePath();
   await clearStoredProgress();
   patchState({ status: 'completed', downloadedBytes, totalBytes, bytesPerSecond: 0, filePath });
+  await openApkInstaller(filePath);
 
   return { filePath, downloadedBytes, totalBytes };
 }

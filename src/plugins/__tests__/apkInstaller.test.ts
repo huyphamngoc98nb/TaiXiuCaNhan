@@ -31,8 +31,8 @@ describe('apkInstaller plugin wrapper', () => {
     mocks.requestInstallPermission.mockReset();
   });
 
-  it('registers the ApkInstaller Capacitor plugin', () => {
-    expect(registerPlugin).toHaveBeenCalledWith('ApkInstaller');
+  it('registers the ApkInstallerPlugin Capacitor plugin', () => {
+    expect(registerPlugin).toHaveBeenCalledWith('ApkInstallerPlugin');
     expect(ApkInstaller).toBeDefined();
   });
 

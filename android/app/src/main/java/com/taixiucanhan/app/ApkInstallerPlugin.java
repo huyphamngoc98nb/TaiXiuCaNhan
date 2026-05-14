@@ -18,11 +18,10 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.io.File;
 
-@CapacitorPlugin(name = "ApkInstaller")
+@CapacitorPlugin(name = "ApkInstallerPlugin")
 public class ApkInstallerPlugin extends Plugin {
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
-    private static final String INSTALL_PERMISSION_REJECT_MESSAGE =
-            "Install permission not granted. Call requestInstallPermission() first.";
+    private static final String INSTALL_PERMISSION_REJECT_MESSAGE = "permission_required";
 
     @PluginMethod
     public void checkInstallPermission(PluginCall call) {
@@ -75,12 +74,13 @@ public class ApkInstallerPlugin extends Plugin {
         }
 
         if (!isInstallPermissionGranted()) {
+            openInstallPermissionSettings();
             call.reject(INSTALL_PERMISSION_REJECT_MESSAGE);
             return;
         }
 
         try {
-            String authority = getContext().getPackageName() + ".fileprovider";
+            String authority = BuildConfig.APPLICATION_ID + ".fileprovider";
             Uri apkUri = FileProvider.getUriForFile(getContext(), authority, apkFile);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -98,6 +98,19 @@ public class ApkInstallerPlugin extends Plugin {
         } catch (Exception exception) {
             call.reject("Failed to open APK installer", exception);
         }
+    }
+
+    protected void openInstallPermissionSettings() {
+        if (getSdkInt() < Build.VERSION_CODES.O) {
+            return;
+        }
+
+        Intent intent = new Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:" + getContext().getPackageName())
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getContext().startActivity(intent);
     }
 
     protected boolean isInstallPermissionGranted() {

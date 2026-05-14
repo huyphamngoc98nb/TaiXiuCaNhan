@@ -15,7 +15,6 @@ import {
   Database,
 } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
-import { ApkDownloadProgress } from '@/shared/components/ApkDownloadProgress';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import './MainLayout.css';
 
@@ -95,7 +94,6 @@ export function MainLayout() {
           </div>
         </>
       )}
-      <ApkDownloadProgress />
     </div>
   );
 }

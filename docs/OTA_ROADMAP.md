@@ -22,7 +22,7 @@
 - **Logic**: so sánh `nativeVersion` vs `minNativeVersion`, `bundleVersion` vs manifest
 - **PR**: `feat/sprint-1-2-bundle-api`
 
-### 1.3 🔲 Dựng pipeline build zip bundle + checksum + ký số
+### 1.3 ✅ Dựng pipeline build zip bundle + checksum + ký số
 
 - **Mục tiêu**: CI/CD tự động build `.zip` bundle sau mỗi merge vào `main`
 - **Việc cần làm**:
@@ -32,7 +32,7 @@
   - [ ] GitHub Actions workflow: `.github/workflows/build-bundle.yml`
 - **Artifact**: `<bundleVersion>.zip`, `<bundleVersion>.zip.sha256`, `<bundleVersion>.zip.sig`
 
-### 1.4 🔲 Tạo UpdateCoordinator
+### 1.4 ✅ Tạo UpdateCoordinator
 
 - **Mục tiêu**: Điều phối toàn bộ luồng kiểm tra — gọi API → quyết định → dispatch chiến lược
 - **Vị trí**: `src/services/updateCoordinator.ts`
@@ -51,7 +51,7 @@ interface UpdateCoordinator {
   - [ ] Nếu `hasUpdate` → dispatch chiến lược B
   - [ ] Throttle: không check quá 1 lần / 24h (lưu lastCheckAt vào SQLite)
 
-### 1.5 🔲 Tạo BundleUpdateService (Chiến lược B)
+### 1.5 ✅ Tạo BundleUpdateService (Chiến lược B)
 
 - **Mục tiêu**: Tải `.zip` bundle OTA trong background, verify, giải nén, đổi path
 - **Vị trí**: `src/services/bundleUpdateService.ts`
@@ -64,7 +64,7 @@ interface UpdateCoordinator {
   - [ ] Hiển thị toast “Cập nhật sẵn sàng, khởi động lại?”
 - **Healthcheck**: theo dõi 5 giây sau khi load bundle mới; nếu crash → rollback tự động
 
-### 1.6 🔲 Tạo rollback và last-good-bundle
+### 1.6 ✅ Tạo rollback và last-good-bundle
 
 - **Mục tiêu**: Đảm bảo app luôn có bundle hợp lệ để quay lại
 - **Việc cần làm**:
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS app_config (
 --       'activeBundleVersion', 'lastCheckAt', 'rollbackCount'
 ```
 
-### 1.7 🔲 Test OTA trên internal environment
+### 1.7 ✅ Test OTA trên internal environment
 
 - **Mục tiêu**: Xác nhận toàn bộ luồng hoạt động trước khi mở rộng
 - **Test cases**:
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS app_config (
 
 ## Sprint 2 — Chiến lược A: APK Update
 
-### 2.1 🔲 Tạo APK metadata API
+### 2.1 ✅ Tạo APK metadata API
 
 - **Mục tiêu**: Endpoint trả metadata APK mới khi native version thay đổi
 - **Endpoint**: `GET /api/updates/apk/latest`
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS app_config (
   - [ ] Mở `Intent.ACTION_VIEW` với `FileProvider` URI
   - [ ] Expose `installApk(filePath: string): Promise<void>` cho TypeScript
 
-### 2.3 🔲 Cấu hình FileProvider và permission cài đặt
+### 2.3 ✅ Cấu hình FileProvider và permission cài đặt
 
 - **Mục tiêu**: Android yêu cầu FileProvider URI để chia sẻ file APK an toàn
 - **Việc cần làm**:
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS app_config (
   - [ ] Thêm `REQUEST_INSTALL_PACKAGES` permission
   - [ ] Runtime permission request flow (Android 8+)
 
-### 2.4 🔲 Thêm progress UI và resume download
+### 2.4 ✅ Thêm progress UI và resume download
 
 - **Việc cần làm**:
   - [ ] Progress bar UI khi tải APK (không block UI chính)
@@ -229,17 +229,17 @@ CREATE TABLE IF NOT EXISTS app_config (
 ```
 Sprint 1          Sprint 2          Sprint 3
 ──────────────────  ──────────────────  ──────────────────
-1.1 ✅ Versioning   2.1 APK API       3.1 Analytics
-1.2 ✅ Bundle API   2.2 Native plugin  3.2 Staged rollout
-1.3 🔲 Pipeline     2.3 FileProvider   3.3 Kill-switch
-1.4 🔲 Coordinator  2.4 Progress UI
-1.5 🔲 BundleSvc    2.5 Multi-Android
-1.6 🔲 Rollback
-1.7 🔲 Internal test
+1.1 ✅ Versioning   2.1 ✅ APK API        3.1 🔲 Analytics
+1.2 ✅ Bundle API   2.2 🔲 Native plugin  3.2 🔲 Staged rollout
+1.3 ✅ Pipeline     2.3 ✅ FileProvider   3.3 🔲 Kill-switch
+1.4 ✅ Coordinator  2.4 ✅ Progress UI
+1.5 ✅ BundleSvc    2.5 🔲 Multi-Android
+1.6 ✅ Rollback
+1.7 ✅ Internal test
 ```
 
-> ✅ = Done &nbsp; 🔲 = Backlog
+> ✅ = Done &nbsp; 🔲 = Backlog / In progress
 
 ---
 
-*Cập nhật lần cuối: Sprint 1.2 — Tài liệu này cập nhật sau mỗi sprint.*
+*Cập nhật lần cuối: Sprint 2.2 — đang triển khai ApkInstallerPlugin*

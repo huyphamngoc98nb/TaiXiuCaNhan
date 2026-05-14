@@ -89,10 +89,7 @@ public class ApkInstallerPluginTest {
 
         assertTrue(call.rejected);
         assertFalse(call.resolved);
-        assertEquals(
-                "Install permission not granted. Call requestInstallPermission() first.",
-                call.rejectMessage
-        );
+        assertEquals("permission_required", call.rejectMessage);
     }
 
     private static class TestApkInstallerPlugin extends ApkInstallerPlugin {
@@ -116,6 +113,11 @@ public class ApkInstallerPluginTest {
             }
             return canRequestPackageInstalls;
         }
+
+        @Override
+        protected void openInstallPermissionSettings() {
+            // Avoid Android framework calls in JVM unit tests.
+        }
     }
 
     private static class TestPluginCall extends PluginCall {
@@ -126,7 +128,7 @@ public class ApkInstallerPluginTest {
         private final String filePath;
 
         TestPluginCall(String filePath) {
-            super(null, "ApkInstaller", "test-callback", "installApk", new JSObject());
+            super(null, "ApkInstallerPlugin", "test-callback", "installApk", new JSObject());
             this.filePath = filePath;
         }
 
