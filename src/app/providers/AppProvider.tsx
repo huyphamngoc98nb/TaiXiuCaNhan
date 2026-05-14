@@ -5,7 +5,6 @@ import { ToastProvider } from '@/shared/components/Toast/ToastContext';
 import { ConfirmProvider } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { LanguageProvider } from '@/shared/context/LanguageContext';
 import { CurrencyProvider } from '@/shared/context/CurrencyContext';
-import { ApkUpdateModal } from '@/components/ApkUpdateModal';
 
 export function AppProvider() {
   return (
@@ -15,7 +14,6 @@ export function AppProvider() {
           <ConfirmProvider>
             <AppBootstrap>
               <RouterProvider router={router} />
-              <ApkUpdateModal />
             </AppBootstrap>
           </ConfirmProvider>
         </ToastProvider>
