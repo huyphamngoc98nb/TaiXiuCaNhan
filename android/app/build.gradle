@@ -1,12 +1,12 @@
+import groovy.json.JsonSlurper
+
 // ─────────────────────────────────────────────────────────────
 // Đọc version từ nguồn sự thật trung tâm: version.config.json
 // Xem docs/versioning.md để hiểu quy ước 3 lớp.
 // KHÔNG sửa versionCode/versionName trực tiếp ở đây.
 // ─────────────────────────────────────────────────────────────
-import groovy.json.JsonSlurper
-
 def versionConfigFile = file("${rootProject.projectDir}/../version.config.json")
-def versionConfig = new JsonSlurper().parse(versionConfigFile)
+def versionConfig = new groovy.json.JsonSlurper().parse(versionConfigFile)
 
 apply plugin: 'com.android.application'
 
