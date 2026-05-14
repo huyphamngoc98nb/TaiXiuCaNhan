@@ -1,4 +1,5 @@
 import { App } from '@capacitor/app';
+import { API_BASE_URL } from '@/config/api';
 import { getDbConnection } from '@/core/db/sqlite/connection';
 import { logger } from '@/core/telemetry/logger';
 import { startApkDownload } from './apkDownloadService';
@@ -8,7 +9,7 @@ import versionConfig from '../../version.config.json';
 
 const LAST_CHECK_KEY = 'lastCheckAt';
 const UPDATE_CHECK_THROTTLE_MS = 86_400_000;
-const BUNDLE_UPDATE_ENDPOINT = '/api/updates/bundle/latest';
+const BUNDLE_UPDATE_ENDPOINT = `${API_BASE_URL}/api/updates/bundle/latest`;
 
 export type UpdateStrategy = 'B' | 'A' | 'none';
 
