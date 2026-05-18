@@ -9,10 +9,13 @@ import { useToast } from '@/shared/components/Toast/ToastContext';
 import { appRepositories } from '@/core/repositories/app-repositories';
 
 export type BudgetScopeType = 'global' | 'account_type';
+type EditableCategoryBudget = CategoryBudget & {
+  budget_account_type_scope?: AccountType | null;
+};
 
 export function useBudgetForm(onSuccess?: () => void) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryBudget | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<EditableCategoryBudget | null>(null);
   const [amount, setAmount] = useState<string>('');
   const [period, setPeriod] = useState<BudgetPeriod>('monthly');
   const [scopeType, setScopeType] = useState<BudgetScopeType>('global');
@@ -26,12 +29,12 @@ export function useBudgetForm(onSuccess?: () => void) {
     []
   );
 
-  const open = useCallback((category: CategoryBudget) => {
+  const open = useCallback((category: EditableCategoryBudget) => {
     setSelectedCategory(category);
     setAmount(category.budget_amount ? category.budget_amount.toString() : '');
     setPeriod(category.budget_period || 'monthly');
-    setScopeType('global');
-    setAccountTypeScope('credit_card');
+    setScopeType(category.budget_account_type_scope ? 'account_type' : 'global');
+    setAccountTypeScope(category.budget_account_type_scope || 'credit_card');
     setValidationError(null);
     setIsOpen(true);
   }, []);

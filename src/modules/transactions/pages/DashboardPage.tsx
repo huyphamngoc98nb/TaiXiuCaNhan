@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, PieChart, ChevronRight, Bell } from 'lucide-react';
+import { useState } from 'react';
+import { PlusCircle, PieChart, ChevronRight, Bell, Eye, EyeOff } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useBudgetAnalysis } from '../hooks/useBudgetAnalysis';
 import { useRecurringReminders } from '../hooks/useRecurringReminders';
@@ -30,6 +31,8 @@ const STATUS_BG: Record<'safe' | 'warning' | 'exceeded', string> = {
   exceeded: 'bg-red-50',
 };
 
+const HIDDEN_AMOUNT = '••••••';
+
 // ── component ────────────────────────────────────────────────────────────
 function DashboardPage() {
   const {
@@ -54,11 +57,26 @@ function DashboardPage() {
     loading: walletLoading,
   } = useWalletBalances();
   const navigate = useNavigate();
+  const [showAmounts, setShowAmounts] = useState(() => {
+    return localStorage.getItem('dashboard_show_amounts') !== 'false';
+  });
   const showEmptyState =
     !walletLoading &&
     wallets.length === 0 &&
     topBudgets.length === 0 &&
     !hasAlerts;
+
+  function toggleShowAmounts() {
+    setShowAmounts(current => {
+      const next = !current;
+      localStorage.setItem('dashboard_show_amounts', String(next));
+      return next;
+    });
+  }
+
+  function displayAmount(value: number, prefix = '') {
+    return showAmounts ? `${prefix}₫${formatVND(value)}` : HIDDEN_AMOUNT;
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] pb-24">
@@ -74,12 +92,23 @@ function DashboardPage() {
         <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
         <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/10" />
 
-        <p className="text-white/70 text-[12px] font-medium mb-1">Tổng số dư</p>
+        <div className="relative z-10 mb-1 flex items-center justify-between">
+          <p className="text-white/70 text-[12px] font-medium">Tổng số dư</p>
+          <button
+            type="button"
+            onClick={toggleShowAmounts}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white active:scale-95"
+            aria-label={showAmounts ? 'Ẩn số dư' : 'Hiện số dư'}
+            title={showAmounts ? 'Ẩn số dư' : 'Hiện số dư'}
+          >
+            {showAmounts ? <EyeOff size={17} /> : <Eye size={17} />}
+          </button>
+        </div>
         {walletLoading ? (
           <div className="h-9 w-40 bg-white/20 rounded-lg animate-pulse mb-3" />
         ) : (
           <h2 className="text-white text-[32px] font-bold tracking-tight mb-3">
-            ₫{formatVND(totalBalance)}
+            {displayAmount(totalBalance)}
           </h2>
         )}
 
@@ -93,7 +122,7 @@ function DashboardPage() {
                 {w.icon || ACCOUNT_TYPE_ICON[w.account_type]}
               </span>
               <span className="text-white text-[11px] font-semibold">{w.name}</span>
-              <span className="text-white/70 text-[11px]">₫{formatVND(w.balance)}</span>
+              <span className="text-white/70 text-[11px]">{displayAmount(w.balance)}</span>
             </div>
           ))}
           {wallets.length > 4 && (
@@ -107,13 +136,13 @@ function DashboardPage() {
           <div className="rounded-[14px] bg-white/15 px-3 py-2">
             <p className="text-white/60 text-[10px] font-medium">Thu thang nay</p>
             <p className="text-white text-[13px] font-bold">
-              {summaryLoading ? '...' : `+${formatVND(totalIncome)}`}
+              {summaryLoading ? '...' : displayAmount(totalIncome, '+')}
             </p>
           </div>
           <div className="rounded-[14px] bg-white/15 px-3 py-2">
             <p className="text-white/60 text-[10px] font-medium">Chi thang nay</p>
             <p className="text-white text-[13px] font-bold">
-              {summaryLoading ? '...' : `-${formatVND(totalExpense)}`}
+              {summaryLoading ? '...' : displayAmount(totalExpense, '-')}
             </p>
           </div>
         </div>
@@ -202,7 +231,7 @@ function DashboardPage() {
                   />
                 </div>
                 <p className="text-[10px] text-gray-500 mt-1.5">
-                  còn ₫{formatVND(Math.max(p.remaining_amount, 0))}
+                  còn {displayAmount(Math.max(p.remaining_amount, 0))}
                 </p>
               </div>
             ))}

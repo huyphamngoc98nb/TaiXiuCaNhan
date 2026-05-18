@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { classifyBudgetStatus } from '../modules/budgets/services/classify-budget-status';
 import { CalculateBudgetProgressUseCase } from '../modules/budgets/services/calculate-budget-progress';
 import { UpsertCategoryBudgetUseCase } from '../modules/budgets/services/upsert-category-budget';
 import { IBudgetRepository } from '../modules/budgets/repositories/budget.repository';
 import { BudgetWithCategory } from '../modules/budgets/domain/budget.model';
+import { SQLiteBudgetRepository } from '../modules/budgets/repositories/sqlite-budget.repository';
+import { getDbConnection } from '@/core/db/sqlite/connection';
 
 // Mock Capacitor
 vi.mock('@capacitor/core', () => ({
@@ -17,8 +19,13 @@ vi.mock('@/core/db/sqlite/pragmas', () => ({
 
 // Mock DB_NAME
 vi.mock('@/core/db/sqlite/connection', () => ({
-  DB_NAME: 'test_db'
+  DB_NAME: 'test_db',
+  getDbConnection: vi.fn(),
 }));
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe('Budget Threshold Classification', () => {
   it('should return safe for < 80%', () => {
@@ -159,5 +166,64 @@ describe('Upsert Category Budget Validation', () => {
   it('should call repository to clear if both are null', async () => {
     await upsertBudget.execute('1', null, null);
     expect(mockRepo.upsertCategoryBudget).toHaveBeenCalledWith('1', null, null);
+  });
+});
+
+describe('SQLiteBudgetRepository upsert behavior', () => {
+  it('deactivates the existing active budget for the same category even when period or scope changes', async () => {
+    const mockDb = {
+      run: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.mocked(getDbConnection).mockResolvedValue(mockDb as any);
+
+    await new SQLiteBudgetRepository().upsertBudget({
+      category_id: 'cat-food',
+      wallet_id: null,
+      account_type_scope: 'credit_card',
+      amount: 500000,
+      period: 'weekly',
+      start_date: 1000,
+    });
+
+    const [deactivateSql, deactivateParams] = mockDb.run.mock.calls[0];
+    expect(deactivateSql).toContain('UPDATE budgets');
+    expect(deactivateSql).not.toContain('AND period');
+    expect(deactivateSql).not.toContain('account_type_scope = ?');
+    expect(deactivateParams).toEqual([
+      expect.any(Number),
+      'cat-food',
+      null,
+      null,
+    ]);
+
+    const [insertSql, insertParams] = mockDb.run.mock.calls[1];
+    expect(insertSql).toContain('INSERT INTO budgets');
+    expect(insertParams).toEqual([
+      expect.any(String),
+      'cat-food',
+      null,
+      'credit_card',
+      500000,
+      'weekly',
+      1000,
+      null,
+      expect.any(Number),
+      expect.any(Number),
+    ]);
+  });
+
+  it('clears active global and account-type budgets for a category', async () => {
+    const mockDb = {
+      run: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.mocked(getDbConnection).mockResolvedValue(mockDb as any);
+
+    await new SQLiteBudgetRepository().upsertCategoryBudget('cat-bills', null, null);
+
+    const [clearSql, clearParams] = mockDb.run.mock.calls[0];
+    expect(clearSql).toContain('UPDATE budgets');
+    expect(clearSql).toContain('wallet_id IS NULL');
+    expect(clearSql).not.toContain('account_type_scope IS NULL');
+    expect(clearParams).toEqual([expect.any(Number), 'cat-bills']);
   });
 });

@@ -108,24 +108,20 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
       throw new Error('Budget không thể có cả wallet_id và account_type_scope cùng lúc.');
     }
 
-    // Deactivate budget cũ cùng (category + wallet + account_type_scope + period)
+    // The edit form models one active budget per category for the supported
+    // wallet scope. Period/scope changes must replace the previous active row.
     const deactivateSql = `
       UPDATE budgets
       SET is_active = 0, updated_at = ?
       WHERE category_id = ?
-        AND period      = ?
         AND is_active   = 1
         AND (wallet_id = ? OR (wallet_id IS NULL AND ? IS NULL))
-        AND (account_type_scope = ? OR (account_type_scope IS NULL AND ? IS NULL))
     `;
     await db.run(deactivateSql, [
       now,
       dto.category_id,
-      dto.period,
       dto.wallet_id ?? null,
       dto.wallet_id ?? null,
-      accountTypeScope,
-      accountTypeScope,
     ]);
 
     const insertSql = `
@@ -217,7 +213,11 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
         b.amount as budget_amount,
         b.period as budget_period
       FROM categories c
-      LEFT JOIN budgets b ON b.category_id = c.id AND b.is_active = 1 AND b.wallet_id IS NULL
+      LEFT JOIN budgets b
+        ON b.category_id = c.id
+       AND b.is_active = 1
+       AND b.wallet_id IS NULL
+       AND b.account_type_scope IS NULL
       ORDER BY c.name
     `;
     const { values } = await db.query(sql);
@@ -229,7 +229,7 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
     const now = Date.now();
     
     await db.run(
-      'UPDATE budgets SET is_active = 0, updated_at = ? WHERE category_id = ? AND wallet_id IS NULL AND account_type_scope IS NULL AND is_active = 1',
+      'UPDATE budgets SET is_active = 0, updated_at = ? WHERE category_id = ? AND wallet_id IS NULL AND is_active = 1',
       [now, categoryId]
     );
     
@@ -254,7 +254,7 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
   async deleteCategoryBudget(categoryId: string): Promise<void> {
     const db = await getDbConnection();
     await db.run(
-      'UPDATE budgets SET is_active = 0, updated_at = ? WHERE category_id = ? AND wallet_id IS NULL AND account_type_scope IS NULL AND is_active = 1',
+      'UPDATE budgets SET is_active = 0, updated_at = ? WHERE category_id = ? AND wallet_id IS NULL AND is_active = 1',
       [Date.now(), categoryId]
     );
   }

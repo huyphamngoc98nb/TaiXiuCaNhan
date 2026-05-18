@@ -1,4 +1,6 @@
 import { Capacitor } from '@capacitor/core';
+import type { PluginListenerHandle } from '@capacitor/core';
+import { CapacitorSQLite } from '@capacitor-community/sqlite';
 import { sqlite } from '@/core/db/sqlite/pragmas';
 import { getSQLiteEncryptionConfig } from '@/core/db/sqlite/encryption';
 
@@ -6,6 +8,18 @@ export interface AuthResult {
   authenticated: boolean;
   createdSecret: boolean;
 }
+
+export interface BiometricAuthEvent {
+  result: boolean;
+  message?: string | null;
+}
+
+type BiometricListenerPlugin = typeof CapacitorSQLite & {
+  addListener(
+    eventName: 'sqliteBiometricEvent',
+    listenerFunc: (event: BiometricAuthEvent) => void,
+  ): Promise<PluginListenerHandle>;
+};
 
 function isNativePlatform(): boolean {
   return Capacitor.getPlatform() !== 'web';
@@ -39,6 +53,37 @@ export class AuthService {
     }
 
     return { authenticated: true, createdSecret: false };
+  }
+
+  async unlockWithBiometrics(): Promise<AuthResult | null> {
+    if (!this.requiresUnlock()) {
+      return { authenticated: true, createdSecret: false };
+    }
+
+    const biometricEnabled = (await sqlite.isInConfigBiometricAuth()).result === true;
+    if (!biometricEnabled) {
+      return null;
+    }
+
+    const secretStored = (await sqlite.isSecretStored()).result === true;
+    if (!secretStored) {
+      return null;
+    }
+
+    return { authenticated: true, createdSecret: false };
+  }
+
+  async onBiometricResult(
+    listener: (event: BiometricAuthEvent) => void,
+  ): Promise<PluginListenerHandle | null> {
+    if (!this.requiresUnlock()) {
+      return null;
+    }
+
+    return (CapacitorSQLite as BiometricListenerPlugin).addListener(
+      'sqliteBiometricEvent',
+      listener,
+    );
   }
 }
 

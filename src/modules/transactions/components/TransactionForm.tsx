@@ -73,22 +73,19 @@ export function TransactionForm({ existing, onSuccess }: Props) {
       {options.wallets.length > 0 && (
         <div className="space-y-1.5">
           <p className="text-[13px] font-semibold text-gray-700">Ví</p>
-          <div className="flex gap-2 flex-wrap">
-            {options.wallets.map((wallet: { id: string; name: string }) => (
-              <button
-                key={wallet.id}
-                type="button"
-                onClick={() => setFormData({ ...formData, wallet_id: wallet.id })}
-                className={`px-4 h-[36px] rounded-full text-[13px] font-semibold transition-all border ${
-                  formData.wallet_id === wallet.id
-                    ? 'bg-indigo-500 border-indigo-500 text-white'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                {wallet.name}
-              </button>
-            ))}
-          </div>
+          <DropdownList
+            value={formData.wallet_id || ''}
+            onChange={value => setFormData({ ...formData, wallet_id: value })}
+            ariaLabel="Ví"
+            placeholder="Chọn ví"
+            options={[
+              { value: '', label: 'Chọn ví', disabled: true },
+              ...options.wallets.map((wallet: { id: string; name: string }) => ({
+                value: wallet.id,
+                label: wallet.name,
+              })),
+            ]}
+          />
         </div>
       )}
 

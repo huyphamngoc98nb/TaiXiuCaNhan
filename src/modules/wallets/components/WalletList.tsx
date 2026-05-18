@@ -26,18 +26,23 @@ export function WalletList({
 }: Props) {
   const { formatAmount } = useCurrency();
 
+  const visibleWallets = useMemo(
+    () => wallets.filter((wallet) => wallet.balance !== 0),
+    [wallets]
+  );
+
   const grouped = useMemo(() => {
     const map = new Map<AccountType, Wallet[]>();
     for (const type of ACCOUNT_TYPE_ORDER) {
       map.set(type, []);
     }
-    for (const w of wallets) {
+    for (const w of visibleWallets) {
       const bucket = map.get(w.account_type) ?? [];
       bucket.push(w);
       map.set(w.account_type, bucket);
     }
     return map;
-  }, [wallets]);
+  }, [visibleWallets]);
 
   if (loading) {
     return (
@@ -88,7 +93,7 @@ export function WalletList({
       </button>
 
       {/* Grouped wallet cards */}
-      {wallets.length === 0 ? (
+      {visibleWallets.length === 0 ? (
         <div className="text-center text-gray-400 mt-10">
           <p className="text-4xl mb-3">💼</p>
           <p className="text-[15px]">Chưa có tài khoản nào</p>

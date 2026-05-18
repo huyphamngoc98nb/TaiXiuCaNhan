@@ -1,17 +1,103 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import { Delete } from 'lucide-react';
 import { authService } from '@/core/auth/auth.service';
 
 interface AppUnlockProps {
   onUnlocked: () => void;
 }
 
+const PIN_MIN_LENGTH = 6;
+const PIN_MAX_LENGTH = 12;
+const PIN_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
 export function AppUnlock({ onUnlocked }: AppUnlockProps) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const canSubmit = pin.trim().length >= PIN_MIN_LENGTH;
+
+  function appendPinDigit(digit: string) {
+    if (submitting) return;
+    setError(null);
+    setPin((currentPin) => {
+      if (currentPin.length >= PIN_MAX_LENGTH) return currentPin;
+      return `${currentPin}${digit}`;
+    });
+  }
+
+  function removePinDigit() {
+    if (submitting) return;
+    setError(null);
+    setPin((currentPin) => currentPin.slice(0, -1));
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+    let removeListener: (() => Promise<void>) | undefined;
+
+    async function unlockFromBiometrics() {
+      try {
+        const result = await authService.unlockWithBiometrics();
+        if (isMounted && result?.authenticated) {
+          setPin('');
+          onUnlocked();
+        }
+      } catch {
+        // PIN remains available when biometric auth is canceled, unavailable, or not set up.
+      }
+    }
+
+    async function subscribeToBiometrics() {
+      try {
+        const listenerHandle = await authService.onBiometricResult((event) => {
+          if (event.result) {
+            void unlockFromBiometrics();
+          } else if (isMounted && event.message) {
+            setError(event.message);
+          }
+        });
+
+        removeListener = listenerHandle ? () => listenerHandle.remove() : undefined;
+      } catch {
+        removeListener = undefined;
+      }
+
+      await unlockFromBiometrics();
+    }
+
+    void subscribeToBiometrics();
+
+    return () => {
+      isMounted = false;
+      if (removeListener) {
+        void removeListener();
+      }
+    };
+  }, [onUnlocked]);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (/^\d$/.test(event.key)) {
+        event.preventDefault();
+        appendPinDigit(event.key);
+        return;
+      }
+
+      if (event.key === 'Backspace' || event.key === 'Delete') {
+        event.preventDefault();
+        removePinDigit();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [submitting]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!canSubmit) return;
+
     setSubmitting(true);
     setError(null);
 
@@ -27,39 +113,86 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA] px-5">
+    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA] px-5 py-8">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm rounded-[18px] bg-white p-5 shadow-sm border border-gray-100"
       >
         <h1 className="text-[22px] font-bold text-gray-900 mb-2">Unlock data</h1>
-        <p className="text-[13px] text-gray-500 mb-5">
-          Enter your PIN. On supported native devices, the encrypted database secret is protected by the system secure store.
-        </p>
+        <p className="text-[13px] text-gray-500 mb-6">Enter your PIN to continue.</p>
 
-        <label className="block text-[12px] font-semibold text-gray-700 mb-2" htmlFor="app-pin">
-          PIN
-        </label>
         <input
           id="app-pin"
           value={pin}
-          onChange={(event) => setPin(event.target.value)}
+          onChange={(event) => {
+            const nextPin = event.target.value.replace(/\D/g, '').slice(0, PIN_MAX_LENGTH);
+            setPin(nextPin);
+          }}
           type="password"
           inputMode="numeric"
           autoComplete="current-password"
-          minLength={6}
-          className="w-full h-12 rounded-[12px] border border-gray-200 px-3 text-[16px] outline-none focus:border-indigo-500"
+          minLength={PIN_MIN_LENGTH}
+          className="sr-only"
           disabled={submitting}
+          aria-label="PIN"
         />
 
+        <div className="flex h-12 items-center justify-center gap-3" aria-hidden="true">
+          {Array.from({ length: PIN_MIN_LENGTH }).map((_, index) => (
+            <span
+              key={index}
+              className={`h-3 w-3 rounded-full border transition-colors ${
+                pin.length > index ? 'border-indigo-500 bg-indigo-500' : 'border-gray-300 bg-white'
+              }`}
+            />
+          ))}
+        </div>
+
         {error && (
-          <p className="mt-3 text-[12px] text-red-500">{error}</p>
+          <p className="mt-3 min-h-4 text-center text-[12px] text-red-500">{error}</p>
         )}
+
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          {PIN_KEYS.slice(0, 9).map((digit) => (
+            <button
+              key={digit}
+              type="button"
+              onClick={() => appendPinDigit(digit)}
+              disabled={submitting}
+              className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-gray-50 text-[24px] font-semibold text-gray-900 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-50"
+              aria-label={`Enter ${digit}`}
+            >
+              {digit}
+            </button>
+          ))}
+
+          <div aria-hidden="true" />
+
+          <button
+            type="button"
+            onClick={() => appendPinDigit('0')}
+            disabled={submitting}
+            className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-gray-50 text-[24px] font-semibold text-gray-900 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-50"
+            aria-label="Enter 0"
+          >
+            0
+          </button>
+
+          <button
+            type="button"
+            onClick={removePinDigit}
+            disabled={submitting || pin.length === 0}
+            className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-white text-gray-700 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-40"
+            aria-label="Delete digit"
+          >
+            <Delete size={24} strokeWidth={2.2} />
+          </button>
+        </div>
 
         <button
           type="submit"
-          disabled={submitting || pin.trim().length < 6}
-          className="mt-5 w-full h-12 rounded-[12px] bg-indigo-500 text-white text-[14px] font-semibold disabled:opacity-50"
+          disabled={submitting || !canSubmit}
+          className="mt-5 h-12 w-full rounded-[8px] bg-indigo-500 text-[14px] font-semibold text-white disabled:opacity-50"
         >
           {submitting ? 'Verifying...' : 'Unlock'}
         </button>
