@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { runMigrations } from '../core/db/migrations/migration-runner';
+import { runInTransaction } from '../core/db/sqlite/transaction';
 import { seedDefaultData } from '../core/db/seed/default-categories';
 import * as connection from '../core/db/sqlite/connection';
 
@@ -154,6 +155,44 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.beginTransaction).toHaveBeenCalledTimes(1);
     expect(mockDb.rollbackTransaction).toHaveBeenCalledTimes(1);
     expect(mockDb.commitTransaction).not.toHaveBeenCalled();
+  });
+
+  it('serializes concurrent native root transactions', async () => {
+    let active = false;
+    let running = 0;
+    let maxRunning = 0;
+
+    mockDb.isTransactionActive.mockResolvedValue({ result: false });
+    mockDb.beginTransaction.mockImplementation(async () => {
+      if (active) throw new Error('fail in beginTransactionAlready');
+      active = true;
+    });
+    mockDb.commitTransaction.mockImplementation(async () => {
+      active = false;
+    });
+
+    const results = await Promise.all([
+      runInTransaction(async () => {
+        running += 1;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        running -= 1;
+        return 'first';
+      }),
+      runInTransaction(async () => {
+        running += 1;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        running -= 1;
+        return 'second';
+      }),
+    ]);
+
+    expect(results).toEqual(['first', 'second']);
+    expect(maxRunning).toBe(1);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(2);
+    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(2);
+    expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
   });
 
   // -------------------------------------------------------------------------

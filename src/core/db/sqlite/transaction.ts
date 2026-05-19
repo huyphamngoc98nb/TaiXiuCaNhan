@@ -1,6 +1,26 @@
 import { getDbConnection } from './connection';
 import { Capacitor } from '@capacitor/core';
 
+let nativeTransactionQueue: Promise<void> = Promise.resolve();
+
+async function runExclusive<T>(work: () => Promise<T>): Promise<T> {
+  const previous = nativeTransactionQueue;
+  let release = () => {};
+
+  const lock = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  nativeTransactionQueue = previous.catch(() => undefined).then(() => lock);
+  await previous.catch(() => undefined);
+
+  try {
+    return await work();
+  } finally {
+    release();
+  }
+}
+
 /**
  * Wraps `work` in a SQLite transaction.
  *
@@ -23,23 +43,30 @@ export async function runInTransaction<T>(
     return work(db);
   }
 
-  const { result: isActive } = await db.isTransactionActive();
-  const shouldManage = !isActive;
-
-  if (shouldManage) {
-    await db.beginTransaction();
+  const { result: isAlreadyActive } = await db.isTransactionActive();
+  if (isAlreadyActive) {
+    return work(db);
   }
 
-  try {
-    const result = await work(db);
+  return runExclusive(async () => {
+    const { result: isActive } = await db.isTransactionActive();
+    const shouldManage = !isActive;
+
     if (shouldManage) {
-      await db.commitTransaction();
+      await db.beginTransaction();
     }
-    return result;
-  } catch (error) {
-    if (shouldManage) {
-      await db.rollbackTransaction();
+
+    try {
+      const result = await work(db);
+      if (shouldManage) {
+        await db.commitTransaction();
+      }
+      return result;
+    } catch (error) {
+      if (shouldManage) {
+        await db.rollbackTransaction();
+      }
+      throw error;
     }
-    throw error;
-  }
+  });
 }
