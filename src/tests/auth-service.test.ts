@@ -66,6 +66,10 @@ describe('AuthService', () => {
     expect(result).toEqual({ authenticated: true, createdSecret: true });
     expect(sqlite.setEncryptionSecret).toHaveBeenCalledWith('123456');
     expect(sqlite.checkEncryptionSecret).not.toHaveBeenCalled();
+    expect(preferencesMock.set).toHaveBeenCalledWith({
+      key: 'biometric_unlock_enabled',
+      value: 'false',
+    });
   });
 
   it('does not create a PIN from unlockWithPin when no secret exists', async () => {

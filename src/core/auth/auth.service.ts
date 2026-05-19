@@ -76,6 +76,11 @@ export class AuthService {
     }
 
     await sqlite.setEncryptionSecret(normalizedPin);
+    await Preferences.set({
+      key: BIOMETRIC_UNLOCK_KEY,
+      value: 'false',
+    });
+
     return { authenticated: true, createdSecret: true };
   }
 
