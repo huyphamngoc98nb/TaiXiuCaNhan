@@ -13,6 +13,7 @@ import {
   X,
   Download,
   Database,
+  Tags,
 } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -25,6 +26,7 @@ export function MainLayout() {
 
   const menuItems = [
     { icon: <Wallet size={22} />, label: t('wallets.title'), route: ROUTES.WALLETS },
+    { icon: <Tags size={22} />, label: 'Danh mục', route: ROUTES.CATEGORIES },
     { icon: <BarChart3 size={22} />, label: t('navigation.reports'), route: ROUTES.REPORTS },
     { icon: <RefreshCcw size={22} />, label: t('recurring_bills.title'), route: ROUTES.RECURRING_BILLS },
     { icon: <Download size={22} />, label: t('reports.export'), route: ROUTES.EXPORT },

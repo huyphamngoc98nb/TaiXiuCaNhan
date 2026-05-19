@@ -3,6 +3,7 @@ import { ROUTES } from '@/shared/constants/routes';
 import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { CurrencySettings } from '../components/CurrencySettings';
+import { BiometricUnlockSettings } from '../components/BiometricUnlockSettings';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import {
   Database,
@@ -11,6 +12,7 @@ import {
   BarChart3,
   RefreshCcw,
   Download,
+  Tags,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -34,6 +36,14 @@ export function SettingsPage() {
       label: t('wallets.title'),
       desc: 'Quản lý ví tiền mặt, ngân hàng, thẻ tín dụng',
       route: ROUTES.WALLETS,
+    },
+    {
+      icon: <Tags size={20} />,
+      iconBg: 'rgba(139,92,246,0.12)',
+      iconColor: '#8B5CF6',
+      label: 'Danh mục',
+      desc: 'Quản lý danh mục thu nhập và chi tiêu',
+      route: ROUTES.CATEGORIES,
     },
     {
       icon: <BarChart3 size={20} />,
@@ -82,6 +92,7 @@ export function SettingsPage() {
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
           <div className="px-4 py-3"><LanguageSettings /></div>
           <div className="px-4 py-3"><CurrencySettings /></div>
+          <div className="px-4 py-3"><BiometricUnlockSettings /></div>
         </div>
 
         {/* Navigation menu items */}

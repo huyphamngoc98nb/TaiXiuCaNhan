@@ -18,18 +18,21 @@ const WALLET_COLUMNS = `
 `;
 
 function mapWallet(row: Record<string, unknown>): Wallet {
+  const balance = Number(row.balance ?? 0);
+  const creditLimit = row.credit_limit == null ? null : Number(row.credit_limit);
+
   return {
     id: row.id as string,
     name: row.name as string,
     currency: row.currency as string,
-    balance: row.balance as number,
+    balance: Number.isFinite(balance) ? balance : 0,
     account_type: (row.account_type as AccountType) ?? 'cash',
     icon: (row.icon as string | null) ?? null,
     color: (row.color as string | null) ?? null,
     sort_order: (row.sort_order as number) ?? 0,
     is_active: (row.is_active as 0 | 1) ?? 1,
     exclude_from_total: (row.exclude_from_total as 0 | 1) ?? 0,
-    credit_limit: (row.credit_limit as number | null) ?? null,
+    credit_limit: creditLimit != null && Number.isFinite(creditLimit) ? creditLimit : null,
     statement_day: (row.statement_day as number | null) ?? null,
     due_day: (row.due_day as number | null) ?? null,
     created_at: row.created_at as number,

@@ -4,6 +4,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { AccountType, BudgetProgress, CategoryBudget, resolveBudgetScope } from '../domain/budget.model';
 import { BudgetCategoryItem } from './BudgetCategoryItem';
 import { EmptyBudgetPrompt } from './EmptyBudgetPrompt';
+import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 
 type EditableCategoryBudget = CategoryBudget & {
   budget_account_type_scope?: AccountType | null;
@@ -68,12 +69,6 @@ export function BudgetCategoryList({ categories, allProgress, onItemClick }: Pro
     () => [...allProgress].sort((a, b) => a.budget.category_name.localeCompare(b.budget.category_name)),
     [allProgress]
   );
-
-  function getCategoryIcon(category: CategoryBudget) {
-    return category.icon && !/^[a-zA-Z0-9-_]+$/.test(category.icon)
-      ? category.icon
-      : category.category_name.charAt(0).toUpperCase();
-  }
 
   function toEditableCategory(progress: BudgetProgress): EditableCategoryBudget {
     const scope = resolveBudgetScope(progress.budget);
@@ -180,7 +175,12 @@ export function BudgetCategoryList({ categories, allProgress, onItemClick }: Pro
                         color: category.color || '#6366F1',
                       }}
                     >
-                      {getCategoryIcon(category)}
+                      <CategoryIcon
+                        icon={category.icon}
+                        name={category.category_name}
+                        type={category.type}
+                        size={17}
+                      />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] font-semibold text-gray-900">

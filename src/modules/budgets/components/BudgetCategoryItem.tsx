@@ -7,6 +7,7 @@ import {
 import { BudgetStatusBadge } from './BudgetStatusBadge';
 import { BudgetScopeBadge } from './BudgetScopeBadge';
 import { ProgressBar } from '@/shared/components/ProgressBar/ProgressBar';
+import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 
 interface Props {
   category: CategoryBudget;
@@ -17,11 +18,6 @@ interface Props {
 export function BudgetCategoryItem({ category, progress, onClick }: Props) {
   const { t } = useLanguage();
   const isSet = category.budget_amount !== null;
-
-  const displayIcon =
-    category.icon && !/^[a-zA-Z0-9-_]+$/.test(category.icon)
-      ? category.icon
-      : category.category_name.charAt(0).toUpperCase();
 
   const periodLabel = isSet
     ? category.budget_period === 'monthly'
@@ -49,7 +45,12 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
               fontSize: '14px',
             }}
           >
-            {displayIcon}
+            <CategoryIcon
+              icon={category.icon}
+              name={category.category_name}
+              type={category.type}
+              size={17}
+            />
           </div>
           <div>
             <div className="flex items-center gap-1.5">

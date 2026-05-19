@@ -6,6 +6,7 @@ import { BudgetScopePicker } from './BudgetScopePicker';
 import type { BudgetScopeType } from '../hooks/useBudgetForm';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { useCurrency } from '@/shared/context/CurrencyContext';
+import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 
 interface Props {
   category: CategoryBudget;
@@ -53,7 +54,12 @@ export function BudgetEditForm({
             className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
             style={{ backgroundColor: `${category.color}26`, color: category.color }}
           >
-            {category.icon || '💰'}
+            <CategoryIcon
+              icon={category.icon}
+              name={category.category_name}
+              type={category.type}
+              size={18}
+            />
           </div>
           <h4 className="text-[18px] font-semibold text-gray-900">{category.category_name}</h4>
         </div>

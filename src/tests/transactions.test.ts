@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SQLiteTransactionRepository } from '../modules/transactions/repositories/sqlite-transaction.repository';
 import { CreateTransactionUseCase } from '../modules/transactions/services/create-transaction';
 import { UpdateTransactionUseCase } from '../modules/transactions/services/update-transaction';
+import { DeleteTransactionUseCase } from '../modules/transactions/services/delete-transaction';
 import { TransactionValidationError } from '../modules/transactions/domain/transaction.schema';
 import { ReceiptStorageService } from '../core/files/receipt-storage';
 import * as connection from '../core/db/sqlite/connection';
@@ -91,7 +92,7 @@ describe('Transaction Module QA Tests', () => {
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO transactions'),
-        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, 1000, 2000, 2000]
+        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 2000, 2000]
       );
     });
 
@@ -123,6 +124,12 @@ describe('Transaction Module QA Tests', () => {
       amount: 50,
       transaction_date: Date.now(),
     };
+    const destinationWallet = {
+      ...walletRow,
+      id: 'w-2',
+      name: 'Bank',
+      balance: 1_000,
+    } satisfies Wallet;
 
     it('CreateTransactionUseCase validates input before executing', async () => {
       const transactionRepository = new InMemoryTransactionRepository();
@@ -184,6 +191,56 @@ describe('Transaction Module QA Tests', () => {
       await updateUseCase.execute('tx-1', { amount: 60 }, 'newBase64');
 
       expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledWith('old.jpg');
+    });
+
+    it('CreateTransactionUseCase moves balance between wallets for transfers', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow, destinationWallet]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      const tx = await createUseCase.execute({
+        ...validCreateInput,
+        type: 'transfer',
+        amount: 2_500,
+        to_wallet_id: 'w-2',
+      });
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 7_500 });
+      await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 3_500 });
+      expect(tx.to_wallet_id).toBe('w-2');
+    });
+
+    it('DeleteTransactionUseCase reverts both wallets for transfers', async () => {
+      const transactionRepository = new InMemoryTransactionRepository([{
+        ...validCreateInput,
+        id: 'tx-transfer',
+        type: 'transfer',
+        amount: 2_500,
+        to_wallet_id: 'w-2',
+        note: null,
+        receipt_path: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      }]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 7_500 },
+        { ...destinationWallet, balance: 3_500 },
+      ]);
+      const deleteUseCase = new DeleteTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      await deleteUseCase.execute('tx-transfer');
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+      await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 1_000 });
     });
   });
 });

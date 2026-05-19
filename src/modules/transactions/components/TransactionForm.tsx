@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
-import { Transaction } from '../domain/transaction.model';
-import { useTransactionForm } from '../hooks/useTransactionForm';
+import { Transaction, TransactionType } from '../domain/transaction.model';
+import { TRANSFER_CATEGORY_ID, useTransactionForm } from '../hooks/useTransactionForm';
 import { ReceiptCapture } from './ReceiptCapture';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { DateTimePicker } from '@/shared/components/DateTimePicker';
@@ -28,10 +28,38 @@ export function TransactionForm({ existing, onSuccess }: Props) {
     if (ok) onSuccess();
   };
 
-  const transactionTypes: { id: 'expense' | 'income'; label: string; active: string }[] = [
+  const transactionTypes: { id: TransactionType; label: string; active: string }[] = [
     { id: 'expense', label: t('form.type_expense'), active: 'bg-rose-500 text-white' },
     { id: 'income', label: t('form.type_income'), active: 'bg-emerald-500 text-white' },
+    { id: 'transfer', label: 'Chuyển khoản', active: 'bg-indigo-500 text-white' },
   ];
+
+  const handleTypeChange = (type: TransactionType) => {
+    setFormData({
+      ...formData,
+      type,
+      category_id: type === 'transfer' ? TRANSFER_CATEGORY_ID : '',
+      to_wallet_id: type === 'transfer' ? formData.to_wallet_id : undefined,
+    });
+  };
+
+  const selectableDestinationWallets = options.wallets.filter(
+    (wallet: { id: string }) => wallet.id !== formData.wallet_id,
+  );
+
+  const amountAccentClass =
+    formData.type === 'expense'
+      ? 'border-rose-200'
+      : formData.type === 'income'
+        ? 'border-emerald-200'
+        : 'border-indigo-200';
+
+  const submitClass =
+    formData.type === 'expense'
+      ? 'bg-rose-500 shadow-lg shadow-rose-300/40'
+      : formData.type === 'income'
+        ? 'bg-emerald-500 shadow-lg shadow-emerald-300/40'
+        : 'bg-indigo-500 shadow-lg shadow-indigo-300/40';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -46,7 +74,7 @@ export function TransactionForm({ existing, onSuccess }: Props) {
           <button
             key={type.id}
             type="button"
-            onClick={() => setFormData({ ...formData, type: type.id, category_id: '' })}
+            onClick={() => handleTypeChange(type.id)}
             className={`flex-1 rounded-[9px] text-[14px] font-semibold transition-all ${
               formData.type === type.id ? `${type.active} shadow-sm` : 'text-gray-500'
             }`}
@@ -66,7 +94,7 @@ export function TransactionForm({ existing, onSuccess }: Props) {
             setFormData({ ...formData, amount: Number(value) });
           }}
           required
-          className={formData.type === 'expense' ? 'border-rose-200' : 'border-emerald-200'}
+          className={amountAccentClass}
         />
       </div>
 
@@ -75,7 +103,13 @@ export function TransactionForm({ existing, onSuccess }: Props) {
           <p className="text-[13px] font-semibold text-gray-700">Ví</p>
           <DropdownList
             value={formData.wallet_id || ''}
-            onChange={value => setFormData({ ...formData, wallet_id: value })}
+            onChange={value => {
+              const nextData = { ...formData, wallet_id: value };
+              if (nextData.to_wallet_id === value) {
+                nextData.to_wallet_id = '';
+              }
+              setFormData(nextData);
+            }}
             ariaLabel="Ví"
             placeholder="Chọn ví"
             options={[
@@ -89,24 +123,47 @@ export function TransactionForm({ existing, onSuccess }: Props) {
         </div>
       )}
 
-      <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">{t('form.label_category')}</p>
-        <DropdownList
-          value={formData.category_id || ''}
-          onChange={value => setFormData({ ...formData, category_id: value })}
-          ariaLabel={t('form.label_category')}
-          placeholder={t('form.select_category')}
-          options={[
-            { value: '', label: t('form.select_category'), disabled: true },
-            ...options.categories
-              .filter((category: { type: string }) => category.type === formData.type)
-              .map((category: { id: string; name: string }) => ({
-                value: category.id,
-                label: category.name,
+      {formData.type === 'transfer' && options.wallets.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Ví nhận</p>
+          <DropdownList
+            value={formData.to_wallet_id || ''}
+            onChange={value => setFormData({ ...formData, to_wallet_id: value, category_id: TRANSFER_CATEGORY_ID })}
+            ariaLabel="Ví nhận"
+            placeholder="Chọn ví nhận"
+            options={[
+              { value: '', label: 'Chọn ví nhận', disabled: true },
+              ...selectableDestinationWallets.map((wallet: { id: string; name: string }) => ({
+                value: wallet.id,
+                label: wallet.name,
               })),
-          ]}
-        />
-      </div>
+            ]}
+          />
+        </div>
+      )}
+
+      {formData.type !== 'transfer' && (
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">{t('form.label_category')}</p>
+          <DropdownList
+            value={formData.category_id || ''}
+            onChange={value => setFormData({ ...formData, category_id: value })}
+            ariaLabel={t('form.label_category')}
+            placeholder={t('form.select_category')}
+            options={[
+              { value: '', label: t('form.select_category'), disabled: true },
+              ...options.categories
+                .filter((category: { id: string; type: string }) => (
+                  category.id !== TRANSFER_CATEGORY_ID && category.type === formData.type
+                ))
+                .map((category: { id: string; name: string }) => ({
+                  value: category.id,
+                  label: category.name,
+                })),
+            ]}
+          />
+        </div>
+      )}
 
       <DateTimePicker
         value={formData.transaction_date ?? Date.now()}
@@ -135,9 +192,7 @@ export function TransactionForm({ existing, onSuccess }: Props) {
         disabled={submitting}
         className={`w-full h-[54px] rounded-[14px] text-white text-[16px] font-bold
           transition-all active:scale-[0.98] mt-2 ${
-            formData.type === 'expense'
-              ? 'bg-rose-500 shadow-lg shadow-rose-300/40'
-              : 'bg-emerald-500 shadow-lg shadow-emerald-300/40'
+            submitClass
           } ${submitting ? 'opacity-50' : ''}`}
       >
         {submitting ? t('form.saving') : t('form.save')}

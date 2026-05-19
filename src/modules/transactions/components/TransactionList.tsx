@@ -48,7 +48,7 @@ export function TransactionList({ transactions, loading, onEdit, onDelete, viewT
 
     currentGroup.items.push(tx);
     if (tx.type === 'income') currentGroup.income += tx.amount;
-    else currentGroup.expense += tx.amount;
+    else if (tx.type === 'expense') currentGroup.expense += tx.amount;
   });
 
   return (

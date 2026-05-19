@@ -27,7 +27,7 @@ export function WalletList({
   const { formatAmount } = useCurrency();
 
   const visibleWallets = useMemo(
-    () => wallets.filter((wallet) => wallet.balance !== 0),
+    () => wallets.filter((wallet) => Number(wallet.balance) !== 0),
     [wallets]
   );
 

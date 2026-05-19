@@ -20,6 +20,7 @@ import budgetAccountTypeSql from './015_budget_account_type_scope.sql?raw';
 import errorLogsSql from './016_error_logs.sql?raw';
 import budgetSingleActiveScopeSql from './017_budget_single_active_scope.sql?raw';
 import budgetSingleActiveCategorySql from './018_budget_single_active_category.sql?raw';
+import transferCategorySql from './019_transfer_category.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -40,6 +41,7 @@ const MIGRATIONS = [
   { version: 16, name: '016_error_logs',                    sql: errorLogsSql },
   { version: 17, name: '017_budget_single_active_scope',     sql: budgetSingleActiveScopeSql },
   { version: 18, name: '018_budget_single_active_category',  sql: budgetSingleActiveCategorySql },
+  { version: 19, name: '019_transfer_category',              sql: transferCategorySql },
 ];
 
 /**

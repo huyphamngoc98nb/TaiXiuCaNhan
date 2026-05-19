@@ -4,6 +4,7 @@ export const ROUTES = {
   TRANSACTIONS_NEW: '/transactions/new',
   TRANSACTIONS_EDIT: '/transactions/:id/edit',
   SETTINGS: '/settings',
+  CATEGORIES: '/settings/categories',
   REPORTS: '/reports',
   BUDGETS: '/budgets',
   RECURRING_BILLS: '/recurring-bills',

@@ -27,6 +27,20 @@ export class UpdateTransactionUseCase {
 
     const finalType = input.type ?? oldTransaction.type;
     const finalAmount = input.amount ?? oldTransaction.amount;
+    const finalToWalletId = finalType === 'transfer'
+      ? input.to_wallet_id ?? oldTransaction.to_wallet_id
+      : null;
+
+    if (finalType === 'transfer') {
+      if (!finalToWalletId) {
+        throw new TransactionValidationError(['to_wallet_id is required for transfer transactions']);
+      }
+      if (finalToWalletId === oldTransaction.wallet_id) {
+        throw new TransactionValidationError(['to_wallet_id must be different from wallet_id']);
+      }
+      const toWallet = await this.walletRepository.getById(finalToWalletId);
+      if (!toWallet) throw new Error('Destination wallet not found');
+    }
 
     // BUG-4 fix: tính net delta rồi kiểm tra balance không âm trước khi write
     // delta dương = nhận tiền vào wallet, âm = mất tiền khỏi wallet
@@ -49,6 +63,20 @@ export class UpdateTransactionUseCase {
       ]);
     }
 
+    const destinationDeltas = new Map<string, number>();
+    if (oldTransaction.type === 'transfer' && oldTransaction.to_wallet_id) {
+      destinationDeltas.set(
+        oldTransaction.to_wallet_id,
+        (destinationDeltas.get(oldTransaction.to_wallet_id) ?? 0) - oldTransaction.amount,
+      );
+    }
+    if (finalType === 'transfer' && finalToWalletId) {
+      destinationDeltas.set(
+        finalToWalletId,
+        (destinationDeltas.get(finalToWalletId) ?? 0) + finalAmount,
+      );
+    }
+
     let newSavedReceiptPath: string | undefined;
     if (newReceiptBase64) {
       newSavedReceiptPath = await ReceiptStorageService.saveReceipt(newReceiptBase64);
@@ -64,6 +92,7 @@ export class UpdateTransactionUseCase {
       const updated = await this.runTransaction(async () => {
         const result = await this.repository.update(id, {
           ...input,
+          to_wallet_id: finalToWalletId,
           ...(finalReceiptPath !== undefined ? { receipt_path: finalReceiptPath } : {}),
           updated_at: now,
         });
@@ -71,6 +100,11 @@ export class UpdateTransactionUseCase {
         if (result) {
           // Atomic delta update — no race condition
           await this.walletRepository.updateBalanceDelta(oldTransaction.wallet_id, delta, now);
+          for (const [walletId, walletDelta] of destinationDeltas) {
+            if (walletDelta !== 0) {
+              await this.walletRepository.updateBalanceDelta(walletId, walletDelta, now);
+            }
+          }
         }
 
         return result;

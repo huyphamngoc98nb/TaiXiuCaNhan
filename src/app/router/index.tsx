@@ -12,6 +12,7 @@ import { RecurringBillsPage } from '@/modules/recurring-bills/pages/RecurringBil
 import { BackupPage } from '@/modules/backup/pages/BackupPage';
 import { ExportPage } from '@/modules/export/pages/ExportPage';
 import { WalletsPage } from '@/modules/wallets/pages/WalletsPage';
+import { CategoriesPage } from '@/modules/categories/pages/CategoriesPage';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.TRANSACTIONS_NEW, element: <AddTransactionPage /> },
       { path: ROUTES.TRANSACTIONS_EDIT, element: <EditTransactionPage /> },
       { path: ROUTES.SETTINGS, element: <SettingsPage /> },
+      { path: ROUTES.CATEGORIES, element: <CategoriesPage /> },
       { path: ROUTES.REPORTS, element: <ReportsPage /> },
       { path: ROUTES.BUDGETS, element: <BudgetSettingsPage /> },
       { path: ROUTES.RECURRING_BILLS, element: <RecurringBillsPage /> },

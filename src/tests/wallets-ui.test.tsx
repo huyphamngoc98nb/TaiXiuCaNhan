@@ -1,0 +1,60 @@
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { WalletList } from '@/modules/wallets/components/WalletList';
+import { CurrencyProvider } from '@/shared/context/CurrencyContext';
+import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
+
+vi.mock('@capacitor/preferences', () => ({
+  Preferences: {
+    get: vi.fn(async () => ({ value: 'vi' })),
+    set: vi.fn(async () => undefined),
+  },
+}));
+
+function wallet(overrides: Partial<Wallet>): Wallet {
+  return {
+    id: 'wallet-id',
+    name: 'Wallet',
+    currency: 'VND',
+    balance: 0,
+    account_type: 'cash',
+    icon: null,
+    color: null,
+    sort_order: 0,
+    is_active: 1,
+    exclude_from_total: 0,
+    credit_limit: null,
+    statement_day: null,
+    due_day: null,
+    created_at: 0,
+    updated_at: 0,
+    ...overrides,
+  };
+}
+
+function renderWalletList(wallets: Wallet[]) {
+  return render(
+    <CurrencyProvider>
+      <WalletList
+        wallets={wallets}
+        totalBalance={100000}
+        loading={false}
+        error={null}
+      />
+    </CurrencyProvider>,
+  );
+}
+
+describe('WalletList', () => {
+  it('shows only wallets with a non-zero balance', () => {
+    renderWalletList([
+      wallet({ id: 'cash', name: 'Cash', balance: 100000 }),
+      wallet({ id: 'zero', name: 'Zero balance', balance: 0 }),
+      wallet({ id: 'string-zero', name: 'String zero balance', balance: '0' as unknown as number }),
+    ]);
+
+    expect(screen.getByText('Cash')).toBeTruthy();
+    expect(screen.queryByText('Zero balance')).toBeNull();
+    expect(screen.queryByText('String zero balance')).toBeNull();
+  });
+});

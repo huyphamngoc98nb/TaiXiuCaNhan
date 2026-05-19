@@ -72,6 +72,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'cat-exp-2', name: 'Shopping',        type: 'expense', icon: 'shopping-bag', color: '#ec4899' },
   { id: 'cat-exp-3', name: 'Transport',       type: 'expense', icon: 'truck',        color: '#6366f1' },
   { id: 'cat-exp-4', name: 'Bills & Utilities', type: 'expense', icon: 'zap',        color: '#ef4444' },
+  { id: 'cat-transfer', name: 'Transfer',      type: 'expense', icon: 'arrow-left-right', color: '#6366f1' },
 ];
 
 export async function seedDefaultData() {

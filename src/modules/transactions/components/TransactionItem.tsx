@@ -1,7 +1,8 @@
 import { Transaction } from '../domain/transaction.model';
-import { Edit2, Trash2, Paperclip } from 'lucide-react';
+import { ArrowLeftRight, Edit2, Trash2, Paperclip } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
+import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 
 interface Props {
   transaction: Transaction;
@@ -15,6 +16,13 @@ export function TransactionItem({ transaction, onEdit, onDelete, showDate = fals
   const { formatAmount } = useCurrency();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
   const isExpense = transaction.type === 'expense';
+  const isTransfer = transaction.type === 'transfer';
+  const amountColor = isTransfer ? '#4f46e5' : isExpense ? '#e11d48' : '#059669';
+  const amountPrefix = isTransfer ? '' : isExpense ? '-' : '+';
+  const categoryColor = transaction.category_color ?? (isExpense ? '#e11d48' : '#059669');
+  const title = isTransfer
+    ? `${transaction.wallet_name ?? transaction.wallet_id} -> ${transaction.to_wallet_name ?? transaction.to_wallet_id ?? ''}`
+    : transaction.category_name ?? transaction.category_id;
 
   const formatTime = (timestamp: number) =>
     new Date(timestamp).toLocaleTimeString(locale, {
@@ -45,21 +53,33 @@ export function TransactionItem({ transaction, onEdit, onDelete, showDate = fals
           width: '40px',
           height: '40px',
           borderRadius: '10px',
-          background: isExpense ? 'rgba(244, 63, 94, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+          background: isTransfer
+            ? 'rgba(79, 70, 229, 0.1)'
+            : `${categoryColor}1A`,
+          color: isTransfer ? '#4f46e5' : categoryColor,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '1.2rem',
         }}>
-          {isExpense ? '💸' : '💰'}
+          {isTransfer ? (
+            <ArrowLeftRight size={20} color="#4f46e5" />
+          ) : (
+            <CategoryIcon
+              icon={transaction.category_icon}
+              name={transaction.category_name ?? transaction.category_id}
+              type={isExpense ? 'expense' : 'income'}
+              size={20}
+            />
+          )}
         </div>
         <div>
           <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text)' }}>
-            {transaction.category_id}
+            {title}
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
             {showDate ? formatDateShort(transaction.transaction_date) : formatTime(transaction.transaction_date)}
-            {transaction.receipt_path && <><span style={{ opacity: 0.5 }}>•</span> <Paperclip size={12} /></>}
+            {transaction.receipt_path && <><span style={{ opacity: 0.5 }}>-</span> <Paperclip size={12} /></>}
           </div>
           {transaction.note && (
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px', fontStyle: 'italic' }}>
@@ -73,9 +93,9 @@ export function TransactionItem({ transaction, onEdit, onDelete, showDate = fals
         <div style={{
           fontWeight: '700',
           fontSize: '1.1rem',
-          color: isExpense ? '#e11d48' : '#059669',
+          color: amountColor,
         }}>
-          {isExpense ? '-' : '+'}{formatAmount(transaction.amount, locale)}
+          {amountPrefix}{formatAmount(transaction.amount, locale)}
         </div>
         <div style={{ display: 'flex', gap: '4px' }}>
           <button

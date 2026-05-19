@@ -12,6 +12,7 @@ import { BudgetByAccountTypeSummary } from '../components/BudgetByAccountTypeSum
 import { BottomSheet } from '@/shared/components/BottomSheet';
 import { SkeletonCard } from '@/shared/components/SkeletonCard/SkeletonCard';
 import { ErrorScreen } from '@/shared/components/ErrorScreen';
+import { ROUTES } from '@/shared/constants/routes';
 
 type ScopeTab = 'all' | 'account_type';
 
@@ -81,7 +82,7 @@ export function BudgetSettingsPage() {
           </p>
         </div>
         <button
-          onClick={() => navigate('/settings/categories')}
+          onClick={() => navigate(ROUTES.CATEGORIES)}
           className="w-full h-[52px] rounded-[12px] bg-indigo-500 text-white text-[15px] font-semibold shadow-lg shadow-indigo-500/20"
         >
           {t('budgets.go_to_categories')}

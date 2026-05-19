@@ -15,7 +15,10 @@ export interface Transaction {
   deleted_at: number | null;
   // Join fields
   category_name?: string;
+  category_icon?: string;
+  category_color?: string;
   wallet_name?: string;
+  to_wallet_name?: string;
 }
 
 export interface CreateTransactionInput {

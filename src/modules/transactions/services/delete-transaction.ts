@@ -23,18 +23,31 @@ export class DeleteTransactionUseCase {
     const wallet = await this.walletRepository.getById(transaction.wallet_id);
     if (!wallet) throw new Error('Wallet not found');
 
+    if (transaction.type === 'transfer') {
+      const toWallet = transaction.to_wallet_id
+        ? await this.walletRepository.getById(transaction.to_wallet_id)
+        : null;
+      if (!toWallet) throw new Error('Destination wallet not found');
+    }
+
     const now = Date.now();
 
-    // Compute revert delta
-    let delta = 0;
-    if (transaction.type === 'income') delta = -transaction.amount;
-    else if (transaction.type === 'expense') delta = transaction.amount;
+    // Compute source wallet revert delta.
+    let sourceDelta = 0;
+    if (transaction.type === 'income') sourceDelta = -transaction.amount;
+    else if (transaction.type === 'expense' || transaction.type === 'transfer') {
+      sourceDelta = transaction.amount;
+    }
 
     await this.runTransaction(async () => {
       await this.repository.softDelete(id, now);
 
       // Atomic delta update — no race condition
-      await this.walletRepository.updateBalanceDelta(transaction.wallet_id, delta, now);
+      await this.walletRepository.updateBalanceDelta(transaction.wallet_id, sourceDelta, now);
+
+      if (transaction.type === 'transfer' && transaction.to_wallet_id) {
+        await this.walletRepository.updateBalanceDelta(transaction.to_wallet_id, -transaction.amount, now);
+      }
     });
 
     // Persist web store after successful commit

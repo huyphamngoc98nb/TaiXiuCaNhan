@@ -9,9 +9,12 @@ interface AppUnlockProps {
 const PIN_MIN_LENGTH = 6;
 const PIN_MAX_LENGTH = 12;
 const PIN_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+type UnlockMode = 'loading' | 'setup' | 'confirm' | 'unlock';
 
 export function AppUnlock({ onUnlocked }: AppUnlockProps) {
   const [pin, setPin] = useState('');
+  const [firstPin, setFirstPin] = useState('');
+  const [mode, setMode] = useState<UnlockMode>('loading');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -49,6 +52,17 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
     }
 
     async function subscribeToBiometrics() {
+      let hasSecret = true;
+      try {
+        hasSecret = await authService.hasStoredSecret();
+      } catch {
+        hasSecret = true;
+      }
+      if (!isMounted) return;
+
+      setMode(hasSecret ? 'unlock' : 'setup');
+      if (!hasSecret) return;
+
       try {
         const listenerHandle = await authService.onBiometricResult((event) => {
           if (event.result) {
@@ -98,12 +112,32 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
     event.preventDefault();
     if (!canSubmit) return;
 
+    if (mode === 'setup') {
+      setFirstPin(pin);
+      setPin('');
+      setError(null);
+      setMode('confirm');
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
 
     try {
-      await authService.unlockWithPin(pin);
+      if (mode === 'confirm') {
+        if (pin !== firstPin) {
+          setPin('');
+          setFirstPin('');
+          setMode('setup');
+          setError('PIN confirmation does not match. Please create your PIN again.');
+          return;
+        }
+        await authService.setupPin(pin);
+      } else {
+        await authService.unlockWithPin(pin);
+      }
       setPin('');
+      setFirstPin('');
       onUnlocked();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to unlock app.');
@@ -118,8 +152,16 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
         onSubmit={handleSubmit}
         className="w-full max-w-sm rounded-[18px] bg-white p-5 shadow-sm border border-gray-100"
       >
-        <h1 className="text-[22px] font-bold text-gray-900 mb-2">Unlock data</h1>
-        <p className="text-[13px] text-gray-500 mb-6">Enter your PIN to continue.</p>
+        <h1 className="text-[22px] font-bold text-gray-900 mb-2">
+          {mode === 'setup' ? 'Create PIN' : mode === 'confirm' ? 'Confirm PIN' : 'Unlock data'}
+        </h1>
+        <p className="text-[13px] text-gray-500 mb-6">
+          {mode === 'setup'
+            ? 'Set a PIN to protect your encrypted database.'
+            : mode === 'confirm'
+              ? 'Enter the same PIN again to confirm.'
+              : 'Enter your PIN to continue.'}
+        </p>
 
         <input
           id="app-pin"
@@ -130,11 +172,11 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
           }}
           type="password"
           inputMode="numeric"
-          autoComplete="current-password"
+          autoComplete={mode === 'unlock' ? 'current-password' : 'new-password'}
           minLength={PIN_MIN_LENGTH}
           className="sr-only"
           disabled={submitting}
-          aria-label="PIN"
+          aria-label={mode === 'unlock' ? 'PIN' : 'New PIN'}
         />
 
         <div className="flex h-12 items-center justify-center gap-3" aria-hidden="true">
@@ -191,10 +233,16 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
 
         <button
           type="submit"
-          disabled={submitting || !canSubmit}
+          disabled={submitting || !canSubmit || mode === 'loading'}
           className="mt-5 h-12 w-full rounded-[8px] bg-indigo-500 text-[14px] font-semibold text-white disabled:opacity-50"
         >
-          {submitting ? 'Verifying...' : 'Unlock'}
+          {submitting
+            ? 'Verifying...'
+            : mode === 'setup'
+              ? 'Continue'
+              : mode === 'confirm'
+                ? 'Create PIN'
+                : 'Unlock'}
         </button>
       </form>
     </div>

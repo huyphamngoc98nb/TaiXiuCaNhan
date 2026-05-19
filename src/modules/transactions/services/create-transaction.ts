@@ -21,6 +21,13 @@ export class CreateTransactionUseCase {
     const wallet = await this.walletRepository.getById(input.wallet_id);
     if (!wallet) throw new Error('Wallet not found');
 
+    if (input.type === 'transfer') {
+      const toWallet = input.to_wallet_id
+        ? await this.walletRepository.getById(input.to_wallet_id)
+        : null;
+      if (!toWallet) throw new Error('Destination wallet not found');
+    }
+
     // BUG-3 fix: kiểm tra số dư cho cả expense và transfer (cả 2 đều trừ số dư source wallet)
     if (
       (input.type === 'expense' || input.type === 'transfer') &&

@@ -36,7 +36,9 @@ export const RecurringBillForm: React.FC<Props> = ({ existing, onSave, onCancel 
     async function loadOptions() {
       const db = await getDbConnection();
       const { values: loadedWallets = [] } = await db.query('SELECT id, name FROM wallets');
-      const { values: loadedCategories = [] } = await db.query("SELECT id, name FROM categories WHERE type = 'expense'");
+      const { values: loadedCategories = [] } = await db.query(
+        "SELECT id, name FROM categories WHERE type = 'expense' AND id <> 'cat-transfer'"
+      );
 
       setWallets(loadedWallets);
       setCategories(loadedCategories);

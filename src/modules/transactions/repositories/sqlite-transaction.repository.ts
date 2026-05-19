@@ -7,12 +7,13 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async create(data: CreateTransactionInput & { id: string, created_at: number, updated_at: number }): Promise<Transaction> {
     const db = await getDbConnection();
     const sql = `
-      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, transaction_date, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       data.id, data.wallet_id, data.category_id, data.type, data.amount,
-      data.note || null, data.receipt_path || null, data.transaction_date, data.created_at, data.updated_at
+      data.note || null, data.receipt_path || null, data.to_wallet_id || null,
+      data.transaction_date, data.created_at, data.updated_at
     ];
     await db.run(sql, values);
     return this.getById(data.id) as Promise<Transaction>;
@@ -30,6 +31,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     if (data.amount !== undefined) { sets.push('amount = ?'); values.push(data.amount); }
     if (data.note !== undefined) { sets.push('note = ?'); values.push(data.note); }
     if (data.receipt_path !== undefined) { sets.push('receipt_path = ?'); values.push(data.receipt_path); }
+    if (data.to_wallet_id !== undefined) { sets.push('to_wallet_id = ?'); values.push(data.to_wallet_id); }
     if (data.transaction_date !== undefined) { sets.push('transaction_date = ?'); values.push(data.transaction_date); }
 
     sets.push('updated_at = ?'); values.push(data.updated_at);
@@ -55,7 +57,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async getById(id: string): Promise<Transaction | null> {
     const db = await getDbConnection();
     const sql = `
-      SELECT id, wallet_id, category_id, type, amount, note, receipt_path,
+      SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
              transaction_date, created_at, updated_at, deleted_at
       FROM transactions
       WHERE id = ? AND deleted_at IS NULL
@@ -72,7 +74,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async getByIdIncludeDeleted(id: string): Promise<Transaction | null> {
     const db = await getDbConnection();
     const sql = `
-      SELECT id, wallet_id, category_id, type, amount, note, receipt_path,
+      SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
              transaction_date, created_at, updated_at, deleted_at
       FROM transactions
       WHERE id = ?
@@ -87,12 +89,16 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     let sql = `
       SELECT
         t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note,
-        t.receipt_path, t.transaction_date, t.created_at, t.updated_at, t.deleted_at,
+        t.receipt_path, t.to_wallet_id, t.transaction_date, t.created_at, t.updated_at, t.deleted_at,
         c.name AS category_name,
-        w.name AS wallet_name
+        c.icon AS category_icon,
+        c.color AS category_color,
+        w.name AS wallet_name,
+        tw.name AS to_wallet_name
       FROM transactions t
       LEFT JOIN categories c ON t.category_id = c.id
       LEFT JOIN wallets w ON t.wallet_id = w.id
+      LEFT JOIN wallets tw ON t.to_wallet_id = tw.id
       WHERE 1=1
     `;
     const values: unknown[] = [];

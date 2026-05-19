@@ -4,6 +4,8 @@ import { getDbConnection } from '@/core/db/sqlite/connection';
 import { createTransactionUseCase, updateTransactionUseCase } from '@/core/di/transactions.di';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 
+export const TRANSFER_CATEGORY_ID = 'cat-transfer';
+
 export function useTransactionForm(existing?: Transaction) {
   const [formData, setFormData] = useState<Partial<CreateTransactionInput>>(() => {
     if (existing) {
@@ -12,6 +14,7 @@ export function useTransactionForm(existing?: Transaction) {
         amount: existing.amount,
         category_id: existing.category_id,
         wallet_id: existing.wallet_id,
+        to_wallet_id: existing.to_wallet_id || undefined,
         note: existing.note || '',
         transaction_date: existing.transaction_date,
         receipt_path: existing.receipt_path || undefined
@@ -79,11 +82,17 @@ export function useTransactionForm(existing?: Transaction) {
     setSubmitting(true);
     setError(null);
     try {
+      const payload = {
+        ...formData,
+        category_id: formData.type === 'transfer' ? TRANSFER_CATEGORY_ID : formData.category_id,
+        to_wallet_id: formData.type === 'transfer' ? formData.to_wallet_id : undefined,
+      };
+
       if (existing) {
-        await updateTransactionUseCase.execute(existing.id, formData as UpdateTransactionInput, receiptBase64);
+        await updateTransactionUseCase.execute(existing.id, payload as UpdateTransactionInput, receiptBase64);
         toast.success('Transaction updated successfully');
       } else {
-        await createTransactionUseCase.execute(formData as CreateTransactionInput, receiptBase64);
+        await createTransactionUseCase.execute(payload as CreateTransactionInput, receiptBase64);
         localStorage.removeItem('transaction_draft'); // Clear draft on success
         toast.success('Transaction added successfully');
       }
