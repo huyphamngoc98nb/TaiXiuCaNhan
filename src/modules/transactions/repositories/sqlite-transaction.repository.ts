@@ -1,4 +1,5 @@
 import { getDbConnection } from '@/core/db/sqlite/connection';
+import { isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import { ITransactionRepository } from './transaction.repository';
 import { Transaction, CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '../domain/transaction.model';
 import { mapToTransaction } from '../domain/transaction.mapper';
@@ -15,7 +16,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       data.note || null, data.receipt_path || null, data.to_wallet_id || null,
       data.transaction_date, data.created_at, data.updated_at
     ];
-    await db.run(sql, values);
+    await db.run(sql, values, !isManagedTransactionActive());
     return this.getById(data.id) as Promise<Transaction>;
   }
 
@@ -38,7 +39,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     values.push(id);
 
     const sql = `UPDATE transactions SET ${sets.join(', ')} WHERE id = ?`;
-    await db.run(sql, values as unknown[]);
+    await db.run(sql, values as unknown[], !isManagedTransactionActive());
 
     return this.getById(id);
   }
@@ -46,7 +47,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async softDelete(id: string, deleted_at: number): Promise<boolean> {
     const db = await getDbConnection();
     const sql = `UPDATE transactions SET deleted_at = ?, updated_at = ? WHERE id = ?`;
-    const res = await db.run(sql, [deleted_at, deleted_at, id]);
+    const res = await db.run(sql, [deleted_at, deleted_at, id], !isManagedTransactionActive());
     return (res.changes?.changes ?? 0) > 0;
   }
 

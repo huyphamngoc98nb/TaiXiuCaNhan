@@ -92,7 +92,8 @@ describe('Transaction Module QA Tests', () => {
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO transactions'),
-        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 2000, 2000]
+        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 2000, 2000],
+        true
       );
     });
 
@@ -111,7 +112,8 @@ describe('Transaction Module QA Tests', () => {
       await repository.softDelete('tx-1', 5000);
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE transactions SET deleted_at = ?, updated_at = ? WHERE id = ?'),
-        [5000, 5000, 'tx-1']
+        [5000, 5000, 'tx-1'],
+        true
       );
     });
   });

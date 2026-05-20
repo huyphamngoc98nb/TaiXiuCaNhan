@@ -1,4 +1,5 @@
 import { getDbConnection } from '@/core/db/sqlite/connection';
+import { isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import type {
   AccountType,
   CreateWalletInput,
@@ -103,7 +104,8 @@ export class SQLiteWalletRepository implements IWalletRepository {
         data.due_day ?? null,
         now,
         now,
-      ]
+      ],
+      !isManagedTransactionActive()
     );
   }
 
@@ -130,7 +132,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     values.push(now);
     values.push(id);
 
-    await db.run(`UPDATE wallets SET ${sets.join(', ')} WHERE id = ?`, values);
+    await db.run(`UPDATE wallets SET ${sets.join(', ')} WHERE id = ?`, values, !isManagedTransactionActive());
   }
 
   /** Soft-deactivate: sets is_active = 0. Row is never hard-deleted. */
@@ -138,7 +140,8 @@ export class SQLiteWalletRepository implements IWalletRepository {
     const db = await getDbConnection();
     await db.run(
       'UPDATE wallets SET is_active = 0, updated_at = ? WHERE id = ?',
-      [now, id]
+      [now, id],
+      !isManagedTransactionActive()
     );
   }
 
@@ -150,7 +153,8 @@ export class SQLiteWalletRepository implements IWalletRepository {
     const db = await getDbConnection();
     await db.run(
       'UPDATE wallets SET balance = ?, updated_at = ? WHERE id = ?',
-      [newBalance, updatedAt, id]
+      [newBalance, updatedAt, id],
+      !isManagedTransactionActive()
     );
   }
 
@@ -162,7 +166,8 @@ export class SQLiteWalletRepository implements IWalletRepository {
     const db = await getDbConnection();
     await db.run(
       'UPDATE wallets SET balance = balance + ?, updated_at = ? WHERE id = ?',
-      [delta, updatedAt, id]
+      [delta, updatedAt, id],
+      !isManagedTransactionActive()
     );
   }
 }

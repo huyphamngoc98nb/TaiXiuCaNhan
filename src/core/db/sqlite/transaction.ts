@@ -2,6 +2,11 @@ import { getDbConnection } from './connection';
 import { Capacitor } from '@capacitor/core';
 
 let nativeTransactionQueue: Promise<void> = Promise.resolve();
+let managedTransactionDepth = 0;
+
+export function isManagedTransactionActive(): boolean {
+  return managedTransactionDepth > 0;
+}
 
 async function runExclusive<T>(work: () => Promise<T>): Promise<T> {
   const previous = nativeTransactionQueue;
@@ -43,8 +48,7 @@ export async function runInTransaction<T>(
     return work(db);
   }
 
-  const { result: isAlreadyActive } = await db.isTransactionActive();
-  if (isAlreadyActive) {
+  if (isManagedTransactionActive()) {
     return work(db);
   }
 
@@ -54,6 +58,7 @@ export async function runInTransaction<T>(
 
     if (shouldManage) {
       await db.beginTransaction();
+      managedTransactionDepth += 1;
     }
 
     try {
@@ -67,6 +72,10 @@ export async function runInTransaction<T>(
         await db.rollbackTransaction();
       }
       throw error;
+    } finally {
+      if (shouldManage) {
+        managedTransactionDepth -= 1;
+      }
     }
   });
 }

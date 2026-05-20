@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { runMigrations } from '../core/db/migrations/migration-runner';
 import { runInTransaction } from '../core/db/sqlite/transaction';
 import { seedDefaultData } from '../core/db/seed/default-categories';
+import { SQLiteTransactionRepository } from '../modules/transactions/repositories/sqlite-transaction.repository';
+import { SQLiteWalletRepository } from '../modules/wallets/repositories/sqlite-wallet.repository';
 import * as connection from '../core/db/sqlite/connection';
 
 // Mock the DB connection and logger
@@ -193,6 +195,53 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.beginTransaction).toHaveBeenCalledTimes(2);
     expect(mockDb.commitTransaction).toHaveBeenCalledTimes(2);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  it('disables implicit db.run transactions inside a managed transaction', async () => {
+    const transactionRepository = new SQLiteTransactionRepository();
+    const walletRepository = new SQLiteWalletRepository();
+
+    mockDb.query.mockResolvedValueOnce({
+      values: [{
+        id: 'tx-1',
+        wallet_id: 'w-1',
+        category_id: 'c-1',
+        type: 'expense',
+        amount: 100,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        transaction_date: 1000,
+        created_at: 2000,
+        updated_at: 2000,
+        deleted_at: null,
+      }],
+    });
+
+    await runInTransaction(async () => {
+      await transactionRepository.create({
+        id: 'tx-1',
+        wallet_id: 'w-1',
+        category_id: 'c-1',
+        type: 'expense',
+        amount: 100,
+        transaction_date: 1000,
+        created_at: 2000,
+        updated_at: 2000,
+      });
+      await walletRepository.updateBalanceDelta('w-1', -100, 2000);
+    });
+
+    expect(mockDb.run).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO transactions'),
+      expect.any(Array),
+      false
+    );
+    expect(mockDb.run).toHaveBeenCalledWith(
+      'UPDATE wallets SET balance = balance + ?, updated_at = ? WHERE id = ?',
+      [-100, 2000, 'w-1'],
+      false
+    );
   });
 
   // -------------------------------------------------------------------------
