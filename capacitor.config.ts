@@ -15,7 +15,7 @@ const config: CapacitorConfig = {
       },
       androidIsEncryption: true,
       androidBiometric: {
-        biometricAuth: true,
+        biometricAuth: false,
         biometricTitle: 'Unlock Expense Tracker',
         biometricSubTitle: 'Verify before opening your encrypted database',
       },

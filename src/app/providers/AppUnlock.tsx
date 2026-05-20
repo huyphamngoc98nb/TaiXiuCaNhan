@@ -52,16 +52,19 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
     }
 
     async function subscribeToBiometrics() {
-      let hasSecret = true;
+      let hasSecret = false;
       try {
         hasSecret = await authService.hasStoredSecret();
       } catch {
-        hasSecret = true;
+        hasSecret = false;
       }
       if (!isMounted) return;
 
       setMode(hasSecret ? 'unlock' : 'setup');
       if (!hasSecret) return;
+
+      const biometricUnlockEnabled = await authService.isBiometricUnlockEnabled();
+      if (!isMounted || !biometricUnlockEnabled) return;
 
       try {
         const listenerHandle = await authService.onBiometricResult((event) => {
