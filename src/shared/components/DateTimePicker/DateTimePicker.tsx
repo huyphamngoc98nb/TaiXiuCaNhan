@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/shared/context/LanguageContext';
+import type { TranslationPath } from '@/shared/constants/translations';
 
 // ─── types ───────────────────────────────────────────────────────────────
 type QuickMode = 'today' | 'yesterday' | 'custom';
@@ -31,20 +33,27 @@ function buildTimestamp(dateStr: string, timeStr: string): number {
   return new Date(`${dateStr}T${timeStr}`).getTime();
 }
 
-const WEEKDAY = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
-const MONTH   = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+const WEEKDAY_KEYS = [
+  'date_time.weekday_sunday',
+  'date_time.weekday_monday',
+  'date_time.weekday_tuesday',
+  'date_time.weekday_wednesday',
+  'date_time.weekday_thursday',
+  'date_time.weekday_friday',
+  'date_time.weekday_saturday',
+] as const satisfies readonly TranslationPath[];
 
-function formatPreview(ts: number): string {
+function formatPreview(ts: number, t: (path: TranslationPath) => string): string {
   const d  = new Date(ts);
-  const wd = WEEKDAY[d.getDay()];
-  const mo = MONTH[d.getMonth()];
+  const wd = t(WEEKDAY_KEYS[d.getDay()]);
+  const mo = String(d.getMonth() + 1);
   const dd = d.getDate();
   const yy = d.getFullYear();
   const hh = d.getHours();
   const mm = String(d.getMinutes()).padStart(2, '0');
-  const period = hh >= 12 ? 'CH' : 'SA';
+  const period = hh >= 12 ? t('date_time.pm') : t('date_time.am');
   const h12  = hh % 12 || 12;
-  return `${wd}, ${dd} tháng ${mo}, ${yy} lúc ${h12}:${mm} ${period}`;
+  return `${wd}, ${dd} ${t('date_time.preview_month')} ${mo}, ${yy} ${t('date_time.preview_at')} ${h12}:${mm} ${period}`;
 }
 
 /** Detect if today or yesterday relative to now */
@@ -64,7 +73,8 @@ function detectMode(ts: number): QuickMode {
 }
 
 // ─── component ───────────────────────────────────────────────────────────
-export function DateTimePicker({ value, onChange, label = 'Ngày giao dịch' }: Props) {
+export function DateTimePicker({ value, onChange, label }: Props) {
+  const { t } = useLanguage();
   const [mode, setMode]       = useState<QuickMode>(() => detectMode(value));
   const [dateStr, setDateStr] = useState(() => toDateInput(value));
   const [timeStr, setTimeStr] = useState(() => toTimeInput(value));
@@ -101,15 +111,15 @@ export function DateTimePicker({ value, onChange, label = 'Ngày giao dịch' }:
   }, [dateStr, onChange]);
 
   const CHIPS: { id: QuickMode; label: string }[] = [
-    { id: 'yesterday', label: 'Hôm qua' },
-    { id: 'today',     label: 'Hôm nay' },
-    { id: 'custom',    label: 'Tùy chọn' },
+    { id: 'yesterday', label: t('date_time.yesterday') },
+    { id: 'today',     label: t('date_time.today') },
+    { id: 'custom',    label: t('date_time.custom') },
   ];
 
   return (
     <div className="space-y-2.5">
       {/* Label */}
-      <p className="text-[13px] font-semibold text-gray-700">{label}</p>
+      <p className="text-[13px] font-semibold text-gray-700">{label ?? t('date_time.transaction_date')}</p>
 
       {/* Quick chips */}
       <div className="flex gap-2">
@@ -169,7 +179,7 @@ export function DateTimePicker({ value, onChange, label = 'Ngày giao dịch' }:
 
       {/* Preview */}
       <p className="text-[11px] text-gray-400 ml-0.5">
-        📅 {formatPreview(buildTimestamp(dateStr, timeStr))}
+        📅 {formatPreview(buildTimestamp(dateStr, timeStr), t)}
       </p>
     </div>
   );

@@ -1,4 +1,5 @@
-import { BudgetProgress, AccountType, ACCOUNT_TYPE_LABELS, resolveBudgetScope } from '../domain/budget.model';
+import { BudgetProgress, AccountType, resolveBudgetScope } from '../domain/budget.model';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 // Icon đơn giản theo account_type (emoji fallback, dễ thay bằng Lucide sau)
 const ACCOUNT_TYPE_ICONS: Record<AccountType, string> = {
@@ -21,6 +22,16 @@ interface Props {
 }
 
 export function BudgetByAccountTypeSummary({ progresses }: Props) {
+  const { t } = useLanguage();
+  const accountTypeLabels: Record<AccountType, string> = {
+    cash: t('wallets.account_cash'),
+    bank: t('wallets.account_bank'),
+    credit_card: t('wallets.account_credit_card'),
+    e_wallet: t('wallets.account_e_wallet'),
+    investment: t('wallets.account_investment'),
+    other: t('wallets.account_other'),
+  };
+
   if (progresses.length === 0) return null;
 
   // Nhóm theo account_type_scope
@@ -44,10 +55,10 @@ export function BudgetByAccountTypeSummary({ progresses }: Props) {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[20px]">{ACCOUNT_TYPE_ICONS[at]}</span>
             <span className="text-[14px] font-semibold text-gray-800">
-              {ACCOUNT_TYPE_LABELS[at]}
+              {accountTypeLabels[at]}
             </span>
             <span className="ml-auto text-[11px] text-gray-400">
-              {grouped[at].length} ngân sách
+              {grouped[at].length} {t('budgets.budget_count')}
             </span>
           </div>
 
@@ -72,7 +83,7 @@ export function BudgetByAccountTypeSummary({ progresses }: Props) {
                   </div>
                   <div className="flex justify-between mt-0.5">
                     <span className="text-[11px] text-gray-400">
-                      Đã dùng: {p.spent_amount.toLocaleString('vi-VN')}đ
+                      {t('budgets.spent_amount')}: {p.spent_amount.toLocaleString('vi-VN')}đ
                     </span>
                     <span className="text-[11px] text-gray-400">
                       / {p.budget.amount.toLocaleString('vi-VN')}đ

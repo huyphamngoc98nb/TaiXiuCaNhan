@@ -66,7 +66,7 @@ export function RecurringBillsPage() {
   const handleAdvance = async (bill: RecurringBill) => {
     try {
       await advanceDueDate(bill);
-      toast.success(${bill.name} );
+      toast.success(`${bill.name} ${t('recurring_bills.mark_paid_success')}`);
     } catch (e: any) {
       toast.error(e.message || t('recurring_bills.advance_failed'));
     }

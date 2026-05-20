@@ -1,10 +1,11 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { X } from 'lucide-react';
 import { Wallet, AccountType, CreateWalletInput, UpdateWalletInput } from '../repositories/sqlite-wallet.repository';
-import { ACCOUNT_TYPE_LABELS, ACCOUNT_TYPE_ICONS } from './WalletCard';
+import { ACCOUNT_TYPE_ICONS } from './WalletCard';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { DropdownList } from '@/shared/components/DropdownList';
 import { CURRENCIES, CurrencyCode } from '@/shared/context/CurrencyContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 interface Props {
   existing?: Wallet;
@@ -24,6 +25,15 @@ const ACCOUNT_TYPES: AccountType[] = [
 
 export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
   const isEdit = !!existing;
+  const { t, language } = useLanguage();
+  const accountTypeLabels: Record<AccountType, string> = {
+    cash: t('wallets.account_cash'),
+    bank: t('wallets.account_bank'),
+    credit_card: t('wallets.account_credit_card'),
+    e_wallet: t('wallets.account_e_wallet'),
+    investment: t('wallets.account_investment'),
+    other: t('wallets.account_other'),
+  };
 
   const [name, setName] = useState(existing?.name ?? '');
   const [accountType, setAccountType] = useState<AccountType>(existing?.account_type ?? 'cash');
@@ -47,13 +57,13 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
     setError(null);
 
     if (!name.trim()) {
-      setError('Tên tài khoản không được để trống.');
+      setError(t('wallets.name_required'));
       return;
     }
     if (accountType === 'credit_card') {
       const limit = parseFloat(creditLimit);
       if (Number.isNaN(limit) || limit <= 0) {
-        setError('Hạn mức thẻ tín dụng phải lớn hơn 0.');
+        setError(t('wallets.credit_limit_required'));
         return;
       }
     }
@@ -82,7 +92,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
       }
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Lưu thất bại.');
+      setError(err instanceof Error ? err.message : t('wallets.save_failed'));
     } finally {
       setSaving(false);
     }
@@ -95,7 +105,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
       await onArchive();
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Lưu trữ thất bại.');
+      setError(err instanceof Error ? err.message : t('wallets.archive_failed'));
     } finally {
       setSaving(false);
     }
@@ -105,7 +115,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[18px] font-bold text-gray-900">
-          {isEdit ? 'Chỉnh sửa tài khoản' : 'Thêm tài khoản mới'}
+          {isEdit ? t('wallets.edit_account') : t('wallets.add_account')}
         </h3>
         <button
           type="button"
@@ -124,18 +134,18 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         )}
 
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Tên tài khoản *</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('wallets.name')} *</p>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="VD: MB Bank, Ví MoMo..."
+            placeholder={t('wallets.name_placeholder')}
             className="w-full h-[48px] bg-gray-50 border border-gray-200 rounded-[14px] px-4 text-[14px] text-gray-900 outline-none focus:border-indigo-400 transition-colors"
           />
         </div>
 
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Loại tài khoản *</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('wallets.account_type')} *</p>
           <div className="grid grid-cols-3 gap-2">
             {ACCOUNT_TYPES.map((type) => (
               <button
@@ -148,28 +158,28 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
                     : 'bg-gray-50 text-gray-600 border-gray-200'
                 }`}
               >
-                {ACCOUNT_TYPE_ICONS[type]} {ACCOUNT_TYPE_LABELS[type]}
+                {ACCOUNT_TYPE_ICONS[type]} {accountTypeLabels[type]}
               </button>
             ))}
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Đơn vị tiền tệ</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('wallets.currency_unit')}</p>
           <DropdownList
             value={currency}
             onChange={setCurrency}
-            ariaLabel="Đơn vị tiền tệ"
+            ariaLabel={t('wallets.currency_unit')}
             options={CURRENCIES.map(item => ({
               value: item.code,
-              label: `${item.flag} ${item.code} - ${item.name_vi}`,
+              label: `${item.flag} ${item.code} - ${language === 'vi' ? item.name_vi : item.name_en}`,
             }))}
           />
         </div>
 
         {!isEdit && (
           <div className="space-y-1.5">
-            <p className="text-[13px] font-semibold text-gray-700">Số dư ban đầu</p>
+            <p className="text-[13px] font-semibold text-gray-700">{t('wallets.initial_balance')}</p>
             <CurrencyAmountInput
               currency={currency}
               value={balance}
@@ -182,10 +192,10 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         {accountType === 'credit_card' && (
           <div className="space-y-4 bg-orange-50 rounded-[14px] p-4">
             <p className="text-[12px] font-semibold text-orange-600 uppercase tracking-wide">
-              Thông tin thẻ tín dụng
+              {t('wallets.credit_info')}
             </p>
             <div className="space-y-1.5">
-              <p className="text-[13px] font-semibold text-gray-700">Hạn mức tín dụng *</p>
+              <p className="text-[13px] font-semibold text-gray-700">{t('wallets.credit_limit')} *</p>
               <CurrencyAmountInput
                 currency={currency}
                 value={creditLimit}
@@ -196,7 +206,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <p className="text-[13px] font-semibold text-gray-700">Ngày sao kê</p>
+                <p className="text-[13px] font-semibold text-gray-700">{t('wallets.statement_day')}</p>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -209,7 +219,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
                 />
               </div>
               <div className="space-y-1.5">
-                <p className="text-[13px] font-semibold text-gray-700">Ngày đến hạn</p>
+                <p className="text-[13px] font-semibold text-gray-700">{t('wallets.due_day')}</p>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -226,7 +236,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         )}
 
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Biểu tượng</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('wallets.icon')}</p>
           <div className="flex flex-wrap gap-2">
             {EMOJI_PRESETS.map((emoji) => (
               <button
@@ -244,7 +254,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Màu sắc</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('wallets.color')}</p>
           <div className="flex flex-wrap gap-2">
             {COLOR_PRESETS.map((preset) => (
               <button
@@ -275,7 +285,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
               }`}
             />
           </div>
-          <span className="text-[14px] text-gray-700">Không tính vào tổng tài sản</span>
+          <span className="text-[14px] text-gray-700">{t('wallets.exclude_total')}</span>
         </label>
 
         <div className="pt-4 border-t border-gray-100 space-y-3 pb-4">
@@ -287,7 +297,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
               saving ? 'opacity-50' : 'shadow-lg shadow-indigo-500/20'
             }`}
           >
-            {saving ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Tạo tài khoản'}
+            {saving ? t('wallets.saving') : isEdit ? t('wallets.save_changes') : t('wallets.create_account')}
           </button>
 
           {isEdit && onArchive && (
@@ -297,7 +307,7 @@ export function WalletForm({ existing, onSave, onClose, onArchive }: Props) {
               onClick={handleArchive}
               className="w-full h-[48px] rounded-[14px] border border-red-200 text-red-500 text-[14px] font-semibold transition-all active:scale-[0.98]"
             >
-              Lưu trữ tài khoản
+              {t('wallets.archive_account')}
             </button>
           )}
         </div>

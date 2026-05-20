@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Fingerprint } from 'lucide-react';
 import { authService } from '@/core/auth/auth.service';
 import { useToast } from '@/shared/components/Toast/ToastContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 export function BiometricUnlockSettings() {
   const toast = useToast();
+  const { t } = useLanguage();
   const [available, setAvailable] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -46,9 +48,9 @@ export function BiometricUnlockSettings() {
     try {
       await authService.setBiometricUnlockEnabled(nextEnabled);
       setEnabled(nextEnabled);
-      toast.success(nextEnabled ? 'Đã bật mở khóa sinh trắc học.' : 'Đã tắt mở khóa sinh trắc học.');
+      toast.success(nextEnabled ? t('settings.biometric_enabled') : t('settings.biometric_disabled'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Không thể cập nhật cài đặt sinh trắc học.');
+      toast.error(err instanceof Error ? err.message : t('settings.biometric_update_failed'));
     } finally {
       setSaving(false);
     }
@@ -68,11 +70,11 @@ export function BiometricUnlockSettings() {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-semibold text-gray-900">Mở khóa bằng sinh trắc học</p>
+        <p className="text-[14px] font-semibold text-gray-900">{t('settings.biometric_unlock')}</p>
         <p className="text-[11px] text-gray-500 truncate">
           {available
-            ? 'Dùng vân tay hoặc khuôn mặt thay cho PIN khi mở ứng dụng'
-            : 'Chỉ khả dụng trên thiết bị Android/iOS có sinh trắc học'}
+            ? t('settings.biometric_available_desc')
+            : t('settings.biometric_unavailable_desc')}
         </p>
       </div>
 

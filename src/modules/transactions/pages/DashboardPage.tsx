@@ -8,6 +8,7 @@ import { useTransactionSummary } from '../hooks/useTransactionSummary';
 import { useWalletBalances } from '../hooks/useWalletBalances';
 import { formatVND } from '../services/build-dashboard-view-model';
 import type { AccountType } from '@/modules/wallets/repositories/wallet.repository';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const ACCOUNT_TYPE_ICON: Record<AccountType, string> = {
@@ -35,6 +36,7 @@ const HIDDEN_AMOUNT = '••••••';
 
 // ── component ────────────────────────────────────────────────────────────
 function DashboardPage() {
+  const { t } = useLanguage();
   const {
     totalIncome,
     totalExpense,
@@ -93,13 +95,13 @@ function DashboardPage() {
         <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/10" />
 
         <div className="relative z-10 mb-1 flex items-center justify-between">
-          <p className="text-white/70 text-[12px] font-medium">Tổng số dư</p>
+          <p className="text-white/70 text-[12px] font-medium">{t('dashboard.total_balance')}</p>
           <button
             type="button"
             onClick={toggleShowAmounts}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white active:scale-95"
-            aria-label={showAmounts ? 'Ẩn số dư' : 'Hiện số dư'}
-            title={showAmounts ? 'Ẩn số dư' : 'Hiện số dư'}
+            aria-label={showAmounts ? t('dashboard.hide_balance') : t('dashboard.show_balance')}
+            title={showAmounts ? t('dashboard.hide_balance') : t('dashboard.show_balance')}
           >
             {showAmounts ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
@@ -127,20 +129,20 @@ function DashboardPage() {
           ))}
           {wallets.length > 4 && (
             <div className="flex items-center bg-white/15 rounded-full px-3 py-1">
-              <span className="text-white/70 text-[11px]">+{wallets.length - 4} ví</span>
+              <span className="text-white/70 text-[11px]">+{wallets.length - 4} {t('dashboard.wallet_count_suffix')}</span>
             </div>
           )}
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
           <div className="rounded-[14px] bg-white/15 px-3 py-2">
-            <p className="text-white/60 text-[10px] font-medium">Thu thang nay</p>
+            <p className="text-white/60 text-[10px] font-medium">{t('dashboard.income_this_month')}</p>
             <p className="text-white text-[13px] font-bold">
               {summaryLoading ? '...' : displayAmount(totalIncome, '+')}
             </p>
           </div>
           <div className="rounded-[14px] bg-white/15 px-3 py-2">
-            <p className="text-white/60 text-[10px] font-medium">Chi thang nay</p>
+            <p className="text-white/60 text-[10px] font-medium">{t('dashboard.expense_this_month')}</p>
             <p className="text-white text-[13px] font-bold">
               {summaryLoading ? '...' : displayAmount(totalExpense, '-')}
             </p>
@@ -155,14 +157,14 @@ function DashboardPage() {
           className="flex-1 flex items-center justify-center gap-2 h-[48px] bg-indigo-500 text-white rounded-[14px] text-[13px] font-semibold shadow-md shadow-indigo-300/40 active:scale-95 transition-transform"
         >
           <PlusCircle size={17} />
-          Thêm giao dịch
+          {t('dashboard.add_transaction')}
         </button>
         <button
           onClick={() => navigate(ROUTES.BUDGETS)}
           className="flex-1 flex items-center justify-center gap-2 h-[48px] bg-white text-indigo-600 border border-indigo-100 rounded-[14px] text-[13px] font-semibold active:scale-95 transition-transform"
         >
           <PieChart size={17} />
-          Ngân sách
+          {t('navigation.budgets')}
         </button>
       </div>
 
@@ -175,12 +177,12 @@ function DashboardPage() {
           <Bell size={18} className="text-amber-500 shrink-0" />
           <div className="flex-1">
             <p className="text-[13px] font-semibold text-gray-900">
-              {reminders.length} hoá đơn sắp đến hạn
+              {reminders.length} {t('dashboard.bills_due_soon')}
             </p>
             <p className="text-[11px] text-amber-600">
               {overdueBillCount > 0
-                ? `${overdueBillCount} đã quá hạn`
-                : 'Nhấn để xem chi tiết'}
+                ? `${overdueBillCount} ${t('dashboard.overdue_count')}`
+                : t('dashboard.tap_to_view_details')}
             </p>
           </div>
           <ChevronRight size={16} className="text-gray-400" />
@@ -191,12 +193,12 @@ function DashboardPage() {
       {!budgetLoading && topBudgets.length > 0 && (
         <div className="mt-5">
           <div className="flex items-center justify-between px-4 mb-3">
-            <h3 className="text-[15px] font-bold text-gray-900">Ngân sách</h3>
+            <h3 className="text-[15px] font-bold text-gray-900">{t('navigation.budgets')}</h3>
             <button
               onClick={() => navigate(ROUTES.BUDGETS)}
               className="text-[12px] text-indigo-500 font-semibold flex items-center gap-0.5"
             >
-              Xem tất cả <ChevronRight size={14} />
+              {t('common.see_all')} <ChevronRight size={14} />
             </button>
           </div>
           <div
@@ -231,7 +233,7 @@ function DashboardPage() {
                   />
                 </div>
                 <p className="text-[10px] text-gray-500 mt-1.5">
-                  còn {displayAmount(Math.max(p.remaining_amount, 0))}
+                  {t('dashboard.remaining')} {displayAmount(Math.max(p.remaining_amount, 0))}
                 </p>
               </div>
             ))}
@@ -243,7 +245,7 @@ function DashboardPage() {
       {hasAlerts && (
         <div className="mx-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[15px] font-bold text-gray-900">Cảnh báo ngân sách</h3>
+            <h3 className="text-[15px] font-bold text-gray-900">{t('dashboard.budget_alerts')}</h3>
             <span className="text-[11px] bg-red-100 text-red-500 font-bold px-2 py-0.5 rounded-full">
               {alerts.length}
             </span>
@@ -286,15 +288,15 @@ function DashboardPage() {
       {showEmptyState && (
         <div className="flex flex-col items-center justify-center mt-20 px-8 text-center space-y-4">
           <div className="text-6xl">👋</div>
-          <h3 className="text-[18px] font-bold text-gray-900">Chào mừng!</h3>
+          <h3 className="text-[18px] font-bold text-gray-900">{t('dashboard.empty_title')}</h3>
           <p className="text-[13px] text-gray-500 leading-relaxed">
-            Bắt đầu bằng cách thêm ví và giao dịch đầu tiên.
+            {t('dashboard.empty_hint')}
           </p>
           <button
             onClick={() => navigate(ROUTES.TRANSACTIONS_NEW)}
             className="w-full h-[52px] rounded-[14px] bg-indigo-500 text-white font-semibold text-[15px] shadow-md shadow-indigo-300/40"
           >
-            Thêm giao dịch đầu tiên
+            {t('dashboard.add_first_transaction')}
           </button>
         </div>
       )}

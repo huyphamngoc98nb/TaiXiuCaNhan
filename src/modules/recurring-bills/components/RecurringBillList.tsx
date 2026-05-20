@@ -2,6 +2,8 @@ import React from 'react';
 import { RecurringBill } from '../domain/recurring-bill.model';
 import { Edit2, Trash2, ToggleLeft, ToggleRight, CalendarCheck } from 'lucide-react';
 import { classifyDueStatus, daysDiff } from '../services/classify-due-status';
+import { useLanguage } from '@/shared/context/LanguageContext';
+import { useCurrency } from '@/shared/context/CurrencyContext';
 
 interface Props {
   bills: RecurringBill[];
@@ -18,12 +20,15 @@ const STATUS_COLORS = {
 };
 
 export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, onToggleActive, onAdvanceDueDate }) => {
+  const { t } = useLanguage();
+  const { formatAmount } = useCurrency();
+
   if (bills.length === 0) {
     return (
       <div style={{ padding: '48px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
         <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📅</div>
-        <p style={{ fontWeight: '600', marginBottom: '4px' }}>No recurring bills yet</p>
-        <p style={{ fontSize: '0.85rem' }}>Add a bill to track monthly payments.</p>
+        <p style={{ fontWeight: '600', marginBottom: '4px' }}>{t('recurring_bills.empty_title')}</p>
+        <p style={{ fontSize: '0.85rem' }}>{t('recurring_bills.empty_hint')}</p>
       </div>
     );
   }
@@ -39,9 +44,9 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
         const isActive = bill.is_active === 1;
         const status = isActive ? classifyDueStatus(bill.next_due_date, bill.reminder_days, now) : null;
         const diff = daysDiff(bill.next_due_date, now);
-        const dueLabel = diff < 0 ? `${Math.abs(diff)}d overdue`
-          : diff === 0 ? 'Due today'
-          : `Due in ${diff}d`;
+        const dueLabel = diff < 0 ? `${Math.abs(diff)} ${t('recurring_bills.days_overdue')}`
+          : diff === 0 ? t('recurring_bills.due_today')
+          : `${t('recurring_bills.due_in')} ${diff}${t('recurring_bills.days_short')}`;
 
         const dotColor = status ? STATUS_COLORS[status].dot : '#94a3b8';
 
@@ -63,31 +68,31 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
                   </span>
                 </div>
                 <div style={{ marginLeft: '16px', marginTop: '4px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  ${bill.amount.toFixed(2)} · {isActive ? dueLabel : 'Paused'} · Remind {bill.reminder_days}d before
+                  {formatAmount(bill.amount)} · {isActive ? dueLabel : t('recurring_bills.paused')} · {t('recurring_bills.remind_before')} {bill.reminder_days}{t('recurring_bills.days_short')}
                 </div>
               </div>
 
               <div style={{ fontWeight: '700', fontSize: '1.1rem', color: '#e11d48', marginLeft: '12px', flexShrink: 0 }}>
-                ${bill.amount.toFixed(2)}
+                {formatAmount(bill.amount)}
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '6px', marginTop: '12px', justifyContent: 'flex-end' }}>
               {isActive && (status === 'due_today' || status === 'overdue') && (
-                <button onClick={() => onAdvanceDueDate(bill)} title="Mark as paid – advance to next cycle"
+                <button onClick={() => onAdvanceDueDate(bill)} title={t('recurring_bills.mark_paid_advance')}
                   style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '8px', border: '1px solid #d1fae5', background: 'rgba(16,185,129,0.08)', color: '#059669', fontSize: '0.78rem', fontWeight: '600', cursor: 'pointer' }}>
-                  <CalendarCheck size={14} /> Paid
+                  <CalendarCheck size={14} /> {t('recurring_bills.paid')}
                 </button>
               )}
-              <button onClick={() => onToggleActive(bill)} title={isActive ? 'Pause' : 'Resume'}
+              <button onClick={() => onToggleActive(bill)} title={isActive ? t('recurring_bills.pause') : t('recurring_bills.resume')}
                 style={{ display: 'flex', padding: '6px', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 {isActive ? <ToggleRight size={20} color="var(--primary)" /> : <ToggleLeft size={20} />}
               </button>
-              <button onClick={() => onEdit(bill)} title="Edit"
+              <button onClick={() => onEdit(bill)} title={t('common.edit')}
                 style={{ display: 'flex', padding: '6px', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <Edit2 size={16} />
               </button>
-              <button onClick={() => onDelete(bill)} title="Delete"
+              <button onClick={() => onDelete(bill)} title={t('common.delete')}
                 style={{ display: 'flex', padding: '6px', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', color: '#f43f5e' }}>
                 <Trash2 size={16} />
               </button>

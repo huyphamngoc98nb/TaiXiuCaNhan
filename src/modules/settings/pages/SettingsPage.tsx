@@ -34,15 +34,15 @@ export function SettingsPage() {
       iconBg: 'rgba(99,102,241,0.12)',
       iconColor: '#6366F1',
       label: t('wallets.title'),
-      desc: 'Quản lý ví tiền mặt, ngân hàng, thẻ tín dụng',
+      desc: t('settings.wallets_desc'),
       route: ROUTES.WALLETS,
     },
     {
       icon: <Tags size={20} />,
       iconBg: 'rgba(139,92,246,0.12)',
       iconColor: '#8B5CF6',
-      label: 'Danh mục',
-      desc: 'Quản lý danh mục thu nhập và chi tiêu',
+      label: t('categories.title'),
+      desc: t('settings.categories_desc'),
       route: ROUTES.CATEGORIES,
     },
     {
@@ -50,7 +50,7 @@ export function SettingsPage() {
       iconBg: 'rgba(16,185,129,0.12)',
       iconColor: '#10B981',
       label: t('navigation.reports'),
-      desc: 'Xem báo cáo thu chi theo thời gian',
+      desc: t('settings.reports_desc'),
       route: ROUTES.REPORTS,
     },
     {
@@ -58,7 +58,7 @@ export function SettingsPage() {
       iconBg: 'rgba(245,158,11,0.12)',
       iconColor: '#F59E0B',
       label: t('recurring_bills.title'),
-      desc: 'Quản lý và nhắc nhở hóa đơn hàng tháng',
+      desc: t('settings.recurring_bills_desc'),
       route: ROUTES.RECURRING_BILLS,
     },
     {
@@ -66,7 +66,7 @@ export function SettingsPage() {
       iconBg: 'rgba(14,165,233,0.12)',
       iconColor: '#0EA5E9',
       label: t('reports.export'),
-      desc: 'Xuất báo cáo sang file Excel, CSV',
+      desc: t('settings.export_desc'),
       route: ROUTES.EXPORT,
     },
     {
@@ -83,7 +83,7 @@ export function SettingsPage() {
     <div className="min-h-screen bg-[#F5F7FA]">
       <div className="px-4 pt-10 pb-2">
         <h1 className="text-[24px] font-bold text-gray-900">{t('settings.title')}</h1>
-        <p className="text-[12px] text-gray-500 mt-0.5">Tùy chỉnh ứng dụng</p>
+        <p className="text-[12px] text-gray-500 mt-0.5">{t('settings.app_customization')}</p>
       </div>
 
       <div className="px-4 pb-24 space-y-4 mt-4">

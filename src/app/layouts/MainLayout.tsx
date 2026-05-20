@@ -41,7 +41,7 @@ export function MainLayout() {
     let removeListener: (() => Promise<void>) | undefined;
 
     async function registerBackButton() {
-      const listener = await CapacitorApp.addListener('backButton', async ({ canGoBack }) => {
+      const listener = await CapacitorApp.addListener('backButton', async ({ canGoBack }: { canGoBack: boolean }) => {
         if (drawerOpenRef.current) {
           setDrawerOpen(false);
           return;

@@ -122,7 +122,7 @@ export function BudgetSettingsPage() {
                   : 'bg-white text-gray-600 border border-gray-200'
               }`}
             >
-              Tất cả
+              {t('budgets.all')}
             </button>
             <button
               onClick={() => setActiveTab('account_type')}
@@ -132,7 +132,7 @@ export function BudgetSettingsPage() {
                   : 'bg-white text-gray-600 border border-gray-200'
               }`}
             >
-              Theo loại tài khoản
+              {t('budgets.account_type_tab')}
               <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold">
                 {progressByScope.byAccountType.length}
               </span>

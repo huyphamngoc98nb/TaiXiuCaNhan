@@ -1,5 +1,6 @@
 import { Wallet, AccountType } from '../repositories/sqlite-wallet.repository';
 import { useCurrency } from '@/shared/context/CurrencyContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 interface Props {
   wallet: Wallet;
@@ -26,6 +27,15 @@ export const ACCOUNT_TYPE_ICONS: Record<AccountType, string> = {
 
 export function WalletCard({ wallet, onClick }: Props) {
   const { formatAmount } = useCurrency();
+  const { t } = useLanguage();
+  const accountTypeLabels: Record<AccountType, string> = {
+    cash: t('wallets.account_cash'),
+    bank: t('wallets.account_bank'),
+    credit_card: t('wallets.account_credit_card'),
+    e_wallet: t('wallets.account_e_wallet'),
+    investment: t('wallets.account_investment'),
+    other: t('wallets.account_other'),
+  };
 
   const defaultIcon = ACCOUNT_TYPE_ICONS[wallet.account_type] ?? '💼';
   const displayIcon = wallet.icon && wallet.icon.trim() !== '' ? wallet.icon : defaultIcon;
@@ -59,21 +69,21 @@ export function WalletCard({ wallet, onClick }: Props) {
               {wallet.name}
             </p>
             <p className="text-[12px] text-gray-500">
-              {ACCOUNT_TYPE_LABELS[wallet.account_type]}
+              {accountTypeLabels[wallet.account_type]}
             </p>
           </div>
         </div>
 
         {wallet.exclude_from_total === 1 && (
           <span className="text-[10px] font-semibold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-            Không tính tổng
+            {t('wallets.excluded_total_short')}
           </span>
         )}
       </div>
 
       {/* Balance */}
       <div className="mt-1">
-        <p className="text-[12px] text-gray-400 mb-0.5">Số dư</p>
+        <p className="text-[12px] text-gray-400 mb-0.5">{t('wallets.balance')}</p>
         <p
           className="text-[20px] font-bold tabular-nums"
           style={{ color: wallet.balance < 0 ? '#ef4444' : '#111827' }}
@@ -86,13 +96,13 @@ export function WalletCard({ wallet, onClick }: Props) {
       {wallet.account_type === 'credit_card' && wallet.credit_limit != null && (
         <div className="mt-3 pt-3 border-t border-gray-100 flex gap-4">
           <div>
-            <p className="text-[11px] text-gray-400">Hạn mức</p>
+            <p className="text-[11px] text-gray-400">{t('wallets.credit_limit')}</p>
             <p className="text-[13px] font-semibold text-gray-700 tabular-nums">
               {formatAmount(wallet.credit_limit)}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-gray-400">Khả dụng</p>
+            <p className="text-[11px] text-gray-400">{t('wallets.available')}</p>
             <p
               className="text-[13px] font-semibold tabular-nums"
               style={{ color: (availableCredit ?? 0) < 0 ? '#ef4444' : '#10b981' }}
@@ -102,9 +112,9 @@ export function WalletCard({ wallet, onClick }: Props) {
           </div>
           {wallet.due_day != null && (
             <div>
-              <p className="text-[11px] text-gray-400">Đến hạn</p>
+              <p className="text-[11px] text-gray-400">{t('wallets.due_day')}</p>
               <p className="text-[13px] font-semibold text-gray-700">
-                Ngày {wallet.due_day}
+                {t('wallets.due_on_day')} {wallet.due_day}
               </p>
             </div>
           )}

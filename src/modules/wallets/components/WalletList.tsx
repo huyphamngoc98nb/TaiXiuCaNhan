@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { Wallet, AccountType } from '../repositories/sqlite-wallet.repository';
-import { WalletCard, ACCOUNT_TYPE_LABELS } from './WalletCard';
+import { WalletCard } from './WalletCard';
 import { useCurrency } from '@/shared/context/CurrencyContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 interface Props {
   wallets: Wallet[];
@@ -25,6 +26,15 @@ export function WalletList({
   onAddClick,
 }: Props) {
   const { formatAmount } = useCurrency();
+  const { t } = useLanguage();
+  const accountTypeLabels: Record<AccountType, string> = {
+    cash: t('wallets.account_cash'),
+    bank: t('wallets.account_bank'),
+    credit_card: t('wallets.account_credit_card'),
+    e_wallet: t('wallets.account_e_wallet'),
+    investment: t('wallets.account_investment'),
+    other: t('wallets.account_other'),
+  };
 
   const visibleWallets = useMemo(
     () => wallets.filter((wallet) => Number(wallet.balance) !== 0),
@@ -75,12 +85,12 @@ export function WalletList({
           boxShadow: '0 4px 20px rgba(99,102,241,0.35)',
         }}
       >
-        <p className="text-[13px] text-indigo-100 mb-1">Tổng tài sản</p>
+        <p className="text-[13px] text-indigo-100 mb-1">{t('wallets.total_assets')}</p>
         <p className="text-[28px] font-bold text-white tabular-nums">
           {formatAmount(totalBalance)}
         </p>
         <p className="text-[11px] text-indigo-200 mt-1">
-          Không bao gồm ví đánh dấu loại trừ
+          {t('wallets.excluded_hint')}
         </p>
       </div>
 
@@ -89,16 +99,16 @@ export function WalletList({
         onClick={onAddClick}
         className="w-full h-12 rounded-2xl border-2 border-dashed border-indigo-300 text-indigo-500 text-[14px] font-semibold mb-5 hover:bg-indigo-50 transition-colors"
       >
-        + Thêm tài khoản
+        {t('wallets.add_account')}
       </button>
 
       {/* Grouped wallet cards */}
       {visibleWallets.length === 0 ? (
         <div className="text-center text-gray-400 mt-10">
           <p className="text-4xl mb-3">💼</p>
-          <p className="text-[15px]">Chưa có tài khoản nào</p>
+          <p className="text-[15px]">{t('wallets.no_accounts')}</p>
           <p className="text-[13px] text-gray-300 mt-1">
-            Nhấn "+ Thêm tài khoản" để bắt đầu
+            {t('wallets.no_accounts_hint')}
           </p>
         </div>
       ) : (
@@ -108,7 +118,7 @@ export function WalletList({
           return (
             <div key={type} className="mb-4">
               <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
-                {ACCOUNT_TYPE_LABELS[type]}
+                {accountTypeLabels[type]}
               </p>
               {group.map((w) => (
                 <WalletCard key={w.id} wallet={w} onClick={onWalletClick} />

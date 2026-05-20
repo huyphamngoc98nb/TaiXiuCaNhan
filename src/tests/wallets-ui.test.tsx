@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { WalletList } from '@/modules/wallets/components/WalletList';
 import { CurrencyProvider } from '@/shared/context/CurrencyContext';
+import { LanguageProvider } from '@/shared/context/LanguageContext';
 import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
 
 vi.mock('@capacitor/preferences', () => ({
@@ -34,26 +35,28 @@ function wallet(overrides: Partial<Wallet>): Wallet {
 
 function renderWalletList(wallets: Wallet[]) {
   return render(
-    <CurrencyProvider>
-      <WalletList
-        wallets={wallets}
-        totalBalance={100000}
-        loading={false}
-        error={null}
-      />
-    </CurrencyProvider>,
+    <LanguageProvider>
+      <CurrencyProvider>
+        <WalletList
+          wallets={wallets}
+          totalBalance={100000}
+          loading={false}
+          error={null}
+        />
+      </CurrencyProvider>
+    </LanguageProvider>,
   );
 }
 
 describe('WalletList', () => {
-  it('shows only wallets with a non-zero balance', () => {
+  it('shows only wallets with a non-zero balance', async () => {
     renderWalletList([
       wallet({ id: 'cash', name: 'Cash', balance: 100000 }),
       wallet({ id: 'zero', name: 'Zero balance', balance: 0 }),
       wallet({ id: 'string-zero', name: 'String zero balance', balance: '0' as unknown as number }),
     ]);
 
-    expect(screen.getByText('Cash')).toBeTruthy();
+    expect(await screen.findByText('Cash')).toBeTruthy();
     expect(screen.queryByText('Zero balance')).toBeNull();
     expect(screen.queryByText('String zero balance')).toBeNull();
   });
