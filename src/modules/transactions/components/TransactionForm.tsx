@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function TransactionForm({ existing, onSuccess }: Props) {
-  const { formData, setFormData, setReceiptBase64, save, error, submitting, options } =
+  const { formData, setFormData, setReceiptBase64, save, submitting, options } =
     useTransactionForm(existing);
   const { t } = useLanguage();
   const { currency } = useCurrency();
@@ -63,12 +63,6 @@ export function TransactionForm({ existing, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {error && (
-        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-[12px] text-[13px] text-red-600 font-medium">
-          {error}
-        </div>
-      )}
-
       <div className="flex bg-gray-100 p-1 rounded-[12px] h-[48px]">
         {transactionTypes.map(type => (
           <button

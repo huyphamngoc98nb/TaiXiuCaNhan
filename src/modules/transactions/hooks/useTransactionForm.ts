@@ -43,7 +43,6 @@ export function useTransactionForm(existing?: Transaction) {
   });
   
   const [receiptBase64, setReceiptBase64] = useState<string | undefined>();
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [options, setOptions] = useState<{ wallets: any[], categories: any[] }>({ wallets: [], categories: [] });
   const toast = useToast();
@@ -80,7 +79,6 @@ export function useTransactionForm(existing?: Transaction) {
 
   const save = async () => {
     setSubmitting(true);
-    setError(null);
     try {
       const payload = {
         ...formData,
@@ -99,7 +97,6 @@ export function useTransactionForm(existing?: Transaction) {
       return true;
     } catch (e: any) {
       const msg = e.errors ? e.errors.join(', ') : e.message;
-      setError(msg);
       toast.error(msg);
       return false;
     } finally {
@@ -107,5 +104,5 @@ export function useTransactionForm(existing?: Transaction) {
     }
   };
 
-  return { formData, setFormData, receiptBase64, setReceiptBase64, save, error, submitting, options };
+  return { formData, setFormData, receiptBase64, setReceiptBase64, save, submitting, options };
 }

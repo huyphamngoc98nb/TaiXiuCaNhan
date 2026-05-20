@@ -18,63 +18,68 @@ export class UpdateTransactionUseCase {
   async execute(id: string, input: UpdateTransactionInput, newReceiptBase64?: string) {
     validateUpdateTransaction(input);
 
-    // getById now only returns active records (deleted_at IS NULL)
     const oldTransaction = await this.repository.getById(id);
     if (!oldTransaction) throw new Error('Transaction not found');
 
-    const wallet = await this.walletRepository.getById(oldTransaction.wallet_id);
-    if (!wallet) throw new Error('Wallet not found');
-
     const finalType = input.type ?? oldTransaction.type;
     const finalAmount = input.amount ?? oldTransaction.amount;
+    const finalWalletId = input.wallet_id ?? oldTransaction.wallet_id;
     const finalToWalletId = finalType === 'transfer'
       ? input.to_wallet_id ?? oldTransaction.to_wallet_id
       : null;
+
+    const finalWallet = await this.walletRepository.getById(finalWalletId);
+    if (!finalWallet) throw new Error('Wallet not found');
 
     if (finalType === 'transfer') {
       if (!finalToWalletId) {
         throw new TransactionValidationError(['to_wallet_id is required for transfer transactions']);
       }
-      if (finalToWalletId === oldTransaction.wallet_id) {
+      if (finalToWalletId === finalWalletId) {
         throw new TransactionValidationError(['to_wallet_id must be different from wallet_id']);
       }
       const toWallet = await this.walletRepository.getById(finalToWalletId);
       if (!toWallet) throw new Error('Destination wallet not found');
     }
 
-    // BUG-4 fix: tính net delta rồi kiểm tra balance không âm trước khi write
-    // delta dương = nhận tiền vào wallet, âm = mất tiền khỏi wallet
-    let delta = 0;
+    const balanceDeltas = new Map<string, number>();
+    const addDelta = (walletId: string, delta: number) => {
+      balanceDeltas.set(walletId, (balanceDeltas.get(walletId) ?? 0) + delta);
+    };
 
-    // 1. Revert ảnh hưởng cũ
-    if (oldTransaction.type === 'income') delta -= oldTransaction.amount;
-    else if (oldTransaction.type === 'expense' || oldTransaction.type === 'transfer')
-      delta += oldTransaction.amount;
-
-    // 2. Áp dụng ảnh hưởng mới
-    if (finalType === 'income') delta += finalAmount;
-    else if (finalType === 'expense' || finalType === 'transfer') delta -= finalAmount;
-
-    // 3. Kiểm tra số dư sau khi áp delta: phải >= 0
-    const projectedBalance = wallet.balance + delta;
-    if (projectedBalance < 0) {
-      throw new TransactionValidationError([
-        `Insufficient balance: current ${wallet.balance}, required additional ${Math.abs(delta)}`,
-      ]);
+    // Revert the old source-wallet effect.
+    if (oldTransaction.type === 'income') {
+      addDelta(oldTransaction.wallet_id, -oldTransaction.amount);
+    } else if (oldTransaction.type === 'expense' || oldTransaction.type === 'transfer') {
+      addDelta(oldTransaction.wallet_id, oldTransaction.amount);
     }
 
-    const destinationDeltas = new Map<string, number>();
+    // Apply the new source-wallet effect. This may target a different wallet.
+    if (finalType === 'income') {
+      addDelta(finalWalletId, finalAmount);
+    } else if (finalType === 'expense' || finalType === 'transfer') {
+      addDelta(finalWalletId, -finalAmount);
+    }
+
+    // Revert/apply destination-wallet effects for transfers.
     if (oldTransaction.type === 'transfer' && oldTransaction.to_wallet_id) {
-      destinationDeltas.set(
-        oldTransaction.to_wallet_id,
-        (destinationDeltas.get(oldTransaction.to_wallet_id) ?? 0) - oldTransaction.amount,
-      );
+      addDelta(oldTransaction.to_wallet_id, -oldTransaction.amount);
     }
     if (finalType === 'transfer' && finalToWalletId) {
-      destinationDeltas.set(
-        finalToWalletId,
-        (destinationDeltas.get(finalToWalletId) ?? 0) + finalAmount,
-      );
+      addDelta(finalToWalletId, finalAmount);
+    }
+
+    for (const [walletId, walletDelta] of balanceDeltas) {
+      if (walletDelta === 0) continue;
+      const wallet = await this.walletRepository.getById(walletId);
+      if (!wallet) throw new Error('Wallet not found');
+
+      const projectedBalance = wallet.balance + walletDelta;
+      if (projectedBalance < 0) {
+        throw new TransactionValidationError([
+          `Insufficient balance: current ${wallet.balance}, required additional ${Math.abs(walletDelta)}`,
+        ]);
+      }
     }
 
     let newSavedReceiptPath: string | undefined;
@@ -83,9 +88,6 @@ export class UpdateTransactionUseCase {
     }
 
     const now = Date.now();
-
-    // Resolve the final receipt_path that will be stored
-    // Priority: new base64-saved path > explicit input.receipt_path > keep old
     const finalReceiptPath = newSavedReceiptPath ?? input.receipt_path;
 
     try {
@@ -98,9 +100,7 @@ export class UpdateTransactionUseCase {
         });
 
         if (result) {
-          // Atomic delta update — no race condition
-          await this.walletRepository.updateBalanceDelta(oldTransaction.wallet_id, delta, now);
-          for (const [walletId, walletDelta] of destinationDeltas) {
+          for (const [walletId, walletDelta] of balanceDeltas) {
             if (walletDelta !== 0) {
               await this.walletRepository.updateBalanceDelta(walletId, walletDelta, now);
             }
@@ -110,14 +110,12 @@ export class UpdateTransactionUseCase {
         return result;
       });
 
-      // Persist web store after successful commit
       const isWeb = Capacitor.getPlatform() === 'web';
       if (isWeb) {
         const { sqlite } = await import('@/core/db/sqlite/pragmas');
         await sqlite.saveToStore(DB_NAME);
       }
 
-      // Bug #6 fix: delete old receipt whenever receipt path actually changes
       if (
         updated &&
         finalReceiptPath &&
@@ -129,7 +127,6 @@ export class UpdateTransactionUseCase {
 
       return updated;
     } catch (error) {
-      // Cleanup new orphaned receipt on DB failure
       if (newSavedReceiptPath) {
         await ReceiptStorageService.deleteReceipt(newSavedReceiptPath);
       }

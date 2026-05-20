@@ -60,6 +60,7 @@ function DashboardPage() {
   const [showAmounts, setShowAmounts] = useState(() => {
     return localStorage.getItem('dashboard_show_amounts') !== 'false';
   });
+  const currentMonthBalance = totalBalance + totalIncome - totalExpense;
   const showEmptyState =
     !walletLoading &&
     wallets.length === 0 &&
@@ -108,7 +109,7 @@ function DashboardPage() {
           <div className="h-9 w-40 bg-white/20 rounded-lg animate-pulse mb-3" />
         ) : (
           <h2 className="text-white text-[32px] font-bold tracking-tight mb-3">
-            {displayAmount(totalBalance)}
+            {displayAmount(currentMonthBalance)}
           </h2>
         )}
 

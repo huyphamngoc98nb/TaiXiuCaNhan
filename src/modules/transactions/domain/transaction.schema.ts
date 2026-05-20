@@ -49,6 +49,10 @@ export function validateCreateTransaction(input: CreateTransactionInput) {
 export function validateUpdateTransaction(input: UpdateTransactionInput) {
   const errors: string[] = [];
 
+  if (input.wallet_id !== undefined && !input.wallet_id) {
+    errors.push('wallet_id is required');
+  }
+
   if (input.type && !['income', 'expense', 'transfer'].includes(input.type)) {
     errors.push('type must be income, expense, or transfer');
   }

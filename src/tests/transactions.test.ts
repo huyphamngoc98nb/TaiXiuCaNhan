@@ -195,6 +195,46 @@ describe('Transaction Module QA Tests', () => {
       expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledWith('old.jpg');
     });
 
+    it('UpdateTransactionUseCase validates expense edits against the new wallet when wallet changes', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        type: 'expense' as const,
+        amount: 5_400_000,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const newWallet = {
+        ...walletRow,
+        id: 'w-2',
+        name: 'Bank',
+        balance: 10_000_000,
+      } satisfies Wallet;
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: -5_400_000 },
+        newWallet,
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      await updateUseCase.execute('tx-1', { wallet_id: 'w-2', amount: 5_400_000 });
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 0 });
+      await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 4_600_000 });
+      await expect(transactionRepository.getById('tx-1')).resolves.toMatchObject({
+        wallet_id: 'w-2',
+        amount: 5_400_000,
+      });
+    });
+
     it('CreateTransactionUseCase moves balance between wallets for transfers', async () => {
       const transactionRepository = new InMemoryTransactionRepository();
       const walletRepository = new InMemoryWalletRepository([walletRow, destinationWallet]);

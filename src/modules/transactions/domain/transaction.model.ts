@@ -33,6 +33,7 @@ export interface CreateTransactionInput {
 }
 
 export interface UpdateTransactionInput {
+  wallet_id?: string;
   category_id?: string;
   type?: TransactionType;
   amount?: number;
