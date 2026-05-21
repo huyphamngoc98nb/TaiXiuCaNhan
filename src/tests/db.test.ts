@@ -146,6 +146,38 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.beginTransaction).toHaveBeenCalledTimes(19);
   });
 
+  it('marks category description migration done when the column already exists', async () => {
+    mockDb.query
+      .mockResolvedValueOnce({
+        values: Array.from({ length: 19 }, (_value, index) => ({ version: index + 1 })),
+      })
+      .mockResolvedValueOnce({ values: [{ name: 'id' }, { name: 'description' }] });
+
+    await runMigrations();
+
+    expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(categories)');
+    expectNoExecuteContaining('ALTER TABLE categories ADD COLUMN description TEXT');
+    expectMigrationMarked(20, '020_category_description');
+    expectMigrationMarked(21, '021_remove_unused_seed_wallets');
+  });
+
+  it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
+    mockDb.query
+      .mockResolvedValueOnce({ values: [{ version: 1 }, { version: 2 }] })
+      .mockResolvedValueOnce({ values: [{ name: 'id' }, { name: 'deleted_at' }] });
+    mockDb.execute.mockImplementation(async (sql: string) => {
+      if (sql.includes('ALTER TABLE transactions ADD COLUMN deleted_at')) {
+        throw new Error('Execute: duplicate column name: deleted_at');
+      }
+    });
+
+    await runMigrations();
+
+    expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
+    expectMigrationMarked(3, '003_transactions_soft_delete');
+    expectMigrationMarked(21, '021_remove_unused_seed_wallets');
+  });
+
   // -------------------------------------------------------------------------
   // Migration runner – failure / rollback
   // -------------------------------------------------------------------------

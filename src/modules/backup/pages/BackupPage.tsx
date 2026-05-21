@@ -120,7 +120,7 @@ export function BackupPage() {
           <div style={{ position: 'relative' }}>
             <input
               type="file"
-              accept=".json"
+              accept="application/json,text/json,.json,*/*"
               onChange={handleImport}
               disabled={loading}
               style={{

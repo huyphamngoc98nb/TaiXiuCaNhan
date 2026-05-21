@@ -48,6 +48,56 @@ const MIGRATIONS = [
   { version: 21, name: '021_remove_unused_seed_wallets',       sql: removeUnusedSeedWalletsSql },
 ];
 
+async function markMigrationDone(
+  db: Awaited<ReturnType<typeof getDbConnection>>,
+  version: number,
+  name: string,
+) {
+  await db.run(
+    'INSERT INTO migrations (version, name, executed_at) VALUES (?, ?, ?)',
+    [version, name, Date.now()],
+    false
+  );
+}
+
+async function columnExists(
+  db: Awaited<ReturnType<typeof getDbConnection>>,
+  tableName: string,
+  columnName: string,
+) {
+  const { values } = await db.query(`PRAGMA table_info(${tableName})`);
+  return (values ?? []).some((row: any) => row.name === columnName);
+}
+
+function parseAddColumnStatement(stmt: string): { tableName: string; columnName: string } | null {
+  const match = stmt.match(/^\s*ALTER\s+TABLE\s+["`[]?(\w+)["`\]]?\s+ADD\s+COLUMN\s+["`[]?(\w+)["`\]]?/i);
+  if (!match) return null;
+  return { tableName: match[1], columnName: match[2] };
+}
+
+async function executeMigrationStatement(
+  db: Awaited<ReturnType<typeof getDbConnection>>,
+  stmt: string,
+) {
+  try {
+    await db.execute(stmt, false);
+  } catch (err: any) {
+    const msg = String(err?.message ?? err);
+    const addColumn = parseAddColumnStatement(stmt);
+
+    if (
+      addColumn &&
+      msg.toLowerCase().includes('duplicate column') &&
+      await columnExists(db, addColumn.tableName, addColumn.columnName)
+    ) {
+      logger.warn(`Column ${addColumn.tableName}.${addColumn.columnName} already exists. Skipping migration statement.`);
+      return;
+    }
+
+    throw err;
+  }
+}
+
 /**
  * Split a SQL migration file into individual executable statements.
  * Splits on ';' for regular statements.
@@ -130,6 +180,15 @@ export async function runMigrations() {
   for (const migration of MIGRATIONS) {
     if (appliedVersions.has(migration.version)) continue;
 
+    if (
+      migration.version === 20 &&
+      await columnExists(db, 'categories', 'description')
+    ) {
+      logger.warn(`${migration.name} column already exists. Marking done.`);
+      await markMigrationDone(db, migration.version, migration.name);
+      continue;
+    }
+
     logger.info(`Running migration: ${migration.name}`);
     const stmts = splitSqlStatements(migration.sql);
     let transactionStarted = false;
@@ -144,13 +203,9 @@ export async function runMigrations() {
 
     try {
       for (const stmt of stmts) {
-        await db.execute(stmt, false);
+        await executeMigrationStatement(db, stmt);
       }
-      await db.run(
-        'INSERT INTO migrations (version, name, executed_at) VALUES (?, ?, ?)',
-        [migration.version, migration.name, Date.now()],
-        false
-      );
+      await markMigrationDone(db, migration.version, migration.name);
       if (transactionStarted) await db.commitTransaction();
       logger.info(`Migration ${migration.name} completed (${stmts.length} stmts).`);
     } catch (err: any) {
@@ -163,10 +218,7 @@ export async function runMigrations() {
       if (isWeb && isDupe) {
         logger.warn(`${migration.name} partially applied on web. Marking done.`);
         try {
-          await db.run(
-            'INSERT INTO migrations (version, name, executed_at) VALUES (?, ?, ?)',
-            [migration.version, migration.name, Date.now()], false
-          );
+          await markMigrationDone(db, migration.version, migration.name);
         } catch (ie) { logger.error(`Failed to mark ${migration.name} done.`, ie); }
       } else {
         logger.error(`Migration ${migration.name} failed.`, err);

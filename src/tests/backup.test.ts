@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { validateBackupPayload } from '@/modules/backup/services/validate-backup-payload';
+import { importBackupJson } from '@/modules/backup/services/import-backup-json';
 import { restoreDatabase } from '@/modules/backup/services/restore-database';
 import * as connection from '@/core/db/sqlite/connection';
 
@@ -35,6 +36,21 @@ describe('Backup Module Tests', () => {
     it('validates a correct payload', () => {
       const result = validateBackupPayload(validPayload);
       expect(result.isValid).toBe(true);
+    });
+
+    it('imports a JSON file object through the browser file API', async () => {
+      const file = new File([JSON.stringify(validPayload)], 'expense_tracker_backup.json', {
+        type: 'application/json',
+      });
+      const mockDb = {
+        run: vi.fn().mockResolvedValue({ changes: { changes: 0 } }),
+        executeSet: vi.fn().mockResolvedValue({ changes: { changes: 1 } }),
+      };
+      vi.mocked(connection.getDbConnection).mockResolvedValue(mockDb as any);
+
+      await importBackupJson(file);
+
+      expect(mockDb.executeSet).toHaveBeenCalled();
     });
 
     it('rejects payload with missing sections', () => {
