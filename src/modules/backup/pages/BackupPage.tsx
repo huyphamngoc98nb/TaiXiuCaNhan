@@ -6,6 +6,7 @@ import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { exportBackupJson } from '../services/export-backup-json';
 import { importBackupJson } from '../services/import-backup-json';
+import { saveBackupFile } from '../services/save-backup-file';
 
 export function BackupPage() {
   const navigate = useNavigate();
@@ -18,18 +19,12 @@ export function BackupPage() {
     setLoading(true);
     try {
       const payload = await exportBackupJson();
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `expense_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success(t('backup.export_success'));
+      const fileName = `expense_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+      const saved = await saveBackupFile(fileName, JSON.stringify(payload, null, 2));
+
+      if (saved) {
+        toast.success(t('backup.export_success'));
+      }
     } catch (error: any) {
       toast.error(`${t('backup.export_failed')} ${error.message}`);
     } finally {
