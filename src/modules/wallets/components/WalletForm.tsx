@@ -45,6 +45,7 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
   const [creditLimit, setCreditLimit] = useState(existing?.credit_limit?.toString() ?? '');
   const [statementDay, setStatDay] = useState(existing?.statement_day?.toString() ?? '');
   const [dueDay, setDueDay] = useState(existing?.due_day?.toString() ?? '');
+  const [annualFee, setAnnualFee] = useState(existing?.annual_fee?.toString() ?? '');
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -80,6 +81,7 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
         credit_limit: accountType === 'credit_card' ? (parseFloat(creditLimit) || null) : null,
         statement_day: accountType === 'credit_card' ? (parseInt(statementDay, 10) || null) : null,
         due_day: accountType === 'credit_card' ? (parseInt(dueDay, 10) || null) : null,
+        annual_fee: accountType === 'credit_card' ? (parseFloat(annualFee) || null) : null,
       };
 
       if (isEdit) {
@@ -87,7 +89,9 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
       } else {
         await onSave({
           ...common,
-          balance: parseFloat(balance) || 0,
+          balance: accountType === 'credit_card'
+            ? -(parseFloat(balance) || 0)
+            : parseFloat(balance) || 0,
         } as CreateWalletInput);
       }
       onClose();
@@ -180,7 +184,11 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
 
         {!isEdit && (
           <div className="space-y-1.5">
-            <p className="text-[13px] font-semibold text-gray-700">{t('wallets.initial_balance')}</p>
+            <p className="text-[13px] font-semibold text-gray-700">
+              {accountType === 'credit_card'
+                ? t('wallets.current_outstanding')
+                : t('wallets.initial_balance')}
+            </p>
             <CurrencyAmountInput
               currency={currency}
               value={balance}
@@ -232,6 +240,16 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
                   className="w-full h-[48px] bg-white border border-orange-200 rounded-[12px] px-4 text-[14px] text-gray-900 outline-none focus:border-orange-400"
                 />
               </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-semibold text-gray-700">{t('wallets.annual_fee')}</p>
+              <CurrencyAmountInput
+                currency={currency}
+                value={annualFee}
+                onValueChange={setAnnualFee}
+                className="h-[48px] bg-white border-orange-200 rounded-[12px] focus-within:border-orange-400"
+                inputClassName="text-[16px]"
+              />
             </div>
           </div>
         )}

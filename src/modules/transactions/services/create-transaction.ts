@@ -2,11 +2,20 @@ import { CreateTransactionInput } from '../domain/transaction.model';
 import { validateCreateTransaction, TransactionValidationError } from '../domain/transaction.schema';
 import { ITransactionRepository } from '../repositories/transaction.repository';
 import { appRepositories } from '@/core/repositories/app-repositories';
-import { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
+import { IWalletRepository, Wallet } from '@/modules/wallets/repositories/wallet.repository';
 import { DB_NAME } from '@/core/db/sqlite/connection';
 import { sqliteTransactionRunner, TransactionRunner } from '@/core/db/transaction-runner';
 import { ReceiptStorageService } from '@/core/files/receipt-storage';
 import { Capacitor } from '@capacitor/core';
+
+function getSourceDelta(type: CreateTransactionInput['type'], amount: number): number {
+  if (type === 'income') return amount;
+  return -amount;
+}
+
+function validateActiveWallet(wallet: Wallet, message: string) {
+  if (wallet.is_active !== 1) throw new Error(message);
+}
 
 export class CreateTransactionUseCase {
   constructor(
@@ -20,21 +29,40 @@ export class CreateTransactionUseCase {
 
     const wallet = await this.walletRepository.getById(input.wallet_id);
     if (!wallet) throw new Error('Wallet not found');
+    validateActiveWallet(wallet, 'Wallet is inactive');
 
+    let toWallet: Wallet | null = null;
     if (input.type === 'transfer') {
-      const toWallet = input.to_wallet_id
+      toWallet = input.to_wallet_id
         ? await this.walletRepository.getById(input.to_wallet_id)
         : null;
       if (!toWallet) throw new Error('Destination wallet not found');
+      validateActiveWallet(toWallet, 'Destination wallet is inactive');
+      if (toWallet.account_type === 'credit_card' && wallet.account_type === 'credit_card') {
+        throw new TransactionValidationError([
+          'Credit card payment source must be a cash, bank, or e-wallet account',
+        ]);
+      }
     }
 
-    // BUG-3 fix: kiểm tra số dư cho cả expense và transfer (cả 2 đều trừ số dư source wallet)
+    const isCreditCardExpense =
+      input.type === 'expense' && wallet.account_type === 'credit_card';
     if (
       (input.type === 'expense' || input.type === 'transfer') &&
+      !isCreditCardExpense &&
       wallet.balance < input.amount
     ) {
       throw new TransactionValidationError([
         `Insufficient balance: available ${wallet.balance}, required ${input.amount}`,
+      ]);
+    }
+    if (
+      isCreditCardExpense &&
+      wallet.credit_limit != null &&
+      wallet.credit_limit + wallet.balance < input.amount
+    ) {
+      throw new TransactionValidationError([
+        `Insufficient credit: available ${wallet.credit_limit + wallet.balance}, required ${input.amount}`,
       ]);
     }
 
@@ -45,14 +73,7 @@ export class CreateTransactionUseCase {
 
     const now = Date.now();
     const id = crypto.randomUUID();
-
-    // Calculate balance delta atomically
-    // - income:   +amount từ wallet
-    // - expense:  -amount từ wallet
-    // - transfer: -amount từ source wallet (to_wallet sẽ được xử lý riêng)
-    let delta = 0;
-    if (input.type === 'income') delta = input.amount;
-    else if (input.type === 'expense' || input.type === 'transfer') delta = -input.amount;
+    const sourceDelta = getSourceDelta(input.type, input.amount);
 
     try {
       const transaction = await this.runTransaction(async () => {
@@ -64,10 +85,10 @@ export class CreateTransactionUseCase {
           updated_at: now,
         });
 
-        // Atomic delta update — no race condition
-        await this.walletRepository.updateBalanceDelta(input.wallet_id, delta, now);
+        // For credit cards, negative balance is outstanding liability.
+        // Purchases increase it; transfers into the card reduce it.
+        await this.walletRepository.updateBalanceDelta(input.wallet_id, sourceDelta, now);
 
-        // Nếu là transfer, cộng số dư vào to_wallet
         if (input.type === 'transfer' && input.to_wallet_id) {
           await this.walletRepository.updateBalanceDelta(input.to_wallet_id, input.amount, now);
         }
@@ -75,16 +96,13 @@ export class CreateTransactionUseCase {
         return tx;
       });
 
-      // Persist web store after successful commit
-      const isWeb = Capacitor.getPlatform() === 'web';
-      if (isWeb) {
+      if (Capacitor.getPlatform() === 'web') {
         const { sqlite } = await import('@/core/db/sqlite/pragmas');
         await sqlite.saveToStore(DB_NAME);
       }
 
       return transaction;
     } catch (error) {
-      // Cleanup orphaned receipt file on DB failure
       if (savedReceiptPath) {
         await ReceiptStorageService.deleteReceipt(savedReceiptPath);
       }

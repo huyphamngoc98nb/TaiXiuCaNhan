@@ -25,10 +25,47 @@ export class InMemoryWalletRepository implements IWalletRepository {
       .map((wallet) => ({ ...wallet }));
   }
 
+  async getActiveCreditCards(): Promise<Wallet[]> {
+    return Array.from(this.wallets.values())
+      .filter((wallet) => wallet.is_active === 1 && wallet.account_type === 'credit_card')
+      .sort((a, b) => a.sort_order - b.sort_order || a.created_at - b.created_at)
+      .map((wallet) => ({ ...wallet }));
+  }
+
   async getTotalBalance(): Promise<number> {
     return Array.from(this.wallets.values())
       .filter((wallet) => wallet.exclude_from_total === 0)
       .reduce((total, wallet) => total + wallet.balance, 0);
+  }
+
+  async getCreditCardOutstandingBalance(walletId: string): Promise<number> {
+    const wallet = this.wallets.get(walletId);
+    if (!wallet || wallet.account_type !== 'credit_card') return 0;
+    return Math.max(0, -wallet.balance);
+  }
+
+  async getCreditCardStatementBalance(): Promise<number> {
+    return 0;
+  }
+
+  async getCreditCardAvailableCredit(walletId: string): Promise<number | null> {
+    const wallet = this.wallets.get(walletId);
+    if (!wallet || wallet.account_type !== 'credit_card' || wallet.credit_limit == null) {
+      return null;
+    }
+    return wallet.credit_limit + Math.min(wallet.balance, 0);
+  }
+
+  async listUpcomingCreditCardDuePayments(): Promise<
+    {
+      wallet_id: string;
+      wallet_name: string;
+      due_at: number;
+      outstanding_balance: number;
+      statement_balance: number;
+    }[]
+  > {
+    return [];
   }
 
   async create(id: string, data: CreateWalletInput, now: number): Promise<void> {
@@ -46,6 +83,7 @@ export class InMemoryWalletRepository implements IWalletRepository {
       credit_limit: data.credit_limit ?? null,
       statement_day: data.statement_day ?? null,
       due_day: data.due_day ?? null,
+      annual_fee: data.annual_fee ?? null,
       created_at: now,
       updated_at: now,
     });

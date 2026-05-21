@@ -7,5 +7,10 @@ export function hasWalletValue(wallet: Pick<Wallet, 'balance' | 'is_active'>): b
 export function filterWalletsWithValue<T extends Pick<Wallet, 'balance' | 'is_active'>>(
   wallets: T[]
 ): T[] {
-  return wallets.filter(hasWalletValue);
+  return wallets.filter((wallet) => {
+    if ('account_type' in wallet && wallet.account_type === 'credit_card') {
+      return wallet.is_active === 1;
+    }
+    return hasWalletValue(wallet);
+  });
 }

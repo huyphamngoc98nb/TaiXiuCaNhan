@@ -1,6 +1,7 @@
 import { Wallet, AccountType } from '../repositories/sqlite-wallet.repository';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { getCreditCardStatementPeriod } from '../services/credit-card.service';
 
 interface Props {
   wallet: Wallet;
@@ -43,8 +44,12 @@ export function WalletCard({ wallet, onClick }: Props) {
 
   const availableCredit =
     wallet.account_type === 'credit_card' && wallet.credit_limit != null
-      ? wallet.credit_limit + wallet.balance   // balance is negative when owed
+      ? wallet.credit_limit + Math.min(wallet.balance, 0)
       : null;
+  const outstandingBalance =
+    wallet.account_type === 'credit_card' ? Math.max(0, -wallet.balance) : null;
+  const statementPeriod =
+    wallet.account_type === 'credit_card' ? getCreditCardStatementPeriod(wallet) : null;
 
   return (
     <div
@@ -83,12 +88,16 @@ export function WalletCard({ wallet, onClick }: Props) {
 
       {/* Balance */}
       <div className="mt-1">
-        <p className="text-[12px] text-gray-400 mb-0.5">{t('wallets.balance')}</p>
+        <p className="text-[12px] text-gray-400 mb-0.5">
+          {wallet.account_type === 'credit_card'
+            ? t('wallets.outstanding_balance')
+            : t('wallets.balance')}
+        </p>
         <p
           className="text-[20px] font-bold tabular-nums"
           style={{ color: wallet.balance < 0 ? '#ef4444' : '#111827' }}
         >
-          {formatAmount(wallet.balance)}
+          {formatAmount(outstandingBalance ?? wallet.balance)}
         </p>
       </div>
 
@@ -110,11 +119,11 @@ export function WalletCard({ wallet, onClick }: Props) {
               {formatAmount(availableCredit ?? 0)}
             </p>
           </div>
-          {wallet.due_day != null && (
+          {statementPeriod && (
             <div>
-              <p className="text-[11px] text-gray-400">{t('wallets.due_day')}</p>
+              <p className="text-[11px] text-gray-400">{t('wallets.next_due_date')}</p>
               <p className="text-[13px] font-semibold text-gray-700">
-                {t('wallets.due_on_day')} {wallet.due_day}
+                {new Date(statementPeriod.dueAt).toLocaleDateString()}
               </p>
             </div>
           )}

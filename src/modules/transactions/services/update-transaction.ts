@@ -30,7 +30,9 @@ export class UpdateTransactionUseCase {
 
     const finalWallet = await this.walletRepository.getById(finalWalletId);
     if (!finalWallet) throw new Error('Wallet not found');
+    if (finalWallet.is_active !== 1) throw new Error('Wallet is inactive');
 
+    let finalToWallet = null;
     if (finalType === 'transfer') {
       if (!finalToWalletId) {
         throw new TransactionValidationError(['to_wallet_id is required for transfer transactions']);
@@ -38,8 +40,17 @@ export class UpdateTransactionUseCase {
       if (finalToWalletId === finalWalletId) {
         throw new TransactionValidationError(['to_wallet_id must be different from wallet_id']);
       }
-      const toWallet = await this.walletRepository.getById(finalToWalletId);
-      if (!toWallet) throw new Error('Destination wallet not found');
+      finalToWallet = await this.walletRepository.getById(finalToWalletId);
+      if (!finalToWallet) throw new Error('Destination wallet not found');
+      if (finalToWallet.is_active !== 1) throw new Error('Destination wallet is inactive');
+      if (
+        finalToWallet.account_type === 'credit_card' &&
+        finalWallet.account_type === 'credit_card'
+      ) {
+        throw new TransactionValidationError([
+          'Credit card payment source must be a cash, bank, or e-wallet account',
+        ]);
+      }
     }
 
     const balanceDeltas = new Map<string, number>();
@@ -75,6 +86,15 @@ export class UpdateTransactionUseCase {
       if (!wallet) throw new Error('Wallet not found');
 
       const projectedBalance = wallet.balance + walletDelta;
+      if (wallet.account_type === 'credit_card') {
+        const projectedOutstanding = Math.max(0, -projectedBalance);
+        if (wallet.credit_limit != null && projectedOutstanding > wallet.credit_limit) {
+          throw new TransactionValidationError([
+            `Insufficient credit: available ${wallet.credit_limit + wallet.balance}, required additional ${Math.abs(walletDelta)}`,
+          ]);
+        }
+        continue;
+      }
       if (projectedBalance < 0) {
         throw new TransactionValidationError([
           `Insufficient balance: current ${wallet.balance}, required additional ${Math.abs(walletDelta)}`,

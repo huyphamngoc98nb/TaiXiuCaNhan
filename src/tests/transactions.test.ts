@@ -3,6 +3,7 @@ import { SQLiteTransactionRepository } from '../modules/transactions/repositorie
 import { CreateTransactionUseCase } from '../modules/transactions/services/create-transaction';
 import { UpdateTransactionUseCase } from '../modules/transactions/services/update-transaction';
 import { DeleteTransactionUseCase } from '../modules/transactions/services/delete-transaction';
+import { CreateCreditCardPaymentUseCase } from '../modules/transactions/services/create-credit-card-payment';
 import { TransactionValidationError } from '../modules/transactions/domain/transaction.schema';
 import { ReceiptStorageService } from '../core/files/receipt-storage';
 import * as connection from '../core/db/sqlite/connection';
@@ -68,6 +69,7 @@ describe('Transaction Module QA Tests', () => {
     credit_limit: null,
     statement_day: null,
     due_day: null,
+    annual_fee: null,
     created_at: 0,
     updated_at: 0,
   } satisfies Wallet;
@@ -131,6 +133,16 @@ describe('Transaction Module QA Tests', () => {
       id: 'w-2',
       name: 'Bank',
       balance: 1_000,
+    } satisfies Wallet;
+    const creditCardWallet = {
+      ...walletRow,
+      id: 'cc-1',
+      name: 'Visa',
+      balance: 0,
+      account_type: 'credit_card' as const,
+      credit_limit: 5_000,
+      statement_day: 15,
+      due_day: 5,
     } satisfies Wallet;
 
     it('CreateTransactionUseCase validates input before executing', async () => {
@@ -254,6 +266,106 @@ describe('Transaction Module QA Tests', () => {
       await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 7_500 });
       await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 3_500 });
       expect(tx.to_wallet_id).toBe('w-2');
+    });
+
+    it('creating an expense on a cash wallet reduces cash balance', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      await createUseCase.execute(validCreateInput);
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 9_950 });
+    });
+
+    it('creating an expense on a credit card increases liability without touching cash', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow, creditCardWallet]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      await createUseCase.execute({
+        ...validCreateInput,
+        wallet_id: 'cc-1',
+        amount: 250,
+      });
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+      await expect(walletRepository.getById('cc-1')).resolves.toMatchObject({ balance: -250 });
+    });
+
+    it('credit card payment reduces source balance and card liability as a transfer', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([
+        walletRow,
+        { ...creditCardWallet, balance: -1_200 },
+      ]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const paymentUseCase = new CreateCreditCardPaymentUseCase(createUseCase, walletRepository);
+
+      const tx = await paymentUseCase.execute({
+        from_wallet_id: 'w-1',
+        credit_card_wallet_id: 'cc-1',
+        category_id: 'cat-transfer',
+        amount: 700,
+        transaction_date: Date.now(),
+      });
+
+      expect(tx.type).toBe('transfer');
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 9_300 });
+      await expect(walletRepository.getById('cc-1')).resolves.toMatchObject({ balance: -500 });
+    });
+
+    it('blocks credit card payments when the source wallet has insufficient balance', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 100 },
+        { ...creditCardWallet, balance: -1_200 },
+      ]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const paymentUseCase = new CreateCreditCardPaymentUseCase(createUseCase, walletRepository);
+
+      await expect(paymentUseCase.execute({
+        from_wallet_id: 'w-1',
+        credit_card_wallet_id: 'cc-1',
+        category_id: 'cat-transfer',
+        amount: 700,
+        transaction_date: Date.now(),
+      })).rejects.toThrow(TransactionValidationError);
+    });
+
+    it('rejects card-payment flow when target wallet is not a credit card', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow, destinationWallet]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const paymentUseCase = new CreateCreditCardPaymentUseCase(createUseCase, walletRepository);
+
+      await expect(paymentUseCase.execute({
+        from_wallet_id: 'w-1',
+        credit_card_wallet_id: 'w-2',
+        category_id: 'cat-transfer',
+        amount: 100,
+        transaction_date: Date.now(),
+      })).rejects.toThrow(TransactionValidationError);
     });
 
     it('DeleteTransactionUseCase reverts both wallets for transfers', async () => {

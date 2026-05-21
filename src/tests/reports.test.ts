@@ -114,6 +114,15 @@ describe('SQLiteReportRepository', () => {
       expect.arrayContaining([range.startDate, range.endDate])
     );
   });
+
+  it('getCashflowSummary excludes transfers such as credit card payments', async () => {
+    mockDb.query.mockResolvedValue({ values: [{ totalIncome: 0, totalExpense: 0 }] });
+    await repo.getCashflowSummary(range);
+
+    const [sql] = mockDb.query.mock.calls[0];
+    expect(sql).toContain("type IN ('income', 'expense')");
+    expect(sql).not.toContain("'transfer'");
+  });
 });
 
 describe('buildDateRange', () => {

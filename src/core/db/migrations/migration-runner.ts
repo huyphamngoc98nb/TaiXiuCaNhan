@@ -23,6 +23,7 @@ import budgetSingleActiveCategorySql from './018_budget_single_active_category.s
 import transferCategorySql from './019_transfer_category.sql?raw';
 import categoryDescriptionSql from './020_category_description.sql?raw';
 import removeUnusedSeedWalletsSql from './021_remove_unused_seed_wallets.sql?raw';
+import creditCardStatementsSql from './022_credit_card_statements.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -46,6 +47,7 @@ const MIGRATIONS = [
   { version: 19, name: '019_transfer_category',              sql: transferCategorySql },
   { version: 20, name: '020_category_description',            sql: categoryDescriptionSql },
   { version: 21, name: '021_remove_unused_seed_wallets',       sql: removeUnusedSeedWalletsSql },
+  { version: 22, name: '022_credit_card_statements',           sql: creditCardStatementsSql },
 ];
 
 async function markMigrationDone(

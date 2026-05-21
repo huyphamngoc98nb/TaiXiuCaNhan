@@ -3,6 +3,7 @@ import { CreateTransactionUseCase } from '@/modules/transactions/services/create
 import { UpdateTransactionUseCase } from '@/modules/transactions/services/update-transaction';
 import { ListTransactionsUseCase } from '@/modules/transactions/services/list-transactions';
 import { DeleteTransactionUseCase } from '@/modules/transactions/services/delete-transaction';
+import { CreateCreditCardPaymentUseCase } from '@/modules/transactions/services/create-credit-card-payment';
 
 // Singleton instance
 export const transactionRepository = appRepositories.transaction;
@@ -19,5 +20,9 @@ export const updateTransactionUseCase = new UpdateTransactionUseCase(
 export const listTransactionsUseCase = new ListTransactionsUseCase(transactionRepository);
 export const deleteTransactionUseCase = new DeleteTransactionUseCase(
   transactionRepository,
+  appRepositories.wallet
+);
+export const createCreditCardPaymentUseCase = new CreateCreditCardPaymentUseCase(
+  createTransactionUseCase,
   appRepositories.wallet
 );

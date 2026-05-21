@@ -88,6 +88,8 @@ describe('Database SQLite Tests', () => {
     expectExecuteContaining('CREATE INDEX IF NOT EXISTS idx_budgets_active_scope');
     expectExecuteContaining("DELETE FROM wallets");
     expectExecuteContaining("'wallet-cash-1', 'wallet-bank-1', 'wallet-ewallet-1', 'wallet-cc-1'");
+    expectExecuteContaining('CREATE TABLE IF NOT EXISTS credit_card_statements');
+    expectExecuteContaining('ALTER TABLE wallets ADD COLUMN annual_fee');
 
     // Each migration is bookmarked with an INSERT
     expectMigrationMarked(1, '001_init');
@@ -101,13 +103,14 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(19, '019_transfer_category');
     expectMigrationMarked(20, '020_category_description');
     expectMigrationMarked(21, '021_remove_unused_seed_wallets');
+    expectMigrationMarked(22, '022_credit_card_statements');
   });
 
   it('wraps each migration in a transaction (beginTransaction / commitTransaction)', async () => {
     await runMigrations();
 
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(21);
-    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(21);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(22);
+    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(22);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
   });
 
@@ -116,7 +119,7 @@ describe('Database SQLite Tests', () => {
   // -------------------------------------------------------------------------
   it('skips all migrations when DB already at latest version', async () => {
     mockDb.query.mockResolvedValueOnce({
-      values: Array.from({ length: 21 }, (_value, index) => ({ version: index + 1 })),
+      values: Array.from({ length: 22 }, (_value, index) => ({ version: index + 1 })),
     });
 
     await runMigrations();
@@ -143,7 +146,7 @@ describe('Database SQLite Tests', () => {
     // Migrations 3 & 4 should run
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN deleted_at');
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN receipt_path');
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(19);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(20);
   });
 
   it('marks category description migration done when the column already exists', async () => {
@@ -159,6 +162,7 @@ describe('Database SQLite Tests', () => {
     expectNoExecuteContaining('ALTER TABLE categories ADD COLUMN description TEXT');
     expectMigrationMarked(20, '020_category_description');
     expectMigrationMarked(21, '021_remove_unused_seed_wallets');
+    expectMigrationMarked(22, '022_credit_card_statements');
   });
 
   it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
@@ -175,7 +179,7 @@ describe('Database SQLite Tests', () => {
 
     expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
     expectMigrationMarked(3, '003_transactions_soft_delete');
-    expectMigrationMarked(21, '021_remove_unused_seed_wallets');
+    expectMigrationMarked(22, '022_credit_card_statements');
   });
 
   // -------------------------------------------------------------------------

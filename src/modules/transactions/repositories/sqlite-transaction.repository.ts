@@ -27,6 +27,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     const sets: string[] = [];
     const values: unknown[] = [];
 
+    if (data.wallet_id !== undefined) { sets.push('wallet_id = ?'); values.push(data.wallet_id); }
     if (data.category_id !== undefined) { sets.push('category_id = ?'); values.push(data.category_id); }
     if (data.type !== undefined) { sets.push('type = ?'); values.push(data.type); }
     if (data.amount !== undefined) { sets.push('amount = ?'); values.push(data.amount); }

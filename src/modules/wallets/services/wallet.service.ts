@@ -14,6 +14,30 @@ function generateId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
 
+function assertCreditCardSettings(data: CreateWalletInput | UpdateWalletInput): void {
+  if (data.account_type !== 'credit_card') return;
+  if (data.credit_limit !== undefined && (!data.credit_limit || data.credit_limit <= 0)) {
+    throw new Error('Credit limit must be greater than 0 for credit card accounts.');
+  }
+  if (
+    data.statement_day !== undefined &&
+    data.statement_day !== null &&
+    (data.statement_day < 1 || data.statement_day > 31)
+  ) {
+    throw new Error('Statement day must be between 1 and 31.');
+  }
+  if (
+    data.due_day !== undefined &&
+    data.due_day !== null &&
+    (data.due_day < 1 || data.due_day > 31)
+  ) {
+    throw new Error('Due day must be between 1 and 31.');
+  }
+  if (data.annual_fee !== undefined && data.annual_fee !== null && data.annual_fee < 0) {
+    throw new Error('Annual fee cannot be negative.');
+  }
+}
+
 async function persistWeb(): Promise<void> {
   if (Capacitor.getPlatform() === 'web') {
     const { sqlite } = await import('@/core/db/sqlite/pragmas');
@@ -29,11 +53,10 @@ export class WalletService {
     if (!data.name.trim()) {
       throw new Error('Wallet name is required.');
     }
-    if (data.account_type === 'credit_card') {
-      if (!data.credit_limit || data.credit_limit <= 0) {
-        throw new Error('Credit limit must be greater than 0 for credit card accounts.');
-      }
+    if (data.account_type === 'credit_card' && (!data.credit_limit || data.credit_limit <= 0)) {
+      throw new Error('Credit limit must be greater than 0 for credit card accounts.');
     }
+    assertCreditCardSettings(data);
 
     const id = generateId();
     const now = Date.now();
@@ -48,11 +71,14 @@ export class WalletService {
     if (data.name !== undefined && !data.name.trim()) {
       throw new Error('Wallet name is required.');
     }
-    if (data.account_type === 'credit_card') {
-      if (data.credit_limit !== undefined && data.credit_limit !== null && data.credit_limit <= 0) {
-        throw new Error('Credit limit must be greater than 0 for credit card accounts.');
-      }
+    const existing = await this.repo.getById(id);
+    if (!existing) throw new Error('Wallet not found.');
+    const nextAccountType = data.account_type ?? existing.account_type;
+    const nextCreditLimit = data.credit_limit ?? existing.credit_limit;
+    if (nextAccountType === 'credit_card' && (!nextCreditLimit || nextCreditLimit <= 0)) {
+      throw new Error('Credit limit must be greater than 0 for credit card accounts.');
     }
+    assertCreditCardSettings(data);
 
     const now = Date.now();
     await this.repo.update(id, data, now);

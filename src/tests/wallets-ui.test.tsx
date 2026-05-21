@@ -27,6 +27,7 @@ function wallet(overrides: Partial<Wallet>): Wallet {
     credit_limit: null,
     statement_day: null,
     due_day: null,
+    annual_fee: null,
     created_at: 0,
     updated_at: 0,
     ...overrides,

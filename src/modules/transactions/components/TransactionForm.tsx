@@ -47,6 +47,11 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
   const selectableDestinationWallets = options.wallets.filter(
     (wallet: { id: string }) => wallet.id !== formData.wallet_id,
   );
+  const selectedDestinationWallet = options.wallets.find(
+    (wallet: { id: string }) => wallet.id === formData.to_wallet_id,
+  );
+  const isCreditCardPayment =
+    formData.type === 'transfer' && selectedDestinationWallet?.account_type === 'credit_card';
 
   const amountAccentClass =
     formData.type === 'expense'
@@ -95,7 +100,9 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
 
       {options.wallets.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">{t('transactions.wallet')}</p>
+          <p className="text-[13px] font-semibold text-gray-700">
+            {isCreditCardPayment ? t('transactions.payment_from_wallet') : t('transactions.wallet')}
+          </p>
           <DropdownList
             value={formData.wallet_id || ''}
             onChange={value => {
@@ -120,7 +127,11 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
 
       {formData.type === 'transfer' && options.wallets.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">{t('transactions.destination_wallet')}</p>
+          <p className="text-[13px] font-semibold text-gray-700">
+            {isCreditCardPayment
+              ? t('transactions.payment_to_card')
+              : t('transactions.destination_wallet')}
+          </p>
           <DropdownList
             value={formData.to_wallet_id || ''}
             onChange={value => setFormData({ ...formData, to_wallet_id: value, category_id: TRANSFER_CATEGORY_ID })}
@@ -128,9 +139,11 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
             placeholder={t('transactions.select_destination_wallet')}
             options={[
               { value: '', label: t('transactions.select_destination_wallet'), disabled: true },
-              ...selectableDestinationWallets.map((wallet: { id: string; name: string }) => ({
+              ...selectableDestinationWallets.map((wallet: { id: string; name: string; account_type?: string }) => ({
                 value: wallet.id,
-                label: wallet.name,
+                label: wallet.account_type === 'credit_card'
+                  ? `${wallet.name} (${t('transactions.credit_card_payment')})`
+                  : wallet.name,
               })),
             ]}
           />

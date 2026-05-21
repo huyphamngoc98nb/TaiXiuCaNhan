@@ -14,6 +14,7 @@ export interface Wallet {
   credit_limit: number | null;
   statement_day: number | null;
   due_day: number | null;
+  annual_fee: number | null;
   created_at: number;
   updated_at: number;
 }
@@ -30,6 +31,7 @@ export interface CreateWalletInput {
   credit_limit?: number | null;
   statement_day?: number | null;
   due_day?: number | null;
+  annual_fee?: number | null;
 }
 
 export interface UpdateWalletInput {
@@ -44,6 +46,7 @@ export interface UpdateWalletInput {
   credit_limit?: number | null;
   statement_day?: number | null;
   due_day?: number | null;
+  annual_fee?: number | null;
 }
 
 export interface WalletReferenceCounts {
@@ -55,7 +58,20 @@ export interface WalletReferenceCounts {
 export interface IWalletRepository {
   getById(id: string): Promise<Wallet | null>;
   getAllActive(): Promise<Wallet[]>;
+  getActiveCreditCards(): Promise<Wallet[]>;
   getTotalBalance(): Promise<number>;
+  getCreditCardOutstandingBalance(walletId: string): Promise<number>;
+  getCreditCardStatementBalance(walletId: string, startDate: number, endDate: number): Promise<number>;
+  getCreditCardAvailableCredit(walletId: string): Promise<number | null>;
+  listUpcomingCreditCardDuePayments(asOf: number, throughDate: number): Promise<
+    {
+      wallet_id: string;
+      wallet_name: string;
+      due_at: number;
+      outstanding_balance: number;
+      statement_balance: number;
+    }[]
+  >;
   create(id: string, data: CreateWalletInput, now: number): Promise<void>;
   update(id: string, data: UpdateWalletInput, now: number): Promise<void>;
   getReferenceCounts(id: string): Promise<WalletReferenceCounts>;

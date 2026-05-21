@@ -15,7 +15,7 @@ const WALLET_COLUMNS = `
   id, name, currency, balance,
   account_type, icon, color, sort_order,
   is_active, exclude_from_total,
-  credit_limit, statement_day, due_day,
+  credit_limit, statement_day, due_day, annual_fee,
   created_at, updated_at
 `;
 
@@ -37,6 +37,7 @@ function mapWallet(row: Record<string, unknown>): Wallet {
     credit_limit: creditLimit != null && Number.isFinite(creditLimit) ? creditLimit : null,
     statement_day: (row.statement_day as number | null) ?? null,
     due_day: (row.due_day as number | null) ?? null,
+    annual_fee: row.annual_fee == null ? null : Number(row.annual_fee),
     created_at: row.created_at as number,
     updated_at: row.updated_at as number,
   };
@@ -65,6 +66,18 @@ export class SQLiteWalletRepository implements IWalletRepository {
     return (values ?? []).map((row) => mapWallet(row as Record<string, unknown>));
   }
 
+  async getActiveCreditCards(): Promise<Wallet[]> {
+    const db = await getDbConnection();
+    const { values } = await db.query(
+      `SELECT ${WALLET_COLUMNS}
+       FROM wallets
+       WHERE is_active = 1
+         AND account_type = 'credit_card'
+       ORDER BY sort_order ASC, created_at ASC`
+    );
+    return (values ?? []).map((row) => mapWallet(row as Record<string, unknown>));
+  }
+
   /**
    * Sum of balances for wallets that are not excluded from total.
    * Credit-card wallets hold negative balances (amount owed), so they correctly
@@ -80,6 +93,95 @@ export class SQLiteWalletRepository implements IWalletRepository {
     return (values?.[0]?.total as number) ?? 0;
   }
 
+  async getCreditCardOutstandingBalance(walletId: string): Promise<number> {
+    const db = await getDbConnection();
+    const { values } = await db.query(
+      `SELECT CASE
+          WHEN balance < 0 THEN -balance
+          ELSE 0
+        END AS outstanding_balance
+       FROM wallets
+       WHERE id = ?
+         AND account_type = 'credit_card'
+       LIMIT 1`,
+      [walletId]
+    );
+    return Number(values?.[0]?.outstanding_balance ?? 0);
+  }
+
+  async getCreditCardStatementBalance(
+    walletId: string,
+    startDate: number,
+    endDate: number
+  ): Promise<number> {
+    const db = await getDbConnection();
+    const { values } = await db.query(
+      `SELECT COALESCE(SUM(amount), 0) AS statement_balance
+       FROM transactions
+       WHERE wallet_id = ?
+         AND type = 'expense'
+         AND deleted_at IS NULL
+         AND transaction_date >= ?
+         AND transaction_date <= ?`,
+      [walletId, startDate, endDate]
+    );
+    return Number(values?.[0]?.statement_balance ?? 0);
+  }
+
+  async getCreditCardAvailableCredit(walletId: string): Promise<number | null> {
+    const db = await getDbConnection();
+    const { values } = await db.query(
+      `SELECT credit_limit, balance
+       FROM wallets
+       WHERE id = ?
+         AND account_type = 'credit_card'
+       LIMIT 1`,
+      [walletId]
+    );
+    const row = values?.[0] as Record<string, unknown> | undefined;
+    if (!row || row.credit_limit == null) return null;
+    return Number(row.credit_limit) + Math.min(Number(row.balance ?? 0), 0);
+  }
+
+  async listUpcomingCreditCardDuePayments(
+    asOf: number,
+    throughDate: number
+  ): Promise<
+    {
+      wallet_id: string;
+      wallet_name: string;
+      due_at: number;
+      outstanding_balance: number;
+      statement_balance: number;
+    }[]
+  > {
+    const db = await getDbConnection();
+    const { values } = await db.query(
+      `SELECT
+         s.wallet_id,
+         w.name AS wallet_name,
+         s.due_at,
+         CASE WHEN w.balance < 0 THEN -w.balance ELSE 0 END AS outstanding_balance,
+         s.statement_balance
+       FROM credit_card_statements s
+       JOIN wallets w ON w.id = s.wallet_id
+       WHERE w.is_active = 1
+         AND w.account_type = 'credit_card'
+         AND s.due_at >= ?
+         AND s.due_at <= ?
+         AND s.status IN ('open', 'closed', 'partial', 'overdue')
+       ORDER BY s.due_at ASC`,
+      [asOf, throughDate]
+    );
+    return (values ?? []).map((row: Record<string, unknown>) => ({
+      wallet_id: row.wallet_id as string,
+      wallet_name: row.wallet_name as string,
+      due_at: Number(row.due_at),
+      outstanding_balance: Number(row.outstanding_balance ?? 0),
+      statement_balance: Number(row.statement_balance ?? 0),
+    }));
+  }
+
   async create(
     id: string,
     data: CreateWalletInput,
@@ -90,9 +192,9 @@ export class SQLiteWalletRepository implements IWalletRepository {
       `INSERT INTO wallets
          (id, name, currency, balance, account_type, icon, color,
           sort_order, is_active, exclude_from_total,
-          credit_limit, statement_day, due_day,
+          credit_limit, statement_day, due_day, annual_fee,
           created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         data.name,
@@ -106,6 +208,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
         data.credit_limit ?? null,
         data.statement_day ?? null,
         data.due_day ?? null,
+        data.annual_fee ?? null,
         now,
         now,
       ],
@@ -129,6 +232,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     if (data.credit_limit  !== undefined) { sets.push('credit_limit = ?');         values.push(data.credit_limit); }
     if (data.statement_day !== undefined) { sets.push('statement_day = ?');        values.push(data.statement_day); }
     if (data.due_day       !== undefined) { sets.push('due_day = ?');              values.push(data.due_day); }
+    if (data.annual_fee    !== undefined) { sets.push('annual_fee = ?');           values.push(data.annual_fee); }
 
     if (sets.length === 0) return;
 

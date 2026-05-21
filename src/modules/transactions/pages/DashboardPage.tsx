@@ -56,6 +56,8 @@ function DashboardPage() {
   } = useRecurringReminders();
   const {
     totalBalance,
+    totalAssets,
+    totalCreditCardLiability,
     wallets,
     loading: walletLoading,
   } = useWalletBalances();
@@ -137,6 +139,18 @@ function DashboardPage() {
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="rounded-[14px] bg-white/15 px-3 py-2">
+            <p className="text-white/60 text-[10px] font-medium">{t('dashboard.total_assets')}</p>
+            <p className="text-white text-[13px] font-bold">
+              {walletLoading ? '...' : displayAmount(totalAssets)}
+            </p>
+          </div>
+          <div className="rounded-[14px] bg-white/15 px-3 py-2">
+            <p className="text-white/60 text-[10px] font-medium">{t('dashboard.credit_card_liability')}</p>
+            <p className="text-white text-[13px] font-bold">
+              {walletLoading ? '...' : displayAmount(totalCreditCardLiability, '-')}
+            </p>
+          </div>
           <div className="rounded-[14px] bg-white/15 px-3 py-2">
             <p className="text-white/60 text-[10px] font-medium">{t('dashboard.income_this_month')}</p>
             <p className="text-white text-[13px] font-bold">
