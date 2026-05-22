@@ -55,7 +55,7 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
       cursor: 'pointer',
     }}
     >
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', minWidth: 0 }}>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', minWidth: 0, flex: '1 1 auto' }}>
         <div style={{
           width: '32px',
           height: '32px',
@@ -81,7 +81,7 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
             />
           )}
         </div>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: '1 1 auto' }}>
           <div style={{ fontWeight: '600', fontSize: '0.9rem', lineHeight: '1.25', color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {title}
           </div>
@@ -90,7 +90,7 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
             {transaction.note && (
               <>
                 <span style={{ opacity: 0.5 }}>-</span>
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{transaction.note}</span>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{transaction.note}</span>
               </>
             )}
             {transaction.receipt_path && <><span style={{ opacity: 0.5 }}>-</span> <Paperclip size={12} style={{ flexShrink: 0 }} /></>}

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FocusEvent, FormEvent, useState } from 'react';
 import { Transaction, TransactionType } from '../domain/transaction.model';
 import { TRANSFER_CATEGORY_ID, useTransactionForm } from '../hooks/useTransactionForm';
 import { ReceiptCapture } from './ReceiptCapture';
@@ -27,6 +27,17 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
     e.preventDefault();
     const ok = await save();
     if (ok) onSuccess();
+  };
+
+  const handleNoteFocus = (e: FocusEvent<HTMLInputElement>) => {
+    const target = e.currentTarget;
+    const scrollNoteIntoView = () => {
+      target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+
+    scrollNoteIntoView();
+    window.setTimeout(scrollNoteIntoView, 180);
+    window.setTimeout(scrollNoteIntoView, 360);
   };
 
   const transactionTypes: { id: TransactionType; label: string; active: string }[] = [
@@ -180,13 +191,15 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
 
       <div className="space-y-1.5">
         <p className="text-[13px] font-semibold text-gray-700">{t('form.label_note')}</p>
-        <textarea
+        <input
+          type="text"
           value={formData.note || ''}
           onChange={e => setFormData({ ...formData, note: e.target.value })}
-          rows={2}
+          onFocus={handleNoteFocus}
           placeholder={t('form.note_placeholder')}
-          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[12px]
-            text-[14px] text-gray-800 resize-none focus:outline-none focus:border-indigo-400"
+          enterKeyHint="done"
+          className="w-full h-[46px] px-4 bg-gray-50 border border-gray-200 rounded-[12px]
+            text-[14px] text-gray-800 focus:outline-none focus:border-indigo-400"
         />
       </div>
 
