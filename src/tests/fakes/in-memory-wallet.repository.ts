@@ -96,6 +96,7 @@ export class InMemoryWalletRepository implements IWalletRepository {
     this.wallets.set(id, {
       ...wallet,
       ...data,
+      balance: data.balance ?? wallet.balance,
       updated_at: now,
     });
   }

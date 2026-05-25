@@ -1,5 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { Delete } from 'lucide-react';
+// REDESIGN: PIN screen - see prompt 20260522
+import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { Delete, Fingerprint, LockKeyhole } from 'lucide-react';
 import { authService } from '@/core/auth/auth.service';
 import { useLanguage } from '@/shared/context/LanguageContext';
 
@@ -8,8 +9,8 @@ interface AppUnlockProps {
 }
 
 const PIN_MIN_LENGTH = 6;
-const PIN_MAX_LENGTH = 12;
 const PIN_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const PIN_ERROR_MESSAGE = 'Mã PIN không đúng. Thử lại.';
 type UnlockMode = 'loading' | 'setup' | 'confirm' | 'unlock';
 
 export function AppUnlock({ onUnlocked }: AppUnlockProps) {
@@ -18,40 +19,84 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
   const [firstPin, setFirstPin] = useState('');
   const [mode, setMode] = useState<UnlockMode>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [shakeDots, setShakeDots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const canSubmit = pin.trim().length >= PIN_MIN_LENGTH;
 
-  function appendPinDigit(digit: string) {
+  const appendPinDigit = useCallback((digit: string) => {
     if (submitting) return;
     setError(null);
     setPin((currentPin) => {
-      if (currentPin.length >= PIN_MAX_LENGTH) return currentPin;
+      if (currentPin.length >= PIN_MIN_LENGTH) return currentPin;
       return `${currentPin}${digit}`;
     });
-  }
+  }, [submitting]);
 
-  function removePinDigit() {
+  const removePinDigit = useCallback(() => {
     if (submitting) return;
     setError(null);
     setPin((currentPin) => currentPin.slice(0, -1));
-  }
+  }, [submitting]);
+
+  const showPinError = useCallback((message: string) => {
+    setPin('');
+    setError(message);
+    setShakeDots(true);
+    window.setTimeout(() => setShakeDots(false), 240);
+  }, []);
+
+  const unlockFromBiometrics = useCallback(async () => {
+    try {
+      const result = await authService.unlockWithBiometrics();
+      if (result?.authenticated) {
+        setPin('');
+        onUnlocked();
+      }
+    } catch {
+      // PIN remains available when biometric auth is canceled, unavailable, or not set up.
+    }
+  }, [onUnlocked]);
+
+  const submitPin = useCallback(async () => {
+    if (!canSubmit || submitting || mode === 'loading') return;
+
+    if (mode === 'setup') {
+      setFirstPin(pin);
+      setPin('');
+      setError(null);
+      setMode('confirm');
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      if (mode === 'confirm') {
+        if (pin !== firstPin) {
+          setFirstPin('');
+          setMode('setup');
+          showPinError(t('app_lock.confirm_mismatch'));
+          return;
+        }
+        await authService.setupPin(pin);
+      } else {
+        await authService.unlockWithPin(pin);
+      }
+      setPin('');
+      setFirstPin('');
+      onUnlocked();
+    } catch {
+      showPinError(PIN_ERROR_MESSAGE);
+    } finally {
+      setSubmitting(false);
+    }
+  }, [canSubmit, firstPin, mode, onUnlocked, pin, showPinError, submitting, t]);
 
   useEffect(() => {
     let isMounted = true;
     let removeListener: (() => Promise<void>) | undefined;
-
-    async function unlockFromBiometrics() {
-      try {
-        const result = await authService.unlockWithBiometrics();
-        if (isMounted && result?.authenticated) {
-          setPin('');
-          onUnlocked();
-        }
-      } catch {
-        // PIN remains available when biometric auth is canceled, unavailable, or not set up.
-      }
-    }
 
     async function subscribeToBiometrics() {
       let hasSecret = false;
@@ -71,7 +116,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
       try {
         const listenerHandle = await authService.onBiometricResult((event) => {
           if (event.result) {
-            void unlockFromBiometrics();
+            if (isMounted) void unlockFromBiometrics();
           } else if (isMounted && event.message) {
             setError(event.message);
           }
@@ -82,7 +127,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
         removeListener = undefined;
       }
 
-      await unlockFromBiometrics();
+      if (isMounted) await unlockFromBiometrics();
     }
 
     void subscribeToBiometrics();
@@ -93,7 +138,23 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
         void removeListener();
       }
     };
-  }, [onUnlocked]);
+  }, [unlockFromBiometrics]);
+
+  useEffect(() => {
+    if (!error) return;
+
+    const dismissTimer = window.setTimeout(() => {
+      setError(null);
+    }, 2000);
+
+    return () => window.clearTimeout(dismissTimer);
+  }, [error]);
+
+  useEffect(() => {
+    if (pin.length === PIN_MIN_LENGTH) {
+      void submitPin();
+    }
+  }, [pin, submitPin]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -111,145 +172,152 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [submitting]);
+  }, [appendPinDigit, removePinDigit]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
-
-    if (mode === 'setup') {
-      setFirstPin(pin);
-      setPin('');
-      setError(null);
-      setMode('confirm');
-      return;
-    }
-
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      if (mode === 'confirm') {
-        if (pin !== firstPin) {
-          setPin('');
-          setFirstPin('');
-          setMode('setup');
-          setError(t('app_lock.confirm_mismatch'));
-          return;
-        }
-        await authService.setupPin(pin);
-      } else {
-        await authService.unlockWithPin(pin);
-      }
-      setPin('');
-      setFirstPin('');
-      onUnlocked();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('app_lock.unlock_error'));
-    } finally {
-      setSubmitting(false);
-    }
+    await submitPin();
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA] px-5 py-8">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-[18px] bg-white p-5 shadow-sm border border-gray-100"
-      >
-        <h1 className="text-[22px] font-bold text-gray-900 mb-2">
-          {mode === 'setup' ? t('app_lock.setup_title') : mode === 'confirm' ? t('app_lock.confirm_title') : t('app_lock.unlock_title')}
-        </h1>
-        <p className="text-[13px] text-gray-500 mb-6">
-          {mode === 'setup'
-            ? t('app_lock.setup_desc')
-            : mode === 'confirm'
-              ? t('app_lock.confirm_desc')
-              : t('app_lock.unlock_desc')}
-        </p>
-
-        <input
-          id="app-pin"
-          value={pin}
-          onChange={(event) => {
-            const nextPin = event.target.value.replace(/\D/g, '').slice(0, PIN_MAX_LENGTH);
-            setPin(nextPin);
-          }}
-          type="password"
-          inputMode="numeric"
-          autoComplete={mode === 'unlock' ? 'current-password' : 'new-password'}
-          minLength={PIN_MIN_LENGTH}
-          className="sr-only"
-          disabled={submitting}
-          aria-label={mode === 'unlock' ? 'PIN' : t('app_lock.new_pin')}
-        />
-
-        <div className="flex h-12 items-center justify-center gap-3" aria-hidden="true">
-          {Array.from({ length: PIN_MIN_LENGTH }).map((_, index) => (
-            <span
-              key={index}
-              className={`h-3 w-3 rounded-full border transition-colors ${
-                pin.length > index ? 'border-indigo-500 bg-indigo-500' : 'border-gray-300 bg-white'
-              }`}
-            />
-          ))}
-        </div>
-
-        {error && (
-          <p className="mt-3 min-h-4 text-center text-[12px] text-red-500">{error}</p>
-        )}
-
-        <div className="mt-5 grid grid-cols-3 gap-3">
-          {PIN_KEYS.slice(0, 9).map((digit) => (
-            <button
-              key={digit}
-              type="button"
-              onClick={() => appendPinDigit(digit)}
-              disabled={submitting}
-              className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-gray-50 text-[24px] font-semibold text-gray-900 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-50"
-              aria-label={`${t('app_lock.enter_digit')} ${digit}`}
-            >
-              {digit}
-            </button>
-          ))}
-
-          <div aria-hidden="true" />
-
-          <button
-            type="button"
-            onClick={() => appendPinDigit('0')}
-            disabled={submitting}
-            className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-gray-50 text-[24px] font-semibold text-gray-900 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-50"
-            aria-label={`${t('app_lock.enter_digit')} 0`}
-          >
-            0
-          </button>
-
-          <button
-            type="button"
-            onClick={removePinDigit}
-            disabled={submitting || pin.length === 0}
-            className="flex aspect-square items-center justify-center rounded-[8px] border border-gray-200 bg-white text-gray-700 transition active:scale-[0.98] active:bg-gray-100 disabled:opacity-40"
-            aria-label={t('app_lock.delete_digit')}
-          >
-            <Delete size={24} strokeWidth={2.2} />
-          </button>
-        </div>
-
-        <button
-          type="submit"
-          disabled={submitting || !canSubmit || mode === 'loading'}
-          className="mt-5 h-12 w-full rounded-[8px] bg-indigo-500 text-[14px] font-semibold text-white disabled:opacity-50"
+    <div className="flex min-h-screen flex-col bg-[#F5F5F7] text-[#1A1B22]">
+      <style>
+        {`
+          @keyframes pin-dot-row-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(9px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(4px); }
+          }
+        `}
+      </style>
+      <main className="flex flex-1 items-center justify-center px-6 pb-6 pt-2">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-[390px]"
         >
-          {submitting
-            ? t('app_lock.verifying')
-            : mode === 'setup'
-              ? t('app_lock.continue')
-              : mode === 'confirm'
-                ? t('app_lock.setup_title')
-                : t('app_lock.unlock_title')}
-        </button>
-      </form>
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
+              <LockKeyhole
+                size={30}
+                strokeWidth={2.35}
+                className="text-[#4A6FA5]"
+                aria-hidden="true"
+              />
+            </div>
+
+            <h1 className="text-center text-[24px] font-extrabold leading-[30px] text-[#1A1B22]">
+              {mode === 'setup' ? t('app_lock.setup_title') : mode === 'confirm' ? t('app_lock.confirm_title') : t('app_lock.unlock_title')}
+            </h1>
+            <p className="mt-2 max-w-[260px] text-center text-[14px] font-normal leading-5 text-[#454653]">
+              {mode === 'setup'
+                ? t('app_lock.setup_desc')
+                : mode === 'confirm'
+                  ? t('app_lock.confirm_desc')
+                  : t('app_lock.unlock_desc')}
+            </p>
+          </div>
+
+          <input
+            id="app-pin"
+            value={pin}
+            onChange={(event) => {
+              const nextPin = event.target.value.replace(/\D/g, '').slice(0, PIN_MIN_LENGTH);
+              setPin(nextPin);
+            }}
+            type="password"
+            inputMode="numeric"
+            autoComplete={mode === 'unlock' ? 'current-password' : 'new-password'}
+            minLength={PIN_MIN_LENGTH}
+            className="sr-only"
+            disabled={submitting}
+            aria-label={mode === 'unlock' ? 'PIN' : t('app_lock.new_pin')}
+          />
+
+          <div className="mt-9 flex min-h-[76px] flex-col items-center justify-center">
+            <div
+              className="flex h-10 items-center justify-center gap-4"
+              style={shakeDots ? { animation: 'pin-dot-row-shake 220ms ease-in-out' } : undefined}
+              aria-hidden="true"
+            >
+              {Array.from({ length: PIN_MIN_LENGTH }).map((_, index) => {
+                const isFilled = pin.length > index;
+
+                return (
+                  <span
+                    key={index}
+                    className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D9DEE7]"
+                  >
+                    <span
+                      className={`h-4 w-4 rounded-full bg-[#4A6FA5] transition-all duration-200 ease-out ${
+                        isFilled ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                      }`}
+                    />
+                  </span>
+                );
+              })}
+            </div>
+
+            <p
+              className={`mt-2 min-h-5 text-center text-[13px] font-medium text-[#BA1A1A] transition-opacity duration-150 ${
+                error ? 'opacity-100' : 'opacity-0'
+              }`}
+              role={error ? 'alert' : undefined}
+            >
+              {error ?? PIN_ERROR_MESSAGE}
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-3 gap-3">
+            {PIN_KEYS.slice(0, 9).map((digit) => (
+              <button
+                key={digit}
+                type="button"
+                onClick={() => appendPinDigit(digit)}
+                disabled={submitting}
+                className="flex aspect-square items-center justify-center rounded-2xl bg-white text-[26px] font-semibold text-[#1A1B22] shadow-[0_8px_24px_rgba(17,24,39,0.08)] transition duration-100 active:scale-[0.92] active:bg-[#EEF2F7] disabled:opacity-50"
+                aria-label={`${t('app_lock.enter_digit')} ${digit}`}
+              >
+                {digit}
+              </button>
+            ))}
+
+            <div aria-hidden="true" />
+
+            <button
+              type="button"
+              onClick={() => appendPinDigit('0')}
+              disabled={submitting}
+              className="flex aspect-square items-center justify-center rounded-2xl bg-white text-[26px] font-semibold text-[#1A1B22] shadow-[0_8px_24px_rgba(17,24,39,0.08)] transition duration-100 active:scale-[0.92] active:bg-[#EEF2F7] disabled:opacity-50"
+              aria-label={`${t('app_lock.enter_digit')} 0`}
+            >
+              0
+            </button>
+
+            <button
+              type="button"
+              onClick={removePinDigit}
+              disabled={submitting || pin.length === 0}
+              className="flex aspect-square items-center justify-center rounded-2xl bg-white text-[#454653] shadow-[0_8px_24px_rgba(17,24,39,0.08)] transition duration-100 active:scale-[0.92] active:bg-[#EEF2F7] disabled:opacity-40"
+              aria-label="Xóa"
+            >
+              <Delete size={26} strokeWidth={2.2} />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => void unlockFromBiometrics()}
+            disabled={submitting || mode !== 'unlock'}
+            className="mx-auto mt-7 flex h-11 items-center justify-center gap-2 rounded-2xl px-4 text-[14px] font-semibold text-[#4A6FA5] transition duration-100 active:scale-[0.92] active:bg-[#E8EEF6] disabled:opacity-50"
+            aria-label="Dùng sinh trắc học"
+          >
+            <Fingerprint size={21} strokeWidth={2.2} />
+            <span>Dùng sinh trắc học</span>
+          </button>
+        </form>
+      </main>
     </div>
   );
 }

@@ -38,7 +38,11 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
   const [name, setName] = useState(existing?.name ?? '');
   const [accountType, setAccountType] = useState<AccountType>(existing?.account_type ?? 'cash');
   const [currency, setCurrency] = useState<CurrencyCode>((existing?.currency as CurrencyCode) ?? 'VND');
-  const [balance, setBalance] = useState(existing?.balance?.toString() ?? '0');
+  const [balance, setBalance] = useState(
+    existing?.account_type === 'credit_card'
+      ? Math.max(0, -Number(existing.balance || 0)).toString()
+      : existing?.balance?.toString() ?? '0'
+  );
   const [icon, setIcon] = useState(existing?.icon ?? '');
   const [color, setColor] = useState(existing?.color ?? '#6366F1');
   const [excludeFromTotal, setExclude] = useState<boolean>((existing?.exclude_from_total ?? 0) === 1);
@@ -85,7 +89,12 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
       };
 
       if (isEdit) {
-        await onSave(common as UpdateWalletInput);
+        await onSave({
+          ...common,
+          balance: accountType === 'credit_card'
+            ? -(parseFloat(balance) || 0)
+            : parseFloat(balance) || 0,
+        } as UpdateWalletInput);
       } else {
         await onSave({
           ...common,
@@ -182,21 +191,19 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
           />
         </div>
 
-        {!isEdit && (
-          <div className="space-y-1.5">
-            <p className="text-[13px] font-semibold text-gray-700">
-              {accountType === 'credit_card'
-                ? t('wallets.current_outstanding')
-                : t('wallets.initial_balance')}
-            </p>
-            <CurrencyAmountInput
-              currency={currency}
-              value={balance}
-              onValueChange={setBalance}
-              className="border-gray-200"
-            />
-          </div>
-        )}
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">
+            {accountType === 'credit_card'
+              ? t('wallets.current_outstanding')
+              : t('wallets.initial_balance')}
+          </p>
+          <CurrencyAmountInput
+            currency={currency}
+            value={balance}
+            onValueChange={setBalance}
+            className="border-gray-200"
+          />
+        </div>
 
         {accountType === 'credit_card' && (
           <div className="space-y-4 bg-orange-50 rounded-[14px] p-4">

@@ -117,6 +117,31 @@ describe('AppBootstrap app lock', () => {
     expect(screen.getByText('PIN screen')).toBeTruthy();
   });
 
+  it('reinitializes the database after unlocking from native background lock', async () => {
+    renderBootstrap();
+
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'PIN screen' }));
+    });
+    await flushPromises();
+
+    expect(sqliteConnectionMock.initDatabaseConnection).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Unlocked app')).toBeTruthy();
+
+    act(() => {
+      appListeners.appStateChange?.({ isActive: false });
+    });
+    expect(screen.getByText('PIN screen')).toBeTruthy();
+
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'PIN screen' }));
+    });
+    await flushPromises();
+
+    expect(sqliteConnectionMock.initDatabaseConnection).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('Unlocked app')).toBeTruthy();
+  });
+
   it('locks after mobile inactivity and resets the timer on activity', async () => {
     renderBootstrap();
 

@@ -40,6 +40,7 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
   const lockApp = useCallback(() => {
     if (!authService.requiresUnlock() || !isUnlockedRef.current) return;
     clearIdleTimer();
+    setIsReady(false);
     setIsUnlocked(false);
   }, [clearIdleTimer]);
 
@@ -59,27 +60,24 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
     let isMounted = true;
 
     async function initializeApp() {
-      if (globalInitPromise) {
-        await globalInitPromise;
-        if (isMounted) setIsReady(true);
-        return;
-      }
-
-      globalInitPromise = (async () => {
-        logger.info('AppBootstrap: Starting database initialization...');
-        await initDatabaseConnection();
-        await runMigrations();
-        await seedDefaultData();
-        logger.info('AppBootstrap: Initialization complete.');
-      })();
-
       try {
+        if (!globalInitPromise) {
+          globalInitPromise = (async () => {
+            logger.info('AppBootstrap: Starting database initialization...');
+            await initDatabaseConnection();
+            await runMigrations();
+            await seedDefaultData();
+            logger.info('AppBootstrap: Initialization complete.');
+          })();
+        }
+
         await globalInitPromise;
         if (isMounted) setIsReady(true);
       } catch (err) {
         logger.error('AppBootstrap: Initialization failed', err);
         if (isMounted) setError(err instanceof Error ? err : new Error(String(err)));
-        globalInitPromise = null; // Allow retry
+      } finally {
+        globalInitPromise = null; // Allow foreground unlock to re-check native SQLite state.
       }
     }
 

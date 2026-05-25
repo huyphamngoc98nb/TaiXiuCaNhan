@@ -37,6 +37,7 @@ export interface CreateWalletInput {
 export interface UpdateWalletInput {
   name?: string;
   currency?: string;
+  balance?: number;
   account_type?: AccountType;
   icon?: string | null;
   color?: string | null;

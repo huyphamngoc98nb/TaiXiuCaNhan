@@ -223,6 +223,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
 
     if (data.name          !== undefined) { sets.push('name = ?');               values.push(data.name); }
     if (data.currency      !== undefined) { sets.push('currency = ?');            values.push(data.currency); }
+    if (data.balance       !== undefined) { sets.push('balance = ?');             values.push(data.balance); }
     if (data.account_type  !== undefined) { sets.push('account_type = ?');        values.push(data.account_type); }
     if (data.icon          !== undefined) { sets.push('icon = ?');                values.push(data.icon); }
     if (data.color         !== undefined) { sets.push('color = ?');               values.push(data.color); }

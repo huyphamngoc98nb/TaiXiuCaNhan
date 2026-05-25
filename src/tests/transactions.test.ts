@@ -4,6 +4,7 @@ import { CreateTransactionUseCase } from '../modules/transactions/services/creat
 import { UpdateTransactionUseCase } from '../modules/transactions/services/update-transaction';
 import { DeleteTransactionUseCase } from '../modules/transactions/services/delete-transaction';
 import { CreateCreditCardPaymentUseCase } from '../modules/transactions/services/create-credit-card-payment';
+import { WalletService } from '@/modules/wallets/services/wallet.service';
 import { TransactionValidationError } from '../modules/transactions/domain/transaction.schema';
 import { ReceiptStorageService } from '../core/files/receipt-storage';
 import * as connection from '../core/db/sqlite/connection';
@@ -395,6 +396,30 @@ describe('Transaction Module QA Tests', () => {
 
       await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
       await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 1_000 });
+    });
+
+    it('WalletService records a balance adjustment transaction when editing wallet balance', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow]);
+      const walletService = new WalletService(
+        walletRepository,
+        transactionRepository,
+        immediateTransactionRunner
+      );
+      mockDb.query.mockResolvedValueOnce({ values: [] });
+
+      await walletService.updateWallet('w-1', { balance: 7_500 });
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 7_500 });
+      const transactions = await transactionRepository.list({ wallet_id: 'w-1' });
+      expect(transactions).toHaveLength(1);
+      expect(transactions[0]).toMatchObject({
+        wallet_id: 'w-1',
+        category_id: 'cat-balance-adjustment-expense',
+        type: 'expense',
+        amount: 2_500,
+        note: 'Cân bằng số dư',
+      });
     });
   });
 });

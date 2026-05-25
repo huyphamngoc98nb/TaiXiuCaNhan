@@ -5,31 +5,78 @@ import { logger } from '@/core/telemetry/logger';
 
 export const DB_NAME = 'taixiu_db';
 
+let webStoreInitPromise: Promise<void> | null = null;
+
+async function ensureWebStoreInitialized() {
+  if (webStoreInitPromise) {
+    await webStoreInitPromise;
+    return;
+  }
+
+  webStoreInitPromise = (async () => {
+    const { defineCustomElements } = await import('jeep-sqlite/loader');
+    defineCustomElements(window);
+
+    if (!document.querySelector('jeep-sqlite')) {
+      const jeepEl = document.createElement('jeep-sqlite');
+      document.body.appendChild(jeepEl);
+    }
+
+    await customElements.whenDefined('jeep-sqlite');
+    await sqlite.initWebStore();
+    logger.info('Jeep SQLite initialized for Web.');
+  })();
+
+  await webStoreInitPromise;
+}
+
 export async function initDatabaseConnection() {
   try {
     const platform = Capacitor.getPlatform();
     
     if (platform === 'web') {
-      // Setup jeep-sqlite for web if needed
-      const { defineCustomElements } = await import('jeep-sqlite/loader');
-      defineCustomElements(window);
-      const jeepEl = document.createElement('jeep-sqlite');
-      document.body.appendChild(jeepEl);
-      await customElements.whenDefined('jeep-sqlite');
-      await sqlite.initWebStore();
-      logger.info('Jeep SQLite initialized for Web.');
+      await ensureWebStoreInitialized();
     }
 
     const encryption = getSQLiteEncryptionConfig();
 
-    // Check connections
-    const connections = await sqlite.checkConnectionsConsistency();
-    const isConn = (await sqlite.isConnection(DB_NAME, false)).result;
+    await sqlite.checkConnectionsConsistency();
 
     let db;
-    if (connections.result && isConn) {
-      db = await sqlite.retrieveConnection(DB_NAME, false);
-    } else {
+    const isConn = (await sqlite.isConnection(DB_NAME, false)).result;
+
+    if (isConn) {
+      try {
+        db = await sqlite.retrieveConnection(DB_NAME, false);
+        await db.open();
+        await applyPragmas(DB_NAME);
+        logger.info('Database connection reopened and pragmas applied.');
+        return db;
+      } catch (error) {
+        logger.warn('Existing SQLite connection is stale; recreating it.', error);
+        try {
+          await sqlite.closeConnection(DB_NAME, false);
+        } catch {
+          // Native process resume can leave the JS connection cache ahead of the plugin state.
+        }
+      }
+    }
+
+    try {
+      db = await sqlite.createConnection(
+        DB_NAME,
+        encryption.encrypted,
+        encryption.mode,
+        1,
+        false
+      );
+    } catch (error) {
+      logger.warn('SQLite createConnection failed; retrying after closing stale connection.', error);
+      try {
+        await sqlite.closeConnection(DB_NAME, false);
+      } catch {
+        // Ignore cleanup failures before the retry.
+      }
       db = await sqlite.createConnection(
         DB_NAME,
         encryption.encrypted,

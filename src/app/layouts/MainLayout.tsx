@@ -28,6 +28,7 @@ export function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | 'none'>('none');
   const drawerOpenRef = useRef(drawerOpen);
   const confirmingExitRef = useRef(false);
 
@@ -89,34 +90,85 @@ export function MainLayout() {
     { icon: <Database size={22} />, label: t('settings.backup_restore'), route: ROUTES.BACKUP },
     { icon: <Settings size={22} />, label: t('navigation.settings'), route: ROUTES.SETTINGS },
   ];
+  const moreRoutes = menuItems.map((item) => item.route);
+  const activeNavIndex = location.pathname === ROUTES.HOME
+    ? 0
+    : location.pathname.startsWith(ROUTES.TRANSACTIONS_NEW)
+      ? 2
+      : location.pathname.startsWith(ROUTES.TRANSACTIONS)
+        ? 1
+        : location.pathname.startsWith(ROUTES.BUDGETS)
+          ? 3
+          : moreRoutes.some((route) => location.pathname.startsWith(route))
+            ? 4
+            : 0;
+  const isMoreActive = drawerOpen || activeNavIndex === 4;
+  const activeNavIndexRef = useRef(activeNavIndex);
+
+  useEffect(() => {
+    activeNavIndexRef.current = activeNavIndex;
+  }, [activeNavIndex]);
+
+  function prepareSlide(nextIndex: number) {
+    const currentIndex = activeNavIndexRef.current;
+    if (nextIndex === currentIndex) {
+      setSlideDirection('none');
+      return;
+    }
+
+    setSlideDirection(nextIndex > currentIndex ? 'left' : 'right');
+  }
 
   return (
     <div className="app-container">
       <main className="main-content">
-        <Outlet />
+        <div
+          key={location.pathname}
+          className={`main-content-page main-content-page--slide-${slideDirection}`}
+        >
+          <Outlet />
+        </div>
       </main>
 
       {/* Bottom Nav - 5 tabs */}
       <nav className="bottom-nav">
-        <NavLink to={ROUTES.HOME} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+        <NavLink
+          to={ROUTES.HOME}
+          onClick={() => prepareSlide(0)}
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          end
+        >
           <Home size={22} />
           <span>{t('navigation.home')}</span>
         </NavLink>
-        <NavLink to={ROUTES.TRANSACTIONS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+        <NavLink
+          to={ROUTES.TRANSACTIONS}
+          onClick={() => prepareSlide(1)}
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          end
+        >
           <List size={22} />
           <span>{t('navigation.history')}</span>
         </NavLink>
         <NavLink
           to={ROUTES.TRANSACTIONS_NEW}
+          onClick={() => prepareSlide(2)}
           className={({ isActive }) => `nav-item nav-item--fab ${isActive ? 'active' : ''}`}
         >
           <PlusCircle size={28} />
         </NavLink>
-        <NavLink to={ROUTES.BUDGETS} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <NavLink
+          to={ROUTES.BUDGETS}
+          onClick={() => prepareSlide(3)}
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+        >
           <PieChart size={22} />
           <span>{t('navigation.budgets')}</span>
         </NavLink>
-        <button className="nav-item" onClick={() => setDrawerOpen(true)}>
+        <button
+          className={`nav-item ${isMoreActive ? 'active' : ''}`}
+          onClick={() => setDrawerOpen(true)}
+        >
           <MoreHorizontal size={22} />
           <span>{t('navigation.more')}</span>
         </button>
@@ -142,7 +194,7 @@ export function MainLayout() {
                 <button
                   key={item.route}
                   className="drawer-grid-item"
-                  onClick={() => { navigate(item.route); setDrawerOpen(false); }}
+                  onClick={() => { prepareSlide(4); navigate(item.route); setDrawerOpen(false); }}
                 >
                   <div className="drawer-grid-icon">{item.icon}</div>
                   <span className="drawer-grid-label">{item.label}</span>
