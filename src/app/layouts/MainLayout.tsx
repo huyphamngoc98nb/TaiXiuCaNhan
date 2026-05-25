@@ -130,48 +130,53 @@ export function MainLayout() {
         </div>
       </main>
 
-      {/* Bottom Nav - 5 tabs */}
+      {/* Bottom Nav */}
       <nav className="bottom-nav">
-        <NavLink
-          to={ROUTES.HOME}
-          onClick={() => prepareSlide(0)}
-          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-          end
-        >
-          <Home size={22} />
-          <span>{t('navigation.home')}</span>
-        </NavLink>
-        <NavLink
-          to={ROUTES.TRANSACTIONS}
-          onClick={() => prepareSlide(1)}
-          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-          end
-        >
-          <List size={22} />
-          <span>{t('navigation.history')}</span>
-        </NavLink>
+        <div className="bottom-nav__side bottom-nav__side--left">
+          <NavLink
+            to={ROUTES.HOME}
+            onClick={() => prepareSlide(0)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            end
+          >
+            <Home size={22} />
+            <span>{t('navigation.home')}</span>
+          </NavLink>
+          <NavLink
+            to={ROUTES.TRANSACTIONS}
+            onClick={() => prepareSlide(1)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            end
+          >
+            <List size={22} />
+            <span>{t('navigation.history')}</span>
+          </NavLink>
+        </div>
         <NavLink
           to={ROUTES.TRANSACTIONS_NEW}
           onClick={() => prepareSlide(2)}
           className={({ isActive }) => `nav-item nav-item--fab ${isActive ? 'active' : ''}`}
+          aria-label={t('navigation.add')}
         >
-          <PlusCircle size={28} />
+          <PlusCircle size={34} />
         </NavLink>
-        <NavLink
-          to={ROUTES.BUDGETS}
-          onClick={() => prepareSlide(3)}
-          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-        >
-          <PieChart size={22} />
-          <span>{t('navigation.budgets')}</span>
-        </NavLink>
-        <button
-          className={`nav-item ${isMoreActive ? 'active' : ''}`}
-          onClick={() => setDrawerOpen(true)}
-        >
-          <MoreHorizontal size={22} />
-          <span>{t('navigation.more')}</span>
-        </button>
+        <div className="bottom-nav__side bottom-nav__side--right">
+          <NavLink
+            to={ROUTES.BUDGETS}
+            onClick={() => prepareSlide(3)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <PieChart size={22} />
+            <span>{t('navigation.budgets')}</span>
+          </NavLink>
+          <button
+            className={`nav-item ${isMoreActive ? 'active' : ''}`}
+            onClick={() => setDrawerOpen(true)}
+          >
+            <MoreHorizontal size={22} />
+            <span>{t('navigation.more')}</span>
+          </button>
+        </div>
       </nav>
 
       {/* Bottom Drawer */}

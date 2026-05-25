@@ -11,7 +11,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom));
+  padding-bottom: calc(96px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom));
   -webkit-overflow-scrolling: touch;
 }
 
@@ -30,23 +30,38 @@
 /* ─── Bottom Nav ─────────────────────────────── */
 .bottom-nav {
   position: fixed;
-  --active-nav-index: 0;
-  --nav-item-count: 5;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  min-height: calc(64px + env(safe-area-inset-bottom));
   background: #ffffff;
-  border-top: 1px solid rgba(0,0,0,0.07);
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 0 4px;
+  justify-content: space-between;
+  gap: 0;
+  padding: 8px 16px 0;
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 50;
-  overflow: hidden;
+  overflow: visible;
   transition: transform 0.18s ease;
+  position: relative;
+}
+
+.bottom-nav__side {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: space-around;
+  min-width: 0;
+}
+
+.bottom-nav__side--left {
+  padding-right: 32px;
+}
+
+.bottom-nav__side--right {
+  padding-left: 32px;
 }
 
 .keyboard-open .bottom-nav {
@@ -61,9 +76,9 @@
   justify-content: center;
   flex: 1;
   text-decoration: none;
-  color: #9CA3AF;
+  color: #6B7280;
   font-size: 0.68rem;
-  font-weight: 500;
+  font-weight: 700;
   gap: 3px;
   min-height: 56px;
   background: none;
@@ -78,7 +93,7 @@
 
 .nav-item.active {
   color: #6366F1;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .nav-item:active {
@@ -100,10 +115,36 @@
 
 /* FAB centre button */
 .nav-item--fab {
-  color: #6366F1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #6366F1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transform: translate(-50%, -50%);
 }
+
+.nav-item--fab.active {
+  color: #ffffff;
+  transform: translate(-50%, -50%) translateY(-1px);
+}
+
 .nav-item--fab svg {
-  filter: drop-shadow(0 2px 6px rgba(99,102,241,0.35));
+  filter: none;
+}
+
+.nav-item--fab:active {
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.nav-item--fab span {
+  display: none;
 }
 
 /* ─── Bottom Drawer ──────────────────────────── */

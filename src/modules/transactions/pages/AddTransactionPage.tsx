@@ -11,7 +11,7 @@ export function AddTransactionPage() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-10 pb-4">
+      <div className="sticky top-0 z-30 flex items-center gap-3 bg-[#F5F7FA] px-4 pt-10 pb-4">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center rounded-full bg-white
@@ -25,7 +25,10 @@ export function AddTransactionPage() {
 
       {/* Form */}
       <div className="px-4 pb-24">
-        <TransactionForm onSuccess={() => navigate(ROUTES.TRANSACTIONS)} />
+        <TransactionForm
+          pinTypeSelector
+          onSuccess={() => navigate(ROUTES.TRANSACTIONS)}
+        />
       </div>
     </div>
   );

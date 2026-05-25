@@ -12,9 +12,10 @@ interface Props {
   existing?: Transaction;
   onSuccess: () => void;
   onDelete?: () => Promise<void>;
+  pinTypeSelector?: boolean;
 }
 
-export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
+export function TransactionForm({ existing, onSuccess, onDelete, pinTypeSelector = false }: Props) {
   const { formData, setFormData, setReceiptBase64, save, submitting, options } =
     useTransactionForm(existing);
   const { t } = useLanguage();
@@ -80,7 +81,13 @@ export function TransactionForm({ existing, onSuccess, onDelete }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="flex bg-gray-100 p-1 rounded-[12px] h-[48px]">
+      <div
+        className={`flex bg-gray-100 p-1 rounded-[12px] h-[48px] ${
+          pinTypeSelector
+            ? 'sticky top-[96px] z-20 -mx-4 mb-1 px-1 bg-gray-100 shadow-sm'
+            : ''
+        }`}
+      >
         {transactionTypes.map(type => (
           <button
             key={type.id}
