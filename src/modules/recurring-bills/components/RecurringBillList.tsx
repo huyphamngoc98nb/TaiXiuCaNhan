@@ -46,7 +46,7 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
         const diff = daysDiff(bill.next_due_date, now);
         const dueLabel = diff < 0 ? `${Math.abs(diff)} ${t('recurring_bills.days_overdue')}`
           : diff === 0 ? t('recurring_bills.due_today')
-          : `${t('recurring_bills.due_in')} ${diff}${t('recurring_bills.days_short')}`;
+          : `${t('recurring_bills.due_in')} ${diff} ${t('recurring_bills.days_short')}`;
 
         const dotColor = status ? STATUS_COLORS[status].dot : '#94a3b8';
 
@@ -68,7 +68,7 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
                   </span>
                 </div>
                 <div style={{ marginLeft: '16px', marginTop: '4px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  {formatAmount(bill.amount)} · {isActive ? dueLabel : t('recurring_bills.paused')} · {t('recurring_bills.remind_before')} {bill.reminder_days}{t('recurring_bills.days_short')}
+                  {formatAmount(bill.amount)} · {isActive ? dueLabel : t('recurring_bills.paused')} · {t('recurring_bills.remind_before')} {bill.reminder_days} {t('recurring_bills.days_short')}
                 </div>
               </div>
 
