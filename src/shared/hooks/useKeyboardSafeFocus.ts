@@ -15,7 +15,6 @@ export function useKeyboardSafeFocus() {
   useEffect(() => {
     if (Capacitor.getPlatform() !== 'android') return;
 
-    const root = document.documentElement;
     const viewport = window.visualViewport;
     let activeEditable: HTMLElement | null = null;
     let cleanupTimers: number[] = [];
@@ -25,8 +24,6 @@ export function useKeyboardSafeFocus() {
       const viewportOffsetTop = viewport?.offsetTop ?? 0;
       const keyboardInset = Math.max(0, window.innerHeight - viewportHeight - viewportOffsetTop);
 
-      root.style.setProperty('--visual-viewport-height', `${viewportHeight}px`);
-      root.style.setProperty('--keyboard-inset-bottom', `${keyboardInset}px`);
       document.body.classList.toggle('keyboard-open', keyboardInset > 80);
     };
 
@@ -80,8 +77,6 @@ export function useKeyboardSafeFocus() {
       window.removeEventListener('resize', handleViewportChange);
       viewport?.removeEventListener('resize', handleViewportChange);
       viewport?.removeEventListener('scroll', handleViewportChange);
-      root.style.removeProperty('--visual-viewport-height');
-      root.style.removeProperty('--keyboard-inset-bottom');
       document.body.classList.remove('keyboard-open');
     };
   }, []);

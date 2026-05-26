@@ -1,14 +1,16 @@
 .app-container {
   display: flex;
   flex-direction: column;
-  height: var(--visual-viewport-height, 100dvh);
+  height: 100%;
+  min-height: 0;
   width: 100%;
 }
 
 .main-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding-bottom: calc(70px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom)); /* Space for bottom nav */
+  padding-bottom: calc(70px + env(safe-area-inset-bottom)); /* Space for bottom nav */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -25,11 +27,6 @@
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
   transition: transform 0.18s ease;
-}
-
-.keyboard-open .bottom-nav {
-  transform: translateY(calc(100% + env(safe-area-inset-bottom)));
-  pointer-events: none;
 }
 
 .nav-item {
