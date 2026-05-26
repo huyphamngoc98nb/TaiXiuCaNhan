@@ -183,7 +183,7 @@ export function TransactionList({
       weekEnd.setDate(weekStart.getDate() + 6);
       weekEnd.setHours(23, 59, 59, 999);
       const key = weekStart.toISOString().slice(0, 10);
-      const label = `Tuan ${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}`;
+      const label = `${t('transactions.label_week')} ${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}`;
 
       if (!currentRow || currentRow.key !== key) {
         currentRow = {
