@@ -140,8 +140,7 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
   const total = useMemo(() => chartData.reduce((sum, item) => sum + item.amount, 0), [chartData]);
 
   const formatMoney = (value: number) => formatAmount(value, locale);
-  const centerLabel = totalLabel;
-  const centerAmount = formatMoney(total);
+  const totalAmount = formatMoney(total);
 
   if (loading) {
     return (
@@ -197,9 +196,9 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
               nameKey="label"
               cx="50%"
               cy="50%"
-              innerRadius={42}
-              outerRadius={56}
-              paddingAngle={2}
+              innerRadius={0}
+              outerRadius={58}
+              paddingAngle={1}
               label={renderOutsideLabel}
               labelLine={false}
               isAnimationActive={false}
@@ -221,7 +220,13 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        <DonutCenterLabel label={centerLabel} amount={centerAmount} />
+      </div>
+
+      <div className="mx-auto mt-2 max-w-[320px] rounded-[14px] bg-gray-50 px-3 py-2 text-center">
+        <div className="text-[12px] font-semibold text-gray-500">{totalLabel}</div>
+        <div className="mt-1 break-words text-[16px] font-bold leading-tight text-gray-900 tabular-nums">
+          {totalAmount}
+        </div>
       </div>
 
       <DonutLegend
