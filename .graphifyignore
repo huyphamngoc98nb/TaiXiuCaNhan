@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+server/dist/
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/main/assets/public/
+
+# Generated graphify artifacts
+graphify-out/
+
+# Local/editor artifacts
+.codex/
+.vscode/
+test-output.txt
+
+# Sensitive local files
+.env
+.env.*
+*.pem
+private_key.pem
