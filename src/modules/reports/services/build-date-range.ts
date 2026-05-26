@@ -1,6 +1,6 @@
 import { DateRange } from '../domain/report.model';
 
-export type DateRangePreset = 'this_week' | 'this_month' | 'last_month' | 'last_30_days' | 'custom';
+export type DateRangePreset = 'this_week' | 'this_month' | 'this_quarter' | 'last_month' | 'last_30_days' | 'custom';
 
 export function buildDateRange(preset: DateRangePreset, customRange?: DateRange): DateRange {
   const now = new Date();
@@ -14,6 +14,13 @@ export function buildDateRange(preset: DateRangePreset, customRange?: DateRange)
   if (preset === 'last_month') {
     const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    return { startDate: start.getTime(), endDate: end.getTime() };
+  }
+
+  if (preset === 'this_quarter') {
+    const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+    const start = new Date(now.getFullYear(), quarterStartMonth, 1);
+    const end = new Date(now.getFullYear(), quarterStartMonth + 3, 0, 23, 59, 59, 999);
     return { startDate: start.getTime(), endDate: end.getTime() };
   }
   

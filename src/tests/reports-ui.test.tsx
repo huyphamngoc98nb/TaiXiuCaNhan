@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import type React from 'react';
 import { DateRangePicker } from '../modules/reports/components/DateRangePicker';
 import { LanguageProvider } from '@/shared/context/LanguageContext';
@@ -24,16 +24,17 @@ describe('Reports UI - DateRangePicker', () => {
       <DateRangePicker 
         preset="this_month" 
         granularity="day" 
+        customRange={{ startDate: 1, endDate: 2 }}
         onPresetChange={onPresetChange} 
         onGranularityChange={onGranularityChange} 
+        onCustomRangeChange={vi.fn()}
+        onReset={vi.fn()}
       />
     );
 
-    const presetDropdown = await screen.findByLabelText(/Time Period/i);
-    fireEvent.click(presetDropdown);
-    fireEvent.click(await screen.findByRole('option', { name: /Last 30 days/i }));
+    fireEvent.click(await screen.findByRole('button', { name: /This Week/i }));
 
-    expect(onPresetChange).toHaveBeenCalledWith('last_30_days');
+    expect(onPresetChange).toHaveBeenCalledWith('this_week');
   });
 
   it('calls onGranularityChange when a new granularity is selected', async () => {
@@ -44,14 +45,16 @@ describe('Reports UI - DateRangePicker', () => {
       <DateRangePicker 
         preset="this_month" 
         granularity="day" 
+        customRange={{ startDate: 1, endDate: 2 }}
         onPresetChange={onPresetChange} 
         onGranularityChange={onGranularityChange} 
+        onCustomRangeChange={vi.fn()}
+        onReset={vi.fn()}
       />
     );
 
-    const granularityDropdown = await screen.findByLabelText(/Group By/i);
-    fireEvent.click(granularityDropdown);
-    fireEvent.click(await screen.findByRole('option', { name: /Week/i }));
+    const granularityGroup = await screen.findByRole('group', { name: /Group By/i });
+    fireEvent.click(within(granularityGroup).getByRole('button', { name: /^Week$/i }));
 
     expect(onGranularityChange).toHaveBeenCalledWith('week');
   });

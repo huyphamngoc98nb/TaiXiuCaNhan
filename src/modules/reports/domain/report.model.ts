@@ -12,6 +12,12 @@ export interface CategorySummary {
   type: 'income' | 'expense';
 }
 
+export interface WalletSummary {
+  wallet_id: string;
+  wallet_name: string;
+  amount: number;
+}
+
 export interface PeriodSummary {
   period: string; // Format depends on granularity ('YYYY-MM-DD', 'YYYY-Wxx', or 'YYYY-MM')
   income: number;

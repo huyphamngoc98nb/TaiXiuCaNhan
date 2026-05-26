@@ -1,6 +1,6 @@
 import { getDbConnection } from '@/core/db/sqlite/connection';
 import { IReportRepository } from './report.repository';
-import { DateRange, ReportGranularity, CategorySummary, PeriodSummary, CashflowSummary } from '../domain/report.model';
+import { DateRange, ReportGranularity, CategorySummary, PeriodSummary, CashflowSummary, WalletSummary } from '../domain/report.model';
 
 export class SQLiteReportRepository implements IReportRepository {
   async getCategorySummary(range: DateRange, type: 'income' | 'expense'): Promise<CategorySummary[]> {
@@ -91,5 +91,27 @@ export class SQLiteReportRepository implements IReportRepository {
       totalExpense,
       netAmount: totalIncome - totalExpense
     };
+  }
+
+  async getWalletSummary(range: DateRange): Promise<WalletSummary[]> {
+    const db = await getDbConnection();
+    const sql = `
+      SELECT t.wallet_id, w.name as wallet_name, SUM(t.amount) as amount
+      FROM transactions t
+      LEFT JOIN wallets w ON t.wallet_id = w.id
+      WHERE t.type = 'expense'
+        AND t.transaction_date >= ?
+        AND t.transaction_date <= ?
+        AND t.deleted_at IS NULL
+      GROUP BY t.wallet_id
+      ORDER BY amount DESC
+    `;
+
+    const { values } = await db.query(sql, [range.startDate, range.endDate]);
+    return (values || []).map((row: any) => ({
+      wallet_id: row.wallet_id,
+      wallet_name: row.wallet_name || 'Unknown wallet',
+      amount: row.amount || 0,
+    }));
   }
 }

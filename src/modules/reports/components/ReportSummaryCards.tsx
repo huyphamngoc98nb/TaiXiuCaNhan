@@ -2,14 +2,20 @@ import React from 'react';
 import { CashflowSummary } from '../domain/report.model';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
-import { ArrowDownCircle, ArrowUpCircle, Scale } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, PiggyBank } from 'lucide-react';
 
 interface Props {
   data: CashflowSummary | null;
+  previousData: CashflowSummary | null;
   loading: boolean;
 }
 
-export const ReportSummaryCards: React.FC<Props> = ({ data, loading }) => {
+const percentChange = (current: number, previous: number) => {
+  if (previous === 0) return current === 0 ? 0 : 100;
+  return ((current - previous) / Math.abs(previous)) * 100;
+};
+
+export const ReportSummaryCards: React.FC<Props> = ({ data, previousData, loading }) => {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
@@ -25,6 +31,7 @@ export const ReportSummaryCards: React.FC<Props> = ({ data, loading }) => {
     {
       label: t('reports.income'),
       value: income,
+      previousValue: previousData?.totalIncome || 0,
       icon: ArrowUpCircle,
       iconClassName: 'text-emerald-500',
       amountClassName: 'text-emerald-600',
@@ -32,14 +39,16 @@ export const ReportSummaryCards: React.FC<Props> = ({ data, loading }) => {
     {
       label: t('reports.expense'),
       value: expense,
+      previousValue: previousData?.totalExpense || 0,
       icon: ArrowDownCircle,
       iconClassName: 'text-red-500',
       amountClassName: 'text-red-600',
     },
     {
-      label: t('reports.net'),
+      label: t('reports.savings_net'),
       value: net,
-      icon: Scale,
+      previousValue: previousData?.netAmount || 0,
+      icon: PiggyBank,
       iconClassName: net >= 0 ? 'text-emerald-500' : 'text-red-500',
       amountClassName: net >= 0 ? 'text-emerald-600' : 'text-red-600',
     },
@@ -49,6 +58,7 @@ export const ReportSummaryCards: React.FC<Props> = ({ data, loading }) => {
     <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
       {cards.map((card) => {
         const Icon = card.icon;
+        const change = percentChange(card.value, card.previousValue);
         return (
           <div
             key={card.label}
@@ -60,10 +70,15 @@ export const ReportSummaryCards: React.FC<Props> = ({ data, loading }) => {
                 {card.label}
               </span>
             </div>
-            <div
-              className={`min-w-0 flex-1 break-words text-right text-[15px] font-bold leading-tight tabular-nums sm:w-full sm:text-left sm:text-[16px] ${card.amountClassName}`}
-            >
-              {formatAmount(card.value, locale)}
+            <div className="min-w-0 flex-1 text-right sm:w-full sm:text-left">
+              <div
+                className={`break-words text-[15px] font-bold leading-tight tabular-nums sm:text-[16px] ${card.amountClassName}`}
+              >
+                {formatAmount(card.value, locale)}
+              </div>
+              <div className={`mt-1 text-[11px] font-semibold ${change >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                {change >= 0 ? '+' : ''}{change.toFixed(0)}%
+              </div>
             </div>
           </div>
         );
