@@ -43,7 +43,9 @@ select {
 
 .keyboard-safe-bottom-sheet {
   max-height: min(85dvh, calc(var(--visual-viewport-height) - 24px));
-  padding-bottom: calc(32px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom));
+  margin-bottom: var(--keyboard-inset-bottom);
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  transition: margin-bottom 180ms ease, max-height 180ms ease;
 }
 
 /* Minimal Utilities */

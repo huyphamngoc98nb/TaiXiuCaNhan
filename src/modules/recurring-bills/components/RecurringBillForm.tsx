@@ -8,6 +8,7 @@ import { useCategories } from '@/modules/categories/hooks/useCategories';
 import { useWallets } from '@/modules/wallets/hooks/useWallets';
 import { filterWalletsWithValue } from '@/modules/wallets/services/wallet-selectors';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
+import { DateTimePicker } from '@/shared/components/DateTimePicker';
 import { DropdownList } from '@/shared/components/DropdownList';
 import type { CurrencyCode } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -23,55 +24,8 @@ function startOfLocalDay(timestamp: number): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
-function toDateInput(timestamp: number): string {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function isValidDateParts(year: number, month: number, day: number): boolean {
-  const date = new Date(year, month - 1, day);
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-  );
-}
-
-function parseDueDate(value: string, language: 'en' | 'vi'): number | null {
-  const trimmed = value.trim();
-  const isoMatch = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(trimmed);
-
-  if (isoMatch) {
-    const [, yearText, monthText, dayText] = isoMatch;
-    const year = Number(yearText);
-    const month = Number(monthText);
-    const day = Number(dayText);
-    return isValidDateParts(year, month, day)
-      ? new Date(year, month - 1, day).getTime()
-      : null;
-  }
-
-  const parts = trimmed.split(/[\/.-]/).map(part => Number(part));
-  if (parts.length !== 3 || parts.some(part => !Number.isInteger(part))) {
-    return null;
-  }
-
-  const [first, second, year] = parts;
-  const day = language === 'vi' ? first : second;
-  const month = language === 'vi' ? second : first;
-
-  if (!isValidDateParts(year, month, day)) {
-    return null;
-  }
-
-  return new Date(year, month - 1, day).getTime();
-}
-
 export function RecurringBillForm({ existing, onSave, onCancel }: Props) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { wallets } = useWallets();
   const { categories } = useCategories();
   const selectableWallets = useMemo(
@@ -87,8 +41,8 @@ export function RecurringBillForm({ existing, onSave, onCancel }: Props) {
   const [amount, setAmount] = useState(existing?.amount?.toString() ?? '');
   const [walletId, setWalletId] = useState(existing?.wallet_id ?? '');
   const [categoryId, setCategoryId] = useState(existing?.category_id ?? '');
-  const [dueDateText, setDueDateText] = useState(() =>
-    toDateInput(startOfLocalDay(existing?.next_due_date ?? Date.now())),
+  const [dueDate, setDueDate] = useState(() =>
+    startOfLocalDay(existing?.next_due_date ?? Date.now()),
   );
   const [reminderDays, setReminderDays] = useState(String(existing?.reminder_days ?? 3));
   const [error, setError] = useState<string | null>(null);
@@ -119,12 +73,6 @@ export function RecurringBillForm({ existing, onSave, onCancel }: Props) {
       setError(t('recurring_bills.validation_category'));
       return;
     }
-    const parsedDueDate = parseDueDate(dueDateText, language);
-    if (parsedDueDate === null) {
-      setError(t('recurring_bills.validation_due_date'));
-      return;
-    }
-
     setSaving(true);
     try {
       await onSave({
@@ -133,7 +81,7 @@ export function RecurringBillForm({ existing, onSave, onCancel }: Props) {
         wallet_id: walletId,
         category_id: categoryId,
         frequency: 'monthly',
-        next_due_date: parsedDueDate,
+        next_due_date: startOfLocalDay(dueDate),
         reminder_days: Number.isFinite(parsedReminderDays) && parsedReminderDays >= 0
           ? parsedReminderDays
           : 0,
@@ -202,37 +150,23 @@ export function RecurringBillForm({ existing, onSave, onCancel }: Props) {
         />
       </label>
 
-      <div className="grid grid-cols-2 gap-3">
-        <label className="block space-y-1.5">
-          <span className="text-[13px] font-semibold text-gray-700">{t('recurring_bills.due_date')}</span>
-          <input
-            type="date"
-            value={dueDateText}
-            onChange={event => {
-              setDueDateText(event.target.value);
-            }}
-            onBlur={() => {
-              const parsed = parseDueDate(dueDateText, language);
-              if (parsed !== null) {
-                setDueDateText(toDateInput(parsed));
-              }
-            }}
-            className="h-[48px] w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 text-[14px] font-medium text-gray-900 outline-none transition-colors focus:border-indigo-400"
-          />
-        </label>
+      <DateTimePicker
+        value={dueDate}
+        onChange={setDueDate}
+        label={t('recurring_bills.due_date')}
+      />
 
-        <label className="block space-y-1.5">
-          <span className="text-[13px] font-semibold text-gray-700">{t('recurring_bills.remind_days')}</span>
-          <input
-            type="number"
-            min={0}
-            inputMode="numeric"
-            value={reminderDays}
-            onChange={event => setReminderDays(event.target.value)}
-            className="h-[48px] w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 text-[14px] font-medium text-gray-900 outline-none transition-colors focus:border-indigo-400"
-          />
-        </label>
-      </div>
+      <label className="block space-y-1.5">
+        <span className="text-[13px] font-semibold text-gray-700">{t('recurring_bills.remind_days')}</span>
+        <input
+          type="number"
+          min={0}
+          inputMode="numeric"
+          value={reminderDays}
+          onChange={event => setReminderDays(event.target.value)}
+          className="h-[48px] w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 text-[14px] font-medium text-gray-900 outline-none transition-colors focus:border-indigo-400"
+        />
+      </label>
 
       <p className="text-[12px] text-gray-500">{t('recurring_bills.frequency_info')}</p>
 
