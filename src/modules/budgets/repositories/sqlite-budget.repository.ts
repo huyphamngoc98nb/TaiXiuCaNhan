@@ -228,6 +228,7 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
        AND b.wallet_id IS NULL
        AND b.account_type_scope IS NULL
       WHERE c.id <> 'cat-transfer'
+        AND c.type = 'expense'
       ORDER BY c.name
     `;
     const { values } = await db.query(sql);

@@ -104,7 +104,6 @@ export function BudgetAddSheet({
               ariaLabel={t('budgets.select_category')}
               placeholder={t('budgets.select_category')}
               options={[
-                { value: '', label: t('budgets.select_category'), disabled: true },
                 ...categories.map(category => ({
                   value: category.category_id,
                   label: category.category_name,
@@ -152,7 +151,6 @@ export function BudgetAddSheet({
               value={amount}
               onValueChange={setAmount}
               className={error ? 'border-red-300' : 'border-gray-200'}
-              autoFocus
             />
             {!error && (
               <p className="text-[12px] text-gray-400 ml-1 italic">
