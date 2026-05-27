@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Calendar, Clock, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { getAppLocale } from '@/shared/utils/locale';
@@ -33,15 +33,20 @@ function buildTimestamp(dateStr: string, timeStr: string): number {
   return new Date(`${dateStr}T${timeStr}`).getTime();
 }
 
-function formatPreview(ts: number, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
-    weekday: 'short',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+function formatDateDisplay(dateStr: string, language: 'vi' | 'en'): string {
+  const [year, month, day] = dateStr.split('-');
+  return language === 'vi' ? `${day}/${month}/${year}` : `${year}/${month}/${day}`;
+}
+
+function formatPreview(ts: number, locale: string, language: 'vi' | 'en'): string {
+  const date = new Date(ts);
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+  const time = new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(ts));
+  }).format(date);
+
+  return `${weekday}, ${formatDateDisplay(toDateInput(ts), language)}, ${time}`;
 }
 
 /** Detect if today or yesterday relative to now */
@@ -64,6 +69,7 @@ function detectMode(ts: number): QuickMode {
 export function DateTimePicker({ value, onChange, label }: Props) {
   const { t, language } = useLanguage();
   const locale = getAppLocale(language);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode]       = useState<QuickMode>(() => detectMode(value));
   const [dateStr, setDateStr] = useState(() => toDateInput(value));
   const [timeStr, setTimeStr] = useState(() => toTimeInput(value));
@@ -93,6 +99,18 @@ export function DateTimePicker({ value, onChange, label }: Props) {
     setDateStr(d);
     onChange(buildTimestamp(d, timeStr));
   }, [timeStr, onChange]);
+
+  const openDatePicker = useCallback(() => {
+    const input = dateInputRef.current;
+    if (!input) return;
+
+    if (input.showPicker) {
+      input.showPicker();
+    } else {
+      input.click();
+    }
+    input.focus();
+  }, []);
 
   const handleTimeChange = useCallback((t: string) => {
     setTimeStr(t);
@@ -140,12 +158,28 @@ export function DateTimePicker({ value, onChange, label }: Props) {
               <Calendar size={15} />
             </span>
             <input
+              ref={dateInputRef}
               type="date"
               value={dateStr}
               onChange={e => handleDateChange(e.target.value)}
+              className="absolute bottom-0 left-0 h-px w-px opacity-0"
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              value={formatDateDisplay(dateStr, language)}
+              readOnly
+              onClick={openDatePicker}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  openDatePicker();
+                }
+              }}
               className="w-full h-[48px] pl-9 pr-3 bg-gray-50 border border-gray-200
                 rounded-[12px] text-[14px] text-gray-800 font-medium
-                focus:outline-none focus:border-indigo-400 appearance-none"
+                focus:outline-none focus:border-indigo-400 appearance-none cursor-pointer"
             />
           </label>
 
@@ -168,7 +202,7 @@ export function DateTimePicker({ value, onChange, label }: Props) {
 
       {/* Preview */}
       <p className="text-[11px] text-gray-400 ml-0.5">
-        📅 {formatPreview(buildTimestamp(dateStr, timeStr), locale)}
+        📅 {formatPreview(buildTimestamp(dateStr, timeStr), locale, language)}
       </p>
     </div>
   );
