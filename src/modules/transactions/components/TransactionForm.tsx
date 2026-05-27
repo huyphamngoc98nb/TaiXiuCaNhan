@@ -13,9 +13,16 @@ interface Props {
   onSuccess: () => void;
   onDelete?: () => Promise<void>;
   pinTypeSelector?: boolean;
+  scrollFields?: boolean;
 }
 
-export function TransactionForm({ existing, onSuccess, onDelete, pinTypeSelector = false }: Props) {
+export function TransactionForm({
+  existing,
+  onSuccess,
+  onDelete,
+  pinTypeSelector = false,
+  scrollFields = false,
+}: Props) {
   const { formData, setFormData, setReceiptBase64, save, submitting, options } =
     useTransactionForm(existing);
   const { t } = useLanguage();
@@ -79,29 +86,8 @@ export function TransactionForm({ existing, onSuccess, onDelete, pinTypeSelector
         ? 'bg-emerald-500 shadow-lg shadow-emerald-300/40'
         : 'bg-indigo-500 shadow-lg shadow-indigo-300/40';
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div
-        className={`flex bg-gray-100 p-1 rounded-[12px] h-[48px] ${
-          pinTypeSelector
-            ? 'sticky top-[96px] z-20 -mx-4 mb-1 px-1 bg-gray-100 shadow-sm'
-            : ''
-        }`}
-      >
-        {transactionTypes.map(type => (
-          <button
-            key={type.id}
-            type="button"
-            onClick={() => handleTypeChange(type.id)}
-            className={`flex-1 rounded-[9px] text-[14px] font-semibold transition-all ${
-              formData.type === type.id ? `${type.active} shadow-sm` : 'text-gray-500'
-            }`}
-          >
-            {type.label}
-          </button>
-        ))}
-      </div>
-
+  const fields = (
+    <>
       <div className="space-y-1.5">
         <p className="text-[13px] font-semibold text-gray-700">{t('form.label_amount')}</p>
         <CurrencyAmountInput
@@ -235,6 +221,42 @@ export function TransactionForm({ existing, onSuccess, onDelete, pinTypeSelector
         >
           {t('transactions.delete_confirm_btn')}
         </button>
+      )}
+    </>
+  );
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className={scrollFields ? 'flex h-full min-h-0 flex-col' : 'space-y-5'}
+    >
+      <div
+        className={`flex bg-gray-100 p-1 rounded-[12px] h-[48px] shrink-0 ${
+          pinTypeSelector
+            ? 'sticky top-[96px] z-20 -mx-4 mb-1 px-1 bg-gray-100 shadow-sm'
+            : ''
+        }`}
+      >
+        {transactionTypes.map(type => (
+          <button
+            key={type.id}
+            type="button"
+            onClick={() => handleTypeChange(type.id)}
+            className={`flex-1 rounded-[9px] text-[14px] font-semibold transition-all ${
+              formData.type === type.id ? `${type.active} shadow-sm` : 'text-gray-500'
+            }`}
+          >
+            {type.label}
+          </button>
+        ))}
+      </div>
+
+      {scrollFields ? (
+        <div className="mt-5 min-h-0 flex-1 space-y-5 overflow-y-auto pb-24">
+          {fields}
+        </div>
+      ) : (
+        fields
       )}
     </form>
   );

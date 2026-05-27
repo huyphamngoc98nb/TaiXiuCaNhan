@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { PieChart, ChevronRight, Bell, Eye, EyeOff } from 'lucide-react';
+import { ChevronRight, Bell, Eye, EyeOff } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useBudgetAnalysis } from '../hooks/useBudgetAnalysis';
 import { useRecurringReminders } from '../hooks/useRecurringReminders';
@@ -164,25 +164,6 @@ function DashboardPage() {
             </p>
           </div>
         </div>
-      </div>
-
-      {/* ── Quick Actions ────────────────────────────────────────────── */}
-      <div className="flex gap-3 mx-4 mt-4">
-        <button
-          onClick={() => navigate(ROUTES.TRANSACTIONS_NEW)}
-          aria-label={t('dashboard.add_transaction')}
-          title={t('dashboard.add_transaction')}
-          className="flex-1 flex items-center justify-center h-[48px] bg-indigo-500 text-white rounded-[14px] text-[22px] font-bold shadow-md shadow-indigo-300/40 active:scale-95 transition-transform"
-        >
-          +
-        </button>
-        <button
-          onClick={() => navigate(ROUTES.BUDGETS)}
-          className="flex-1 flex items-center justify-center gap-2 h-[48px] bg-white text-indigo-600 border border-indigo-100 rounded-[14px] text-[13px] font-semibold active:scale-95 transition-transform"
-        >
-          <PieChart size={17} />
-          {t('navigation.budgets')}
-        </button>
       </div>
 
       {/* ── Bill Reminders banner ────────────────────────────────────────── */}

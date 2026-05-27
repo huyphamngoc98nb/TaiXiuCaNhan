@@ -53,7 +53,7 @@ export function EditTransactionPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <div className="flex items-center gap-3 px-4 pt-10 pb-4">
+      <div className="sticky top-0 z-30 flex items-center gap-3 bg-[#F5F7FA] px-4 pt-10 pb-4">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center rounded-full bg-white
@@ -68,6 +68,7 @@ export function EditTransactionPage() {
       <div className="px-4 pb-24">
         <TransactionForm
           existing={transaction}
+          pinTypeSelector
           onSuccess={() => navigate(ROUTES.TRANSACTIONS)}
           onDelete={handleDelete}
         />
