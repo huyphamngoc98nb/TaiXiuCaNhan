@@ -20,7 +20,6 @@ export function useBudgetAddForm(onSuccess?: () => void) {
   const [scopeType, setScopeType] = useState<BudgetScopeType>('global');
   const [accountTypeScope, setAccountTypeScope] = useState<AccountType>('credit_card');
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const toast = useToast();
   const { t } = useLanguage();
 
@@ -35,7 +34,6 @@ export function useBudgetAddForm(onSuccess?: () => void) {
     setPeriod('monthly');
     setScopeType('global');
     setAccountTypeScope('credit_card');
-    setError(null);
     setIsOpen(true);
   }, []);
 
@@ -46,22 +44,21 @@ export function useBudgetAddForm(onSuccess?: () => void) {
 
   const setSelectedCategory = useCallback((category: CategoryBudget) => {
     setSelectedCategoryState(category);
-    setError(null);
   }, []);
 
   const handleSave = async () => {
     if (!selectedCategory) {
-      setError(t('budgets.select_category_required'));
+      toast.error(t('budgets.select_category_required'));
       return;
     }
 
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      setError(t('budgets.amount_required'));
+      toast.error(t('budgets.amount_required'));
       return;
     }
     if (parsedAmount > MAX_BUDGET_AMOUNT) {
-      setError(t('budgets.amount_too_large'));
+      toast.error(t('budgets.amount_too_large'));
       return;
     }
 
@@ -78,7 +75,7 @@ export function useBudgetAddForm(onSuccess?: () => void) {
       close();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : t('budgets.save_failed');
-      setError(msg);
+      toast.error(msg);
     } finally {
       setIsSaving(false);
     }
@@ -99,7 +96,6 @@ export function useBudgetAddForm(onSuccess?: () => void) {
     accountTypeScope,
     setAccountTypeScope,
     isSaving,
-    error,
     handleSave,
   };
 }

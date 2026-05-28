@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
+import { registerAppBackHandler } from '@/shared/utils/app-back-stack';
 
 export interface DropdownOption<T extends string> {
   value: T;
@@ -41,7 +42,7 @@ export function DropdownList<T extends string>({
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const selected = useMemo(
-    () => options.find(option => option.value === value),
+    () => options.find((option) => option.value === value),
     [options, value],
   );
 
@@ -97,6 +98,16 @@ export function DropdownList<T extends string>({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    return registerAppBackHandler(() => {
+      setIsOpen(false);
+      buttonRef.current?.focus();
+      return true;
+    });
+  }, [isOpen]);
+
   const handleSelect = (option: DropdownOption<T>) => {
     if (option.disabled) return;
     onChange(option.value);
@@ -117,7 +128,7 @@ export function DropdownList<T extends string>({
         onClick={() => {
           if (!disabled) {
             updateMenuPosition();
-            setIsOpen(open => !open);
+            setIsOpen((open) => !open);
           }
         }}
         className={`w-full min-h-[48px] flex items-center justify-between gap-3 rounded-[12px] border border-gray-200 bg-gray-50 px-4 text-left text-[14px] font-semibold text-gray-800 shadow-sm outline-none transition-colors active:bg-gray-100 focus:border-indigo-400 disabled:cursor-not-allowed disabled:opacity-60 ${buttonClassName}`}
@@ -139,7 +150,7 @@ export function DropdownList<T extends string>({
           style={menuStyle}
           className={`overscroll-contain overflow-y-auto rounded-[14px] border border-gray-200 bg-white p-1 shadow-xl shadow-gray-900/12 ${menuClassName}`}
         >
-          {options.map(option => {
+          {options.map((option) => {
             const isSelected = option.value === value;
             return (
               <button

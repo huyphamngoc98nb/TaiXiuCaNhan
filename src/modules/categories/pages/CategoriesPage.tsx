@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Tags } from 'lucide-react';
+import { Plus, Tags } from 'lucide-react';
+import { BackButton } from '@/shared/components/BackButton';
+import { ROUTES } from '@/shared/constants/routes';
 import { BottomSheet } from '@/shared/components/BottomSheet';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
@@ -15,14 +17,8 @@ export function CategoriesPage() {
   const confirm = useConfirm();
   const toast = useToast();
   const { t } = useLanguage();
-  const {
-    categories,
-    loading,
-    error,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-  } = useCategories();
+  const { categories, loading, error, createCategory, updateCategory, deleteCategory } =
+    useCategories();
   const [activeType, setActiveType] = useState<CategoryType>('expense');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Category | undefined>();
@@ -71,13 +67,7 @@ export function CategoriesPage() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       <div className="flex items-center gap-3 px-4 pt-10 pb-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 active:bg-gray-100 transition-colors"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <BackButton onClick={() => navigate(ROUTES.SETTINGS)} ariaLabel={t('common.back')} />
         <div className="flex-1 min-w-0">
           <h1 className="text-[20px] font-bold text-gray-900">{t('categories.title')}</h1>
           <p className="text-[12px] text-gray-500">{t('categories.subtitle')}</p>
@@ -123,15 +113,13 @@ export function CategoriesPage() {
         ) : categories.length === 0 ? (
           <div className="text-center text-gray-400 py-12">
             <Tags size={36} className="mx-auto mb-3 text-gray-300" />
-            <p className="text-[15px] font-semibold text-gray-500">{t('categories.no_categories')}</p>
+            <p className="text-[15px] font-semibold text-gray-500">
+              {t('categories.no_categories')}
+            </p>
             <p className="text-[13px] mt-1">{t('categories.no_categories_hint')}</p>
           </div>
         ) : (
-          <CategoryList
-            categories={visibleCategories}
-            onEdit={openEdit}
-            onDelete={handleDelete}
-          />
+          <CategoryList categories={visibleCategories} onEdit={openEdit} onDelete={handleDelete} />
         )}
       </div>
 

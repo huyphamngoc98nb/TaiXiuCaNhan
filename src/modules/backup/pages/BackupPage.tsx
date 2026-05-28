@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Upload, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Download, Upload, AlertCircle, ShieldCheck } from 'lucide-react';
+import { BackButton } from '@/shared/components/BackButton';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -50,20 +51,24 @@ export function BackupPage() {
       title: t('backup.restore_confirm_title'),
       message: t('backup.restore_confirm_msg'),
       confirmText: t('backup.restore_confirm_btn'),
-      cancelText: t('common.cancel')
+      cancelText: t('common.cancel'),
     });
 
     if (ok) {
       suspendAppLock();
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
-        window.addEventListener('focus', () => {
-          window.setTimeout(() => {
-            if (!restoreInProgressRef.current && !fileInputRef.current?.files?.length) {
-              resumeAppLock();
-            }
-          }, 1000);
-        }, { once: true });
+        window.addEventListener(
+          'focus',
+          () => {
+            window.setTimeout(() => {
+              if (!restoreInProgressRef.current && !fileInputRef.current?.files?.length) {
+                resumeAppLock();
+              }
+            }, 1000);
+          },
+          { once: true },
+        );
         fileInputRef.current.click();
       }
     }
@@ -100,12 +105,7 @@ export function BackupPage() {
   return (
     <div style={{ padding: '16px', paddingBottom: '90px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-        <button 
-          onClick={() => navigate(-1)}
-          style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '4px' }}
-        >
-          <ArrowLeft size={24} />
-        </button>
+        <BackButton onClick={() => navigate(ROUTES.SETTINGS)} ariaLabel={t('common.back')} />
         <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{t('backup.title')}</h2>
       </div>
 
@@ -113,12 +113,23 @@ export function BackupPage() {
         {/* Export Card */}
         <div className="card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <div style={{ padding: '10px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '12px' }}>
+            <div
+              style={{
+                padding: '10px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                borderRadius: '12px',
+              }}
+            >
               <Download size={24} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>{t('backup.export_title')}</h3>
-              <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('backup.export_desc')}</p>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>
+                {t('backup.export_title')}
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                {t('backup.export_desc')}
+              </p>
             </div>
           </div>
           <button
@@ -134,7 +145,7 @@ export function BackupPage() {
               fontWeight: '700',
               fontSize: '1rem',
               cursor: 'pointer',
-              opacity: loading ? 0.7 : 1
+              opacity: loading ? 0.7 : 1,
             }}
           >
             {loading ? t('common.processing') : t('backup.export_button')}
@@ -144,15 +155,26 @@ export function BackupPage() {
         {/* Import Card */}
         <div className="card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <div style={{ padding: '10px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', borderRadius: '12px' }}>
+            <div
+              style={{
+                padding: '10px',
+                background: 'rgba(245, 158, 11, 0.1)',
+                color: '#f59e0b',
+                borderRadius: '12px',
+              }}
+            >
               <Upload size={24} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>{t('backup.restore_title')}</h3>
-              <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('backup.restore_desc')}</p>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>
+                {t('backup.restore_title')}
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                {t('backup.restore_desc')}
+              </p>
             </div>
           </div>
-          
+
           <div>
             <input
               ref={fileInputRef}
@@ -176,22 +198,24 @@ export function BackupPage() {
                 fontWeight: '700',
                 fontSize: '1rem',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1
+                opacity: loading ? 0.7 : 1,
               }}
             >
               {loading ? t('common.processing') : t('backup.restore_button')}
             </button>
           </div>
 
-          <div style={{ 
-            marginTop: '16px', 
-            padding: '12px', 
-            background: 'rgba(244, 63, 94, 0.05)', 
-            borderRadius: '10px',
-            display: 'flex',
-            gap: '10px',
-            border: '1px solid rgba(244, 63, 94, 0.1)'
-          }}>
+          <div
+            style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'rgba(244, 63, 94, 0.05)',
+              borderRadius: '10px',
+              display: 'flex',
+              gap: '10px',
+              border: '1px solid rgba(244, 63, 94, 0.1)',
+            }}
+          >
             <AlertCircle size={18} color="#f43f5e" style={{ flexShrink: 0, marginTop: '2px' }} />
             <p style={{ margin: 0, fontSize: '0.8rem', color: '#be123c', lineHeight: '1.4' }}>
               {t('backup.warning')}
@@ -201,11 +225,29 @@ export function BackupPage() {
 
         {/* Info Section */}
         <div style={{ padding: '0 8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: 'var(--text-muted)',
+              marginBottom: '12px',
+            }}
+          >
             <ShieldCheck size={16} />
-            <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{t('backup.local_security')}</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+              {t('backup.local_security')}
+            </span>
           </div>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+          <ul
+            style={{
+              margin: 0,
+              paddingLeft: '20px',
+              fontSize: '0.8rem',
+              color: 'var(--text-muted)',
+              lineHeight: '1.6',
+            }}
+          >
             <li>{t('backup.security_1')}</li>
             <li>{t('backup.security_2')}</li>
             <li>{t('backup.security_3')}</li>

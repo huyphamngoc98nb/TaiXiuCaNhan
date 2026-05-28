@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { BackButton } from '@/shared/components/BackButton';
 import { TransactionForm } from '../components/TransactionForm';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { ROUTES } from '@/shared/constants/routes';
@@ -12,23 +12,13 @@ export function AddTransactionPage() {
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Header */}
       <div className="sticky top-0 z-30 flex items-center gap-3 bg-[#F5F7FA] px-4 pt-10 pb-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white
-            text-gray-600 active:bg-gray-100 transition-colors"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <BackButton onClick={() => navigate(ROUTES.TRANSACTIONS)} ariaLabel={t('common.back')} />
         <h2 className="text-[18px] font-bold text-gray-900">{t('transactions.add_title')}</h2>
       </div>
 
       {/* Form */}
       <div className="px-4 pb-24">
-        <TransactionForm
-          pinTypeSelector
-          onSuccess={() => navigate(ROUTES.TRANSACTIONS)}
-        />
+        <TransactionForm pinTypeSelector onSuccess={() => navigate(ROUTES.TRANSACTIONS)} />
       </div>
     </div>
   );

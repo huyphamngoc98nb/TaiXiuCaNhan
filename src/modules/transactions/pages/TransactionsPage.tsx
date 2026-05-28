@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
+import { BackButton } from '@/shared/components/BackButton';
 import { useTransactions } from '../hooks/useTransactions';
 import { TransactionList } from '../components/TransactionList';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -9,6 +10,7 @@ import { useCategories } from '@/modules/categories/hooks/useCategories';
 import { AdvancedTransactionFilterSheet } from '../components/AdvancedTransactionFilterSheet';
 import type { TransactionFilter } from '../domain/transaction.model';
 import { getAppLocale } from '@/shared/utils/locale';
+import { ROUTES } from '@/shared/constants/routes';
 
 export type ViewType = 'day' | 'month' | 'year';
 
@@ -49,7 +51,7 @@ export function TransactionsPage() {
       return;
     }
 
-    navigate(-1);
+    navigate(ROUTES.HOME);
   };
 
   const handleSelectSummaryRange = (range: {
@@ -112,26 +114,7 @@ export function TransactionsPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-            <button
-              type="button"
-              onClick={handleBack}
-              aria-label={t('common.back')}
-              style={{
-                width: '40px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                color: 'var(--text)',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                flexShrink: 0,
-              }}
-            >
-              <ArrowLeft size={20} />
-            </button>
+            <BackButton onClick={handleBack} ariaLabel={t('common.back')} />
             <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', minWidth: 0 }}>{title}</h2>
           </div>
 

@@ -20,6 +20,8 @@ import {
 import { ROUTES } from '@/shared/constants/routes';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { consumeAppBackButton } from '@/shared/utils/app-back-stack';
+import { getParentRoute } from '@/shared/utils/route-parent';
 import './MainLayout.css';
 
 export function MainLayout() {
@@ -42,32 +44,45 @@ export function MainLayout() {
     let removeListener: (() => Promise<void>) | undefined;
 
     async function registerBackButton() {
-      const listener = await CapacitorApp.addListener('backButton', async ({ canGoBack }: { canGoBack: boolean }) => {
-        if (drawerOpenRef.current) {
-          setDrawerOpen(false);
-          return;
-        }
+      const listener = await CapacitorApp.addListener(
+        'backButton',
+        async ({ canGoBack }: { canGoBack: boolean }) => {
+          if (drawerOpenRef.current) {
+            setDrawerOpen(false);
+            return;
+          }
 
-        if (canGoBack && location.pathname !== ROUTES.HOME) {
-          navigate(-1);
-          return;
-        }
+          if (consumeAppBackButton()) {
+            return;
+          }
 
-        if (confirmingExitRef.current) return;
+          const parentRoute = getParentRoute(location.pathname);
+          if (parentRoute) {
+            navigate(parentRoute);
+            return;
+          }
 
-        confirmingExitRef.current = true;
-        const shouldExit = await confirm({
-          title: t('app.exit_title'),
-          message: t('app.exit_message'),
-          confirmText: t('app.exit_confirm'),
-          cancelText: t('app.stay'),
-        });
-        confirmingExitRef.current = false;
+          if (canGoBack && location.pathname !== ROUTES.HOME) {
+            navigate(-1);
+            return;
+          }
 
-        if (shouldExit) {
-          await CapacitorApp.exitApp();
-        }
-      });
+          if (confirmingExitRef.current) return;
+
+          confirmingExitRef.current = true;
+          const shouldExit = await confirm({
+            title: t('app.exit_title'),
+            message: t('app.exit_message'),
+            confirmText: t('app.exit_confirm'),
+            cancelText: t('app.stay'),
+          });
+          confirmingExitRef.current = false;
+
+          if (shouldExit) {
+            await CapacitorApp.exitApp();
+          }
+        },
+      );
 
       removeListener = () => listener.remove();
     }
@@ -85,23 +100,28 @@ export function MainLayout() {
     { icon: <Wallet size={22} />, label: t('wallets.title'), route: ROUTES.WALLETS },
     { icon: <Tags size={22} />, label: t('categories.title'), route: ROUTES.CATEGORIES },
     { icon: <BarChart3 size={22} />, label: t('navigation.reports'), route: ROUTES.REPORTS },
-    { icon: <RefreshCcw size={22} />, label: t('recurring_bills.title'), route: ROUTES.RECURRING_BILLS },
+    {
+      icon: <RefreshCcw size={22} />,
+      label: t('recurring_bills.title'),
+      route: ROUTES.RECURRING_BILLS,
+    },
     { icon: <Download size={22} />, label: t('reports.export'), route: ROUTES.EXPORT },
     { icon: <Database size={22} />, label: t('settings.backup_restore'), route: ROUTES.BACKUP },
     { icon: <Settings size={22} />, label: t('navigation.settings'), route: ROUTES.SETTINGS },
   ];
   const moreRoutes = menuItems.map((item) => item.route);
-  const activeNavIndex = location.pathname === ROUTES.HOME
-    ? 0
-    : location.pathname.startsWith(ROUTES.TRANSACTIONS_NEW)
-      ? 2
-      : location.pathname.startsWith(ROUTES.TRANSACTIONS)
-        ? 1
-        : location.pathname.startsWith(ROUTES.BUDGETS)
-          ? 3
-          : moreRoutes.some((route) => location.pathname.startsWith(route))
-            ? 4
-            : 0;
+  const activeNavIndex =
+    location.pathname === ROUTES.HOME
+      ? 0
+      : location.pathname.startsWith(ROUTES.TRANSACTIONS_NEW)
+        ? 2
+        : location.pathname.startsWith(ROUTES.TRANSACTIONS)
+          ? 1
+          : location.pathname.startsWith(ROUTES.BUDGETS)
+            ? 3
+            : moreRoutes.some((route) => location.pathname.startsWith(route))
+              ? 4
+              : 0;
   const isMoreActive = drawerOpen || activeNavIndex === 4;
   const activeNavIndexRef = useRef(activeNavIndex);
 
@@ -182,10 +202,7 @@ export function MainLayout() {
       {/* Bottom Drawer */}
       {drawerOpen && (
         <>
-          <div
-            className="drawer-backdrop"
-            onClick={() => setDrawerOpen(false)}
-          />
+          <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />
           <div className="drawer-sheet">
             <div className="drawer-handle" />
             <div className="drawer-header">
@@ -195,11 +212,15 @@ export function MainLayout() {
               </button>
             </div>
             <div className="drawer-grid">
-              {menuItems.map(item => (
+              {menuItems.map((item) => (
                 <button
                   key={item.route}
                   className="drawer-grid-item"
-                  onClick={() => { prepareSlide(4); navigate(item.route); setDrawerOpen(false); }}
+                  onClick={() => {
+                    prepareSlide(4);
+                    navigate(item.route);
+                    setDrawerOpen(false);
+                  }}
                 >
                   <div className="drawer-grid-icon">{item.icon}</div>
                   <span className="drawer-grid-label">{item.label}</span>

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { registerAppBackHandler } from '@/shared/utils/app-back-stack';
 
 interface Props {
   isOpen: boolean;
@@ -17,8 +18,19 @@ export function BottomSheet({ isOpen, onClose, children, fullScreenOnAndroid = f
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => { document.body.style.overflow = 'unset'; };
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    return registerAppBackHandler(() => {
+      onClose();
+      return true;
+    });
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -32,21 +44,16 @@ export function BottomSheet({ isOpen, onClose, children, fullScreenOnAndroid = f
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center animate-in fade-in duration-200">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
-        onClick={onClose}
-      />
-      
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
+
       {/* Sheet */}
       <div className={sheetClassName}>
         {/* Drag Handle */}
         {!isFullScreen && (
           <div className="w-8 h-1 bg-gray-200 rounded-full mx-auto mb-6" onClick={onClose} />
         )}
-        
-        <div className="min-h-0 flex-1 pb-8">
-          {children}
-        </div>
+
+        <div className="min-h-0 flex-1 pb-8">{children}</div>
       </div>
     </div>
   );

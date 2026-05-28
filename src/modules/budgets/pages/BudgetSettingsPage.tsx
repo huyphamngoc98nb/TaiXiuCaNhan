@@ -182,7 +182,6 @@ export function BudgetSettingsPage() {
           onSave={addForm.handleSave}
           onClose={addForm.close}
           isSaving={addForm.isSaving}
-          error={addForm.error}
         />
       </BottomSheet>
     </div>
