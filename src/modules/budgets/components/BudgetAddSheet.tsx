@@ -176,7 +176,7 @@ export function BudgetAddSheet({
               ? t('common.saving')
               : selectedCategory
                 ? t('budgets.save_budget')
-                : t('budgets.select_category')}
+                : t('budgets.save_budget')}
           </button>
         </div>
       </div>
