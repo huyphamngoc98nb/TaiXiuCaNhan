@@ -53,6 +53,23 @@ body.keyboard-open .keyboard-safe-bottom-sheet {
   max-height: calc(var(--visual-viewport-height) - 8px);
 }
 
+.keyboard-safe-bottom-sheet--fullscreen {
+  height: var(--visual-viewport-height);
+  max-height: var(--visual-viewport-height);
+  padding-top: calc(20px + env(safe-area-inset-top));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  box-shadow: none;
+}
+
+body.keyboard-open .keyboard-safe-bottom-sheet--fullscreen {
+  height: var(--visual-viewport-height);
+  max-height: var(--visual-viewport-height);
+}
+
+body.keyboard-open [data-keyboard-hide-on-open="true"] {
+  display: none;
+}
+
 body.keyboard-open .bottom-nav {
   transform: translateY(calc(100% + env(safe-area-inset-bottom)));
 }

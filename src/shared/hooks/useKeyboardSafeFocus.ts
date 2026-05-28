@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 
 const FOCUSABLE_INPUT_SELECTOR = 'input, textarea, select, [contenteditable="true"]';
+const KEYBOARD_SCROLL_TARGET_SELECTOR = '[data-keyboard-scroll-target="true"]';
 const KEYBOARD_SAFE_GAP = 24;
 const KEYBOARD_SCROLL_PADDING = 96;
 
@@ -95,7 +96,8 @@ function scrollElementIntoKeyboardSafeView(element: HTMLElement) {
   const viewport = window.visualViewport;
   const visibleTop = viewport?.offsetTop ?? 0;
   const visibleBottom = visibleTop + (viewport?.height ?? window.innerHeight) - KEYBOARD_SAFE_GAP;
-  const rect = element.getBoundingClientRect();
+  const target = element.closest<HTMLElement>(KEYBOARD_SCROLL_TARGET_SELECTOR) ?? element;
+  const rect = target.getBoundingClientRect();
 
   if (rect.bottom <= visibleBottom && rect.top >= visibleTop + KEYBOARD_SAFE_GAP) {
     return;
@@ -105,11 +107,11 @@ function scrollElementIntoKeyboardSafeView(element: HTMLElement) {
   const delta = rect.bottom - visibleBottom;
 
   if (scrollParent && delta > 0) {
-    scrollParent.scrollBy({ top: delta, behavior: 'smooth' });
+    scrollParent.scrollBy({ top: delta + KEYBOARD_SAFE_GAP, behavior: 'smooth' });
     return;
   }
 
-  element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
+  target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
 }
 
 export function useKeyboardSafeFocus() {

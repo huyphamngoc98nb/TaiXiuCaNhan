@@ -144,7 +144,7 @@ export function BudgetAddSheet({
           />
 
           {/* Amount Input */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" data-keyboard-scroll-target="true">
             <p className="text-[13px] font-semibold text-gray-700">{t('budgets.amount')}</p>
             <CurrencyAmountInput
               currency={currency}
@@ -163,7 +163,7 @@ export function BudgetAddSheet({
         </div>
 
         {/* Footer */}
-        <div className="mt-4 shrink-0 pt-4 border-t border-gray-100">
+        <div className="mt-4 shrink-0 pt-4 border-t border-gray-100" data-keyboard-hide-on-open="true">
           <button
             onClick={onSave}
             disabled={isSaving || !selectedCategory}

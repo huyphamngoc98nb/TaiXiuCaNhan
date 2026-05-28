@@ -8296,7 +8296,7 @@
       "label": "Props",
       "file_type": "code",
       "source_file": "src/shared/components/BottomSheet.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "id": "components_bottomsheet_props",
       "community": 41,
       "norm_label": "props"
@@ -8305,7 +8305,7 @@
       "label": "BottomSheet()",
       "file_type": "code",
       "source_file": "src/shared/components/BottomSheet.tsx",
-      "source_location": "L9",
+      "source_location": "L11",
       "id": "components_bottomsheet_bottomsheet",
       "community": 41,
       "norm_label": "bottomsheet()"
@@ -8998,7 +8998,7 @@
       "label": "ScrollPaddingState",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "id": "hooks_usekeyboardsafefocus_scrollpaddingstate",
       "community": 40,
       "norm_label": "scrollpaddingstate"
@@ -9007,7 +9007,7 @@
       "label": "isEditableElement()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "id": "hooks_usekeyboardsafefocus_iseditableelement",
       "community": 40,
       "norm_label": "iseditableelement()"
@@ -9016,7 +9016,7 @@
       "label": "getKeyboardScrollContainer()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L33",
+      "source_location": "L34",
       "id": "hooks_usekeyboardsafefocus_getkeyboardscrollcontainer",
       "community": 40,
       "norm_label": "getkeyboardscrollcontainer()"
@@ -9025,7 +9025,7 @@
       "label": "applyKeyboardScrollPadding()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "id": "hooks_usekeyboardsafefocus_applykeyboardscrollpadding",
       "community": 40,
       "norm_label": "applykeyboardscrollpadding()"
@@ -9034,7 +9034,7 @@
       "label": "restoreScrollPadding()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L83",
+      "source_location": "L84",
       "id": "hooks_usekeyboardsafefocus_restorescrollpadding",
       "community": 40,
       "norm_label": "restorescrollpadding()"
@@ -9043,7 +9043,7 @@
       "label": "scrollElementIntoKeyboardSafeView()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L94",
+      "source_location": "L95",
       "id": "hooks_usekeyboardsafefocus_scrollelementintokeyboardsafeview",
       "community": 40,
       "norm_label": "scrollelementintokeyboardsafeview()"
@@ -9052,7 +9052,7 @@
       "label": "useKeyboardSafeFocus()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
-      "source_location": "L115",
+      "source_location": "L117",
       "id": "hooks_usekeyboardsafefocus_usekeyboardsafefocus",
       "community": 34,
       "norm_label": "usekeyboardsafefocus()"
@@ -40280,9 +40280,9 @@
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_shared_hooks_usekeyboardsafefocus_ts",
-      "target": "hooks_usekeyboardsafefocus_getkeyboardscrollcontainer",
-      "confidence_score": 1.0
+      "target": "hooks_usekeyboardsafefocus_getkeyboardscrollcontainer"
     },
     {
       "relation": "contains",
@@ -40341,9 +40341,9 @@
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
       "source_location": "L104",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "hooks_usekeyboardsafefocus_scrollelementintokeyboardsafeview",
-      "target": "hooks_usekeyboardsafefocus_getkeyboardscrollcontainer",
-      "confidence_score": 1.0
+      "target": "hooks_usekeyboardsafefocus_getkeyboardscrollcontainer"
     },
     {
       "relation": "calls",

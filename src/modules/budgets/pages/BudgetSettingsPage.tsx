@@ -166,7 +166,7 @@ export function BudgetSettingsPage() {
       </BottomSheet>
 
       {/* Add Sheet */}
-      <BottomSheet isOpen={addForm.isOpen} onClose={addForm.close}>
+      <BottomSheet isOpen={addForm.isOpen} onClose={addForm.close} fullScreenOnAndroid>
         <BudgetAddSheet
           categories={categories}
           selectedCategory={addForm.selectedCategory}
