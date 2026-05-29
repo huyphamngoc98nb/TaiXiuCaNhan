@@ -1,8 +1,13 @@
 package com.taixiucanhan.app;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 
 import androidx.activity.result.ActivityResult;
 
@@ -13,6 +18,8 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -40,6 +47,129 @@ public class DocumentSaverPlugin extends Plugin {
         intent.putExtra(Intent.EXTRA_TITLE, fileName);
 
         startActivityForResult(call, intent, "saveTextFileResult");
+    }
+
+    @PluginMethod
+    public void saveTextFileToDownloads(PluginCall call) {
+        String fileName = call.getString("fileName");
+        String content = call.getString("content");
+        String mimeType = call.getString("mimeType", "application/octet-stream");
+        String directoryName = call.getString("directoryName", getAppLabel());
+
+        if (fileName == null || fileName.trim().isEmpty()) {
+            call.reject("File name is required.");
+            return;
+        }
+
+        if (content == null) {
+            call.reject("File content is required.");
+            return;
+        }
+
+        if (directoryName == null || directoryName.trim().isEmpty()) {
+            directoryName = getAppLabel();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveTextFileToDownloadsWithMediaStore(call, fileName, content, mimeType, directoryName);
+            return;
+        }
+
+        saveTextFileToLegacyDownloads(call, fileName, content, directoryName);
+    }
+
+    private String getAppLabel() {
+        CharSequence label = getContext().getApplicationInfo().loadLabel(getContext().getPackageManager());
+        return label != null ? label.toString() : "Expense Tracker";
+    }
+
+    private void saveTextFileToDownloadsWithMediaStore(
+            PluginCall call,
+            String fileName,
+            String content,
+            String mimeType,
+            String directoryName
+    ) {
+        ContentResolver resolver = getContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+        values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
+        values.put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_DOWNLOADS + File.separator + directoryName
+        );
+        values.put(MediaStore.MediaColumns.IS_PENDING, 1);
+
+        Uri uri = null;
+
+        try {
+            uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+            if (uri == null) {
+                call.reject("Unable to create file in Downloads.");
+                return;
+            }
+
+            try (OutputStream outputStream = resolver.openOutputStream(uri, "wt")) {
+                if (outputStream == null) {
+                    throw new IllegalStateException("Unable to open Downloads file.");
+                }
+
+                outputStream.write(content.getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+            }
+
+            ContentValues completedValues = new ContentValues();
+            completedValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
+            resolver.update(uri, completedValues, null, null);
+
+            resolveSavedFile(call, uri.toString(), "Download/" + directoryName + "/" + fileName);
+        } catch (Exception error) {
+            if (uri != null) {
+                resolver.delete(uri, null, null);
+            }
+            call.reject("Unable to save file to Downloads.", error);
+        }
+    }
+
+    private void saveTextFileToLegacyDownloads(
+            PluginCall call,
+            String fileName,
+            String content,
+            String directoryName
+    ) {
+        File targetDirectory = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                directoryName
+        );
+
+        try {
+            if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
+                call.reject("Unable to create Downloads folder.");
+                return;
+            }
+
+            File targetFile = new File(targetDirectory, fileName);
+            try (OutputStream outputStream = new FileOutputStream(targetFile, false)) {
+                outputStream.write(content.getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+            }
+
+            resolveSavedFile(
+                    call,
+                    Uri.fromFile(targetFile).toString(),
+                    "Download/" + directoryName + "/" + fileName
+            );
+        } catch (Exception error) {
+            call.reject("Unable to save file to Downloads.", error);
+        }
+    }
+
+    private void resolveSavedFile(PluginCall call, String uri, String path) {
+        JSObject response = new JSObject();
+        response.put("saved", true);
+        response.put("uri", uri);
+        response.put("path", path);
+        call.resolve(response);
     }
 
     @ActivityCallback

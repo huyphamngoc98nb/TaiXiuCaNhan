@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\DocumentSaverPlugin.java": {
-    "mtime": 1779411575.3770194,
-    "ast_hash": "9f7038bb4579be248d863fd5dd65066f",
+    "mtime": 1780046342.4543211,
+    "ast_hash": "6a86d8724f3b0f6fdcab03e952c06dc1",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\MainActivity.java": {
@@ -380,8 +380,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\files\\document-saver.ts": {
-    "mtime": 1779411575.4368935,
-    "ast_hash": "79f8410e8df7d668a5fedb38c86caa5d",
+    "mtime": 1780046300.5774825,
+    "ast_hash": "7a7a1b44d5a11433afc94216392b91d5",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\files\\receipt-storage.ts": {
@@ -1460,13 +1460,18 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\auto-backup.service.ts": {
-    "mtime": 1780044310.7793906,
-    "ast_hash": "eaf2553c79f41cce0db102f35d56aca8",
+    "mtime": 1780046313.8945818,
+    "ast_hash": "a7bef1e85053a3dd6c6b2d2566043aa9",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\auto-backup.test.ts": {
-    "mtime": 1780045544.2478805,
-    "ast_hash": "2f083f7e0846d19e9275db216da3579d",
+    "mtime": 1780046322.4116528,
+    "ast_hash": "32666a237c6189503ed95d75c471f260",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\save-auto-backup-file.ts": {
+    "mtime": 1780046307.9943612,
+    "ast_hash": "62448d781961f5b9b73d6997eb2897cb",
     "semantic_hash": ""
   }
 }

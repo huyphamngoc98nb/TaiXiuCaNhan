@@ -1393,7 +1393,7 @@
       "label": "DocumentSaverPlugin",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L19",
+      "source_location": "L26",
       "id": "app_documentsaverplugin_documentsaverplugin",
       "community": 25,
       "norm_label": "documentsaverplugin"
@@ -1411,7 +1411,7 @@
       "label": ".saveTextFile()",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L21",
+      "source_location": "L28",
       "id": "app_documentsaverplugin_documentsaverplugin_savetextfile",
       "community": 25,
       "norm_label": ".savetextfile()"
@@ -1420,7 +1420,7 @@
       "label": "PluginCall",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L21",
+      "source_location": "L28",
       "id": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall",
       "community": 25,
       "norm_label": "plugincall"
@@ -1429,16 +1429,70 @@
       "label": "PluginMethod",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L21",
+      "source_location": "L28",
       "id": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_pluginmethod",
       "community": 25,
       "norm_label": "pluginmethod"
     },
     {
+      "label": ".saveTextFileToDownloads()",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L52",
+      "id": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "community": 25,
+      "norm_label": ".savetextfiletodownloads()"
+    },
+    {
+      "label": ".getAppLabel()",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L81",
+      "id": "app_documentsaverplugin_documentsaverplugin_getapplabel",
+      "community": 25,
+      "norm_label": ".getapplabel()"
+    },
+    {
+      "label": "String",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L81",
+      "id": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_string",
+      "community": 25,
+      "norm_label": "string"
+    },
+    {
+      "label": ".saveTextFileToDownloadsWithMediaStore()",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L86",
+      "id": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "community": 25,
+      "norm_label": ".savetextfiletodownloadswithmediastore()"
+    },
+    {
+      "label": ".saveTextFileToLegacyDownloads()",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L134",
+      "id": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "community": 25,
+      "norm_label": ".savetextfiletolegacydownloads()"
+    },
+    {
+      "label": ".resolveSavedFile()",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L167",
+      "id": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "community": 25,
+      "norm_label": ".resolvesavedfile()"
+    },
+    {
       "label": ".saveTextFileResult()",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L45",
+      "source_location": "L175",
       "id": "app_documentsaverplugin_documentsaverplugin_savetextfileresult",
       "community": 25,
       "norm_label": ".savetextfileresult()"
@@ -1447,7 +1501,7 @@
       "label": "ActivityResult",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L45",
+      "source_location": "L175",
       "id": "activityresult",
       "community": 25,
       "norm_label": "activityresult"
@@ -1456,7 +1510,7 @@
       "label": "ActivityCallback",
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
-      "source_location": "L45",
+      "source_location": "L175",
       "id": "activitycallback",
       "community": 25,
       "norm_label": "activitycallback"
@@ -1583,7 +1637,7 @@
       "file_type": "code",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/NativeBiometricPlugin.java",
       "source_location": "L83",
-      "id": "string",
+      "id": "android_app_src_main_java_com_taixiucanhan_app_nativebiometricplugin_java_string",
       "community": 25,
       "norm_label": "string"
     },
@@ -2016,7 +2070,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L1",
       "id": "scripts_check_translations_ts",
-      "community": 0,
+      "community": 41,
       "norm_label": "check-translations.ts"
     },
     {
@@ -2025,7 +2079,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L3",
       "id": "scripts_check_translations_getkeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "getkeys()"
     },
     {
@@ -2034,7 +2088,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L10",
       "id": "scripts_check_translations_enkeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "enkeys"
     },
     {
@@ -2043,7 +2097,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L11",
       "id": "scripts_check_translations_vikeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "vikeys"
     },
     {
@@ -2052,7 +2106,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L13",
       "id": "scripts_check_translations_missinginvi",
-      "community": 0,
+      "community": 41,
       "norm_label": "missinginvi"
     },
     {
@@ -2061,7 +2115,7 @@
       "source_file": "scripts/check-translations.ts",
       "source_location": "L14",
       "id": "scripts_check_translations_missinginen",
-      "community": 0,
+      "community": 41,
       "norm_label": "missinginen"
     },
     {
@@ -2430,7 +2484,7 @@
       "source_file": "src/main.tsx",
       "source_location": "L1",
       "id": "src_main_tsx",
-      "community": 23,
+      "community": 40,
       "norm_label": "main.tsx"
     },
     {
@@ -2466,7 +2520,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L1",
       "id": "src_app_layouts_mainlayout_tsx",
-      "community": 85,
+      "community": 21,
       "norm_label": "mainlayout.tsx"
     },
     {
@@ -2475,7 +2529,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L27",
       "id": "layouts_mainlayout_contextualaddroute",
-      "community": 85,
+      "community": 21,
       "norm_label": "contextualaddroute"
     },
     {
@@ -2484,7 +2538,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L32",
       "id": "layouts_mainlayout_default_add_route",
-      "community": 85,
+      "community": 21,
       "norm_label": "default_add_route"
     },
     {
@@ -2493,7 +2547,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L37",
       "id": "layouts_mainlayout_contextual_add_routes",
-      "community": 85,
+      "community": 21,
       "norm_label": "contextual_add_routes"
     },
     {
@@ -2502,7 +2556,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L50",
       "id": "layouts_mainlayout_matchesroutecontext",
-      "community": 85,
+      "community": 21,
       "norm_label": "matchesroutecontext()"
     },
     {
@@ -2511,7 +2565,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L55",
       "id": "layouts_mainlayout_getcontextualaddroute",
-      "community": 85,
+      "community": 21,
       "norm_label": "getcontextualaddroute()"
     },
     {
@@ -2520,7 +2574,7 @@
       "source_file": "src/app/layouts/MainLayout.tsx",
       "source_location": "L63",
       "id": "layouts_mainlayout_mainlayout",
-      "community": 85,
+      "community": 21,
       "norm_label": "mainlayout()"
     },
     {
@@ -2529,7 +2583,7 @@
       "source_file": "src/app/providers/app-lock-events.ts",
       "source_location": "L1",
       "id": "src_app_providers_app_lock_events_ts",
-      "community": 73,
+      "community": 83,
       "norm_label": "app-lock-events.ts"
     },
     {
@@ -2538,7 +2592,7 @@
       "source_file": "src/app/providers/app-lock-events.ts",
       "source_location": "L5",
       "id": "providers_app_lock_events_suspendapplock",
-      "community": 73,
+      "community": 83,
       "norm_label": "suspendapplock()"
     },
     {
@@ -2547,7 +2601,7 @@
       "source_file": "src/app/providers/app-lock-events.ts",
       "source_location": "L9",
       "id": "providers_app_lock_events_resumeapplock",
-      "community": 73,
+      "community": 83,
       "norm_label": "resumeapplock()"
     },
     {
@@ -2556,7 +2610,7 @@
       "source_file": "src/app/providers/app-lock-events.ts",
       "source_location": "L13",
       "id": "providers_app_lock_events_forceappunlock",
-      "community": 73,
+      "community": 83,
       "norm_label": "forceappunlock()"
     },
     {
@@ -2592,7 +2646,7 @@
       "source_file": "src/app/providers/AppBootstrap.tsx",
       "source_location": "L28",
       "id": "providers_appbootstrap_appbootstrap",
-      "community": 73,
+      "community": 83,
       "norm_label": "appbootstrap()"
     },
     {
@@ -2601,7 +2655,7 @@
       "source_file": "src/app/providers/AppProvider.tsx",
       "source_location": "L1",
       "id": "src_app_providers_appprovider_tsx",
-      "community": 29,
+      "community": 40,
       "norm_label": "appprovider.tsx"
     },
     {
@@ -2610,7 +2664,7 @@
       "source_file": "src/app/providers/AppProvider.tsx",
       "source_location": "L11",
       "id": "providers_appprovider_appprovider",
-      "community": 29,
+      "community": 40,
       "norm_label": "appprovider()"
     },
     {
@@ -2619,7 +2673,7 @@
       "source_file": "src/app/providers/AppUnlock.tsx",
       "source_location": "L1",
       "id": "src_app_providers_appunlock_tsx",
-      "community": 28,
+      "community": 7,
       "norm_label": "appunlock.tsx"
     },
     {
@@ -2628,7 +2682,7 @@
       "source_file": "src/app/providers/AppUnlock.tsx",
       "source_location": "L7",
       "id": "providers_appunlock_appunlockprops",
-      "community": 28,
+      "community": 7,
       "norm_label": "appunlockprops"
     },
     {
@@ -2637,7 +2691,7 @@
       "source_file": "src/app/providers/AppUnlock.tsx",
       "source_location": "L12",
       "id": "providers_appunlock_pin_keys",
-      "community": 28,
+      "community": 7,
       "norm_label": "pin_keys"
     },
     {
@@ -2646,7 +2700,7 @@
       "source_file": "src/app/providers/AppUnlock.tsx",
       "source_location": "L19",
       "id": "providers_appunlock_unlockmode",
-      "community": 28,
+      "community": 7,
       "norm_label": "unlockmode"
     },
     {
@@ -2655,7 +2709,7 @@
       "source_file": "src/app/providers/AppUnlock.tsx",
       "source_location": "L21",
       "id": "providers_appunlock_appunlock",
-      "community": 28,
+      "community": 7,
       "norm_label": "appunlock()"
     },
     {
@@ -2664,7 +2718,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L1",
       "id": "src_app_providers_globalerrorboundary_tsx",
-      "community": 33,
+      "community": 40,
       "norm_label": "globalerrorboundary.tsx"
     },
     {
@@ -2673,7 +2727,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L5",
       "id": "providers_globalerrorboundary_globalerrorboundaryprops",
-      "community": 33,
+      "community": 40,
       "norm_label": "globalerrorboundaryprops"
     },
     {
@@ -2682,7 +2736,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L9",
       "id": "providers_globalerrorboundary_globalerrorboundarystate",
-      "community": 33,
+      "community": 40,
       "norm_label": "globalerrorboundarystate"
     },
     {
@@ -2691,7 +2745,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L13",
       "id": "providers_globalerrorboundary_globalerrorboundary",
-      "community": 28,
+      "community": 40,
       "norm_label": "globalerrorboundary"
     },
     {
@@ -2700,7 +2754,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L21",
       "id": "providers_globalerrorboundary_globalerrorboundary_getderivedstatefromerror",
-      "community": 28,
+      "community": 40,
       "norm_label": ".getderivedstatefromerror()"
     },
     {
@@ -2709,7 +2763,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L25",
       "id": "providers_globalerrorboundary_globalerrorboundary_componentdidcatch",
-      "community": 28,
+      "community": 40,
       "norm_label": ".componentdidcatch()"
     },
     {
@@ -2718,7 +2772,7 @@
       "source_file": "src/app/providers/GlobalErrorBoundary.tsx",
       "source_location": "L32",
       "id": "providers_globalerrorboundary_globalerrorboundary_render",
-      "community": 28,
+      "community": 40,
       "norm_label": ".render()"
     },
     {
@@ -2736,7 +2790,7 @@
       "source_file": "src/app/router/index.tsx",
       "source_location": "L19",
       "id": "router_index_router",
-      "community": 29,
+      "community": 40,
       "norm_label": "router"
     },
     {
@@ -2799,7 +2853,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L33",
       "id": "auth_auth_service_isbiometricunlocksupportedplatform",
-      "community": 82,
+      "community": 7,
       "norm_label": "isbiometricunlocksupportedplatform()"
     },
     {
@@ -2808,7 +2862,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L37",
       "id": "auth_auth_service_isandroidplatform",
-      "community": 82,
+      "community": 7,
       "norm_label": "isandroidplatform()"
     },
     {
@@ -2817,7 +2871,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L41",
       "id": "auth_auth_service_authservice",
-      "community": 82,
+      "community": 7,
       "norm_label": "authservice"
     },
     {
@@ -2826,7 +2880,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L42",
       "id": "auth_auth_service_authservice_requiresunlock",
-      "community": 82,
+      "community": 7,
       "norm_label": ".requiresunlock()"
     },
     {
@@ -2835,7 +2889,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L46",
       "id": "auth_auth_service_authservice_isbiometricunlockavailable",
-      "community": 82,
+      "community": 7,
       "norm_label": ".isbiometricunlockavailable()"
     },
     {
@@ -2844,7 +2898,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L54",
       "id": "auth_auth_service_authservice_isbiometricunlockenabled",
-      "community": 82,
+      "community": 7,
       "norm_label": ".isbiometricunlockenabled()"
     },
     {
@@ -2853,7 +2907,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L60",
       "id": "auth_auth_service_authservice_setbiometricunlockenabled",
-      "community": 82,
+      "community": 7,
       "norm_label": ".setbiometricunlockenabled()"
     },
     {
@@ -2862,7 +2916,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L81",
       "id": "auth_auth_service_authservice_hasstoredsecret",
-      "community": 82,
+      "community": 7,
       "norm_label": ".hasstoredsecret()"
     },
     {
@@ -2871,7 +2925,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L86",
       "id": "auth_auth_service_authservice_setuppin",
-      "community": 82,
+      "community": 7,
       "norm_label": ".setuppin()"
     },
     {
@@ -2880,7 +2934,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L110",
       "id": "auth_auth_service_authservice_unlockwithpin",
-      "community": 82,
+      "community": 7,
       "norm_label": ".unlockwithpin()"
     },
     {
@@ -2889,7 +2943,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L133",
       "id": "auth_auth_service_authservice_unlockwithbiometrics",
-      "community": 82,
+      "community": 7,
       "norm_label": ".unlockwithbiometrics()"
     },
     {
@@ -2898,7 +2952,7 @@
       "source_file": "src/core/auth/auth.service.ts",
       "source_location": "L170",
       "id": "auth_auth_service_authservice_onbiometricresult",
-      "community": 82,
+      "community": 7,
       "norm_label": ".onbiometricresult()"
     },
     {
@@ -2952,7 +3006,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L1",
       "id": "src_core_db_transaction_runner_ts",
-      "community": 81,
+      "community": 34,
       "norm_label": "transaction-runner.ts"
     },
     {
@@ -2970,7 +3024,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L5",
       "id": "db_transaction_runner_sqlitetransactionrunner",
-      "community": 81,
+      "community": 34,
       "norm_label": "sqlitetransactionrunner()"
     },
     {
@@ -2979,7 +3033,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L9",
       "id": "db_transaction_runner_immediatetransactionrunner",
-      "community": 81,
+      "community": 9,
       "norm_label": "immediatetransactionrunner()"
     },
     {
@@ -3060,7 +3114,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L1",
       "id": "src_core_db_seed_default_categories_ts",
-      "community": 12,
+      "community": 33,
       "norm_label": "default-categories.ts"
     },
     {
@@ -3069,7 +3123,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L4",
       "id": "seed_default_categories_defaultcategorytype",
-      "community": 12,
+      "community": 33,
       "norm_label": "defaultcategorytype"
     },
     {
@@ -3078,7 +3132,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L6",
       "id": "seed_default_categories_defaultcategory",
-      "community": 12,
+      "community": 33,
       "norm_label": "defaultcategory"
     },
     {
@@ -3087,7 +3141,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L16",
       "id": "seed_default_categories_default_categories",
-      "community": 12,
+      "community": 33,
       "norm_label": "default_categories"
     },
     {
@@ -3096,7 +3150,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L26",
       "id": "seed_default_categories_insertdefaultcategories",
-      "community": 12,
+      "community": 33,
       "norm_label": "insertdefaultcategories()"
     },
     {
@@ -3105,7 +3159,7 @@
       "source_file": "src/core/db/seed/default-categories.ts",
       "source_location": "L39",
       "id": "seed_default_categories_seeddefaultdata",
-      "community": 12,
+      "community": 33,
       "norm_label": "seeddefaultdata()"
     },
     {
@@ -3114,7 +3168,7 @@
       "source_file": "src/core/db/sqlite/connection.ts",
       "source_location": "L1",
       "id": "src_core_db_sqlite_connection_ts",
-      "community": 7,
+      "community": 43,
       "norm_label": "connection.ts"
     },
     {
@@ -3123,7 +3177,7 @@
       "source_file": "src/core/db/sqlite/connection.ts",
       "source_location": "L10",
       "id": "sqlite_connection_ensurewebstoreinitialized",
-      "community": 7,
+      "community": 43,
       "norm_label": "ensurewebstoreinitialized()"
     },
     {
@@ -3132,7 +3186,7 @@
       "source_file": "src/core/db/sqlite/connection.ts",
       "source_location": "L33",
       "id": "sqlite_connection_initdatabaseconnection",
-      "community": 7,
+      "community": 43,
       "norm_label": "initdatabaseconnection()"
     },
     {
@@ -3150,7 +3204,7 @@
       "source_file": "src/core/db/sqlite/connection.ts",
       "source_location": "L108",
       "id": "sqlite_connection_isdatabaseready",
-      "community": 8,
+      "community": 28,
       "norm_label": "isdatabaseready()"
     },
     {
@@ -3159,7 +3213,7 @@
       "source_file": "src/core/db/sqlite/encryption.ts",
       "source_location": "L1",
       "id": "src_core_db_sqlite_encryption_ts",
-      "community": 7,
+      "community": 43,
       "norm_label": "encryption.ts"
     },
     {
@@ -3168,7 +3222,7 @@
       "source_file": "src/core/db/sqlite/encryption.ts",
       "source_location": "L3",
       "id": "sqlite_encryption_sqliteencryptionmode",
-      "community": 7,
+      "community": 43,
       "norm_label": "sqliteencryptionmode"
     },
     {
@@ -3177,7 +3231,7 @@
       "source_file": "src/core/db/sqlite/encryption.ts",
       "source_location": "L5",
       "id": "sqlite_encryption_sqliteencryptionconfig",
-      "community": 7,
+      "community": 43,
       "norm_label": "sqliteencryptionconfig"
     },
     {
@@ -3186,7 +3240,7 @@
       "source_file": "src/core/db/sqlite/encryption.ts",
       "source_location": "L11",
       "id": "sqlite_encryption_sqlite_encryption_config",
-      "community": 7,
+      "community": 43,
       "norm_label": "sqlite_encryption_config"
     },
     {
@@ -3195,7 +3249,7 @@
       "source_file": "src/core/db/sqlite/encryption.ts",
       "source_location": "L17",
       "id": "sqlite_encryption_getsqliteencryptionconfig",
-      "community": 7,
+      "community": 43,
       "norm_label": "getsqliteencryptionconfig()"
     },
     {
@@ -3204,7 +3258,7 @@
       "source_file": "src/core/db/sqlite/health.ts",
       "source_location": "L1",
       "id": "src_core_db_sqlite_health_ts",
-      "community": 8,
+      "community": 77,
       "norm_label": "health.ts"
     },
     {
@@ -3213,7 +3267,7 @@
       "source_file": "src/core/db/sqlite/health.ts",
       "source_location": "L3",
       "id": "sqlite_health_getschemaversion",
-      "community": 8,
+      "community": 77,
       "norm_label": "getschemaversion()"
     },
     {
@@ -3222,7 +3276,7 @@
       "source_file": "src/core/db/sqlite/health.ts",
       "source_location": "L13",
       "id": "sqlite_health_listtables",
-      "community": 8,
+      "community": 77,
       "norm_label": "listtables()"
     },
     {
@@ -3231,7 +3285,7 @@
       "source_file": "src/core/db/sqlite/health.ts",
       "source_location": "L23",
       "id": "sqlite_health_countcategories",
-      "community": 8,
+      "community": 77,
       "norm_label": "countcategories()"
     },
     {
@@ -3267,7 +3321,7 @@
       "source_file": "src/core/db/sqlite/pragmas.ts",
       "source_location": "L9",
       "id": "sqlite_pragmas_applypragmas",
-      "community": 7,
+      "community": 43,
       "norm_label": "applypragmas()"
     },
     {
@@ -3276,7 +3330,7 @@
       "source_file": "src/core/db/sqlite/transaction.ts",
       "source_location": "L1",
       "id": "src_core_db_sqlite_transaction_ts",
-      "community": 81,
+      "community": 12,
       "norm_label": "transaction.ts"
     },
     {
@@ -3285,7 +3339,7 @@
       "source_file": "src/core/db/sqlite/transaction.ts",
       "source_location": "L4",
       "id": "sqlite_transaction_nativetransactionqueue",
-      "community": 81,
+      "community": 12,
       "norm_label": "nativetransactionqueue"
     },
     {
@@ -3303,7 +3357,7 @@
       "source_file": "src/core/db/sqlite/transaction.ts",
       "source_location": "L11",
       "id": "sqlite_transaction_runexclusive",
-      "community": 81,
+      "community": 12,
       "norm_label": "runexclusive()"
     },
     {
@@ -3312,7 +3366,7 @@
       "source_file": "src/core/db/sqlite/transaction.ts",
       "source_location": "L40",
       "id": "sqlite_transaction_runintransaction",
-      "community": 81,
+      "community": 12,
       "norm_label": "runintransaction()"
     },
     {
@@ -3357,7 +3411,7 @@
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L1",
       "id": "src_core_di_transactions_di_ts",
-      "community": 74,
+      "community": 14,
       "norm_label": "transactions.di.ts"
     },
     {
@@ -3366,7 +3420,7 @@
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L12",
       "id": "di_transactions_di_createtransactionusecase",
-      "community": 74,
+      "community": 14,
       "norm_label": "createtransactionusecase"
     },
     {
@@ -3375,7 +3429,7 @@
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L16",
       "id": "di_transactions_di_updatetransactionusecase",
-      "community": 74,
+      "community": 14,
       "norm_label": "updatetransactionusecase"
     },
     {
@@ -3393,7 +3447,7 @@
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L21",
       "id": "di_transactions_di_deletetransactionusecase",
-      "community": 14,
+      "community": 21,
       "norm_label": "deletetransactionusecase"
     },
     {
@@ -3402,7 +3456,7 @@
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L25",
       "id": "di_transactions_di_createcreditcardpaymentusecase",
-      "community": 74,
+      "community": 14,
       "norm_label": "createcreditcardpaymentusecase"
     },
     {
@@ -3424,10 +3478,19 @@
       "norm_label": "savetextfileoptions"
     },
     {
-      "label": "SaveTextFileResult",
+      "label": "SaveTextFileToDownloadsOptions",
       "file_type": "code",
       "source_file": "src/core/files/document-saver.ts",
       "source_location": "L9",
+      "id": "files_document_saver_savetextfiletodownloadsoptions",
+      "community": 83,
+      "norm_label": "savetextfiletodownloadsoptions"
+    },
+    {
+      "label": "SaveTextFileResult",
+      "file_type": "code",
+      "source_file": "src/core/files/document-saver.ts",
+      "source_location": "L13",
       "id": "files_document_saver_savetextfileresult",
       "community": 83,
       "norm_label": "savetextfileresult"
@@ -3436,7 +3499,7 @@
       "label": "DocumentSaverPlugin",
       "file_type": "code",
       "source_file": "src/core/files/document-saver.ts",
-      "source_location": "L14",
+      "source_location": "L19",
       "id": "files_document_saver_documentsaverplugin",
       "community": 83,
       "norm_label": "documentsaverplugin"
@@ -3445,7 +3508,7 @@
       "label": "documentSaver",
       "file_type": "code",
       "source_file": "src/core/files/document-saver.ts",
-      "source_location": "L18",
+      "source_location": "L24",
       "id": "files_document_saver_documentsaver",
       "community": 83,
       "norm_label": "documentsaver"
@@ -3537,7 +3600,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L1",
       "id": "src_core_telemetry_error_log_repository_ts",
-      "community": 8,
+      "community": 28,
       "norm_label": "error-log.repository.ts"
     },
     {
@@ -3546,7 +3609,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L6",
       "id": "telemetry_error_log_repository_errorlogrecord",
-      "community": 8,
+      "community": 28,
       "norm_label": "errorlogrecord"
     },
     {
@@ -3555,7 +3618,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L16",
       "id": "telemetry_error_log_repository_generateid",
-      "community": 8,
+      "community": 28,
       "norm_label": "generateid()"
     },
     {
@@ -3564,7 +3627,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L23",
       "id": "telemetry_error_log_repository_canuselocalstorage",
-      "community": 8,
+      "community": 28,
       "norm_label": "canuselocalstorage()"
     },
     {
@@ -3573,7 +3636,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L31",
       "id": "telemetry_error_log_repository_readpendinglogs",
-      "community": 8,
+      "community": 28,
       "norm_label": "readpendinglogs()"
     },
     {
@@ -3582,7 +3645,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L44",
       "id": "telemetry_error_log_repository_writependinglogs",
-      "community": 8,
+      "community": 28,
       "norm_label": "writependinglogs()"
     },
     {
@@ -3591,7 +3654,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L49",
       "id": "telemetry_error_log_repository_errorlogrepository",
-      "community": 8,
+      "community": 28,
       "norm_label": "errorlogrepository"
     },
     {
@@ -3600,7 +3663,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L50",
       "id": "telemetry_error_log_repository_errorlogrepository_insert",
-      "community": 8,
+      "community": 28,
       "norm_label": ".insert()"
     },
     {
@@ -3609,7 +3672,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L68",
       "id": "telemetry_error_log_repository_errorlogrepository_flushpending",
-      "community": 8,
+      "community": 28,
       "norm_label": ".flushpending()"
     },
     {
@@ -3618,7 +3681,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L78",
       "id": "telemetry_error_log_repository_errorlogrepository_append",
-      "community": 8,
+      "community": 28,
       "norm_label": ".append()"
     },
     {
@@ -3627,7 +3690,7 @@
       "source_file": "src/core/telemetry/error-log.repository.ts",
       "source_location": "L88",
       "id": "telemetry_error_log_repository_errorlogrepository_list",
-      "community": 8,
+      "community": 28,
       "norm_label": ".list()"
     },
     {
@@ -3636,7 +3699,7 @@
       "source_file": "src/core/telemetry/global-error-logging.ts",
       "source_location": "L1",
       "id": "src_core_telemetry_global_error_logging_ts",
-      "community": 23,
+      "community": 40,
       "norm_label": "global-error-logging.ts"
     },
     {
@@ -3645,7 +3708,7 @@
       "source_file": "src/core/telemetry/global-error-logging.ts",
       "source_location": "L5",
       "id": "telemetry_global_error_logging_tometadatavalue",
-      "community": 23,
+      "community": 40,
       "norm_label": "tometadatavalue()"
     },
     {
@@ -3654,7 +3717,7 @@
       "source_file": "src/core/telemetry/global-error-logging.ts",
       "source_location": "L17",
       "id": "telemetry_global_error_logging_installglobalerrorlogging",
-      "community": 23,
+      "community": 40,
       "norm_label": "installglobalerrorlogging()"
     },
     {
@@ -3672,7 +3735,7 @@
       "source_file": "src/core/telemetry/logger.ts",
       "source_location": "L4",
       "id": "telemetry_logger_loglevel",
-      "community": 8,
+      "community": 28,
       "norm_label": "loglevel"
     },
     {
@@ -3681,7 +3744,7 @@
       "source_file": "src/core/telemetry/logger.ts",
       "source_location": "L6",
       "id": "telemetry_logger_structuredlogentry",
-      "community": 8,
+      "community": 28,
       "norm_label": "structuredlogentry"
     },
     {
@@ -3843,7 +3906,7 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L1",
       "id": "src_modules_backup_pages_backuppage_tsx",
-      "community": 21,
+      "community": 83,
       "norm_label": "backuppage.tsx"
     },
     {
@@ -3852,7 +3915,7 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L21",
       "id": "pages_backuppage_formatlastrunat",
-      "community": 21,
+      "community": 83,
       "norm_label": "formatlastrunat()"
     },
     {
@@ -4162,6 +4225,24 @@
       "norm_label": "restoredatabase()"
     },
     {
+      "label": "save-auto-backup-file.ts",
+      "file_type": "code",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L1",
+      "id": "src_modules_backup_services_save_auto_backup_file_ts",
+      "community": 83,
+      "norm_label": "save-auto-backup-file.ts"
+    },
+    {
+      "label": "saveAutoBackupFile()",
+      "file_type": "code",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L8",
+      "id": "services_save_auto_backup_file_saveautobackupfile",
+      "community": 83,
+      "norm_label": "saveautobackupfile()"
+    },
+    {
       "label": "save-backup-file.ts",
       "file_type": "code",
       "source_file": "src/modules/backup/services/save-backup-file.ts",
@@ -4392,7 +4473,7 @@
       "source_file": "src/modules/budgets/components/BudgetAddSheet.tsx",
       "source_location": "L29",
       "id": "components_budgetaddsheet_budgetaddsheet",
-      "community": 5,
+      "community": 21,
       "norm_label": "budgetaddsheet()"
     },
     {
@@ -4410,7 +4491,7 @@
       "source_file": "src/modules/budgets/components/BudgetAlertsPanel.tsx",
       "source_location": "L5",
       "id": "components_budgetalertspanel_props",
-      "community": 5,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -4428,7 +4509,7 @@
       "source_file": "src/modules/budgets/components/BudgetByAccountTypeSummary.tsx",
       "source_location": "L1",
       "id": "src_modules_budgets_components_budgetbyaccounttypesummary_tsx",
-      "community": 22,
+      "community": 5,
       "norm_label": "budgetbyaccounttypesummary.tsx"
     },
     {
@@ -4437,7 +4518,7 @@
       "source_file": "src/modules/budgets/components/BudgetByAccountTypeSummary.tsx",
       "source_location": "L5",
       "id": "components_budgetbyaccounttypesummary_account_type_icons",
-      "community": 22,
+      "community": 5,
       "norm_label": "account_type_icons"
     },
     {
@@ -4446,7 +4527,7 @@
       "source_file": "src/modules/budgets/components/BudgetByAccountTypeSummary.tsx",
       "source_location": "L14",
       "id": "components_budgetbyaccounttypesummary_status_colors",
-      "community": 22,
+      "community": 5,
       "norm_label": "status_colors"
     },
     {
@@ -4455,7 +4536,7 @@
       "source_file": "src/modules/budgets/components/BudgetByAccountTypeSummary.tsx",
       "source_location": "L20",
       "id": "components_budgetbyaccounttypesummary_props",
-      "community": 22,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -4464,7 +4545,7 @@
       "source_file": "src/modules/budgets/components/BudgetByAccountTypeSummary.tsx",
       "source_location": "L24",
       "id": "components_budgetbyaccounttypesummary_budgetbyaccounttypesummary",
-      "community": 22,
+      "community": 5,
       "norm_label": "budgetbyaccounttypesummary()"
     },
     {
@@ -4554,7 +4635,7 @@
       "source_file": "src/modules/budgets/components/BudgetEditForm.tsx",
       "source_location": "L29",
       "id": "components_budgeteditform_budgeteditform",
-      "community": 5,
+      "community": 52,
       "norm_label": "budgeteditform()"
     },
     {
@@ -4581,7 +4662,7 @@
       "source_file": "src/modules/budgets/components/BudgetEditSheet.tsx",
       "source_location": "L30",
       "id": "components_budgeteditsheet_budgeteditsheet",
-      "community": 5,
+      "community": 21,
       "norm_label": "budgeteditsheet()"
     },
     {
@@ -4590,7 +4671,7 @@
       "source_file": "src/modules/budgets/components/BudgetProgressCard.tsx",
       "source_location": "L1",
       "id": "src_modules_budgets_components_budgetprogresscard_tsx",
-      "community": 22,
+      "community": 13,
       "norm_label": "budgetprogresscard.tsx"
     },
     {
@@ -4599,7 +4680,7 @@
       "source_file": "src/modules/budgets/components/BudgetProgressCard.tsx",
       "source_location": "L3",
       "id": "components_budgetprogresscard_props",
-      "community": 22,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -4608,7 +4689,7 @@
       "source_file": "src/modules/budgets/components/BudgetProgressCard.tsx",
       "source_location": "L7",
       "id": "components_budgetprogresscard_budgetprogresscard",
-      "community": 22,
+      "community": 13,
       "norm_label": "budgetprogresscard()"
     },
     {
@@ -4779,7 +4860,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L1",
       "id": "src_modules_budgets_domain_budget_model_ts",
-      "community": 3,
+      "community": 52,
       "norm_label": "budget.model.ts"
     },
     {
@@ -4788,7 +4869,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L1",
       "id": "domain_budget_model_budgetperiod",
-      "community": 3,
+      "community": 52,
       "norm_label": "budgetperiod"
     },
     {
@@ -4815,7 +4896,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L6",
       "id": "domain_budget_model_account_type_labels",
-      "community": 3,
+      "community": 52,
       "norm_label": "account_type_labels"
     },
     {
@@ -4824,7 +4905,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L16",
       "id": "domain_budget_model_budget",
-      "community": 3,
+      "community": 52,
       "norm_label": "budget"
     },
     {
@@ -4833,7 +4914,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L30",
       "id": "domain_budget_model_createbudgetdto",
-      "community": 3,
+      "community": 52,
       "norm_label": "createbudgetdto"
     },
     {
@@ -4842,7 +4923,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L41",
       "id": "domain_budget_model_budgetwithcategory",
-      "community": 3,
+      "community": 52,
       "norm_label": "budgetwithcategory"
     },
     {
@@ -4860,7 +4941,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L63",
       "id": "domain_budget_model_budgetprogress",
-      "community": 22,
+      "community": 13,
       "norm_label": "budgetprogress"
     },
     {
@@ -4887,7 +4968,7 @@
       "source_file": "src/modules/budgets/domain/budget.model.ts",
       "source_location": "L85",
       "id": "domain_budget_model_wallet",
-      "community": 3,
+      "community": 52,
       "norm_label": "wallet"
     },
     {
@@ -4986,7 +5067,7 @@
       "source_file": "src/modules/budgets/hooks/useBudgets.ts",
       "source_location": "L1",
       "id": "src_modules_budgets_hooks_usebudgets_ts",
-      "community": 91,
+      "community": 3,
       "norm_label": "usebudgets.ts"
     },
     {
@@ -4995,7 +5076,7 @@
       "source_file": "src/modules/budgets/hooks/useBudgets.ts",
       "source_location": "L7",
       "id": "hooks_usebudgets_usebudgets",
-      "community": 91,
+      "community": 75,
       "norm_label": "usebudgets()"
     },
     {
@@ -5031,7 +5112,7 @@
       "source_file": "src/modules/budgets/repositories/budget.repository.ts",
       "source_location": "L1",
       "id": "src_modules_budgets_repositories_budget_repository_ts",
-      "community": 3,
+      "community": 52,
       "norm_label": "budget.repository.ts"
     },
     {
@@ -5049,7 +5130,7 @@
       "source_file": "src/modules/budgets/repositories/sqlite-budget.repository.ts",
       "source_location": "L1",
       "id": "src_modules_budgets_repositories_sqlite_budget_repository_ts",
-      "community": 3,
+      "community": 52,
       "norm_label": "sqlite-budget.repository.ts"
     },
     {
@@ -5076,7 +5157,7 @@
       "source_file": "src/modules/budgets/repositories/sqlite-budget.repository.ts",
       "source_location": "L21",
       "id": "repositories_sqlite_budget_repository_sqlitebudgetrepository_getactivebudgets",
-      "community": 3,
+      "community": 52,
       "norm_label": ".getactivebudgets()"
     },
     {
@@ -5085,7 +5166,7 @@
       "source_file": "src/modules/budgets/repositories/sqlite-budget.repository.ts",
       "source_location": "L57",
       "id": "repositories_sqlite_budget_repository_sqlitebudgetrepository_getactivebudgetsbyaccounttype",
-      "community": 3,
+      "community": 52,
       "norm_label": ".getactivebudgetsbyaccounttype()"
     },
     {
@@ -5238,7 +5319,7 @@
       "source_file": "src/modules/budgets/services/get-budget-settings.ts",
       "source_location": "L4",
       "id": "services_get_budget_settings_getbudgetsettingsusecase",
-      "community": 91,
+      "community": 3,
       "norm_label": "getbudgetsettingsusecase"
     },
     {
@@ -5247,7 +5328,7 @@
       "source_file": "src/modules/budgets/services/get-budget-settings.ts",
       "source_location": "L5",
       "id": "services_get_budget_settings_getbudgetsettingsusecase_constructor",
-      "community": 91,
+      "community": 3,
       "norm_label": ".constructor()"
     },
     {
@@ -5256,7 +5337,7 @@
       "source_file": "src/modules/budgets/services/get-budget-settings.ts",
       "source_location": "L7",
       "id": "services_get_budget_settings_getbudgetsettingsusecase_execute",
-      "community": 91,
+      "community": 3,
       "norm_label": ".execute()"
     },
     {
@@ -5301,7 +5382,7 @@
       "source_file": "src/modules/budgets/services/upsert-category-budget.ts",
       "source_location": "L1",
       "id": "src_modules_budgets_services_upsert_category_budget_ts",
-      "community": 3,
+      "community": 52,
       "norm_label": "upsert-category-budget.ts"
     },
     {
@@ -5310,7 +5391,7 @@
       "source_file": "src/modules/budgets/services/upsert-category-budget.ts",
       "source_location": "L5",
       "id": "services_upsert_category_budget_upsertcategorybudgetusecase",
-      "community": 3,
+      "community": 52,
       "norm_label": "upsertcategorybudgetusecase"
     },
     {
@@ -5328,7 +5409,7 @@
       "source_file": "src/modules/budgets/services/upsert-category-budget.ts",
       "source_location": "L8",
       "id": "services_upsert_category_budget_upsertcategorybudgetusecase_execute",
-      "community": 3,
+      "community": 52,
       "norm_label": ".execute()"
     },
     {
@@ -5337,7 +5418,7 @@
       "source_file": "src/modules/budgets/services/upsert-category-budget.ts",
       "source_location": "L47",
       "id": "services_upsert_category_budget_computestartdate",
-      "community": 3,
+      "community": 52,
       "norm_label": "computestartdate()"
     },
     {
@@ -5373,7 +5454,7 @@
       "source_file": "src/modules/categories/components/CategoryForm.tsx",
       "source_location": "L19",
       "id": "components_categoryform_categoryform",
-      "community": 0,
+      "community": 21,
       "norm_label": "categoryform()"
     },
     {
@@ -5400,7 +5481,7 @@
       "source_file": "src/modules/categories/components/CategoryIcon.tsx",
       "source_location": "L56",
       "id": "components_categoryicon_localizedcategoryiconpreset",
-      "community": 0,
+      "community": 41,
       "norm_label": "localizedcategoryiconpreset"
     },
     {
@@ -5472,7 +5553,7 @@
       "source_file": "src/modules/categories/components/CategoryIcon.tsx",
       "source_location": "L192",
       "id": "components_categoryicon_getlocalizedcategorydescription",
-      "community": 0,
+      "community": 21,
       "norm_label": "getlocalizedcategorydescription()"
     },
     {
@@ -5535,7 +5616,7 @@
       "source_file": "src/modules/categories/components/CategoryList.tsx",
       "source_location": "L1",
       "id": "src_modules_categories_components_categorylist_tsx",
-      "community": 0,
+      "community": 21,
       "norm_label": "categorylist.tsx"
     },
     {
@@ -5553,7 +5634,7 @@
       "source_file": "src/modules/categories/components/CategoryList.tsx",
       "source_location": "L13",
       "id": "components_categorylist_categorylist",
-      "community": 0,
+      "community": 21,
       "norm_label": "categorylist()"
     },
     {
@@ -5616,7 +5697,7 @@
       "source_file": "src/modules/categories/hooks/useCategories.ts",
       "source_location": "L7",
       "id": "hooks_usecategories_usecategories",
-      "community": 77,
+      "community": 21,
       "norm_label": "usecategories()"
     },
     {
@@ -5877,7 +5958,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L1",
       "id": "src_modules_export_services_export_error_logs_ts",
-      "community": 8,
+      "community": 28,
       "norm_label": "export-error-logs.ts"
     },
     {
@@ -5886,7 +5967,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L3",
       "id": "services_export_error_logs_errorlogexportitem",
-      "community": 8,
+      "community": 28,
       "norm_label": "errorlogexportitem"
     },
     {
@@ -5895,7 +5976,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L14",
       "id": "services_export_error_logs_errorlogexportpayload",
-      "community": 8,
+      "community": 28,
       "norm_label": "errorlogexportpayload"
     },
     {
@@ -5904,7 +5985,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L21",
       "id": "services_export_error_logs_parsemetadata",
-      "community": 8,
+      "community": 28,
       "norm_label": "parsemetadata()"
     },
     {
@@ -5913,7 +5994,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L32",
       "id": "services_export_error_logs_builderrorlogexportpayload",
-      "community": 8,
+      "community": 28,
       "norm_label": "builderrorlogexportpayload()"
     },
     {
@@ -5922,7 +6003,7 @@
       "source_file": "src/modules/export/services/export-error-logs.ts",
       "source_location": "L53",
       "id": "services_export_error_logs_exporterrorlogstojson",
-      "community": 8,
+      "community": 28,
       "norm_label": "exporterrorlogstojson()"
     },
     {
@@ -6021,7 +6102,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L1",
       "id": "src_modules_recurring_bills_components_recurringbillform_tsx",
-      "community": 77,
+      "community": 2,
       "norm_label": "recurringbillform.tsx"
     },
     {
@@ -6039,7 +6120,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L22",
       "id": "components_recurringbillform_startoflocalday",
-      "community": 77,
+      "community": 2,
       "norm_label": "startoflocalday()"
     },
     {
@@ -6048,7 +6129,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L27",
       "id": "components_recurringbillform_recurringbillform",
-      "community": 77,
+      "community": 2,
       "norm_label": "recurringbillform()"
     },
     {
@@ -6084,7 +6165,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillList.tsx",
       "source_location": "L22",
       "id": "components_recurringbilllist_recurringbilllist",
-      "community": 5,
+      "community": 21,
       "norm_label": "recurringbilllist()"
     },
     {
@@ -6093,7 +6174,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillReminderBanner.tsx",
       "source_location": "L1",
       "id": "src_modules_recurring_bills_components_recurringbillreminderbanner_tsx",
-      "community": 2,
+      "community": 13,
       "norm_label": "recurringbillreminderbanner.tsx"
     },
     {
@@ -6102,7 +6183,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillReminderBanner.tsx",
       "source_location": "L5",
       "id": "components_recurringbillreminderbanner_props",
-      "community": 2,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -6111,7 +6192,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillReminderBanner.tsx",
       "source_location": "L9",
       "id": "components_recurringbillreminderbanner_status_config",
-      "community": 2,
+      "community": 13,
       "norm_label": "status_config"
     },
     {
@@ -6120,7 +6201,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillReminderBanner.tsx",
       "source_location": "L33",
       "id": "components_recurringbillreminderbanner_formatdaysdiff",
-      "community": 2,
+      "community": 13,
       "norm_label": "formatdaysdiff()"
     },
     {
@@ -6129,7 +6210,7 @@
       "source_file": "src/modules/recurring-bills/components/RecurringBillReminderBanner.tsx",
       "source_location": "L39",
       "id": "components_recurringbillreminderbanner_recurringbillreminderbanner",
-      "community": 2,
+      "community": 13,
       "norm_label": "recurringbillreminderbanner()"
     },
     {
@@ -6165,7 +6246,7 @@
       "source_file": "src/modules/recurring-bills/domain/recurring-bill.model.ts",
       "source_location": "L37",
       "id": "domain_recurring_bill_model_recurringbillreminder",
-      "community": 2,
+      "community": 13,
       "norm_label": "recurringbillreminder"
     },
     {
@@ -6246,7 +6327,7 @@
       "source_file": "src/modules/recurring-bills/pages/RecurringBillsPage.tsx",
       "source_location": "L1",
       "id": "src_modules_recurring_bills_pages_recurringbillspage_tsx",
-      "community": 75,
+      "community": 21,
       "norm_label": "recurringbillspage.tsx"
     },
     {
@@ -6255,7 +6336,7 @@
       "source_file": "src/modules/recurring-bills/pages/RecurringBillsPage.tsx",
       "source_location": "L11",
       "id": "pages_recurringbillspage_recurringbillspage",
-      "community": 75,
+      "community": 21,
       "norm_label": "recurringbillspage()"
     },
     {
@@ -6678,7 +6759,7 @@
       "source_file": "src/modules/reports/components/ReportDonutCard.tsx",
       "source_location": "L121",
       "id": "components_reportdonutcard_reportdonutcard",
-      "community": 5,
+      "community": 21,
       "norm_label": "reportdonutcard()"
     },
     {
@@ -6723,7 +6804,7 @@
       "source_file": "src/modules/reports/dev/query-explain.ts",
       "source_location": "L1",
       "id": "src_modules_reports_dev_query_explain_ts",
-      "community": 8,
+      "community": 43,
       "norm_label": "query-explain.ts"
     },
     {
@@ -6732,7 +6813,7 @@
       "source_file": "src/modules/reports/dev/query-explain.ts",
       "source_location": "L3",
       "id": "dev_query_explain_explainreportqueries",
-      "community": 8,
+      "community": 43,
       "norm_label": "explainreportqueries()"
     },
     {
@@ -7065,7 +7146,7 @@
       "source_file": "src/modules/settings/components/BiometricUnlockSettings.tsx",
       "source_location": "L1",
       "id": "src_modules_settings_components_biometricunlocksettings_tsx",
-      "community": 79,
+      "community": 21,
       "norm_label": "biometricunlocksettings.tsx"
     },
     {
@@ -7074,7 +7155,7 @@
       "source_file": "src/modules/settings/components/BiometricUnlockSettings.tsx",
       "source_location": "L7",
       "id": "components_biometricunlocksettings_biometricunlocksettings",
-      "community": 79,
+      "community": 21,
       "norm_label": "biometricunlocksettings()"
     },
     {
@@ -7083,7 +7164,7 @@
       "source_file": "src/modules/settings/components/CurrencySettings.tsx",
       "source_location": "L1",
       "id": "src_modules_settings_components_currencysettings_tsx",
-      "community": 5,
+      "community": 21,
       "norm_label": "currencysettings.tsx"
     },
     {
@@ -7092,7 +7173,7 @@
       "source_file": "src/modules/settings/components/CurrencySettings.tsx",
       "source_location": "L7",
       "id": "components_currencysettings_currencysettings",
-      "community": 5,
+      "community": 21,
       "norm_label": "currencysettings()"
     },
     {
@@ -7101,7 +7182,7 @@
       "source_file": "src/modules/settings/components/DatabaseDiagnostics.tsx",
       "source_location": "L1",
       "id": "src_modules_settings_components_databasediagnostics_tsx",
-      "community": 8,
+      "community": 77,
       "norm_label": "databasediagnostics.tsx"
     },
     {
@@ -7110,7 +7191,7 @@
       "source_file": "src/modules/settings/components/DatabaseDiagnostics.tsx",
       "source_location": "L5",
       "id": "components_databasediagnostics_databasediagnostics",
-      "community": 8,
+      "community": 77,
       "norm_label": "databasediagnostics()"
     },
     {
@@ -7119,7 +7200,7 @@
       "source_file": "src/modules/settings/components/LanguageSettings.tsx",
       "source_location": "L1",
       "id": "src_modules_settings_components_languagesettings_tsx",
-      "community": 5,
+      "community": 21,
       "norm_label": "languagesettings.tsx"
     },
     {
@@ -7128,7 +7209,7 @@
       "source_file": "src/modules/settings/components/LanguageSettings.tsx",
       "source_location": "L5",
       "id": "components_languagesettings_languagesettings",
-      "community": 5,
+      "community": 21,
       "norm_label": "languagesettings()"
     },
     {
@@ -7137,7 +7218,7 @@
       "source_file": "src/modules/settings/pages/SettingsPage.tsx",
       "source_location": "L1",
       "id": "src_modules_settings_pages_settingspage_tsx",
-      "community": 79,
+      "community": 21,
       "norm_label": "settingspage.tsx"
     },
     {
@@ -7146,7 +7227,7 @@
       "source_file": "src/modules/settings/pages/SettingsPage.tsx",
       "source_location": "L18",
       "id": "pages_settingspage_menuitem",
-      "community": 79,
+      "community": 21,
       "norm_label": "menuitem"
     },
     {
@@ -7155,7 +7236,7 @@
       "source_file": "src/modules/settings/pages/SettingsPage.tsx",
       "source_location": "L27",
       "id": "pages_settingspage_settingspage",
-      "community": 79,
+      "community": 21,
       "norm_label": "settingspage()"
     },
     {
@@ -7164,7 +7245,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L1",
       "id": "src_modules_transactions_components_advancedtransactionfiltersheet_tsx",
-      "community": 80,
+      "community": 0,
       "norm_label": "advancedtransactionfiltersheet.tsx"
     },
     {
@@ -7173,7 +7254,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L9",
       "id": "components_advancedtransactionfiltersheet_props",
-      "community": 80,
+      "community": 0,
       "norm_label": "props"
     },
     {
@@ -7182,7 +7263,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L18",
       "id": "components_advancedtransactionfiltersheet_todateinputvalue",
-      "community": 80,
+      "community": 0,
       "norm_label": "todateinputvalue()"
     },
     {
@@ -7191,7 +7272,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L27",
       "id": "components_advancedtransactionfiltersheet_startoflocalday",
-      "community": 80,
+      "community": 0,
       "norm_label": "startoflocalday()"
     },
     {
@@ -7200,7 +7281,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L33",
       "id": "components_advancedtransactionfiltersheet_endoflocalday",
-      "community": 80,
+      "community": 0,
       "norm_label": "endoflocalday()"
     },
     {
@@ -7209,7 +7290,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L39",
       "id": "components_advancedtransactionfiltersheet_inputstyle",
-      "community": 80,
+      "community": 0,
       "norm_label": "inputstyle"
     },
     {
@@ -7218,7 +7299,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L51",
       "id": "components_advancedtransactionfiltersheet_labelstyle",
-      "community": 80,
+      "community": 0,
       "norm_label": "labelstyle"
     },
     {
@@ -7227,7 +7308,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L60",
       "id": "components_advancedtransactionfiltersheet_advancedtransactionfiltersheet",
-      "community": 80,
+      "community": 0,
       "norm_label": "advancedtransactionfiltersheet()"
     },
     {
@@ -7263,7 +7344,7 @@
       "source_file": "src/modules/transactions/components/TransactionForm.tsx",
       "source_location": "L1",
       "id": "src_modules_transactions_components_transactionform_tsx",
-      "community": 41,
+      "community": 21,
       "norm_label": "transactionform.tsx"
     },
     {
@@ -7281,7 +7362,7 @@
       "source_file": "src/modules/transactions/components/TransactionForm.tsx",
       "source_location": "L19",
       "id": "components_transactionform_transactionform",
-      "community": 41,
+      "community": 21,
       "norm_label": "transactionform()"
     },
     {
@@ -7290,7 +7371,7 @@
       "source_file": "src/modules/transactions/components/TransactionItem.tsx",
       "source_location": "L1",
       "id": "src_modules_transactions_components_transactionitem_tsx",
-      "community": 5,
+      "community": 73,
       "norm_label": "transactionitem.tsx"
     },
     {
@@ -7299,7 +7380,7 @@
       "source_file": "src/modules/transactions/components/TransactionItem.tsx",
       "source_location": "L8",
       "id": "components_transactionitem_props",
-      "community": 11,
+      "community": 73,
       "norm_label": "props"
     },
     {
@@ -7308,7 +7389,7 @@
       "source_file": "src/modules/transactions/components/TransactionItem.tsx",
       "source_location": "L14",
       "id": "components_transactionitem_transactionitem",
-      "community": 5,
+      "community": 73,
       "norm_label": "transactionitem()"
     },
     {
@@ -7317,7 +7398,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L1",
       "id": "src_modules_transactions_components_transactionlist_tsx",
-      "community": 11,
+      "community": 73,
       "norm_label": "transactionlist.tsx"
     },
     {
@@ -7326,7 +7407,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L8",
       "id": "components_transactionlist_props",
-      "community": 11,
+      "community": 73,
       "norm_label": "props"
     },
     {
@@ -7335,7 +7416,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L16",
       "id": "components_transactionlist_summaryrow",
-      "community": 11,
+      "community": 73,
       "norm_label": "summaryrow"
     },
     {
@@ -7344,7 +7425,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L24",
       "id": "components_transactionlist_daysummaryrow",
-      "community": 11,
+      "community": 73,
       "norm_label": "daysummaryrow"
     },
     {
@@ -7353,7 +7434,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L29",
       "id": "components_transactionlist_monthsummaryrow",
-      "community": 11,
+      "community": 73,
       "norm_label": "monthsummaryrow"
     },
     {
@@ -7362,7 +7443,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L33",
       "id": "components_transactionlist_weeksummaryrow",
-      "community": 11,
+      "community": 73,
       "norm_label": "weeksummaryrow"
     },
     {
@@ -7371,7 +7452,7 @@
       "source_file": "src/modules/transactions/components/TransactionList.tsx",
       "source_location": "L39",
       "id": "components_transactionlist_transactionlist",
-      "community": 77,
+      "community": 21,
       "norm_label": "transactionlist()"
     },
     {
@@ -7416,7 +7497,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_domain_transaction_model_ts",
-      "community": 43,
+      "community": 11,
       "norm_label": "transaction.model.ts"
     },
     {
@@ -7425,7 +7506,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L1",
       "id": "domain_transaction_model_transactiontype",
-      "community": 80,
+      "community": 0,
       "norm_label": "transactiontype"
     },
     {
@@ -7443,7 +7524,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L24",
       "id": "domain_transaction_model_createtransactioninput",
-      "community": 43,
+      "community": 11,
       "norm_label": "createtransactioninput"
     },
     {
@@ -7452,7 +7533,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L35",
       "id": "domain_transaction_model_updatetransactioninput",
-      "community": 43,
+      "community": 11,
       "norm_label": "updatetransactioninput"
     },
     {
@@ -7461,7 +7542,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L46",
       "id": "domain_transaction_model_transactionfilter",
-      "community": 43,
+      "community": 11,
       "norm_label": "transactionfilter"
     },
     {
@@ -7470,7 +7551,7 @@
       "source_file": "src/modules/transactions/domain/transaction.schema.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_domain_transaction_schema_ts",
-      "community": 48,
+      "community": 74,
       "norm_label": "transaction.schema.ts"
     },
     {
@@ -7479,7 +7560,7 @@
       "source_file": "src/modules/transactions/domain/transaction.schema.ts",
       "source_location": "L3",
       "id": "domain_transaction_schema_transactionvalidationerror",
-      "community": 48,
+      "community": 74,
       "norm_label": "transactionvalidationerror"
     },
     {
@@ -7488,7 +7569,7 @@
       "source_file": "src/modules/transactions/domain/transaction.schema.ts",
       "source_location": "L4",
       "id": "domain_transaction_schema_transactionvalidationerror_constructor",
-      "community": 48,
+      "community": 74,
       "norm_label": ".constructor()"
     },
     {
@@ -7515,7 +7596,7 @@
       "source_file": "src/modules/transactions/hooks/useBudgetAnalysis.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_hooks_usebudgetanalysis_ts",
-      "community": 91,
+      "community": 75,
       "norm_label": "usebudgetanalysis.ts"
     },
     {
@@ -7524,7 +7605,7 @@
       "source_file": "src/modules/transactions/hooks/useBudgetAnalysis.ts",
       "source_location": "L5",
       "id": "hooks_usebudgetanalysis_usebudgetanalysis",
-      "community": 91,
+      "community": 75,
       "norm_label": "usebudgetanalysis()"
     },
     {
@@ -7551,7 +7632,7 @@
       "source_file": "src/modules/transactions/hooks/useTransactionForm.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_hooks_usetransactionform_ts",
-      "community": 74,
+      "community": 14,
       "norm_label": "usetransactionform.ts"
     },
     {
@@ -7560,7 +7641,7 @@
       "source_file": "src/modules/transactions/hooks/useTransactionForm.ts",
       "source_location": "L11",
       "id": "hooks_usetransactionform_usetransactionform",
-      "community": 41,
+      "community": 21,
       "norm_label": "usetransactionform()"
     },
     {
@@ -7569,7 +7650,7 @@
       "source_file": "src/modules/transactions/hooks/useTransactions.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_hooks_usetransactions_ts",
-      "community": 14,
+      "community": 21,
       "norm_label": "usetransactions.ts"
     },
     {
@@ -7578,7 +7659,7 @@
       "source_file": "src/modules/transactions/hooks/useTransactions.ts",
       "source_location": "L8",
       "id": "hooks_usetransactions_usetransactions",
-      "community": 77,
+      "community": 21,
       "norm_label": "usetransactions()"
     },
     {
@@ -7713,7 +7794,7 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L1",
       "id": "src_modules_transactions_pages_transactionspage_tsx",
-      "community": 77,
+      "community": 21,
       "norm_label": "transactionspage.tsx"
     },
     {
@@ -7722,7 +7803,7 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L15",
       "id": "pages_transactionspage_viewtype",
-      "community": 77,
+      "community": 21,
       "norm_label": "viewtype"
     },
     {
@@ -7731,7 +7812,7 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L17",
       "id": "pages_transactionspage_getdefaulthistoryfilter",
-      "community": 77,
+      "community": 21,
       "norm_label": "getdefaulthistoryfilter()"
     },
     {
@@ -7740,7 +7821,7 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L28",
       "id": "pages_transactionspage_transactionspage",
-      "community": 77,
+      "community": 21,
       "norm_label": "transactionspage()"
     },
     {
@@ -7749,7 +7830,7 @@
       "source_file": "src/modules/transactions/repositories/sqlite-transaction.repository.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_repositories_sqlite_transaction_repository_ts",
-      "community": 43,
+      "community": 11,
       "norm_label": "sqlite-transaction.repository.ts"
     },
     {
@@ -7821,7 +7902,7 @@
       "source_file": "src/modules/transactions/repositories/sqlite-transaction.repository.ts",
       "source_location": "L152",
       "id": "repositories_sqlite_transaction_repository_sqlitetransactionrepository_getsummarybyaccounttype",
-      "community": 11,
+      "community": 8,
       "norm_label": ".getsummarybyaccounttype()"
     },
     {
@@ -7830,7 +7911,7 @@
       "source_file": "src/modules/transactions/repositories/transaction.repository.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_repositories_transaction_repository_ts",
-      "community": 43,
+      "community": 11,
       "norm_label": "transaction.repository.ts"
     },
     {
@@ -7839,7 +7920,7 @@
       "source_file": "src/modules/transactions/repositories/transaction.repository.ts",
       "source_location": "L3",
       "id": "repositories_transaction_repository_itransactionrepository",
-      "community": 43,
+      "community": 34,
       "norm_label": "itransactionrepository"
     },
     {
@@ -7848,7 +7929,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_build_dashboard_view_model_ts",
-      "community": 2,
+      "community": 13,
       "norm_label": "build-dashboard-view-model.ts"
     },
     {
@@ -7857,7 +7938,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L5",
       "id": "services_build_dashboard_view_model_budget_status_order",
-      "community": 2,
+      "community": 13,
       "norm_label": "budget_status_order"
     },
     {
@@ -7866,7 +7947,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L11",
       "id": "services_build_dashboard_view_model_dashboardviewmodelinput",
-      "community": 2,
+      "community": 13,
       "norm_label": "dashboardviewmodelinput"
     },
     {
@@ -7875,7 +7956,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L21",
       "id": "services_build_dashboard_view_model_dashboardviewmodel",
-      "community": 2,
+      "community": 13,
       "norm_label": "dashboardviewmodel"
     },
     {
@@ -7884,7 +7965,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L35",
       "id": "services_build_dashboard_view_model_formatvnd",
-      "community": 2,
+      "community": 13,
       "norm_label": "formatvnd()"
     },
     {
@@ -7893,7 +7974,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L47",
       "id": "services_build_dashboard_view_model_gettopbudgets",
-      "community": 2,
+      "community": 13,
       "norm_label": "gettopbudgets()"
     },
     {
@@ -7902,7 +7983,7 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L53",
       "id": "services_build_dashboard_view_model_builddashboardviewmodel",
-      "community": 2,
+      "community": 13,
       "norm_label": "builddashboardviewmodel()"
     },
     {
@@ -7911,7 +7992,7 @@
       "source_file": "src/modules/transactions/services/create-credit-card-payment.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_create_credit_card_payment_ts",
-      "community": 34,
+      "community": 74,
       "norm_label": "create-credit-card-payment.ts"
     },
     {
@@ -7920,7 +8001,7 @@
       "source_file": "src/modules/transactions/services/create-credit-card-payment.ts",
       "source_location": "L8",
       "id": "services_create_credit_card_payment_createcreditcardpaymentinput",
-      "community": 34,
+      "community": 74,
       "norm_label": "createcreditcardpaymentinput"
     },
     {
@@ -8046,7 +8127,7 @@
       "source_file": "src/modules/transactions/services/list-transactions.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_list_transactions_ts",
-      "community": 43,
+      "community": 11,
       "norm_label": "list-transactions.ts"
     },
     {
@@ -8055,7 +8136,7 @@
       "source_file": "src/modules/transactions/services/list-transactions.ts",
       "source_location": "L4",
       "id": "services_list_transactions_listtransactionsusecase",
-      "community": 43,
+      "community": 14,
       "norm_label": "listtransactionsusecase"
     },
     {
@@ -8064,7 +8145,7 @@
       "source_file": "src/modules/transactions/services/list-transactions.ts",
       "source_location": "L5",
       "id": "services_list_transactions_listtransactionsusecase_constructor",
-      "community": 43,
+      "community": 14,
       "norm_label": ".constructor()"
     },
     {
@@ -8073,7 +8154,7 @@
       "source_file": "src/modules/transactions/services/list-transactions.ts",
       "source_location": "L7",
       "id": "services_list_transactions_listtransactionsusecase_execute",
-      "community": 43,
+      "community": 14,
       "norm_label": ".execute()"
     },
     {
@@ -8127,7 +8208,7 @@
       "source_file": "src/modules/transactions/services/update-transaction.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_update_transaction_ts",
-      "community": 48,
+      "community": 34,
       "norm_label": "update-transaction.ts"
     },
     {
@@ -8145,7 +8226,7 @@
       "source_file": "src/modules/transactions/services/update-transaction.ts",
       "source_location": "L12",
       "id": "services_update_transaction_updatetransactionusecase_constructor",
-      "community": 48,
+      "community": 34,
       "norm_label": ".constructor()"
     },
     {
@@ -8163,7 +8244,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L1",
       "id": "src_modules_wallets_components_walletcard_tsx",
-      "community": 30,
+      "community": 78,
       "norm_label": "walletcard.tsx"
     },
     {
@@ -8172,7 +8253,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L7",
       "id": "components_walletcard_props",
-      "community": 30,
+      "community": 78,
       "norm_label": "props"
     },
     {
@@ -8181,7 +8262,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L12",
       "id": "components_walletcard_account_type_labels",
-      "community": 30,
+      "community": 78,
       "norm_label": "account_type_labels"
     },
     {
@@ -8190,7 +8271,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L21",
       "id": "components_walletcard_account_type_icons",
-      "community": 44,
+      "community": 78,
       "norm_label": "account_type_icons"
     },
     {
@@ -8199,7 +8280,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L30",
       "id": "components_walletcard_formatdaymonth",
-      "community": 30,
+      "community": 78,
       "norm_label": "formatdaymonth()"
     },
     {
@@ -8208,7 +8289,7 @@
       "source_file": "src/modules/wallets/components/WalletCard.tsx",
       "source_location": "L37",
       "id": "components_walletcard_walletcard",
-      "community": 30,
+      "community": 78,
       "norm_label": "walletcard()"
     },
     {
@@ -8217,7 +8298,7 @@
       "source_file": "src/modules/wallets/components/WalletForm.tsx",
       "source_location": "L1",
       "id": "src_modules_wallets_components_walletform_tsx",
-      "community": 44,
+      "community": 78,
       "norm_label": "walletform.tsx"
     },
     {
@@ -8235,7 +8316,7 @@
       "source_file": "src/modules/wallets/components/WalletForm.tsx",
       "source_location": "L17",
       "id": "components_walletform_emoji_presets",
-      "community": 44,
+      "community": 78,
       "norm_label": "emoji_presets"
     },
     {
@@ -8244,7 +8325,7 @@
       "source_file": "src/modules/wallets/components/WalletForm.tsx",
       "source_location": "L18",
       "id": "components_walletform_color_presets",
-      "community": 44,
+      "community": 78,
       "norm_label": "color_presets"
     },
     {
@@ -8253,7 +8334,7 @@
       "source_file": "src/modules/wallets/components/WalletForm.tsx",
       "source_location": "L22",
       "id": "components_walletform_account_types",
-      "community": 44,
+      "community": 78,
       "norm_label": "account_types"
     },
     {
@@ -8262,7 +8343,7 @@
       "source_file": "src/modules/wallets/components/WalletForm.tsx",
       "source_location": "L26",
       "id": "components_walletform_walletform",
-      "community": 44,
+      "community": 21,
       "norm_label": "walletform()"
     },
     {
@@ -8298,7 +8379,7 @@
       "source_file": "src/modules/wallets/components/WalletList.tsx",
       "source_location": "L21",
       "id": "components_walletlist_walletlist",
-      "community": 44,
+      "community": 21,
       "norm_label": "walletlist()"
     },
     {
@@ -8316,7 +8397,7 @@
       "source_file": "src/modules/wallets/hooks/useCreditCardSummary.ts",
       "source_location": "L9",
       "id": "hooks_usecreditcardsummary_usecreditcardsummary",
-      "community": 30,
+      "community": 78,
       "norm_label": "usecreditcardsummary()"
     },
     {
@@ -8343,7 +8424,7 @@
       "source_file": "src/modules/wallets/hooks/useWallets.ts",
       "source_location": "L18",
       "id": "hooks_usewallets_usewallets",
-      "community": 77,
+      "community": 21,
       "norm_label": "usewallets()"
     },
     {
@@ -8370,7 +8451,7 @@
       "source_file": "src/modules/wallets/repositories/sqlite-wallet.repository.ts",
       "source_location": "L1",
       "id": "src_modules_wallets_repositories_sqlite_wallet_repository_ts",
-      "community": 44,
+      "community": 90,
       "norm_label": "sqlite-wallet.repository.ts"
     },
     {
@@ -8550,7 +8631,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L1",
       "id": "src_modules_wallets_repositories_wallet_repository_ts",
-      "community": 34,
+      "community": 90,
       "norm_label": "wallet.repository.ts"
     },
     {
@@ -8559,7 +8640,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L1",
       "id": "repositories_wallet_repository_accounttype",
-      "community": 44,
+      "community": 78,
       "norm_label": "accounttype"
     },
     {
@@ -8568,7 +8649,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L3",
       "id": "repositories_wallet_repository_wallet",
-      "community": 90,
+      "community": 44,
       "norm_label": "wallet"
     },
     {
@@ -8595,7 +8676,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L53",
       "id": "repositories_wallet_repository_walletreferencecounts",
-      "community": 44,
+      "community": 90,
       "norm_label": "walletreferencecounts"
     },
     {
@@ -8604,7 +8685,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L59",
       "id": "repositories_wallet_repository_creditcardstatementstatus",
-      "community": 34,
+      "community": 30,
       "norm_label": "creditcardstatementstatus"
     },
     {
@@ -8613,7 +8694,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L61",
       "id": "repositories_wallet_repository_upsertcreditcardstatementinput",
-      "community": 27,
+      "community": 90,
       "norm_label": "upsertcreditcardstatementinput"
     },
     {
@@ -8739,7 +8820,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L1",
       "id": "src_modules_wallets_services_sync_credit_card_statement_ts",
-      "community": 34,
+      "community": 30,
       "norm_label": "sync-credit-card-statement.ts"
     },
     {
@@ -8748,7 +8829,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L9",
       "id": "services_sync_credit_card_statement_derivestatus",
-      "community": 34,
+      "community": 30,
       "norm_label": "derivestatus()"
     },
     {
@@ -8757,7 +8838,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L25",
       "id": "services_sync_credit_card_statement_getstatementperiodforlifecycle",
-      "community": 34,
+      "community": 30,
       "norm_label": "getstatementperiodforlifecycle()"
     },
     {
@@ -8766,7 +8847,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L54",
       "id": "services_sync_credit_card_statement_synccreditcardstatementusecase",
-      "community": 34,
+      "community": 30,
       "norm_label": "synccreditcardstatementusecase"
     },
     {
@@ -8775,7 +8856,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L55",
       "id": "services_sync_credit_card_statement_synccreditcardstatementusecase_constructor",
-      "community": 34,
+      "community": 30,
       "norm_label": ".constructor()"
     },
     {
@@ -8784,7 +8865,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L57",
       "id": "services_sync_credit_card_statement_synccreditcardstatementusecase_execute",
-      "community": 34,
+      "community": 30,
       "norm_label": ".execute()"
     },
     {
@@ -9126,7 +9207,7 @@
       "source_file": "src/shared/components/ErrorScreen.tsx",
       "source_location": "L1",
       "id": "src_shared_components_errorscreen_tsx",
-      "community": 33,
+      "community": 40,
       "norm_label": "errorscreen.tsx"
     },
     {
@@ -9135,7 +9216,7 @@
       "source_file": "src/shared/components/ErrorScreen.tsx",
       "source_location": "L2",
       "id": "components_errorscreen_errorscreenprops",
-      "community": 33,
+      "community": 40,
       "norm_label": "errorscreenprops"
     },
     {
@@ -9144,7 +9225,7 @@
       "source_file": "src/shared/components/ErrorScreen.tsx",
       "source_location": "L7",
       "id": "components_errorscreen_errorscreen",
-      "community": 33,
+      "community": 40,
       "norm_label": "errorscreen()"
     },
     {
@@ -9459,7 +9540,7 @@
       "source_file": "src/shared/components/Toast/ToastContext.tsx",
       "source_location": "L15",
       "id": "toast_toastcontext_toastprovider",
-      "community": 29,
+      "community": 40,
       "norm_label": "toastprovider()"
     },
     {
@@ -9513,7 +9594,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1",
       "id": "src_shared_constants_translations_ts",
-      "community": 0,
+      "community": 41,
       "norm_label": "translations.ts"
     },
     {
@@ -9522,7 +9603,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1",
       "id": "constants_translations_translations",
-      "community": 0,
+      "community": 41,
       "norm_label": "translations"
     },
     {
@@ -9531,7 +9612,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1010",
       "id": "constants_translations_language",
-      "community": 0,
+      "community": 41,
       "norm_label": "language"
     },
     {
@@ -9540,7 +9621,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1012",
       "id": "constants_translations_nestedkeyof",
-      "community": 0,
+      "community": 41,
       "norm_label": "nestedkeyof"
     },
     {
@@ -9549,7 +9630,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1022",
       "id": "constants_translations_translationpath",
-      "community": 14,
+      "community": 41,
       "norm_label": "translationpath"
     },
     {
@@ -9558,7 +9639,7 @@
       "source_file": "src/shared/constants/translations.ts",
       "source_location": "L1023",
       "id": "constants_translations_translationkey",
-      "community": 0,
+      "community": 41,
       "norm_label": "translationkey"
     },
     {
@@ -9621,7 +9702,7 @@
       "source_file": "src/shared/context/CurrencyContext.tsx",
       "source_location": "L33",
       "id": "context_currencycontext_currencyprovider",
-      "community": 29,
+      "community": 40,
       "norm_label": "currencyprovider()"
     },
     {
@@ -9630,7 +9711,7 @@
       "source_file": "src/shared/context/CurrencyContext.tsx",
       "source_location": "L62",
       "id": "context_currencycontext_usecurrency",
-      "community": 5,
+      "community": 21,
       "norm_label": "usecurrency()"
     },
     {
@@ -9639,7 +9720,7 @@
       "source_file": "src/shared/context/LanguageContext.tsx",
       "source_location": "L1",
       "id": "src_shared_context_languagecontext_tsx",
-      "community": 5,
+      "community": 21,
       "norm_label": "languagecontext.tsx"
     },
     {
@@ -9648,7 +9729,7 @@
       "source_file": "src/shared/context/LanguageContext.tsx",
       "source_location": "L7",
       "id": "context_languagecontext_languagecontexttype",
-      "community": 14,
+      "community": 41,
       "norm_label": "languagecontexttype"
     },
     {
@@ -9657,7 +9738,7 @@
       "source_file": "src/shared/context/LanguageContext.tsx",
       "source_location": "L13",
       "id": "context_languagecontext_languagecontext",
-      "community": 5,
+      "community": 21,
       "norm_label": "languagecontext"
     },
     {
@@ -9666,7 +9747,7 @@
       "source_file": "src/shared/context/LanguageContext.tsx",
       "source_location": "L15",
       "id": "context_languagecontext_languageprovider",
-      "community": 5,
+      "community": 40,
       "norm_label": "languageprovider()"
     },
     {
@@ -9675,7 +9756,7 @@
       "source_file": "src/shared/context/LanguageContext.tsx",
       "source_location": "L83",
       "id": "context_languagecontext_uselanguage",
-      "community": 5,
+      "community": 21,
       "norm_label": "uselanguage()"
     },
     {
@@ -9747,7 +9828,7 @@
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
       "source_location": "L117",
       "id": "hooks_usekeyboardsafefocus_usekeyboardsafefocus",
-      "community": 29,
+      "community": 40,
       "norm_label": "usekeyboardsafefocus()"
     },
     {
@@ -9801,7 +9882,7 @@
       "source_file": "src/shared/utils/locale.ts",
       "source_location": "L1",
       "id": "src_shared_utils_locale_ts",
-      "community": 77,
+      "community": 1,
       "norm_label": "locale.ts"
     },
     {
@@ -9810,7 +9891,7 @@
       "source_file": "src/shared/utils/locale.ts",
       "source_location": "L3",
       "id": "utils_locale_getapplocale",
-      "community": 77,
+      "community": 1,
       "norm_label": "getapplocale()"
     },
     {
@@ -9819,7 +9900,7 @@
       "source_file": "src/shared/utils/route-parent.ts",
       "source_location": "L1",
       "id": "src_shared_utils_route_parent_ts",
-      "community": 85,
+      "community": 21,
       "norm_label": "route-parent.ts"
     },
     {
@@ -9828,7 +9909,7 @@
       "source_file": "src/shared/utils/route-parent.ts",
       "source_location": "L3",
       "id": "utils_route_parent_getparentroute",
-      "community": 85,
+      "community": 21,
       "norm_label": "getparentroute()"
     },
     {
@@ -9855,7 +9936,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L1",
       "id": "src_tests_app_bootstrap_lock_test_tsx",
-      "community": 73,
+      "community": 83,
       "norm_label": "app-bootstrap-lock.test.tsx"
     },
     {
@@ -9864,7 +9945,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L6",
       "id": "tests_app_bootstrap_lock_test_authservicemock",
-      "community": 73,
+      "community": 83,
       "norm_label": "authservicemock"
     },
     {
@@ -9873,7 +9954,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L14",
       "id": "tests_app_bootstrap_lock_test_sqliteconnectionmock",
-      "community": 73,
+      "community": 83,
       "norm_label": "sqliteconnectionmock"
     },
     {
@@ -9882,7 +9963,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L18",
       "id": "tests_app_bootstrap_lock_test_migrationsmock",
-      "community": 73,
+      "community": 83,
       "norm_label": "migrationsmock"
     },
     {
@@ -9891,7 +9972,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L22",
       "id": "tests_app_bootstrap_lock_test_seedmock",
-      "community": 73,
+      "community": 83,
       "norm_label": "seedmock"
     },
     {
@@ -9900,7 +9981,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L26",
       "id": "tests_app_bootstrap_lock_test_autobackupmock",
-      "community": 73,
+      "community": 83,
       "norm_label": "autobackupmock"
     },
     {
@@ -9909,7 +9990,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L30",
       "id": "tests_app_bootstrap_lock_test_capacitormock",
-      "community": 73,
+      "community": 83,
       "norm_label": "capacitormock"
     },
     {
@@ -9918,7 +9999,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L34",
       "id": "tests_app_bootstrap_lock_test_applisteners",
-      "community": 73,
+      "community": 83,
       "norm_label": "applisteners"
     },
     {
@@ -9927,7 +10008,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L78",
       "id": "tests_app_bootstrap_lock_test_renderbootstrap",
-      "community": 28,
+      "community": 40,
       "norm_label": "renderbootstrap()"
     },
     {
@@ -9936,7 +10017,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L86",
       "id": "tests_app_bootstrap_lock_test_flushpromises",
-      "community": 73,
+      "community": 83,
       "norm_label": "flushpromises()"
     },
     {
@@ -9945,7 +10026,7 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L93",
       "id": "tests_app_bootstrap_lock_test_emitappstatechange",
-      "community": 73,
+      "community": 83,
       "norm_label": "emitappstatechange()"
     },
     {
@@ -9954,7 +10035,7 @@
       "source_file": "src/tests/app-unlock.test.tsx",
       "source_location": "L1",
       "id": "src_tests_app_unlock_test_tsx",
-      "community": 28,
+      "community": 7,
       "norm_label": "app-unlock.test.tsx"
     },
     {
@@ -9963,7 +10044,7 @@
       "source_file": "src/tests/app-unlock.test.tsx",
       "source_location": "L6",
       "id": "tests_app_unlock_test_authservicemock",
-      "community": 28,
+      "community": 7,
       "norm_label": "authservicemock"
     },
     {
@@ -9972,7 +10053,7 @@
       "source_file": "src/tests/app-unlock.test.tsx",
       "source_location": "L26",
       "id": "tests_app_unlock_test_renderappunlock",
-      "community": 28,
+      "community": 40,
       "norm_label": "renderappunlock()"
     },
     {
@@ -9981,7 +10062,7 @@
       "source_file": "src/tests/app-unlock.test.tsx",
       "source_location": "L34",
       "id": "tests_app_unlock_test_enterpin",
-      "community": 28,
+      "community": 7,
       "norm_label": "enterpin()"
     },
     {
@@ -9990,7 +10071,7 @@
       "source_file": "src/tests/app-unlock.test.tsx",
       "source_location": "L61",
       "id": "tests_app_unlock_test_onunlocked",
-      "community": 28,
+      "community": 7,
       "norm_label": "onunlocked"
     },
     {
@@ -10170,7 +10251,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L1",
       "id": "src_tests_credit_card_service_test_ts",
-      "community": 13,
+      "community": 30,
       "norm_label": "credit-card.service.test.ts"
     },
     {
@@ -10179,7 +10260,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L7",
       "id": "tests_credit_card_service_test_timestamp",
-      "community": 13,
+      "community": 30,
       "norm_label": "timestamp()"
     },
     {
@@ -10188,7 +10269,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L11",
       "id": "tests_credit_card_service_test_wallet",
-      "community": 13,
+      "community": 30,
       "norm_label": "wallet()"
     },
     {
@@ -10206,7 +10287,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L40",
       "id": "tests_credit_card_service_test_period",
-      "community": 13,
+      "community": 30,
       "norm_label": "period"
     },
     {
@@ -10215,7 +10296,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L58",
       "id": "tests_credit_card_service_test_asof",
-      "community": 13,
+      "community": 30,
       "norm_label": "asof"
     },
     {
@@ -10224,7 +10305,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L59",
       "id": "tests_credit_card_service_test_creditcard",
-      "community": 13,
+      "community": 30,
       "norm_label": "creditcard"
     },
     {
@@ -10233,7 +10314,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L61",
       "id": "tests_credit_card_service_test_repo",
-      "community": 13,
+      "community": 30,
       "norm_label": "repo"
     },
     {
@@ -10242,7 +10323,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L71",
       "id": "tests_credit_card_service_test_statement",
-      "community": 13,
+      "community": 30,
       "norm_label": "statement"
     },
     {
@@ -10251,7 +10332,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L93",
       "id": "tests_credit_card_service_test_sync",
-      "community": 13,
+      "community": 30,
       "norm_label": "sync"
     },
     {
@@ -10260,7 +10341,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L95",
       "id": "tests_credit_card_service_test_firststatement",
-      "community": 13,
+      "community": 30,
       "norm_label": "firststatement"
     },
     {
@@ -10269,7 +10350,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L100",
       "id": "tests_credit_card_service_test_updatedstatement",
-      "community": 13,
+      "community": 30,
       "norm_label": "updatedstatement"
     },
     {
@@ -10278,7 +10359,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L137",
       "id": "tests_credit_card_service_test_closedstatementasof",
-      "community": 13,
+      "community": 30,
       "norm_label": "closedstatementasof"
     },
     {
@@ -10287,7 +10368,7 @@
       "source_file": "src/tests/credit-card.service.test.ts",
       "source_location": "L138",
       "id": "tests_credit_card_service_test_overdueasof",
-      "community": 13,
+      "community": 30,
       "norm_label": "overdueasof"
     },
     {
@@ -10296,7 +10377,7 @@
       "source_file": "src/tests/dashboard-view-model.test.ts",
       "source_location": "L1",
       "id": "src_tests_dashboard_view_model_test_ts",
-      "community": 2,
+      "community": 13,
       "norm_label": "dashboard-view-model.test.ts"
     },
     {
@@ -10305,7 +10386,7 @@
       "source_file": "src/tests/dashboard-view-model.test.ts",
       "source_location": "L11",
       "id": "tests_dashboard_view_model_test_makebudgetprogress",
-      "community": 2,
+      "community": 13,
       "norm_label": "makebudgetprogress()"
     },
     {
@@ -10314,7 +10395,7 @@
       "source_file": "src/tests/dashboard-view-model.test.ts",
       "source_location": "L40",
       "id": "tests_dashboard_view_model_test_topbudgets",
-      "community": 2,
+      "community": 13,
       "norm_label": "topbudgets"
     },
     {
@@ -10323,7 +10404,7 @@
       "source_file": "src/tests/dashboard-view-model.test.ts",
       "source_location": "L59",
       "id": "tests_dashboard_view_model_test_reminders",
-      "community": 2,
+      "community": 13,
       "norm_label": "reminders"
     },
     {
@@ -10332,7 +10413,7 @@
       "source_file": "src/tests/dashboard-view-model.test.ts",
       "source_location": "L65",
       "id": "tests_dashboard_view_model_test_viewmodel",
-      "community": 2,
+      "community": 13,
       "norm_label": "viewmodel"
     },
     {
@@ -10602,7 +10683,7 @@
       "source_file": "src/tests/language-context.test.tsx",
       "source_location": "L1",
       "id": "src_tests_language_context_test_tsx",
-      "community": 5,
+      "community": 40,
       "norm_label": "language-context.test.tsx"
     },
     {
@@ -10611,7 +10692,7 @@
       "source_file": "src/tests/language-context.test.tsx",
       "source_location": "L5",
       "id": "tests_language_context_test_preferencesmock",
-      "community": 5,
+      "community": 40,
       "norm_label": "preferencesmock"
     },
     {
@@ -10620,7 +10701,7 @@
       "source_file": "src/tests/language-context.test.tsx",
       "source_location": "L20",
       "id": "tests_language_context_test_probe",
-      "community": 5,
+      "community": 40,
       "norm_label": "probe()"
     },
     {
@@ -10629,7 +10710,7 @@
       "source_file": "src/tests/logger.test.ts",
       "source_location": "L1",
       "id": "src_tests_logger_test_ts",
-      "community": 8,
+      "community": 28,
       "norm_label": "logger.test.ts"
     },
     {
@@ -10881,7 +10962,7 @@
       "source_file": "src/tests/sqlite-encryption.test.ts",
       "source_location": "L1",
       "id": "src_tests_sqlite_encryption_test_ts",
-      "community": 7,
+      "community": 43,
       "norm_label": "sqlite-encryption.test.ts"
     },
     {
@@ -11097,7 +11178,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L1",
       "id": "src_tests_translations_test_ts",
-      "community": 0,
+      "community": 41,
       "norm_label": "translations.test.ts"
     },
     {
@@ -11106,7 +11187,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L4",
       "id": "tests_translations_test_getkeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "getkeys()"
     },
     {
@@ -11115,7 +11196,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L13",
       "id": "tests_translations_test_enkeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "enkeys"
     },
     {
@@ -11124,7 +11205,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L14",
       "id": "tests_translations_test_vikeys",
-      "community": 0,
+      "community": 41,
       "norm_label": "vikeys"
     },
     {
@@ -11133,7 +11214,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L16",
       "id": "tests_translations_test_missinginvi",
-      "community": 0,
+      "community": 41,
       "norm_label": "missinginvi"
     },
     {
@@ -11142,7 +11223,7 @@
       "source_file": "src/tests/translations.test.ts",
       "source_location": "L17",
       "id": "tests_translations_test_missinginen",
-      "community": 0,
+      "community": 41,
       "norm_label": "missinginen"
     },
     {
@@ -11169,7 +11250,7 @@
       "source_file": "src/tests/wallets-ui.test.tsx",
       "source_location": "L37",
       "id": "tests_wallets_ui_test_renderwalletlist",
-      "community": 28,
+      "community": 40,
       "norm_label": "renderwalletlist()"
     },
     {
@@ -11178,7 +11259,7 @@
       "source_file": "src/tests/fakes/in-memory-transaction.repository.ts",
       "source_location": "L1",
       "id": "src_tests_fakes_in_memory_transaction_repository_ts",
-      "community": 43,
+      "community": 11,
       "norm_label": "in-memory-transaction.repository.ts"
     },
     {
@@ -11187,7 +11268,7 @@
       "source_file": "src/tests/fakes/in-memory-transaction.repository.ts",
       "source_location": "L9",
       "id": "fakes_in_memory_transaction_repository_matchesfilter",
-      "community": 43,
+      "community": 11,
       "norm_label": "matchesfilter()"
     },
     {
@@ -11295,7 +11376,7 @@
       "source_file": "src/tests/fakes/in-memory-wallet.repository.ts",
       "source_location": "L21",
       "id": "fakes_in_memory_wallet_repository_inmemorywalletrepository_constructor",
-      "community": 90,
+      "community": 27,
       "norm_label": ".constructor()"
     },
     {
@@ -11304,7 +11385,7 @@
       "source_file": "src/tests/fakes/in-memory-wallet.repository.ts",
       "source_location": "L27",
       "id": "fakes_in_memory_wallet_repository_inmemorywalletrepository_getbyid",
-      "community": 90,
+      "community": 27,
       "norm_label": ".getbyid()"
     },
     {
@@ -11313,7 +11394,7 @@
       "source_file": "src/tests/fakes/in-memory-wallet.repository.ts",
       "source_location": "L32",
       "id": "fakes_in_memory_wallet_repository_inmemorywalletrepository_getallactive",
-      "community": 90,
+      "community": 27,
       "norm_label": ".getallactive()"
     },
     {
@@ -11322,7 +11403,7 @@
       "source_file": "src/tests/fakes/in-memory-wallet.repository.ts",
       "source_location": "L38",
       "id": "fakes_in_memory_wallet_repository_inmemorywalletrepository_getactivecreditcards",
-      "community": 90,
+      "community": 27,
       "norm_label": ".getactivecreditcards()"
     },
     {
@@ -12136,6 +12217,15 @@
       "norm_label": "code:ts (63  |)"
     },
     {
+      "label": "String",
+      "file_type": "code",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/NativeBiometricPlugin.java",
+      "source_location": "L83",
+      "community": 25,
+      "norm_label": "string",
+      "id": "string"
+    },
+    {
       "label": "getScrollableParent()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useKeyboardSafeFocus.ts",
@@ -12149,7 +12239,7 @@
       "file_type": "code",
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L26",
-      "community": 77,
+      "community": 2,
       "norm_label": "todateinput()",
       "id": "components_recurringbillform_todateinput"
     },
@@ -12158,7 +12248,7 @@
       "file_type": "code",
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L34",
-      "community": 77,
+      "community": 2,
       "norm_label": "isvaliddateparts()",
       "id": "components_recurringbillform_isvaliddateparts"
     },
@@ -12167,7 +12257,7 @@
       "file_type": "code",
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L43",
-      "community": 77,
+      "community": 2,
       "norm_label": "parseduedate()",
       "id": "components_recurringbillform_parseduedate"
     },
@@ -12176,7 +12266,7 @@
       "file_type": "code",
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L66",
-      "community": 77,
+      "community": 2,
       "norm_label": "formatduedate()",
       "id": "components_recurringbillform_formatduedate"
     },
@@ -12194,7 +12284,7 @@
       "file_type": "code",
       "source_file": "src/modules/recurring-bills/components/RecurringBillForm.tsx",
       "source_location": "L30",
-      "community": 77,
+      "community": 2,
       "norm_label": "fromdateinput()",
       "id": "components_recurringbillform_fromdateinput"
     }
@@ -13631,6 +13721,56 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin",
+      "target": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin",
+      "target": "app_documentsaverplugin_documentsaverplugin_getapplabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin",
+      "target": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin",
+      "target": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L167",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin",
+      "target": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
       "source_location": "L45",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -13684,12 +13824,166 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L52",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L86",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L134",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L167",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
       "source_location": "L45",
       "weight": 1.0,
       "context": "parameter_type",
       "confidence_score": 1.0,
       "source": "app_documentsaverplugin_documentsaverplugin_savetextfileresult",
       "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_plugincall"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L52",
+      "weight": 1.0,
+      "context": "attribute",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_pluginmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "target": "app_documentsaverplugin_documentsaverplugin_getapplabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "target": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloads",
+      "target": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L81",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_getapplabel",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L86",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L134",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L167",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_documentsaverplugin_java_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletodownloadswithmediastore",
+      "target": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/DocumentSaverPlugin.java",
+      "source_location": "L157",
+      "weight": 1.0,
+      "source": "app_documentsaverplugin_documentsaverplugin_savetextfiletolegacydownloads",
+      "target": "app_documentsaverplugin_documentsaverplugin_resolvesavedfile",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -13914,6 +14208,17 @@
       "confidence_score": 1.0,
       "source": "app_nativebiometricplugin_nativebiometricplugin_authenticate",
       "target": "app_nativebiometricplugin_nativebiometricplugin_availabilitymessage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "android/app/src/main/java/com/taixiucanhan/app/NativeBiometricPlugin.java",
+      "source_location": "L83",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "app_nativebiometricplugin_nativebiometricplugin_availabilitymessage",
+      "target": "android_app_src_main_java_com_taixiucanhan_app_nativebiometricplugin_java_string",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -15369,9 +15674,9 @@
       "source_file": "src/app/providers/AppBootstrap.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_providers_appbootstrap_tsx",
-      "target": "src_modules_backup_services_auto_backup_service_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_auto_backup_service_ts"
     },
     {
       "relation": "imports",
@@ -15380,9 +15685,9 @@
       "source_file": "src/app/providers/AppBootstrap.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_providers_appbootstrap_tsx",
-      "target": "services_auto_backup_service_runautobackupifdue",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdue"
     },
     {
       "relation": "imports_from",
@@ -17591,9 +17896,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "src_core_db_sqlite_connection_ts",
-      "confidence_score": 1.0
+      "target": "src_core_db_sqlite_connection_ts"
     },
     {
       "relation": "imports_from",
@@ -17811,9 +18116,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "src_core_db_sqlite_connection_ts",
-      "confidence_score": 1.0
+      "target": "src_core_db_sqlite_connection_ts"
     },
     {
       "relation": "imports_from",
@@ -17965,9 +18270,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "sqlite_connection_getdbconnection",
-      "confidence_score": 1.0
+      "target": "sqlite_connection_getdbconnection"
     },
     {
       "relation": "imports",
@@ -18130,9 +18435,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L92",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_readautobackupsettingvalues",
-      "target": "sqlite_connection_getdbconnection",
-      "confidence_score": 1.0
+      "target": "sqlite_connection_getdbconnection"
     },
     {
       "relation": "calls",
@@ -18141,9 +18446,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L111",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_upsertappsetting",
-      "target": "sqlite_connection_getdbconnection",
-      "confidence_score": 1.0
+      "target": "sqlite_connection_getdbconnection"
     },
     {
       "relation": "calls",
@@ -19845,6 +20150,16 @@
       "source_file": "src/core/files/document-saver.ts",
       "source_location": "L9",
       "weight": 1.0,
+      "source": "src_core_files_document_saver_ts",
+      "target": "files_document_saver_savetextfiletodownloadsoptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/files/document-saver.ts",
+      "source_location": "L9",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_core_files_document_saver_ts",
       "target": "files_document_saver_savetextfileresult"
@@ -19873,6 +20188,17 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_modules_backup_services_save_auto_backup_file_ts",
+      "target": "src_core_files_document_saver_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/modules/backup/services/save-backup-file.ts",
       "source_location": "L2",
       "weight": 1.0,
@@ -19890,6 +20216,17 @@
       "confidence_score": 1.0,
       "source": "src_modules_export_services_save_error_log_file_ts",
       "target": "src_core_files_document_saver_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_modules_backup_services_save_auto_backup_file_ts",
+      "target": "files_document_saver_documentsaver",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -21202,9 +21539,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "src_core_telemetry_logger_ts",
-      "confidence_score": 1.0
+      "target": "src_core_telemetry_logger_ts"
     },
     {
       "relation": "imports_from",
@@ -21328,9 +21665,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "telemetry_logger_logger",
-      "confidence_score": 1.0
+      "target": "telemetry_logger_logger"
     },
     {
       "relation": "imports",
@@ -21753,9 +22090,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "src_modules_backup_services_auto_backup_service_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_auto_backup_service_ts"
     },
     {
       "relation": "imports",
@@ -21764,9 +22101,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "services_auto_backup_service_autobackupinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackupinterval"
     },
     {
       "relation": "imports",
@@ -21775,9 +22112,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "services_auto_backup_service_autobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackupsettings"
     },
     {
       "relation": "imports",
@@ -21786,9 +22123,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "services_auto_backup_service_getautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_getautobackupsettings"
     },
     {
       "relation": "imports",
@@ -21797,9 +22134,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "services_auto_backup_service_runautobackupifdue",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdue"
     },
     {
       "relation": "imports",
@@ -21808,9 +22145,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "services_auto_backup_service_updateautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updateautobackupsettings"
     },
     {
       "relation": "contains",
@@ -21818,9 +22155,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_pages_backuppage_tsx",
-      "target": "pages_backuppage_formatlastrunat",
-      "confidence_score": 1.0
+      "target": "pages_backuppage_formatlastrunat"
     },
     {
       "relation": "contains",
@@ -21839,9 +22176,9 @@
       "source_file": "src/modules/backup/pages/BackupPage.tsx",
       "source_location": "L364",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_backuppage_backuppage",
-      "target": "pages_backuppage_formatlastrunat",
-      "confidence_score": 1.0
+      "target": "pages_backuppage_formatlastrunat"
     },
     {
       "relation": "calls",
@@ -21883,9 +22220,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "src_modules_backup_services_export_backup_json_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_export_backup_json_ts"
     },
     {
       "relation": "imports",
@@ -21894,9 +22231,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_export_backup_json_exportbackupjson",
-      "confidence_score": 1.0
+      "target": "services_export_backup_json_exportbackupjson"
     },
     {
       "relation": "imports_from",
@@ -21906,7 +22243,7 @@
       "source_location": "L4",
       "weight": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "src_modules_backup_services_save_backup_file_ts",
+      "target": "src_modules_backup_services_save_auto_backup_file_ts",
       "confidence_score": 1.0
     },
     {
@@ -21917,7 +22254,7 @@
       "source_location": "L4",
       "weight": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_save_backup_file_savebackupfile",
+      "target": "services_save_auto_backup_file_saveautobackupfile",
       "confidence_score": 1.0
     },
     {
@@ -21926,9 +22263,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_auto_backup_setting_keys",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_auto_backup_setting_keys"
     },
     {
       "relation": "contains",
@@ -21936,9 +22273,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_auto_backup_intervals",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_auto_backup_intervals"
     },
     {
       "relation": "contains",
@@ -21946,9 +22283,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_autobackupinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackupinterval"
     },
     {
       "relation": "contains",
@@ -21956,9 +22293,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_autobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackupsettings"
     },
     {
       "relation": "contains",
@@ -21966,9 +22303,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_updateautobackupsettingsinput",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updateautobackupsettingsinput"
     },
     {
       "relation": "contains",
@@ -21976,9 +22313,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_autobackuprunreason",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackuprunreason"
     },
     {
       "relation": "contains",
@@ -21986,9 +22323,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_autobackuprunresult",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackuprunresult"
     },
     {
       "relation": "contains",
@@ -21996,9 +22333,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_auto_backup_interval_ms",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_auto_backup_interval_ms"
     },
     {
       "relation": "contains",
@@ -22006,9 +22343,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_default_auto_backup_settings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_default_auto_backup_settings"
     },
     {
       "relation": "contains",
@@ -22016,9 +22353,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_isautobackupinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_isautobackupinterval"
     },
     {
       "relation": "contains",
@@ -22026,9 +22363,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_normalizeinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_normalizeinterval"
     },
     {
       "relation": "contains",
@@ -22036,9 +22373,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L68",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_parselastrunat",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_parselastrunat"
     },
     {
       "relation": "contains",
@@ -22046,9 +22383,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L75",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_formatdatepart",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_formatdatepart"
     },
     {
       "relation": "contains",
@@ -22056,9 +22393,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_createautobackupfilename",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_createautobackupfilename"
     },
     {
       "relation": "contains",
@@ -22066,9 +22403,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_readautobackupsettingvalues",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_readautobackupsettingvalues"
     },
     {
       "relation": "contains",
@@ -22076,9 +22413,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L110",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_upsertappsetting",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_upsertappsetting"
     },
     {
       "relation": "contains",
@@ -22086,9 +22423,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_updatelastrunat",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updatelastrunat"
     },
     {
       "relation": "contains",
@@ -22096,9 +22433,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L123",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_getautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_getautobackupsettings"
     },
     {
       "relation": "contains",
@@ -22106,9 +22443,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_updateautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updateautobackupsettings"
     },
     {
       "relation": "contains",
@@ -22116,9 +22453,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L154",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_shouldrunautobackup",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_shouldrunautobackup"
     },
     {
       "relation": "contains",
@@ -22126,9 +22463,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L164",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_runautobackupifdueinternal",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdueinternal"
     },
     {
       "relation": "contains",
@@ -22136,9 +22473,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L202",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_backup_services_auto_backup_service_ts",
-      "target": "services_auto_backup_service_runautobackupifdue",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdue"
     },
     {
       "relation": "imports_from",
@@ -22147,9 +22484,31 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "src_modules_backup_services_auto_backup_service_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_auto_backup_service_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/auto-backup.service.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_backup_services_auto_backup_service_ts",
+      "target": "src_modules_backup_services_save_backup_file_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/auto-backup.service.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_backup_services_auto_backup_service_ts",
+      "target": "services_save_backup_file_savebackupfile"
     },
     {
       "relation": "imports",
@@ -22158,9 +22517,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_auto_backup_setting_keys",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_auto_backup_setting_keys"
     },
     {
       "relation": "imports",
@@ -22169,9 +22528,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_autobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_autobackupsettings"
     },
     {
       "relation": "imports",
@@ -22180,9 +22539,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_auto_backup_interval_ms",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_auto_backup_interval_ms"
     },
     {
       "relation": "calls",
@@ -22191,9 +22550,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L65",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_normalizeinterval",
-      "target": "services_auto_backup_service_isautobackupinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_isautobackupinterval"
     },
     {
       "relation": "calls",
@@ -22202,9 +22561,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L128",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_getautobackupsettings",
-      "target": "services_auto_backup_service_normalizeinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_normalizeinterval"
     },
     {
       "relation": "calls",
@@ -22213,9 +22572,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_updateautobackupsettings",
-      "target": "services_auto_backup_service_normalizeinterval",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_normalizeinterval"
     },
     {
       "relation": "calls",
@@ -22224,9 +22583,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L129",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_getautobackupsettings",
-      "target": "services_auto_backup_service_parselastrunat",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_parselastrunat"
     },
     {
       "relation": "calls",
@@ -22235,9 +22594,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_createautobackupfilename",
-      "target": "services_auto_backup_service_formatdatepart",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_formatdatepart"
     },
     {
       "relation": "calls",
@@ -22246,9 +22605,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L177",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_auto_backup_service_createautobackupfilename",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_createautobackupfilename"
     },
     {
       "relation": "imports",
@@ -22257,9 +22616,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_createautobackupfilename",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_createautobackupfilename"
     },
     {
       "relation": "calls",
@@ -22268,9 +22627,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_getautobackupsettings",
-      "target": "services_auto_backup_service_readautobackupsettingvalues",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_readautobackupsettingvalues"
     },
     {
       "relation": "calls",
@@ -22279,9 +22638,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_updatelastrunat",
-      "target": "services_auto_backup_service_upsertappsetting",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_upsertappsetting"
     },
     {
       "relation": "calls",
@@ -22290,9 +22649,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L144",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_updateautobackupsettings",
-      "target": "services_auto_backup_service_upsertappsetting",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_upsertappsetting"
     },
     {
       "relation": "calls",
@@ -22301,9 +22660,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_auto_backup_service_updatelastrunat",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updatelastrunat"
     },
     {
       "relation": "calls",
@@ -22312,9 +22671,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L136",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_updateautobackupsettings",
-      "target": "services_auto_backup_service_getautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_getautobackupsettings"
     },
     {
       "relation": "calls",
@@ -22323,9 +22682,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L166",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_auto_backup_service_getautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_getautobackupsettings"
     },
     {
       "relation": "imports",
@@ -22334,9 +22693,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_updateautobackupsettings",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_updateautobackupsettings"
     },
     {
       "relation": "calls",
@@ -22345,9 +22704,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_auto_backup_service_shouldrunautobackup",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_shouldrunautobackup"
     },
     {
       "relation": "imports",
@@ -22356,9 +22715,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_shouldrunautobackup",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_shouldrunautobackup"
     },
     {
       "relation": "calls",
@@ -22367,9 +22726,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L204",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdue",
-      "target": "services_auto_backup_service_runautobackupifdueinternal",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdueinternal"
     },
     {
       "relation": "calls",
@@ -22378,9 +22737,9 @@
       "source_file": "src/modules/backup/services/auto-backup.service.ts",
       "source_location": "L176",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_export_backup_json_exportbackupjson",
-      "confidence_score": 1.0
+      "target": "services_export_backup_json_exportbackupjson"
     },
     {
       "relation": "calls",
@@ -22390,8 +22749,19 @@
       "source_location": "L178",
       "weight": 1.0,
       "source": "services_auto_backup_service_runautobackupifdueinternal",
-      "target": "services_save_backup_file_savebackupfile",
+      "target": "services_save_auto_backup_file_saveautobackupfile",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/auto-backup.service.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auto_backup_service_runautobackupifdueinternal",
+      "target": "services_save_backup_file_savebackupfile"
     },
     {
       "relation": "imports",
@@ -22400,9 +22770,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "services_auto_backup_service_runautobackupifdue",
-      "confidence_score": 1.0
+      "target": "services_auto_backup_service_runautobackupifdue"
     },
     {
       "relation": "contains",
@@ -22432,9 +22802,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "src_modules_backup_services_export_backup_json_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_export_backup_json_ts"
     },
     {
       "relation": "imports_from",
@@ -22618,6 +22988,60 @@
       "target": "services_restore_database_restoredatabase"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_modules_backup_services_save_auto_backup_file_ts",
+      "target": "src_modules_backup_services_save_backup_file_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_modules_backup_services_save_auto_backup_file_ts",
+      "target": "services_save_backup_file_savebackupfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_modules_backup_services_save_auto_backup_file_ts",
+      "target": "services_save_auto_backup_file_saveautobackupfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/tests/auto-backup.test.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_tests_auto_backup_test_ts",
+      "target": "src_modules_backup_services_save_auto_backup_file_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/modules/backup/services/save-auto-backup-file.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "services_save_auto_backup_file_saveautobackupfile",
+      "target": "services_save_backup_file_savebackupfile"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/modules/backup/services/save-backup-file.ts",
@@ -22644,9 +23068,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "src_modules_backup_services_save_backup_file_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_backup_services_save_backup_file_ts"
     },
     {
       "relation": "calls",
@@ -43286,9 +43710,9 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_app_bootstrap_lock_test_tsx",
-      "target": "tests_app_bootstrap_lock_test_autobackupmock",
-      "confidence_score": 1.0
+      "target": "tests_app_bootstrap_lock_test_autobackupmock"
     },
     {
       "relation": "contains",
@@ -43336,9 +43760,9 @@
       "source_file": "src/tests/app-bootstrap-lock.test.tsx",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_app_bootstrap_lock_test_tsx",
-      "target": "tests_app_bootstrap_lock_test_emitappstatechange",
-      "confidence_score": 1.0
+      "target": "tests_app_bootstrap_lock_test_emitappstatechange"
     },
     {
       "relation": "contains",
@@ -43406,9 +43830,9 @@
       "source_file": "src/tests/auto-backup.test.ts",
       "source_location": "L68",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_auto_backup_test_ts",
-      "target": "tests_auto_backup_test_basesettings",
-      "confidence_score": 1.0
+      "target": "tests_auto_backup_test_basesettings"
     },
     {
       "relation": "contains",

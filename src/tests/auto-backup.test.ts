@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as connection from '@/core/db/sqlite/connection';
 import * as exportBackup from '@/modules/backup/services/export-backup-json';
-import * as saveBackup from '@/modules/backup/services/save-backup-file';
+import * as saveAutoBackup from '@/modules/backup/services/save-auto-backup-file';
 import {
   AUTO_BACKUP_INTERVAL_MS,
   AUTO_BACKUP_SETTING_KEYS,
@@ -20,8 +20,8 @@ vi.mock('@/modules/backup/services/export-backup-json', () => ({
   exportBackupJson: vi.fn(),
 }));
 
-vi.mock('@/modules/backup/services/save-backup-file', () => ({
-  saveBackupFile: vi.fn(),
+vi.mock('@/modules/backup/services/save-auto-backup-file', () => ({
+  saveAutoBackupFile: vi.fn(),
 }));
 
 vi.mock('@/core/telemetry/logger', () => ({
@@ -61,7 +61,7 @@ describe('auto backup service', () => {
       budgets: [],
       error_logs: [],
     });
-    vi.mocked(saveBackup.saveBackupFile).mockResolvedValue(true);
+    vi.mocked(saveAutoBackup.saveAutoBackupFile).mockResolvedValue(true);
   });
 
   it('detects whether auto backup is due by interval', () => {
@@ -97,7 +97,7 @@ describe('auto backup service', () => {
 
     expect(result).toMatchObject({ ran: true, saved: true, reason: 'saved' });
     expect(exportBackup.exportBackupJson).toHaveBeenCalledTimes(1);
-    expect(saveBackup.saveBackupFile).toHaveBeenCalledWith(
+    expect(saveAutoBackup.saveAutoBackupFile).toHaveBeenCalledWith(
       createAutoBackupFileName(new Date(now)),
       expect.any(String)
     );
@@ -111,7 +111,7 @@ describe('auto backup service', () => {
 
     expect(result).toMatchObject({ ran: false, saved: false, reason: 'disabled' });
     expect(exportBackup.exportBackupJson).not.toHaveBeenCalled();
-    expect(saveBackup.saveBackupFile).not.toHaveBeenCalled();
+    expect(saveAutoBackup.saveAutoBackupFile).not.toHaveBeenCalled();
   });
 
   it('does not update last_run_at when save is cancelled', async () => {
@@ -119,7 +119,7 @@ describe('auto backup service', () => {
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.enabled, '1');
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.interval, 'weekly');
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.lastRunAt, String(previousRunAt));
-    vi.mocked(saveBackup.saveBackupFile).mockResolvedValue(false);
+    vi.mocked(saveAutoBackup.saveAutoBackupFile).mockResolvedValue(false);
 
     const result = await runAutoBackupIfDue(now);
 

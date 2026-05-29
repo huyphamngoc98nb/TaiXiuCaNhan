@@ -1,7 +1,7 @@
 import { getDbConnection } from '@/core/db/sqlite/connection';
 import { logger } from '@/core/telemetry/logger';
 import { exportBackupJson } from './export-backup-json';
-import { saveBackupFile } from './save-backup-file';
+import { saveAutoBackupFile } from './save-auto-backup-file';
 
 export const AUTO_BACKUP_SETTING_KEYS = {
   enabled: 'auto_backup_enabled',
@@ -175,7 +175,7 @@ async function runAutoBackupIfDueInternal(now: number): Promise<AutoBackupRunRes
 
     const payload = await exportBackupJson();
     const fileName = createAutoBackupFileName(new Date(now));
-    const saved = await saveBackupFile(fileName, JSON.stringify(payload, null, 2));
+    const saved = await saveAutoBackupFile(fileName, JSON.stringify(payload, null, 2));
 
     if (!saved) {
       return { ran: true, saved: false, reason: 'save_cancelled', fileName, settings };
