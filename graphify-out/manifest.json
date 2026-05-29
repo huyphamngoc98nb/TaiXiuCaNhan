@@ -55,7 +55,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1780028837.8476565,
+    "mtime": 1780046579.757761,
     "ast_hash": "7d20bbb6ddd9b895546d6342e84c45a4",
     "semantic_hash": ""
   },
@@ -80,7 +80,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1780028837.8481238,
+    "mtime": 1780046579.7587757,
     "ast_hash": "3deacd894fa096455ce58f3b2df33e10",
     "semantic_hash": ""
   },
@@ -90,12 +90,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1780028837.6018806,
+    "mtime": 1780046579.5844603,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1780028837.6996956,
+    "mtime": 1780046579.67262,
     "ast_hash": "f63e79d46b1f8b3fe5f4af0d8fcd322a",
     "semantic_hash": ""
   },
@@ -120,12 +120,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1780028837.850844,
+    "mtime": 1780046579.7595532,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1780028837.850844,
+    "mtime": 1780046579.7595532,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -1055,8 +1055,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\routes.ts": {
-    "mtime": 1780038815.0129273,
-    "ast_hash": "8852edd7693d9a16f0a0e0c9cda34c32",
+    "mtime": 1780048854.5131698,
+    "ast_hash": "c7532f1eaedbe6c5d51308c06732ac6c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
@@ -1415,8 +1415,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\route-parent.ts": {
-    "mtime": 1780038828.8976274,
-    "ast_hash": "ded794024a523b8d1b7d159b65b802a7",
+    "mtime": 1780048854.6352284,
+    "ast_hash": "bd1f5e6ffab08ba387717afc60f3d1eb",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\playwright.config.ts": {

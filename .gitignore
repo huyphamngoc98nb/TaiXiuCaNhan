@@ -10,3 +10,4 @@ private_key.pem
 # Artifacts tạm thời trong quá trình build bundle
 artifacts/
 dist/
+dist/index.html
