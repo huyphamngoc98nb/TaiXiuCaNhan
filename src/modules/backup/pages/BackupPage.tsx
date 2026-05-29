@@ -105,7 +105,7 @@ export function BackupPage() {
   return (
     <div style={{ padding: '16px', paddingBottom: '90px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-        <BackButton onClick={() => navigate(ROUTES.SETTINGS)} ariaLabel={t('common.back')} />
+        <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
         <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{t('backup.title')}</h2>
       </div>
 

@@ -178,7 +178,7 @@ export function MainLayout() {
           className={({ isActive }) => `nav-item nav-item--fab ${isActive ? 'active' : ''}`}
           aria-label={t('navigation.add')}
         >
-          <PlusCircle size={34} />
+          <PlusCircle size={30} />
         </NavLink>
         <div className="bottom-nav__side bottom-nav__side--right">
           <NavLink

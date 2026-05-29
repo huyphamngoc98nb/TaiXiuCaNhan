@@ -13,4 +13,5 @@ export const ROUTES = {
   BACKUP: '/backup',
   EXPORT: '/export',
   WALLETS: '/wallets',
+  MORE: '/more',
 } as const;

@@ -67,7 +67,7 @@ export function CategoriesPage() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       <div className="flex items-center gap-3 px-4 pt-10 pb-4">
-        <BackButton onClick={() => navigate(ROUTES.SETTINGS)} ariaLabel={t('common.back')} />
+        <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
         <div className="flex-1 min-w-0">
           <h1 className="text-[20px] font-bold text-gray-900">{t('categories.title')}</h1>
           <p className="text-[12px] text-gray-500">{t('categories.subtitle')}</p>
