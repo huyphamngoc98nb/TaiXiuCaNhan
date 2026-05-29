@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Plus, Wallet } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useBudgets } from '../hooks/useBudgets';
@@ -21,6 +21,7 @@ type ScopeTab = 'all' | 'account_type';
 
 export function BudgetSettingsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const {
     categories,
@@ -32,11 +33,32 @@ export function BudgetSettingsPage() {
     error,
     refresh,
   } = useBudgets();
+  const isCreateRoute = location.pathname === ROUTES.BUDGETS_NEW;
 
-  const addForm = useBudgetAddForm(refresh);
+  const handleAddSuccess = useCallback(() => {
+    void refresh();
+    if (isCreateRoute) {
+      navigate(ROUTES.BUDGETS, { replace: true });
+    }
+  }, [isCreateRoute, navigate, refresh]);
+
+  const addForm = useBudgetAddForm(handleAddSuccess);
   const editForm = useBudgetForm(refresh);
 
   const [activeTab, setActiveTab] = useState<ScopeTab>('all');
+
+  useEffect(() => {
+    if (isCreateRoute && !addForm.isOpen) {
+      addForm.open();
+    }
+  }, [addForm.isOpen, addForm.open, isCreateRoute]);
+
+  const closeAddForm = useCallback(() => {
+    if (isCreateRoute) {
+      navigate(ROUTES.BUDGETS, { replace: true });
+    }
+    addForm.close();
+  }, [addForm.close, isCreateRoute, navigate]);
 
   if (isLoading && categories.length === 0) {
     return (
@@ -91,7 +113,7 @@ export function BudgetSettingsPage() {
               </h1>
             </div>
             <button
-              onClick={addForm.open}
+              onClick={() => navigate(ROUTES.BUDGETS_NEW)}
               aria-label={t('budgets.add_budget')}
               className="w-10 h-10 rounded-full bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center justify-center text-[24px] font-light active:scale-95 transition-transform flex-shrink-0 mt-0"
             >
@@ -171,7 +193,7 @@ export function BudgetSettingsPage() {
       </BottomSheet>
 
       {/* Add Sheet */}
-      <BottomSheet isOpen={addForm.isOpen} onClose={addForm.close} fullScreenOnAndroid>
+      <BottomSheet isOpen={addForm.isOpen} onClose={closeAddForm} fullScreenOnAndroid>
         <BudgetAddSheet
           categories={categories}
           selectedCategory={addForm.selectedCategory}
@@ -185,7 +207,7 @@ export function BudgetSettingsPage() {
           accountTypeScope={addForm.accountTypeScope}
           setAccountTypeScope={addForm.setAccountTypeScope}
           onSave={addForm.handleSave}
-          onClose={addForm.close}
+          onClose={closeAddForm}
           isSaving={addForm.isSaving}
         />
       </BottomSheet>

@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\layouts\\MainLayout.tsx": {
-    "mtime": 1780019915.2567954,
-    "ast_hash": "40cee02ee67e787f1dbb2c2e1fb3510f",
+    "mtime": 1780038845.0638392,
+    "ast_hash": "c148fd46940879d35e71f4723c3bfc8c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\app-lock-events.ts": {
@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\router\\index.tsx": {
-    "mtime": 1779849074.6821198,
-    "ast_hash": "816d96baa2d7e7326f01d2fc8b1b24d6",
+    "mtime": 1780038822.7159865,
+    "ast_hash": "66546bd2d7eccf76342103a6d76549f4",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\auth\\auth.service.ts": {
@@ -515,8 +515,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\pages\\BudgetSettingsPage.tsx": {
-    "mtime": 1780021846.409324,
-    "ast_hash": "88c5c23c4e2457db2234d8f8414b9d15",
+    "mtime": 1780038866.29905,
+    "ast_hash": "8d519dfb75e000299bfaa3faa8e25939",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\repositories\\budget.repository.ts": {
@@ -585,8 +585,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\categories\\pages\\CategoriesPage.tsx": {
-    "mtime": 1780038146.3615866,
-    "ast_hash": "f9393f5cc495f64ae179ead0b663dfb9",
+    "mtime": 1780038898.90067,
+    "ast_hash": "91415b766e3c8b8dc8896d918c5bf7f0",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\categories\\repositories\\sqlite-category.repository.ts": {
@@ -950,8 +950,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\pages\\WalletsPage.tsx": {
-    "mtime": 1779411575.4919915,
-    "ast_hash": "921f3072a31bd5b7aca09fcdf753c013",
+    "mtime": 1780038882.3824427,
+    "ast_hash": "8d60892d88dbbdc6001fedd1cffbf866",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\repositories\\sqlite-wallet.repository.ts": {
@@ -1055,8 +1055,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\routes.ts": {
-    "mtime": 1780019281.9751592,
-    "ast_hash": "ef4083ea35487815a07f7f169240b1a2",
+    "mtime": 1780038815.0129273,
+    "ast_hash": "8852edd7693d9a16f0a0e0c9cda34c32",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
@@ -1415,8 +1415,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\route-parent.ts": {
-    "mtime": 1779963358.2635624,
-    "ast_hash": "5738f4a08b3da1530ee8f100dd91d9e3",
+    "mtime": 1780038828.8976274,
+    "ast_hash": "ded794024a523b8d1b7d159b65b802a7",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\playwright.config.ts": {

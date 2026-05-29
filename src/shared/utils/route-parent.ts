@@ -14,6 +14,9 @@ export function getParentRoute(pathname: string): string | null {
     return ROUTES.RECURRING_BILLS;
   }
 
+  if (pathname === ROUTES.BUDGETS_NEW) return ROUTES.BUDGETS;
+  if (pathname === ROUTES.CATEGORIES_NEW) return ROUTES.CATEGORIES;
+  if (pathname === ROUTES.WALLETS_NEW) return ROUTES.WALLETS;
   if (pathname === ROUTES.CATEGORIES) return ROUTES.SETTINGS;
   if (pathname === ROUTES.WALLETS) return ROUTES.SETTINGS;
   if (pathname === ROUTES.BACKUP) return ROUTES.SETTINGS;

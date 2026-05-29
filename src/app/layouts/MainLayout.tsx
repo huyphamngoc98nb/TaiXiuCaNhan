@@ -24,6 +24,41 @@ import { consumeAppBackButton } from '@/shared/utils/app-back-stack';
 import { getParentRoute } from '@/shared/utils/route-parent';
 import './MainLayout.css';
 
+type ContextualAddRoute = {
+  to: string;
+  navIndex: number;
+};
+
+const DEFAULT_ADD_ROUTE: ContextualAddRoute = {
+  to: ROUTES.TRANSACTIONS_NEW,
+  navIndex: 2,
+};
+
+const CONTEXTUAL_ADD_ROUTES: Array<{
+  route: string;
+  exact?: boolean;
+  addRoute: ContextualAddRoute;
+}> = [
+  { route: ROUTES.HOME, exact: true, addRoute: DEFAULT_ADD_ROUTE },
+  { route: ROUTES.TRANSACTIONS, addRoute: DEFAULT_ADD_ROUTE },
+  { route: ROUTES.BUDGETS, addRoute: { to: ROUTES.BUDGETS_NEW, navIndex: 3 } },
+  { route: ROUTES.WALLETS, addRoute: { to: ROUTES.WALLETS_NEW, navIndex: 4 } },
+  { route: ROUTES.CATEGORIES, addRoute: { to: ROUTES.CATEGORIES_NEW, navIndex: 4 } },
+];
+
+function matchesRouteContext(pathname: string, route: string, exact = false) {
+  if (exact) return pathname === route;
+  return pathname === route || pathname.startsWith(`${route}/`);
+}
+
+function getContextualAddRoute(pathname: string): ContextualAddRoute {
+  return (
+    CONTEXTUAL_ADD_ROUTES.find((item) =>
+      matchesRouteContext(pathname, item.route, item.exact),
+    )?.addRoute ?? DEFAULT_ADD_ROUTE
+  );
+}
+
 export function MainLayout() {
   const { t } = useLanguage();
   const { confirm } = useConfirm();
@@ -123,6 +158,7 @@ export function MainLayout() {
               ? 4
               : 0;
   const isMoreActive = drawerOpen || activeNavIndex === 4;
+  const addRoute = getContextualAddRoute(location.pathname);
   const activeNavIndexRef = useRef(activeNavIndex);
 
   useEffect(() => {
@@ -172,14 +208,17 @@ export function MainLayout() {
             <span>{t('navigation.history')}</span>
           </NavLink>
         </div>
-        <NavLink
-          to={ROUTES.TRANSACTIONS_NEW}
-          onClick={() => prepareSlide(2)}
-          className={({ isActive }) => `nav-item nav-item--fab ${isActive ? 'active' : ''}`}
+        <button
+          type="button"
+          onClick={() => {
+            prepareSlide(addRoute.navIndex);
+            navigate(addRoute.to);
+          }}
+          className={`nav-item nav-item--fab ${activeNavIndex === 2 ? 'active' : ''}`}
           aria-label={t('navigation.add')}
         >
           <PlusCircle size={30} />
-        </NavLink>
+        </button>
         <div className="bottom-nav__side bottom-nav__side--right">
           <NavLink
             to={ROUTES.BUDGETS}

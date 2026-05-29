@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Plus, Tags } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
 import { ROUTES } from '@/shared/constants/routes';
@@ -14,6 +14,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 
 export function CategoriesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const confirm = useConfirm();
   const toast = useToast();
   const { t } = useLanguage();
@@ -22,16 +23,30 @@ export function CategoriesPage() {
   const [activeType, setActiveType] = useState<CategoryType>('expense');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Category | undefined>();
+  const isCreateRoute = location.pathname === ROUTES.CATEGORIES_NEW;
 
   const visibleCategories = useMemo(
     () => categories.filter((category) => category.type === activeType),
     [activeType, categories],
   );
 
-  function openCreate() {
+  const openCreate = useCallback(() => {
     setEditTarget(undefined);
     setSheetOpen(true);
-  }
+  }, []);
+
+  const closeSheet = useCallback(() => {
+    if (isCreateRoute) {
+      navigate(ROUTES.CATEGORIES, { replace: true });
+    }
+    setSheetOpen(false);
+  }, [isCreateRoute, navigate]);
+
+  useEffect(() => {
+    if (isCreateRoute && !sheetOpen) {
+      openCreate();
+    }
+  }, [isCreateRoute, openCreate, sheetOpen]);
 
   function openEdit(category: Category) {
     setEditTarget(category);
@@ -45,7 +60,7 @@ export function CategoriesPage() {
     } else {
       await createCategory(input);
     }
-    setSheetOpen(false);
+    closeSheet();
   }
 
   async function handleDelete(category: Category) {
@@ -74,7 +89,7 @@ export function CategoriesPage() {
         </div>
         <button
           type="button"
-          onClick={openCreate}
+          onClick={() => navigate(ROUTES.CATEGORIES_NEW)}
           className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center active:scale-[0.96] transition-transform"
           style={{ boxShadow: '0 6px 14px rgba(99,102,241,0.28)' }}
           aria-label={t('categories.add')}
@@ -123,12 +138,12 @@ export function CategoriesPage() {
         )}
       </div>
 
-      <BottomSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)}>
+      <BottomSheet isOpen={sheetOpen} onClose={closeSheet}>
         <CategoryForm
           existing={editTarget}
           defaultType={activeType}
           onSave={handleSave}
-          onCancel={() => setSheetOpen(false)}
+          onCancel={closeSheet}
         />
       </BottomSheet>
     </div>

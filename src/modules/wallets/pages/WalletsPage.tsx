@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useWallets } from '../hooks/useWallets';
 import { WalletList } from '../components/WalletList';
 import { WalletForm } from '../components/WalletForm';
@@ -7,8 +8,11 @@ import { Wallet, CreateWalletInput, UpdateWalletInput } from '../repositories/sq
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { ROUTES } from '@/shared/constants/routes';
 
 export function WalletsPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { wallets, totalBalance, loading, error, createWallet, updateWallet, deleteWallet } =
     useWallets();
   const { confirm } = useConfirm();
@@ -17,11 +21,25 @@ export function WalletsPage() {
 
   const [sheetOpen, setSheetOpen]         = useState(false);
   const [editTarget, setEditTarget]       = useState<Wallet | undefined>(undefined);
+  const isCreateRoute = location.pathname === ROUTES.WALLETS_NEW;
 
-  function openCreate() {
+  const openCreate = useCallback(() => {
     setEditTarget(undefined);
     setSheetOpen(true);
-  }
+  }, []);
+
+  const closeSheet = useCallback(() => {
+    if (isCreateRoute) {
+      navigate(ROUTES.WALLETS, { replace: true });
+    }
+    setSheetOpen(false);
+  }, [isCreateRoute, navigate]);
+
+  useEffect(() => {
+    if (isCreateRoute && !sheetOpen) {
+      openCreate();
+    }
+  }, [isCreateRoute, openCreate, sheetOpen]);
 
   function openEdit(wallet: Wallet) {
     setEditTarget(wallet);
@@ -60,14 +78,14 @@ export function WalletsPage() {
         loading={loading}
         error={error}
         onWalletClick={openEdit}
-        onAddClick={openCreate}
+        onAddClick={() => navigate(ROUTES.WALLETS_NEW)}
       />
 
-      <BottomSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)}>
+      <BottomSheet isOpen={sheetOpen} onClose={closeSheet}>
         <WalletForm
           existing={editTarget}
           onSave={handleSave}
-          onClose={() => setSheetOpen(false)}
+          onClose={closeSheet}
           onDelete={editTarget ? handleDelete : undefined}
         />
       </BottomSheet>
