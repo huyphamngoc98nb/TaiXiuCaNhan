@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppBootstrap } from '@/app/providers/AppBootstrap';
-import { resumeAppLock, suspendAppLock } from '@/app/providers/app-lock-events';
+import { forceAppUnlock, resumeAppLock, suspendAppLock } from '@/app/providers/app-lock-events';
 
 const authServiceMock = vi.hoisted(() => ({
   requiresUnlock: vi.fn(),
@@ -137,6 +137,26 @@ describe('AppBootstrap app lock', () => {
 
     act(() => {
       resumeAppLock();
+      appListeners.appStateChange?.({ isActive: false });
+    });
+
+    expect(screen.getByText('PIN screen')).toBeTruthy();
+  });
+
+  it('force unlock restores the unlocked state and resumes app locking', async () => {
+    renderBootstrap();
+
+    expect(screen.getByText('PIN screen')).toBeTruthy();
+
+    act(() => {
+      suspendAppLock();
+      forceAppUnlock();
+    });
+    await flushPromises();
+
+    expect(screen.getByText('Unlocked app')).toBeTruthy();
+
+    act(() => {
       appListeners.appStateChange?.({ isActive: false });
     });
 

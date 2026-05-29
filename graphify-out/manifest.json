@@ -55,7 +55,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1779963537.970647,
+    "mtime": 1780025711.5318234,
     "ast_hash": "7d20bbb6ddd9b895546d6342e84c45a4",
     "semantic_hash": ""
   },
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1779963537.970647,
-    "ast_hash": "32b21c5fd7ad9d9126d17b47ae905c0c",
+    "mtime": 1780025711.5318234,
+    "ast_hash": "3deacd894fa096455ce58f3b2df33e10",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\androidTest\\java\\com\\getcapacitor\\myapp\\ExampleInstrumentedTest.java": {
@@ -90,12 +90,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1779963537.8226073,
+    "mtime": 1780025711.2874556,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1779963537.9065585,
+    "mtime": 1780025711.4182367,
     "ast_hash": "f63e79d46b1f8b3fe5f4af0d8fcd322a",
     "semantic_hash": ""
   },
@@ -120,13 +120,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1779963537.970647,
-    "ast_hash": "13a885b925f99b619845018a13d508d3",
+    "mtime": 1780025711.5369146,
+    "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1779963537.970647,
-    "ast_hash": "299becb7733b8720b74d289e3cb837f1",
+    "mtime": 1780025711.5369146,
+    "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\scripts\\check-translations.ts": {
@@ -175,13 +175,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\app-lock-events.ts": {
-    "mtime": 1779672221.2231581,
-    "ast_hash": "6ee2fe9fcd1dad9bdc31f8acdbdc33c8",
+    "mtime": 1780027657.4115918,
+    "ast_hash": "fe7a391b51ad41cacdfa1b0c19e9317b",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppBootstrap.tsx": {
-    "mtime": 1780025530.8392663,
-    "ast_hash": "96449425c6cadb2421e8d07a94e7d082",
+    "mtime": 1780027664.817859,
+    "ast_hash": "85fa97dbffeffcd75ec1e4bac6b6f031",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppProvider.tsx": {
@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\pages\\BackupPage.tsx": {
-    "mtime": 1780019386.4196854,
-    "ast_hash": "d62ec44bde089fe3a9f870fbfb1526d3",
+    "mtime": 1780027671.351501,
+    "ast_hash": "dbfb419dab3ea7b53cb0a4806174a97e",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\export-backup-json.ts": {
@@ -1080,8 +1080,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\app-bootstrap-lock.test.tsx": {
-    "mtime": 1779672282.9469965,
-    "ast_hash": "3821a174eb8c9840a04183cfd7b53051",
+    "mtime": 1780027681.8295262,
+    "ast_hash": "577d6b9f23d73b1d52535b7b1d893861",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\app-unlock.test.tsx": {

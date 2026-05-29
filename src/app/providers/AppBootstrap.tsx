@@ -9,7 +9,11 @@ import { runMigrations } from '@/core/db/migrations/migration-runner';
 import { seedDefaultData } from '@/core/db/seed/default-categories';
 import { authService } from '@/core/auth/auth.service';
 import { AppUnlock } from './AppUnlock';
-import { APP_LOCK_RESUME_EVENT, APP_LOCK_SUSPEND_EVENT } from './app-lock-events';
+import {
+  APP_LOCK_FORCE_UNLOCK_EVENT,
+  APP_LOCK_RESUME_EVENT,
+  APP_LOCK_SUSPEND_EVENT,
+} from './app-lock-events';
 
 interface AppBootstrapProps {
   children: ReactNode;
@@ -70,13 +74,19 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
       appLockSuspendedRef.current = false;
       resetIdleTimer();
     };
+    const forceUnlock = () => {
+      appLockSuspendedRef.current = false;
+      setIsUnlocked(true);
+    };
 
     window.addEventListener(APP_LOCK_SUSPEND_EVENT, suspendAppLock);
     window.addEventListener(APP_LOCK_RESUME_EVENT, resumeAppLock);
+    window.addEventListener(APP_LOCK_FORCE_UNLOCK_EVENT, forceUnlock);
 
     return () => {
       window.removeEventListener(APP_LOCK_SUSPEND_EVENT, suspendAppLock);
       window.removeEventListener(APP_LOCK_RESUME_EVENT, resumeAppLock);
+      window.removeEventListener(APP_LOCK_FORCE_UNLOCK_EVENT, forceUnlock);
     };
   }, [clearIdleTimer, resetIdleTimer]);
 

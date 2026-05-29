@@ -5,7 +5,7 @@ import { BackButton } from '@/shared/components/BackButton';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
-import { resumeAppLock, suspendAppLock } from '@/app/providers/app-lock-events';
+import { forceAppUnlock, resumeAppLock, suspendAppLock } from '@/app/providers/app-lock-events';
 import { ROUTES } from '@/shared/constants/routes';
 import { exportBackupJson } from '../services/export-backup-json';
 import { importBackupJson } from '../services/import-backup-json';
@@ -35,6 +35,7 @@ export function BackupPage() {
 
       if (saved) {
         toast.success(t('backup.export_success'));
+        forceAppUnlock();
         navigate(ROUTES.HOME, { replace: true });
       }
     } catch (error: any) {
@@ -88,7 +89,7 @@ export function BackupPage() {
       toast.success(t('backup.restore_success'));
       event.target.value = '';
       restoreInProgressRef.current = false;
-      resumeAppLock();
+      forceAppUnlock();
       navigate(ROUTES.HOME, { replace: true });
     } catch (error: any) {
       toast.error(`${t('backup.restore_failed')} ${error.message}`);
