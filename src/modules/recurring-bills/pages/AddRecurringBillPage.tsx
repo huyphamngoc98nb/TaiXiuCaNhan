@@ -28,7 +28,7 @@ export function AddRecurringBillPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <div className="flex items-center gap-3 px-4 pt-10 pb-4">
+      <div className="flex items-center gap-3 px-4 pt-4 pb-4">
         <BackButton onClick={() => navigate(ROUTES.RECURRING_BILLS)} ariaLabel={t('common.back')} />
         <h2 className="text-[18px] font-bold text-gray-900">{t('recurring_bills.new')}</h2>
       </div>

@@ -44,6 +44,7 @@ const CONTEXTUAL_ADD_ROUTES: Array<{
   { route: ROUTES.BUDGETS, addRoute: { to: ROUTES.BUDGETS_NEW, navIndex: 3 } },
   { route: ROUTES.WALLETS, addRoute: { to: ROUTES.WALLETS_NEW, navIndex: 4 } },
   { route: ROUTES.CATEGORIES, addRoute: { to: ROUTES.CATEGORIES_NEW, navIndex: 4 } },
+  { route: ROUTES.RECURRING_BILLS, addRoute: { to: ROUTES.RECURRING_BILLS_NEW, navIndex: 4 } },
 ];
 
 function matchesRouteContext(pathname: string, route: string, exact = false) {
