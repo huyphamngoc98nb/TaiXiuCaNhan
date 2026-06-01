@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
 import { useTransactions } from '../hooks/useTransactions';
 import { TransactionList } from '../components/TransactionList';
@@ -11,23 +11,15 @@ import { AdvancedTransactionFilterSheet } from '../components/AdvancedTransactio
 import type { TransactionFilter } from '../domain/transaction.model';
 import { getAppLocale } from '@/shared/utils/locale';
 import { ROUTES } from '@/shared/constants/routes';
+import { addMonths, getMonthDateRange, isCurrentMonth, toMonthKey } from '@/shared/utils/date-range';
 
 export type ViewType = 'day' | 'month' | 'year';
 
-function getDefaultHistoryFilter(): TransactionFilter {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-
-  return {
-    startDate: startOfMonth.getTime(),
-    endDate: endOfToday.getTime(),
-  };
-}
-
 export function TransactionsPage() {
   const navigate = useNavigate();
-  const initialFilter = useMemo(() => getDefaultHistoryFilter(), []);
+  const [selectedMonth, setSelectedMonth] = useState(() => toMonthKey());
+  const [hasCustomDateRange, setHasCustomDateRange] = useState(false);
+  const initialFilter = useMemo(() => getMonthDateRange(toMonthKey()), []);
   const { transactions, loading, filter, setFilter } = useTransactions(initialFilter);
   const { t, language } = useLanguage();
   const { wallets } = useWallets();
@@ -37,21 +29,75 @@ export function TransactionsPage() {
   const [drilldownSnapshot, setDrilldownSnapshot] = useState<{
     filter: TransactionFilter;
     viewType: ViewType;
+    hasCustomDateRange: boolean;
     title?: string;
   } | null>(null);
   const isDayDetail = Boolean(drilldownSnapshot);
   const locale = getAppLocale(language);
+  const selectedMonthRange = useMemo(() => getMonthDateRange(selectedMonth), [selectedMonth]);
+  const selectedMonthLabel = useMemo(() => {
+    const monthDate = new Date(selectedMonthRange.startDate);
+    return language === 'vi'
+      ? `Tháng ${monthDate.getMonth() + 1}/${monthDate.getFullYear()}`
+      : `${String(monthDate.getMonth() + 1).padStart(2, '0')}/${monthDate.getFullYear()}`;
+  }, [language, selectedMonthRange.startDate]);
+  const isNextMonthDisabled = isCurrentMonth(selectedMonth);
 
   const handleEdit = (id: string) => navigate(`/transactions/${id}/edit`);
   const handleBack = () => {
     if (drilldownSnapshot) {
       setFilter(drilldownSnapshot.filter);
       setViewType(drilldownSnapshot.viewType);
+      setHasCustomDateRange(drilldownSnapshot.hasCustomDateRange);
       setDrilldownSnapshot(null);
       return;
     }
 
     navigate(ROUTES.HOME);
+  };
+
+  const applyMonth = (monthKey: string) => {
+    const range = getMonthDateRange(monthKey);
+    setSelectedMonth(monthKey);
+    setHasCustomDateRange(false);
+    setDrilldownSnapshot(null);
+    setFilter((current) => ({
+      ...current,
+      startDate: range.startDate,
+      endDate: range.endDate,
+    }));
+  };
+
+  const handlePreviousMonth = () => {
+    applyMonth(addMonths(selectedMonth, -1));
+  };
+
+  const handleNextMonth = () => {
+    if (!isNextMonthDisabled) {
+      applyMonth(addMonths(selectedMonth, 1));
+    }
+  };
+
+  const handleAdvancedFilterChange = (nextFilter: TransactionFilter) => {
+    const dateChanged =
+      nextFilter.startDate !== filter.startDate || nextFilter.endDate !== filter.endDate;
+
+    if (dateChanged) {
+      setHasCustomDateRange(
+        nextFilter.startDate !== selectedMonthRange.startDate ||
+          nextFilter.endDate !== selectedMonthRange.endDate,
+      );
+    }
+
+    setFilter(nextFilter);
+  };
+
+  const handleResetFilters = () => {
+    setHasCustomDateRange(false);
+    setFilter({
+      startDate: selectedMonthRange.startDate,
+      endDate: selectedMonthRange.endDate,
+    });
   };
 
   const handleSelectSummaryRange = (range: {
@@ -62,9 +108,11 @@ export function TransactionsPage() {
     setDrilldownSnapshot({
       filter,
       viewType,
+      hasCustomDateRange,
       title: range.title,
     });
     setShowAdvancedFilter(false);
+    setHasCustomDateRange(true);
     setFilter({
       ...filter,
       startDate: range.startDate,
@@ -80,7 +128,7 @@ export function TransactionsPage() {
   };
 
   const hasAdvancedFilter = Boolean(
-    filter.startDate || filter.endDate || filter.wallet_id || filter.type || filter.category_id,
+    hasCustomDateRange || filter.wallet_id || filter.type || filter.category_id,
   );
   const title =
     drilldownSnapshot?.title ??
@@ -110,37 +158,117 @@ export function TransactionsPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            gap: '10px',
+            flexWrap: 'wrap',
             marginBottom: '14px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
             <BackButton onClick={handleBack} ariaLabel={t('common.back')} />
             <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', minWidth: 0 }}>{title}</h2>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowAdvancedFilter((open) => !open)}
-            aria-label="Lọc nâng cao"
-            aria-expanded={showAdvancedFilter}
+          <div
             style={{
-              width: '40px',
-              height: '40px',
               display: isDayDetail ? 'none' : 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              background: hasAdvancedFilter ? 'var(--primary)' : 'var(--surface)',
-              color: hasAdvancedFilter ? 'white' : 'var(--text)',
-              border: hasAdvancedFilter ? 'none' : '1px solid var(--border)',
-              borderRadius: '10px',
-              boxShadow: hasAdvancedFilter
-                ? '0 4px 6px -1px rgba(14, 165, 233, 0.2)'
-                : '0 1px 2px rgba(0,0,0,0.04)',
-              flexShrink: 0,
+              justifyContent: 'flex-end',
+              gap: '8px',
+              flexWrap: 'wrap',
+              marginLeft: 'auto',
             }}
           >
-            <SlidersHorizontal size={20} />
-          </button>
+            <div
+              aria-label={t('transactions.current_month')}
+              style={{
+                minHeight: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                background: 'var(--surface)',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                overflow: 'hidden',
+              }}
+            >
+              <button
+                type="button"
+                onClick={handlePreviousMonth}
+                aria-label={t('transactions.previous_month')}
+                style={{
+                  width: '40px',
+                  minHeight: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: 'none',
+                  borderRight: '1px solid var(--border)',
+                  background: 'transparent',
+                  color: 'var(--text)',
+                }}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <span
+                style={{
+                  minWidth: language === 'vi' ? '104px' : '78px',
+                  padding: '0 10px',
+                  color: 'var(--text)',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {selectedMonthLabel}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                disabled={isNextMonthDisabled}
+                aria-label={t('transactions.next_month')}
+                style={{
+                  width: '40px',
+                  minHeight: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: 'none',
+                  borderLeft: '1px solid var(--border)',
+                  background: 'transparent',
+                  color: isNextMonthDisabled ? 'var(--text-muted)' : 'var(--text)',
+                  opacity: isNextMonthDisabled ? 0.45 : 1,
+                  cursor: isNextMonthDisabled ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowAdvancedFilter((open) => !open)}
+              aria-label={t('transactions.advanced_filter')}
+              aria-expanded={showAdvancedFilter}
+              style={{
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: hasAdvancedFilter ? 'var(--primary)' : 'var(--surface)',
+                color: hasAdvancedFilter ? 'white' : 'var(--text)',
+                border: hasAdvancedFilter ? 'none' : '1px solid var(--border)',
+                borderRadius: '10px',
+                boxShadow: hasAdvancedFilter
+                  ? '0 4px 6px -1px rgba(14, 165, 233, 0.2)'
+                  : '0 1px 2px rgba(0,0,0,0.04)',
+                flexShrink: 0,
+              }}
+            >
+              <SlidersHorizontal size={20} />
+            </button>
+          </div>
         </div>
 
         <div
@@ -181,7 +309,8 @@ export function TransactionsPage() {
         filter={filter}
         wallets={wallets}
         categories={categories}
-        onChange={setFilter}
+        onChange={handleAdvancedFilterChange}
+        onReset={handleResetFilters}
         onClose={() => setShowAdvancedFilter(false)}
       />
 
@@ -192,6 +321,7 @@ export function TransactionsPage() {
           onSelect={handleEdit}
           onSelectSummaryRange={handleSelectSummaryRange}
           viewType={viewType}
+          emptyMessage={!hasAdvancedFilter ? t('transactions.empty_month') : undefined}
         />
       </div>
     </div>

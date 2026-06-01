@@ -11,6 +11,7 @@ interface Props {
   onSelect: (id: string) => void;
   onSelectSummaryRange?: (range: { startDate: number; endDate: number; title?: string }) => void;
   viewType?: 'day' | 'month' | 'year';
+  emptyMessage?: string;
 }
 
 interface SummaryRow {
@@ -42,6 +43,7 @@ export function TransactionList({
   onSelect,
   onSelectSummaryRange,
   viewType = 'day',
+  emptyMessage,
 }: Props) {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
@@ -62,7 +64,7 @@ export function TransactionList({
   if (transactions.length === 0) {
     return (
       <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
-        {t('transactions.empty')}
+        {emptyMessage ?? t('transactions.empty')}
       </div>
     );
   }

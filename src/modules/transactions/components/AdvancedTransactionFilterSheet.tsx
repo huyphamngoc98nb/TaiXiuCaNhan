@@ -12,6 +12,7 @@ interface Props {
   wallets: Wallet[];
   categories: Category[];
   onChange: (filter: TransactionFilter) => void;
+  onReset: () => void;
   onClose: () => void;
 }
 
@@ -63,6 +64,7 @@ export function AdvancedTransactionFilterSheet({
   wallets,
   categories,
   onChange,
+  onReset,
   onClose,
 }: Props) {
   const { t } = useLanguage();
@@ -75,7 +77,9 @@ export function AdvancedTransactionFilterSheet({
     <BottomSheet isOpen={isOpen} onClose={onClose}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)' }}>Lọc nâng cao</h3>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)' }}>
+            {t('transactions.advanced_filter')}
+          </h3>
           <button
             type="button"
             onClick={onClose}
@@ -176,6 +180,21 @@ export function AdvancedTransactionFilterSheet({
           }}
         >
           Áp dụng
+        </button>
+
+        <button
+          type="button"
+          onClick={onReset}
+          style={{
+            minHeight: '44px',
+            borderRadius: '12px',
+            background: 'var(--surface)',
+            color: 'var(--text)',
+            fontWeight: 700,
+            border: '1px solid var(--border)',
+          }}
+        >
+          {t('transactions.reset_filters')}
         </button>
       </div>
     </BottomSheet>
