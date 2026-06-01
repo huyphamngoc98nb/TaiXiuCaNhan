@@ -11,7 +11,6 @@ interface Props {
   loading: boolean;
   error: string | null;
   onWalletClick?: (wallet: Wallet) => void;
-  onAddClick?: () => void;
 }
 
 const ACCOUNT_TYPE_ORDER: AccountType[] = [
@@ -24,7 +23,6 @@ export function WalletList({
   loading,
   error,
   onWalletClick,
-  onAddClick,
 }: Props) {
   const { formatAmount } = useCurrency();
   const { t } = useLanguage();
@@ -94,16 +92,6 @@ export function WalletList({
           {t('wallets.excluded_hint')}
         </p>
       </div>
-
-      {/* Add wallet button */}
-      <button
-        onClick={onAddClick}
-        aria-label={t('wallets.add_account')}
-        title={t('wallets.add_account')}
-        className="w-full h-12 rounded-2xl border-2 border-dashed border-indigo-300 text-indigo-500 text-[22px] font-bold mb-5 hover:bg-indigo-50 transition-colors"
-      >
-        +
-      </button>
 
       {/* Grouped wallet cards */}
       {visibleWallets.length === 0 ? (

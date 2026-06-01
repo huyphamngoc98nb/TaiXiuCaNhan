@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Plus, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useBudgets } from '../hooks/useBudgets';
 import { useBudgetAddForm } from '../hooks/useBudgetAddForm';
@@ -112,13 +112,6 @@ export function BudgetSettingsPage() {
                 {t('budgets.title')}
               </h1>
             </div>
-            <button
-              onClick={() => navigate(ROUTES.BUDGETS_NEW)}
-              aria-label={t('budgets.add_budget')}
-              className="w-10 h-10 rounded-full bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center justify-center text-[24px] font-light active:scale-95 transition-transform flex-shrink-0 mt-0"
-            >
-              <Plus size={24} />
-            </button>
           </div>
         </header>
 

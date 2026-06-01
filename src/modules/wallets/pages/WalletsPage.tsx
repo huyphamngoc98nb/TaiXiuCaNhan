@@ -78,7 +78,6 @@ export function WalletsPage() {
         loading={loading}
         error={error}
         onWalletClick={openEdit}
-        onAddClick={() => navigate(ROUTES.WALLETS_NEW)}
       />
 
       <BottomSheet isOpen={sheetOpen} onClose={closeSheet}>

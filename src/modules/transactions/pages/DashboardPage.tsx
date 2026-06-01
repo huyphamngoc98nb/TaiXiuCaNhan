@@ -290,12 +290,6 @@ function DashboardPage() {
           <p className="text-[13px] text-gray-500 leading-relaxed">
             {t('dashboard.empty_hint')}
           </p>
-          <button
-            onClick={() => navigate(ROUTES.TRANSACTIONS_NEW)}
-            className="w-full h-[52px] rounded-[14px] bg-indigo-500 text-white font-semibold text-[15px] shadow-md shadow-indigo-300/40"
-          >
-            {t('dashboard.add_first_transaction')}
-          </button>
         </div>
       )}
     </div>

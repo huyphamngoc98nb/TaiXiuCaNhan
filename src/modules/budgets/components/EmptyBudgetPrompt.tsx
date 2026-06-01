@@ -1,11 +1,7 @@
 import { Target } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 
-interface Props {
-  onClick?: () => void;
-}
-
-export function EmptyBudgetPrompt({ onClick }: Props) {
+export function EmptyBudgetPrompt() {
   const { t } = useLanguage();
 
   return (
@@ -16,13 +12,6 @@ export function EmptyBudgetPrompt({ onClick }: Props) {
       <p className="text-[14px] text-gray-500 max-w-[240px]">
         {t('budgets.set_first_budget')}
       </p>
-      <button
-        type="button"
-        onClick={onClick}
-        className="text-[14px] font-semibold text-indigo-500"
-      >
-        {t('budgets.set_a_budget')}
-      </button>
     </div>
   );
 }

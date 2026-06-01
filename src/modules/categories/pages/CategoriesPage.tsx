@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Plus, Tags } from 'lucide-react';
+import { Tags } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
 import { ROUTES } from '@/shared/constants/routes';
 import { BottomSheet } from '@/shared/components/BottomSheet';
@@ -87,15 +87,6 @@ export function CategoriesPage() {
           <h1 className="text-[20px] font-bold text-gray-900">{t('categories.title')}</h1>
           <p className="text-[12px] text-gray-500">{t('categories.subtitle')}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate(ROUTES.CATEGORIES_NEW)}
-          className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center active:scale-[0.96] transition-transform"
-          style={{ boxShadow: '0 6px 14px rgba(99,102,241,0.28)' }}
-          aria-label={t('categories.add')}
-        >
-          <Plus size={20} />
-        </button>
       </div>
 
       <div className="px-4 pb-24">

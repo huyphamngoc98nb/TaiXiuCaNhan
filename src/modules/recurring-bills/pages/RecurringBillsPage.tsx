@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
 import { useRecurringBills } from '../hooks/useRecurringBills';
 import { RecurringBillList } from '../components/RecurringBillList';
 import { RecurringBill } from '../domain/recurring-bill.model';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
-import { ROUTES } from '@/shared/constants/routes';
 
 export function RecurringBillsPage() {
   const { bills, loading, error, remove, toggleActive, advanceDueDate } = useRecurringBills();
@@ -63,14 +61,6 @@ export function RecurringBillsPage() {
             {t('recurring_bills.subtitle')} - {bills.filter(b => b.is_active === 1).length} {t('recurring_bills.active_count')}
           </p>
         </div>
-        <button
-          onClick={() => navigate(ROUTES.RECURRING_BILLS_NEW)}
-          aria-label={t('recurring_bills.add')}
-          title={t('recurring_bills.add')}
-          className="w-10 h-10 rounded-full bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center justify-center text-[24px] font-light active:scale-95 transition-transform flex-shrink-0"
-        >
-          <Plus size={24} />
-        </button>
       </div>
 
       {error && (
