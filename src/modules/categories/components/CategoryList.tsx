@@ -48,22 +48,26 @@ export function CategoryList({ categories, onEdit, onDelete }: Props) {
               {description || (category.type === 'income' ? t('categories.income_type') : t('categories.expense_type'))}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => onEdit(category)}
-            className="w-9 h-9 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center active:bg-gray-100"
-            aria-label={`${t('common.edit')} ${category.name}`}
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={() => onDelete(category)}
-            className="w-9 h-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center active:bg-red-100"
-            aria-label={`${t('common.delete')} ${category.name}`}
-          >
-            <Trash2 size={16} />
-          </button>
+          {category.is_system !== 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => onEdit(category)}
+                className="w-9 h-9 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center active:bg-gray-100"
+                aria-label={`${t('common.edit')} ${category.name}`}
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => onDelete(category)}
+                className="w-9 h-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center active:bg-red-100"
+                aria-label={`${t('common.delete')} ${category.name}`}
+              >
+                <Trash2 size={16} />
+              </button>
+            </>
+          )}
         </div>
         );
       })}

@@ -24,6 +24,8 @@ import transferCategorySql from './019_transfer_category.sql?raw';
 import categoryDescriptionSql from './020_category_description.sql?raw';
 import removeUnusedSeedWalletsSql from './021_remove_unused_seed_wallets.sql?raw';
 import creditCardStatementsSql from './022_credit_card_statements.sql?raw';
+import loansSql from './023_loans.sql?raw';
+import loanCategoriesSql from './024_loan_categories.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -48,6 +50,8 @@ const MIGRATIONS = [
   { version: 20, name: '020_category_description',            sql: categoryDescriptionSql },
   { version: 21, name: '021_remove_unused_seed_wallets',       sql: removeUnusedSeedWalletsSql },
   { version: 22, name: '022_credit_card_statements',           sql: creditCardStatementsSql },
+  { version: 23, name: '023_loans',                            sql: loansSql },
+  { version: 24, name: '024_loan_categories',                  sql: loanCategoriesSql },
 ];
 
 async function markMigrationDone(

@@ -12,6 +12,8 @@ export const ROUTES = {
   RECURRING_BILLS: '/recurring-bills',
   RECURRING_BILLS_NEW: '/recurring-bills/new',
   RECURRING_BILLS_EDIT: '/recurring-bills/:id/edit',
+  LOANS: '/loans',
+  LOANS_DETAIL: '/loans/:id',
   BACKUP: '/backup',
   EXPORT: '/export',
   WALLETS: '/wallets',

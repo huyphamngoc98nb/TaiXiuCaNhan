@@ -46,7 +46,7 @@ export async function seedDefaultData() {
   const expenseDefaults = DEFAULT_CATEGORIES.filter((cat) => cat.type === 'expense');
 
   const { values: incomeCategories } = await db.query(
-    'SELECT id FROM categories WHERE type = ? LIMIT 1',
+    'SELECT id FROM categories WHERE type = ? AND COALESCE(is_system, 0) = 0 LIMIT 1',
     ['income']
   );
   if (!incomeCategories || incomeCategories.length === 0) {
@@ -55,7 +55,7 @@ export async function seedDefaultData() {
   }
 
   const { values: expenseCategories } = await db.query(
-    'SELECT id FROM categories WHERE type = ? AND id <> ? LIMIT 1',
+    'SELECT id FROM categories WHERE type = ? AND id <> ? AND COALESCE(is_system, 0) = 0 LIMIT 1',
     ['expense', TRANSFER_CATEGORY_ID]
   );
   if (!expenseCategories || expenseCategories.length === 0) {

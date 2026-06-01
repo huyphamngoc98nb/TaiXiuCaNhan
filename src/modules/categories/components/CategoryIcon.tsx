@@ -1,6 +1,8 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   ArrowLeftRight,
+  ArrowDownCircle,
+  ArrowUpCircle,
   Banknote,
   Bike,
   BookOpen,
@@ -18,6 +20,7 @@ import {
   Fuel,
   Gift,
   GraduationCap,
+  HandCoins,
   HeartPulse,
   Home,
   Landmark,
@@ -62,6 +65,8 @@ interface LocalizedCategoryIconPreset {
 
 const ICONS: Record<string, LucideIcon> = {
   'arrow-left-right': ArrowLeftRight,
+  'arrow-down-circle': ArrowDownCircle,
+  'arrow-up-circle': ArrowUpCircle,
   banknote: Banknote,
   bike: Bike,
   book: BookOpen,
@@ -83,6 +88,7 @@ const ICONS: Record<string, LucideIcon> = {
   fuel: Fuel,
   gift: Gift,
   health: HeartPulse,
+  'hand-coins': HandCoins,
   home: Home,
   investment: TrendingUp,
   investments: TrendingUp,

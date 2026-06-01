@@ -1,0 +1,72 @@
+import { useCallback, useState } from 'react';
+import { loanMutationDeps, loanServiceDeps } from '@/core/di/loans.di';
+import type { CreateLoanInput, CreateLoanPaymentInput, Loan, LoanPayment } from '../domain/loan.model';
+import { addLoanPayment as addLoanPaymentService } from '../services/add-loan-payment';
+import { cancelLoan as cancelLoanService } from '../services/cancel-loan';
+import { createLoan as createLoanService } from '../services/create-loan';
+
+function toError(err: unknown): Error {
+  return err instanceof Error ? err : new Error(String(err));
+}
+
+function emitLoanEvent(name: string, detail?: unknown) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent(name, { detail }));
+}
+
+export function useLoanMutations() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const createLoan = useCallback(async (input: CreateLoanInput): Promise<Loan> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const loan = await createLoanService(input, loanServiceDeps);
+      emitLoanEvent('loan:created', loan);
+      return loan;
+    } catch (err) {
+      const nextError = toError(err);
+      setError(nextError);
+      throw nextError;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const addPayment = useCallback(async (input: CreateLoanPaymentInput): Promise<LoanPayment> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const payment = await addLoanPaymentService(input, loanMutationDeps);
+      emitLoanEvent('loan:payment-added', payment);
+      return payment;
+    } catch (err) {
+      const nextError = toError(err);
+      setError(nextError);
+      throw nextError;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const cancelLoan = useCallback(async (loanId: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await cancelLoanService(loanId, loanMutationDeps);
+      emitLoanEvent('loan:cancelled', { loanId });
+    } catch (err) {
+      const nextError = toError(err);
+      setError(nextError);
+      throw nextError;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { createLoan, addPayment, cancelLoan, loading, error };
+}

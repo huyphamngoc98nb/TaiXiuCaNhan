@@ -90,6 +90,10 @@ describe('Database SQLite Tests', () => {
     expectExecuteContaining("'wallet-cash-1', 'wallet-bank-1', 'wallet-ewallet-1', 'wallet-cc-1'");
     expectExecuteContaining('CREATE TABLE IF NOT EXISTS credit_card_statements');
     expectExecuteContaining('ALTER TABLE wallets ADD COLUMN annual_fee');
+    expectExecuteContaining('CREATE TABLE IF NOT EXISTS loans');
+    expectExecuteContaining('CREATE TABLE IF NOT EXISTS loan_payments');
+    expectExecuteContaining('ALTER TABLE categories ADD COLUMN slug TEXT');
+    expectExecuteContaining("'cho_vay', 'Cho vay'");
 
     // Each migration is bookmarked with an INSERT
     expectMigrationMarked(1, '001_init');
@@ -104,13 +108,15 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(20, '020_category_description');
     expectMigrationMarked(21, '021_remove_unused_seed_wallets');
     expectMigrationMarked(22, '022_credit_card_statements');
+    expectMigrationMarked(23, '023_loans');
+    expectMigrationMarked(24, '024_loan_categories');
   });
 
   it('wraps each migration in a transaction (beginTransaction / commitTransaction)', async () => {
     await runMigrations();
 
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(22);
-    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(22);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(24);
+    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(24);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
   });
 
@@ -119,7 +125,7 @@ describe('Database SQLite Tests', () => {
   // -------------------------------------------------------------------------
   it('skips all migrations when DB already at latest version', async () => {
     mockDb.query.mockResolvedValueOnce({
-      values: Array.from({ length: 22 }, (_value, index) => ({ version: index + 1 })),
+      values: Array.from({ length: 24 }, (_value, index) => ({ version: index + 1 })),
     });
 
     await runMigrations();
@@ -146,7 +152,7 @@ describe('Database SQLite Tests', () => {
     // Migrations 3 & 4 should run
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN deleted_at');
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN receipt_path');
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(20);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(22);
   });
 
   it('marks category description migration done when the column already exists', async () => {
@@ -163,6 +169,8 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(20, '020_category_description');
     expectMigrationMarked(21, '021_remove_unused_seed_wallets');
     expectMigrationMarked(22, '022_credit_card_statements');
+    expectMigrationMarked(23, '023_loans');
+    expectMigrationMarked(24, '024_loan_categories');
   });
 
   it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
@@ -179,7 +187,7 @@ describe('Database SQLite Tests', () => {
 
     expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
     expectMigrationMarked(3, '003_transactions_soft_delete');
-    expectMigrationMarked(22, '022_credit_card_statements');
+    expectMigrationMarked(24, '024_loan_categories');
   });
 
   // -------------------------------------------------------------------------

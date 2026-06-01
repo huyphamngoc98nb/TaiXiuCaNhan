@@ -15,6 +15,8 @@ import { BackupPage } from '@/modules/backup/pages/BackupPage';
 import { ExportPage } from '@/modules/export/pages/ExportPage';
 import { WalletsPage } from '@/modules/wallets/pages/WalletsPage';
 import { CategoriesPage } from '@/modules/categories/pages/CategoriesPage';
+import { LoanListPage } from '@/modules/loans/pages/LoanListPage';
+import { LoanDetailPage } from '@/modules/loans/pages/LoanDetailPage';
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +36,8 @@ export const router = createBrowserRouter([
       { path: ROUTES.RECURRING_BILLS, element: <RecurringBillsPage /> },
       { path: ROUTES.RECURRING_BILLS_NEW, element: <AddRecurringBillPage /> },
       { path: ROUTES.RECURRING_BILLS_EDIT, element: <EditRecurringBillPage /> },
+      { path: ROUTES.LOANS, element: <LoanListPage /> },
+      { path: ROUTES.LOANS_DETAIL, element: <LoanDetailPage /> },
       { path: ROUTES.BACKUP,          element: <BackupPage /> },
       { path: ROUTES.EXPORT,          element: <ExportPage /> },
       { path: ROUTES.WALLETS,         element: <WalletsPage /> },

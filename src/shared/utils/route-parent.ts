@@ -13,6 +13,8 @@ export function getParentRoute(pathname: string): string | null {
   if (pathname.startsWith('/recurring-bills/') && pathname.endsWith('/edit')) {
     return ROUTES.RECURRING_BILLS;
   }
+  if (pathname.startsWith('/loans/') && pathname !== ROUTES.LOANS) return ROUTES.LOANS;
+  if (pathname === ROUTES.LOANS) return ROUTES.HOME;
 
   if (pathname === ROUTES.BUDGETS_NEW) return ROUTES.BUDGETS;
   if (pathname === ROUTES.CATEGORIES_NEW) return ROUTES.CATEGORIES;

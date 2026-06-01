@@ -49,12 +49,22 @@ export class CategoryService {
   }
 
   async update(id: string, input: CategoryInput): Promise<void> {
+    const existing = await this.repository.getById(id);
+    if (existing?.is_system === 1) {
+      throw new Error('Không thể sửa danh mục hệ thống.');
+    }
+
     const data = normalizeInput(input);
     await this.repository.update(id, data, Date.now());
     await persistWeb();
   }
 
   async delete(id: string): Promise<void> {
+    const existing = await this.repository.getById(id);
+    if (existing?.is_system === 1) {
+      throw new Error('Không thể xóa danh mục hệ thống.');
+    }
+
     const counts = await this.repository.getReferenceCounts(id);
     const totalReferences = counts.transactions + counts.recurringBills + counts.budgets;
     if (totalReferences > 0) {

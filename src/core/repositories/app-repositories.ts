@@ -1,5 +1,8 @@
 import type { IBudgetRepository } from '@/modules/budgets/repositories/budget.repository';
 import { SQLiteBudgetRepository } from '@/modules/budgets/repositories/sqlite-budget.repository';
+import { SQLiteCategoryRepository } from '@/modules/categories/repositories/sqlite-category.repository';
+import type { ILoanRepository } from '@/modules/loans/repositories/loan.repository';
+import { SQLiteLoanRepository } from '@/modules/loans/repositories/sqlite-loan.repository';
 import type { IRecurringBillRepository } from '@/modules/recurring-bills/repositories/recurring-bill.repository';
 import { SQLiteRecurringBillRepository } from '@/modules/recurring-bills/repositories/sqlite-recurring-bill.repository';
 import type { IReportRepository } from '@/modules/reports/repositories/report.repository';
@@ -11,6 +14,8 @@ import { SQLiteWalletRepository } from '@/modules/wallets/repositories/sqlite-wa
 
 export interface AppRepositories {
   budget: IBudgetRepository;
+  category: SQLiteCategoryRepository;
+  loan: ILoanRepository;
   recurringBill: IRecurringBillRepository;
   report: IReportRepository;
   transaction: ITransactionRepository;
@@ -20,6 +25,8 @@ export interface AppRepositories {
 export function createSQLiteRepositories(): AppRepositories {
   return {
     budget: new SQLiteBudgetRepository(),
+    category: new SQLiteCategoryRepository(),
+    loan: new SQLiteLoanRepository(),
     recurringBill: new SQLiteRecurringBillRepository(),
     report: new SQLiteReportRepository(),
     transaction: new SQLiteTransactionRepository(),
