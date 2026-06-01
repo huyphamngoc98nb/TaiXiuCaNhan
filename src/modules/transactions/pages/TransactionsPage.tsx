@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
 import { useTransactions } from '../hooks/useTransactions';
 import { TransactionList } from '../components/TransactionList';
+import './TransactionsPage.css';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useWallets } from '@/modules/wallets/hooks/useWallets';
 import { useCategories } from '@/modules/categories/hooks/useCategories';
@@ -37,10 +38,8 @@ export function TransactionsPage() {
   const selectedMonthRange = useMemo(() => getMonthDateRange(selectedMonth), [selectedMonth]);
   const selectedMonthLabel = useMemo(() => {
     const monthDate = new Date(selectedMonthRange.startDate);
-    return language === 'vi'
-      ? `Tháng ${monthDate.getMonth() + 1}/${monthDate.getFullYear()}`
-      : `${String(monthDate.getMonth() + 1).padStart(2, '0')}/${monthDate.getFullYear()}`;
-  }, [language, selectedMonthRange.startDate]);
+    return `${String(monthDate.getMonth() + 1).padStart(2, '0')}/${monthDate.getFullYear()}`;
+  }, [selectedMonthRange.startDate]);
   const isNextMonthDisabled = isCurrentMonth(selectedMonth);
 
   const handleEdit = (id: string) => navigate(`/transactions/${id}/edit`);
@@ -169,6 +168,7 @@ export function TransactionsPage() {
           </div>
 
           <div
+            className="transactions-history-toolbar"
             style={{
               display: isDayDetail ? 'none' : 'flex',
               alignItems: 'center',
@@ -179,25 +179,29 @@ export function TransactionsPage() {
             }}
           >
             <div
+              className="transactions-month-navigator"
               aria-label={t('transactions.current_month')}
               style={{
-                minHeight: '40px',
+                minHeight: '38px',
                 display: 'flex',
                 alignItems: 'center',
                 border: '1px solid var(--border)',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 background: 'var(--surface)',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                overflow: 'hidden',
+                overflow: 'visible',
+                flex: '0 1 auto',
+                maxWidth: '100%',
               }}
             >
               <button
+                className="transactions-month-button"
                 type="button"
                 onClick={handlePreviousMonth}
                 aria-label={t('transactions.previous_month')}
                 style={{
-                  width: '40px',
-                  minHeight: '40px',
+                  width: '38px',
+                  minHeight: '38px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -207,14 +211,15 @@ export function TransactionsPage() {
                   color: 'var(--text)',
                 }}
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={16} />
               </button>
               <span
+                className="transactions-month-label"
                 style={{
-                  minWidth: language === 'vi' ? '104px' : '78px',
-                  padding: '0 10px',
+                  minWidth: '68px',
+                  padding: '0 8px',
                   color: 'var(--text)',
-                  fontSize: '0.85rem',
+                  fontSize: '0.82rem',
                   fontWeight: 700,
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
@@ -223,13 +228,14 @@ export function TransactionsPage() {
                 {selectedMonthLabel}
               </span>
               <button
+                className="transactions-month-button"
                 type="button"
                 onClick={handleNextMonth}
                 disabled={isNextMonthDisabled}
                 aria-label={t('transactions.next_month')}
                 style={{
-                  width: '40px',
-                  minHeight: '40px',
+                  width: '38px',
+                  minHeight: '38px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -241,11 +247,12 @@ export function TransactionsPage() {
                   cursor: isNextMonthDisabled ? 'not-allowed' : 'pointer',
                 }}
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </button>
             </div>
 
             <button
+              className="transactions-advanced-filter-button"
               type="button"
               onClick={() => setShowAdvancedFilter((open) => !open)}
               aria-label={t('transactions.advanced_filter')}
@@ -266,7 +273,7 @@ export function TransactionsPage() {
                 flexShrink: 0,
               }}
             >
-              <SlidersHorizontal size={20} />
+              <SlidersHorizontal size={18} />
             </button>
           </div>
         </div>

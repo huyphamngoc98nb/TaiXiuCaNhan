@@ -1,0 +1,64 @@
+.transactions-history-toolbar {
+  min-width: 0;
+}
+
+.transactions-month-button,
+.transactions-advanced-filter-button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.transactions-month-button::before,
+.transactions-advanced-filter-button::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+}
+
+.transactions-month-button:focus-visible,
+.transactions-advanced-filter-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.transactions-month-button:active:not(:disabled),
+.transactions-advanced-filter-button:active {
+  transform: translateY(1px);
+}
+
+.transactions-month-button:disabled {
+  transform: none;
+}
+
+@media (max-width: 420px) {
+  .transactions-history-toolbar {
+    gap: 6px !important;
+  }
+
+  .transactions-month-navigator {
+    min-height: 36px !important;
+  }
+
+  .transactions-month-button {
+    width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  .transactions-month-button::before,
+  .transactions-advanced-filter-button::before {
+    inset: -4px;
+  }
+
+  .transactions-month-label {
+    min-width: 64px !important;
+    padding-inline: 6px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .transactions-advanced-filter-button {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+  }
+}
