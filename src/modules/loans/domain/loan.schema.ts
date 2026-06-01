@@ -11,8 +11,9 @@ export class LoanValidationError extends Error {
 
 export function validateCreateLoan(input: CreateLoanInput): void {
   const errors: string[] = [];
+  const skipTransaction = input.skip_transaction ?? false;
 
-  if (!input.wallet_id) errors.push('wallet_id is required');
+  if (!skipTransaction && !input.wallet_id) errors.push('wallet_id is required');
   if (!input.contact_name) errors.push('contact_name is required');
 
   if (!LOAN_TYPES.includes(input.type)) {

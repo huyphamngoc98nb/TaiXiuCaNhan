@@ -10,7 +10,7 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1780309918.4067702,
+    "mtime": 1780313275.0134895,
     "ast_hash": "32b21c5fd7ad9d9126d17b47ae905c0c",
     "semantic_hash": ""
   },
@@ -20,12 +20,12 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1780309918.3560188,
+    "mtime": 1780313274.9640715,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1780309918.3828473,
+    "mtime": 1780313274.989378,
     "ast_hash": "f63e79d46b1f8b3fe5f4af0d8fcd322a",
     "semantic_hash": ""
   },
@@ -55,17 +55,17 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1780309918.4085827,
+    "mtime": 1780313275.0237653,
     "ast_hash": "13a885b925f99b619845018a13d508d3",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1780309918.4085827,
+    "mtime": 1780313275.024772,
     "ast_hash": "299becb7733b8720b74d289e3cb837f1",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1780309918.4067702,
+    "mtime": 1780313275.0134895,
     "ast_hash": "7d20bbb6ddd9b895546d6342e84c45a4",
     "semantic_hash": ""
   },
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\core\\db\\migrations\\migration-runner.ts": {
-    "mtime": 1780311710.5706894,
-    "ast_hash": "596f4fa8140aef0c5e509d3c5b58cf72",
+    "mtime": 1780314584.478089,
+    "ast_hash": "dfdc30132fd2798b0f1a67179003403f",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\core\\db\\seed\\default-categories.ts": {
@@ -1180,8 +1180,8 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\tests\\db.test.ts": {
-    "mtime": 1780311744.9291046,
-    "ast_hash": "f9f6ed425413f47c3a13f06a58a1f791",
+    "mtime": 1780314591.25084,
+    "ast_hash": "3a1d89b556567744738b9bfbe6604801",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\tests\\export.test.ts": {
@@ -1505,18 +1505,18 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\domain\\loan.mapper.ts": {
-    "mtime": 1780310802.1090078,
-    "ast_hash": "362cd8ee8953fff30d6690bbb78fed10",
+    "mtime": 1780314144.8582282,
+    "ast_hash": "5affbda5cffe365452706ae8cb018a46",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\domain\\loan.model.ts": {
-    "mtime": 1780310802.003379,
-    "ast_hash": "4bb10d47eab70273ab3d5ee3cfaf82c7",
+    "mtime": 1780314131.46927,
+    "ast_hash": "95a89577b8ae8ae075e21cd6020d4e48",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\domain\\loan.schema.ts": {
-    "mtime": 1780310802.0587082,
-    "ast_hash": "612459a444e5b716491a6e5bbb76213d",
+    "mtime": 1780314137.113757,
+    "ast_hash": "a0983e2706cd2de7277a57c93378f1c9",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\repositories\\loan.repository.ts": {
@@ -1525,8 +1525,8 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\repositories\\sqlite-loan.repository.ts": {
-    "mtime": 1780311011.8692474,
-    "ast_hash": "16d6dd1b1e6e467c8a6ab4517462b379",
+    "mtime": 1780314154.4938526,
+    "ast_hash": "f73f5f7bb684cf2d8ef443364b777a60",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\services\\add-loan-payment.ts": {
@@ -1540,8 +1540,8 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\services\\create-loan.ts": {
-    "mtime": 1780311331.110569,
-    "ast_hash": "cd1ff98bbe812bebd63cea2f3a40941d",
+    "mtime": 1780314169.4119208,
+    "ast_hash": "49a9f256d721e422672787f8ee9bfa93",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\services\\list-loans.ts": {
@@ -1580,13 +1580,13 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\components\\LoanForm.tsx": {
-    "mtime": 1780312259.6141107,
-    "ast_hash": "7d8f532c171c285b9bb938f4be0dcf98",
+    "mtime": 1780314189.3357692,
+    "ast_hash": "2d328a278d73b340c294ae2fdbccd146",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\components\\PaymentForm.tsx": {
-    "mtime": 1780312259.6662073,
-    "ast_hash": "6f23050eed841c159473ab8f92060aef",
+    "mtime": 1780314194.46634,
+    "ast_hash": "50c851e3ed11eeddc06c6404b9c301f9",
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\pages\\LoanDetailPage.tsx": {
@@ -1600,8 +1600,13 @@
     "semantic_hash": ""
   },
   "D:\\PersonalProject\\TaiXiuCaNhan\\src\\modules\\loans\\services\\create-loan.test.ts": {
-    "mtime": 1780312965.9295228,
-    "ast_hash": "48c30203f2e98c27aff34fe13dfc3306",
+    "mtime": 1780314220.4969823,
+    "ast_hash": "76e1e09ee3680e971bf2415776997779",
+    "semantic_hash": ""
+  },
+  "D:\\PersonalProject\\TaiXiuCaNhan\\src\\core\\db\\migrations\\024_loan_skip_transaction.sql": {
+    "mtime": 1780314578.211904,
+    "ast_hash": "48d847b8f25f881c03f26a15bd2b0219",
     "semantic_hash": ""
   }
 }

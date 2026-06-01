@@ -31,7 +31,7 @@ function formatVnd(value: number): string {
 
 export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
   const { wallets, loading: walletsLoading } = useWallets();
-  const [walletId, setWalletId] = useState(loan.wallet_id);
+  const [walletId, setWalletId] = useState(loan.wallet_id ?? '');
   const [amount, setAmount] = useState('');
   const [paymentDate, setPaymentDate] = useState(todayInputValue);
   const [note, setNote] = useState('');

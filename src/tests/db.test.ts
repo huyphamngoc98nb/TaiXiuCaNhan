@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { runMigrations } from '../core/db/migrations/migration-runner';
+import { runMigrations, splitSqlStatements } from '../core/db/migrations/migration-runner';
 import { runInTransaction } from '../core/db/sqlite/transaction';
 import { seedDefaultData } from '../core/db/seed/default-categories';
 import { SQLiteTransactionRepository } from '../modules/transactions/repositories/sqlite-transaction.repository';
@@ -94,6 +94,9 @@ describe('Database SQLite Tests', () => {
     expectExecuteContaining('CREATE TABLE IF NOT EXISTS loan_payments');
     expectExecuteContaining('ALTER TABLE categories ADD COLUMN slug TEXT');
     expectExecuteContaining("'cho_vay', 'Cho vay'");
+    expectExecuteContaining('ALTER TABLE loans ADD COLUMN skip_transaction INTEGER NOT NULL DEFAULT 0');
+    expectExecuteContaining('CREATE TABLE loans_new');
+    expectExecuteContaining('CHECK (skip_transaction = 1 OR wallet_id IS NOT NULL)');
 
     // Each migration is bookmarked with an INSERT
     expectMigrationMarked(1, '001_init');
@@ -110,13 +113,14 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(22, '022_credit_card_statements');
     expectMigrationMarked(23, '023_loans');
     expectMigrationMarked(24, '024_loan_categories');
+    expectMigrationMarked(25, '024_loan_skip_transaction');
   });
 
   it('wraps each migration in a transaction (beginTransaction / commitTransaction)', async () => {
     await runMigrations();
 
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(24);
-    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(24);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(25);
+    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(25);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
   });
 
@@ -125,7 +129,7 @@ describe('Database SQLite Tests', () => {
   // -------------------------------------------------------------------------
   it('skips all migrations when DB already at latest version', async () => {
     mockDb.query.mockResolvedValueOnce({
-      values: Array.from({ length: 24 }, (_value, index) => ({ version: index + 1 })),
+      values: Array.from({ length: 25 }, (_value, index) => ({ version: index + 1 })),
     });
 
     await runMigrations();
@@ -152,7 +156,7 @@ describe('Database SQLite Tests', () => {
     // Migrations 3 & 4 should run
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN deleted_at');
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN receipt_path');
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(22);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(23);
   });
 
   it('marks category description migration done when the column already exists', async () => {
@@ -171,6 +175,7 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(22, '022_credit_card_statements');
     expectMigrationMarked(23, '023_loans');
     expectMigrationMarked(24, '024_loan_categories');
+    expectMigrationMarked(25, '024_loan_skip_transaction');
   });
 
   it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
@@ -187,7 +192,21 @@ describe('Database SQLite Tests', () => {
 
     expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
     expectMigrationMarked(3, '003_transactions_soft_delete');
-    expectMigrationMarked(24, '024_loan_categories');
+    expectMigrationMarked(25, '024_loan_skip_transaction');
+  });
+
+  it('ignores consecutive SQL comments that contain semicolons', () => {
+    const statements = splitSqlStatements(`
+      -- First comment.
+      -- Comment with a semicolon; should not become SQL.
+      PRAGMA foreign_keys=OFF;
+      SELECT 1;
+    `);
+
+    expect(statements).toEqual([
+      'PRAGMA foreign_keys=OFF;',
+      'SELECT 1;',
+    ]);
   });
 
   // -------------------------------------------------------------------------

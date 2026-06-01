@@ -60,7 +60,8 @@ function makeDeps() {
   const loanCreateLoan = vi.fn(
     async (data: Parameters<ILoanRepository['createLoan']>[0]): Promise<Loan> => ({
       id: data.id,
-      wallet_id: data.wallet_id,
+      wallet_id: data.wallet_id ?? null,
+      skip_transaction: data.skip_transaction ?? false,
       type: data.type,
       contact_name: data.contact_name,
       contact_info: data.contact_info ?? null,
@@ -184,6 +185,42 @@ describe('createLoan', () => {
         amount: 1_000_000,
       }),
     );
+  });
+
+  it('does not require a wallet or create a transaction when skip_transaction is true', async () => {
+    const { deps, loanCreateLoan, transactionCreate } = makeDeps();
+
+    const loan = await createLoan({
+      type: 'lend',
+      contact_name: 'Nguyen Van A',
+      principal: 1_000_000,
+      skip_transaction: true,
+    }, deps);
+
+    expect(loan).toEqual(expect.objectContaining({
+      wallet_id: null,
+      skip_transaction: true,
+    }));
+    expect(deps.walletRepo.getById).not.toHaveBeenCalled();
+    expect(deps.categoryRepo.findBySlug).not.toHaveBeenCalled();
+    expect(loanCreateLoan).toHaveBeenCalledWith(expect.objectContaining({
+      wallet_id: null,
+      skip_transaction: true,
+    }));
+    expect(transactionCreate).not.toHaveBeenCalled();
+  });
+
+  it('throws LoanValidationError when wallet is missing and skip_transaction is false', async () => {
+    const { deps, loanCreateLoan, transactionCreate } = makeDeps();
+
+    await expect(createLoan({
+      type: 'lend',
+      contact_name: 'Nguyen Van A',
+      principal: 1_000_000,
+    }, deps)).rejects.toThrow(LoanValidationError);
+
+    expect(loanCreateLoan).not.toHaveBeenCalled();
+    expect(transactionCreate).not.toHaveBeenCalled();
   });
 
   it('throws LoanValidationError when principal is not greater than 0', async () => {

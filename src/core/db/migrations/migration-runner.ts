@@ -26,6 +26,7 @@ import removeUnusedSeedWalletsSql from './021_remove_unused_seed_wallets.sql?raw
 import creditCardStatementsSql from './022_credit_card_statements.sql?raw';
 import loansSql from './023_loans.sql?raw';
 import loanCategoriesSql from './024_loan_categories.sql?raw';
+import loanSkipTransactionSql from './024_loan_skip_transaction.sql?raw';
 
 const MIGRATIONS = [
   { version: 1,  name: '001_init',                          sql: initSql },
@@ -52,6 +53,7 @@ const MIGRATIONS = [
   { version: 22, name: '022_credit_card_statements',           sql: creditCardStatementsSql },
   { version: 23, name: '023_loans',                            sql: loansSql },
   { version: 24, name: '024_loan_categories',                  sql: loanCategoriesSql },
+  { version: 25, name: '024_loan_skip_transaction',            sql: loanSkipTransactionSql },
 ];
 
 async function markMigrationDone(
@@ -115,7 +117,7 @@ export function splitSqlStatements(sql: string): string[] {
   let remaining = sql.replace(/\r\n/g, '\n');
 
   while (remaining.trim().length > 0) {
-    remaining = remaining.replace(/^(\s*--[^\n]*\n|\s+)/, '');
+    remaining = remaining.replace(/^(?:\s*--[^\n]*\n|\s+)+/, '');
     if (!remaining.trim()) break;
 
     const trimmed = remaining.trimStart();

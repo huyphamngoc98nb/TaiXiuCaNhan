@@ -17,7 +17,9 @@ const LOAN_PAYMENT_COLUMNS = `
 `;
 
 function loanRowToArray(row: unknown): unknown[] {
-  if (Array.isArray(row)) return row;
+  if (Array.isArray(row)) {
+    return row.length >= 13 ? row : [...row, 0];
+  }
 
   const record = row as Record<string, unknown>;
   return [
@@ -33,11 +35,14 @@ function loanRowToArray(row: unknown): unknown[] {
     record.created_at,
     record.updated_at,
     record.deleted_at,
+    record.skip_transaction ?? 0,
   ];
 }
 
 function loanWithSummaryRowToArray(row: unknown): unknown[] {
-  if (Array.isArray(row)) return row;
+  if (Array.isArray(row)) {
+    return row.length >= 16 ? row : [...row.slice(0, 12), 0, ...row.slice(12)];
+  }
 
   const record = row as Record<string, unknown>;
   return [
@@ -71,13 +76,13 @@ export class SQLiteLoanRepository implements ILoanRepository {
     const sql = `
       INSERT INTO loans (
         id, wallet_id, type, contact_name, contact_info, principal,
-        due_date, note, status, created_at, updated_at, deleted_at
+        due_date, note, status, created_at, updated_at, deleted_at, skip_transaction
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       data.id,
-      data.wallet_id,
+      data.wallet_id ?? null,
       data.type,
       data.contact_name,
       data.contact_info ?? null,
@@ -88,6 +93,7 @@ export class SQLiteLoanRepository implements ILoanRepository {
       data.created_at,
       data.updated_at,
       null,
+      data.skip_transaction ? 1 : 0,
     ];
 
     await db.run(sql, values, !isManagedTransactionActive());

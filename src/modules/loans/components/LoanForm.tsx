@@ -23,13 +23,14 @@ export function LoanForm({ onSubmit, loading }: LoanFormProps) {
   const [principal, setPrincipal] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [note, setNote] = useState('');
+  const [skipTransaction, setSkipTransaction] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!walletId && wallets[0]) {
+    if (!skipTransaction && !walletId && wallets[0]) {
       setWalletId(wallets[0].id);
     }
-  }, [walletId, wallets]);
+  }, [skipTransaction, walletId, wallets]);
 
   const walletOptions = useMemo(
     () => wallets.map((wallet) => ({ value: wallet.id, label: wallet.name })),
@@ -40,14 +41,15 @@ export function LoanForm({ onSubmit, loading }: LoanFormProps) {
     event.preventDefault();
     setError(null);
 
-    if (!walletId) {
+    if (!skipTransaction && !walletId) {
       setError('Vui lòng chọn ví.');
       return;
     }
 
     try {
       await onSubmit({
-        wallet_id: walletId,
+        wallet_id: skipTransaction ? undefined : walletId,
+        skip_transaction: skipTransaction,
         type,
         contact_name: contactName.trim(),
         contact_info: contactInfo.trim() || undefined,
@@ -108,21 +110,23 @@ export function LoanForm({ onSubmit, loading }: LoanFormProps) {
         />
       </div>
 
-      <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Ví *</p>
-        <DropdownList
-          value={walletId}
-          onChange={setWalletId}
-          ariaLabel="Ví"
-          placeholder={walletsLoading ? 'Đang tải ví...' : 'Chọn ví'}
-          disabled={walletsLoading || walletOptions.length === 0}
-          openOnInputBlurPointerDown
-          options={[
-            { value: '', label: 'Chọn ví', disabled: true },
-            ...walletOptions,
-          ]}
-        />
-      </div>
+      {!skipTransaction && (
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-semibold text-gray-700">Ví *</p>
+          <DropdownList
+            value={walletId}
+            onChange={setWalletId}
+            ariaLabel="Ví"
+            placeholder={walletsLoading ? 'Đang tải ví...' : 'Chọn ví'}
+            disabled={walletsLoading || walletOptions.length === 0}
+            openOnInputBlurPointerDown
+            options={[
+              { value: '', label: 'Chọn ví', disabled: true },
+              ...walletOptions,
+            ]}
+          />
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <p className="text-[13px] font-semibold text-gray-700">Số tiền *</p>
@@ -153,6 +157,30 @@ export function LoanForm({ onSubmit, loading }: LoanFormProps) {
           rows={3}
           className="w-full resize-none rounded-[12px] border border-gray-200 bg-gray-50 px-4 py-3 text-[14px] text-gray-900 outline-none focus:border-indigo-400"
         />
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-start gap-3 rounded-[12px] border border-gray-200 bg-gray-50 px-4 py-3">
+          <input
+            type="checkbox"
+            checked={skipTransaction}
+            onChange={(event) => setSkipTransaction(event.target.checked)}
+            className="mt-0.5 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13px] font-bold text-gray-800">
+              Không trừ/cộng tiền vào ví
+            </span>
+            <span className="mt-0.5 block text-[12px] font-medium text-gray-500">
+              Dùng khi khoản này đã xảy ra trước đó
+            </span>
+          </span>
+        </label>
+        {skipTransaction && (
+          <p className="rounded-[12px] bg-indigo-50 px-4 py-3 text-[12px] font-semibold text-indigo-600">
+            Khoản này chỉ được theo dõi, không ảnh hưởng số dư ví
+          </p>
+        )}
       </div>
 
       <button

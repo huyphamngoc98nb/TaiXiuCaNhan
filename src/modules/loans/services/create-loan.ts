@@ -92,21 +92,29 @@ export function dateToMs(date: string): number {
 
 export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): Promise<Loan> {
   validateCreateLoan(input);
+  const skipTransaction = input.skip_transaction ?? false;
 
-  const wallet = await deps.walletRepo.getById(input.wallet_id);
-  if (!wallet) throw new Error('Wallet not found');
-  if (wallet.is_active !== 1) throw new Error('Wallet is inactive');
+  let categoryId: string | null = null;
+  let walletId: string | null = input.wallet_id ?? null;
 
-  const categoryConfig = LOAN_CREATE_CATEGORY[input.type];
-  const categoryId = await resolveLoanCategoryId(
-    deps.categoryRepo,
-    categoryConfig.slug,
-    categoryConfig.type
-  );
+  if (!skipTransaction) {
+    if (!walletId) throw new Error('wallet_id is required');
+
+    const wallet = await deps.walletRepo.getById(walletId);
+    if (!wallet) throw new Error('Wallet not found');
+    if (wallet.is_active !== 1) throw new Error('Wallet is inactive');
+
+    const categoryConfig = LOAN_CREATE_CATEGORY[input.type];
+    categoryId = await resolveLoanCategoryId(
+      deps.categoryRepo,
+      categoryConfig.slug,
+      categoryConfig.type
+    );
+  }
 
   const now = Date.now();
   const loanId = generateUUID();
-  const transactionId = generateUUID();
+  const transactionId = skipTransaction ? null : generateUUID();
   const transactionType = input.type === 'lend' ? 'expense' : 'income';
   const transactionNote = input.type === 'lend'
     ? `Cho vay: ${input.contact_name}`
@@ -116,22 +124,26 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
   return runInTransaction(async () => {
     const loan = await deps.loanRepo.createLoan({
       ...input,
+      wallet_id: walletId,
+      skip_transaction: skipTransaction,
       id: loanId,
       created_at: now,
       updated_at: now,
     });
 
-    await deps.transactionRepo.create({
-      id: transactionId,
-      wallet_id: input.wallet_id,
-      category_id: categoryId,
-      type: transactionType,
-      amount: input.principal,
-      note: transactionNote,
-      transaction_date: transactionDate,
-      created_at: now,
-      updated_at: now,
-    });
+    if (!skipTransaction) {
+      await deps.transactionRepo.create({
+        id: transactionId as string,
+        wallet_id: walletId as string,
+        category_id: categoryId as string,
+        type: transactionType,
+        amount: input.principal,
+        note: transactionNote,
+        transaction_date: transactionDate,
+        created_at: now,
+        updated_at: now,
+      });
+    }
 
     return loan;
   });
