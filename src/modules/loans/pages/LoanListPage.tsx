@@ -220,7 +220,9 @@ export function LoanListPage() {
       </div>
 
       <BottomSheet isOpen={formOpen} onClose={() => setFormOpen(false)} fullScreenOnAndroid>
-        <LoanForm onSubmit={handleCreateLoan} loading={mutationLoading} />
+        <div className="pb-[calc(32px+env(safe-area-inset-bottom))]">
+          <LoanForm onSubmit={handleCreateLoan} loading={mutationLoading} />
+        </div>
       </BottomSheet>
     </div>
   );
