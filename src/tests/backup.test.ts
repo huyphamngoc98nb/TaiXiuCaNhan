@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { validateBackupPayload } from '@/modules/backup/services/validate-backup-payload';
+import { normalizeBackupPayload, validateBackupPayload } from '@/modules/backup/services/validate-backup-payload';
 import { importBackupJson } from '@/modules/backup/services/import-backup-json';
 import { restoreDatabase } from '@/modules/backup/services/restore-database';
 import { exportBackupJson } from '@/modules/backup/services/export-backup-json';
@@ -59,6 +59,7 @@ describe('Backup Module Tests', () => {
             updated_at: 1,
             deleted_at: null,
             skip_transaction: 0,
+            linked_transaction_id: null,
           },
           {
             id: 'loan-borrow',
@@ -74,6 +75,7 @@ describe('Backup Module Tests', () => {
             updated_at: 3,
             deleted_at: null,
             skip_transaction: 1,
+            linked_transaction_id: null,
           },
         ],
         loan_payments: [
@@ -135,6 +137,60 @@ describe('Backup Module Tests', () => {
       expect(mockDb.executeSet).toHaveBeenCalled();
     });
 
+    it('imports a legacy v1 JSON file after normalizing it to the current restore shape', async () => {
+      const legacyPayload = {
+        metadata: { version: '1.0', schema_version: 1, exported_at: 1, app_version: '0.0.1' },
+        wallets: [{ id: 'wallet-1', name: 'Cash', balance: 1000, created_at: 1, updated_at: 1 }],
+        categories: [{ id: 'category-1', name: 'Food', type: 'expense', created_at: 1, updated_at: 1 }],
+        transactions: [{
+          id: 'tx-1',
+          wallet_id: 'wallet-1',
+          category_id: 'category-1',
+          type: 'expense',
+          amount: 100,
+          transaction_date: 1,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        recurring_bills: [{
+          id: 'bill-1',
+          wallet_id: 'wallet-1',
+          category_id: 'category-1',
+          name: 'Rent',
+          amount: 500,
+          frequency: 'monthly',
+          next_due_date: 2,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        app_settings: [{ key: 'currency', value: 'VND', updated_at: 1 }],
+      };
+      const file = new File([JSON.stringify(legacyPayload)], 'legacy_backup.json', {
+        type: 'application/json',
+      });
+      const mockDb = {
+        run: vi.fn().mockResolvedValue({ changes: { changes: 0 } }),
+        executeSet: vi.fn().mockResolvedValue({ changes: { changes: 1 } }),
+      };
+      vi.mocked(connection.getDbConnection).mockResolvedValue(mockDb as any);
+
+      await importBackupJson(file);
+
+      const statements = mockDb.executeSet.mock.calls[0][0];
+      expect(statements).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            statement: expect.stringContaining('INSERT INTO wallets'),
+            values: expect.arrayContaining(['wallet-1', 'Cash', 'VND', 1000, 'cash']),
+          }),
+          expect.objectContaining({
+            statement: expect.stringContaining('INSERT INTO transactions'),
+            values: expect.arrayContaining(['tx-1', 'wallet-1', 'category-1', 'expense', 100, null, null]),
+          }),
+        ])
+      );
+    });
+
     it('rejects payload with missing sections', () => {
       const invalid = { ...validPayload };
       delete (invalid as any).transactions;
@@ -148,19 +204,139 @@ describe('Backup Module Tests', () => {
       const result = validateBackupPayload(invalid);
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('Unsupported backup version');
+      expect(result.error).toContain('Supported versions');
     });
 
     it('rejects unsupported schema versions for current backup format', () => {
-      const invalid = { ...validPayload, metadata: { ...validPayload.metadata, schema_version: 17 } };
+      const invalid = { ...validPayload, metadata: { ...validPayload.metadata, schema_version: 15 } };
       const result = validateBackupPayload(invalid);
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('Unsupported schema version');
+      expect(result.error).toContain('Only schema 16 is supported');
+    });
+
+    it('rejects current backups missing schema_version', () => {
+      const invalid = {
+        ...validPayload,
+        metadata: {
+          version: '2.0',
+          exported_at: validPayload.metadata.exported_at,
+          app_version: validPayload.metadata.app_version,
+        },
+      };
+      const result = validateBackupPayload(invalid);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('metadata.schema_version is required');
+    });
+
+    it('rejects current backups that omit current nullable fields', () => {
+      const invalid = {
+        ...validPayload,
+        wallets: [{
+          id: 'wallet-1',
+          name: 'Cash',
+          currency: 'VND',
+          balance: 1000,
+          account_type: 'cash',
+          icon: null,
+          color: null,
+          sort_order: 0,
+          is_active: 1,
+          exclude_from_total: 0,
+          credit_limit: null,
+          statement_day: null,
+          due_day: null,
+          created_at: 1,
+          updated_at: 1,
+        }],
+      };
+      const result = validateBackupPayload(invalid);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('wallets[0].annual_fee is required');
+    });
+
+    it('accepts and normalizes legacy v1 backups with missing current fields', () => {
+      const legacyPayload = {
+        metadata: { version: '1.0', exported_at: 1, app_version: '0.0.1' },
+        wallets: [{ id: 'wallet-1', name: 'Cash', balance: 1000, created_at: 1, updated_at: 1 }],
+        categories: [{ id: 'category-1', name: 'Food', type: 'expense', created_at: 1, updated_at: 1 }],
+        transactions: [{
+          id: 'tx-1',
+          wallet_id: 'wallet-1',
+          category_id: 'category-1',
+          type: 'expense',
+          amount: 100,
+          transaction_date: 1,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        recurring_bills: [{
+          id: 'bill-1',
+          wallet_id: 'wallet-1',
+          category_id: 'category-1',
+          name: 'Rent',
+          amount: 500,
+          frequency: 'monthly',
+          next_due_date: 2,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        app_settings: [{ key: 'currency', value: 'VND', updated_at: 1 }],
+      };
+
+      expect(validateBackupPayload(legacyPayload).isValid).toBe(true);
+      const normalized = normalizeBackupPayload(legacyPayload);
+
+      expect(normalized.metadata).toMatchObject({ version: '2.0', schema_version: 16 });
+      expect(normalized.wallets[0]).toMatchObject({
+        currency: 'VND',
+        account_type: 'cash',
+        annual_fee: null,
+      });
+      expect(normalized.transactions[0]).toMatchObject({
+        note: null,
+        receipt_path: null,
+        deleted_at: null,
+      });
+      expect(normalized.budgets).toEqual([]);
+      expect(normalized.loans).toEqual([]);
+    });
+
+    it('rejects legacy v1 backups with unsupported schema_version', () => {
+      const invalid = {
+        metadata: { version: '1.0', schema_version: 2, exported_at: 1, app_version: '0.0.1' },
+        wallets: [],
+        categories: [],
+        transactions: [],
+        recurring_bills: [],
+        app_settings: [],
+      };
+      const result = validateBackupPayload(invalid);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('Unsupported legacy schema version');
     });
 
     it('rejects rows that do not match the section schema', () => {
       const invalid = {
         ...validPayload,
-        wallets: [{ id: 'wallet-1', name: 'Cash', currency: 'VND', balance: '1000' }],
+        wallets: [{
+          id: 'wallet-1',
+          name: 'Cash',
+          currency: 'VND',
+          balance: '1000',
+          account_type: 'cash',
+          icon: null,
+          color: null,
+          sort_order: 0,
+          is_active: 1,
+          exclude_from_total: 0,
+          credit_limit: null,
+          statement_day: null,
+          due_day: null,
+          annual_fee: null,
+          created_at: 1,
+          updated_at: 1,
+        }],
       };
       const result = validateBackupPayload(invalid);
       expect(result.isValid).toBe(false);
@@ -278,6 +454,7 @@ describe('Backup Module Tests', () => {
           updated_at: 2,
           deleted_at: null,
           skip_transaction: 0,
+          linked_transaction_id: null,
         }],
         loan_payments: [{
           id: 'loan-payment-1',

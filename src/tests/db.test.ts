@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { runMigrations, splitSqlStatements } from '../core/db/migrations/migration-runner';
-import { runInTransaction } from '../core/db/sqlite/transaction';
+import { Capacitor } from '@capacitor/core';
+import { runMigrations, splitSqlStatements, MIGRATIONS } from '../core/db/migrations/migration-runner';
+import { isManagedTransactionActive, runInTransaction } from '../core/db/sqlite/transaction';
 import { seedDefaultData } from '../core/db/seed/default-categories';
 import { SQLiteTransactionRepository } from '../modules/transactions/repositories/sqlite-transaction.repository';
 import { SQLiteWalletRepository } from '../modules/wallets/repositories/sqlite-wallet.repository';
 import { SQLiteCategoryRepository } from '../modules/categories/repositories/sqlite-category.repository';
+import { WalletService } from '../modules/wallets/services/wallet.service';
 import * as connection from '../core/db/sqlite/connection';
 
 // Mock the DB connection and logger
@@ -16,7 +18,7 @@ vi.mock('../core/db/sqlite/connection', () => ({
 }));
 
 vi.mock('@capacitor/core', () => ({
-  Capacitor: { getPlatform: () => 'android' },
+  Capacitor: { getPlatform: vi.fn(() => 'android') },
 }));
 
 vi.mock('@/core/telemetry/logger', () => ({
@@ -55,6 +57,7 @@ describe('Database SQLite Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(Capacitor.getPlatform).mockReturnValue('android');
     mockDb = {
       execute: vi.fn().mockResolvedValue(undefined),
       query: vi.fn().mockResolvedValue({ values: [] }),
@@ -70,6 +73,22 @@ describe('Database SQLite Tests', () => {
   // -------------------------------------------------------------------------
   // Migration runner – happy path (all 4 migrations)
   // -------------------------------------------------------------------------
+  it('keeps migration versions unique, increasing, and mapped to matching files', () => {
+    const versions = MIGRATIONS.map((migration) => migration.version);
+    expect(new Set(versions).size).toBe(versions.length);
+    expect(versions).toEqual([...versions].sort((a, b) => a - b));
+
+    for (const migration of MIGRATIONS) {
+      expect(migration.name).toMatch(new RegExp(`^${String(migration.version).padStart(3, '0')}_`));
+    }
+
+    const migrationFileNames = Object.keys(import.meta.glob('../core/db/migrations/*.sql'))
+      .map((filePath) => filePath.split('/').pop()?.replace(/\.sql$/, '') ?? '')
+      .sort();
+
+    expect(MIGRATIONS.map((migration) => migration.name).sort()).toEqual(migrationFileNames);
+  });
+
   it('migration runner creates migrations table and runs all migrations in order', async () => {
     await runMigrations();
 
@@ -97,6 +116,7 @@ describe('Database SQLite Tests', () => {
     expectExecuteContaining('ALTER TABLE loans ADD COLUMN skip_transaction INTEGER NOT NULL DEFAULT 0');
     expectExecuteContaining('CREATE TABLE loans_new');
     expectExecuteContaining('CHECK (skip_transaction = 1 OR wallet_id IS NOT NULL)');
+    expectExecuteContaining('ALTER TABLE loans ADD COLUMN linked_transaction_id');
 
     // Each migration is bookmarked with an INSERT
     expectMigrationMarked(1, '001_init');
@@ -113,14 +133,15 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(22, '022_credit_card_statements');
     expectMigrationMarked(23, '023_loans');
     expectMigrationMarked(24, '024_loan_categories');
-    expectMigrationMarked(25, '024_loan_skip_transaction');
+    expectMigrationMarked(25, '025_loan_skip_transaction');
+    expectMigrationMarked(26, '026_loan_linked_transaction');
   });
 
   it('wraps each migration in a transaction (beginTransaction / commitTransaction)', async () => {
     await runMigrations();
 
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(25);
-    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(25);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(26);
+    expect(mockDb.commitTransaction).toHaveBeenCalledTimes(26);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
   });
 
@@ -129,7 +150,7 @@ describe('Database SQLite Tests', () => {
   // -------------------------------------------------------------------------
   it('skips all migrations when DB already at latest version', async () => {
     mockDb.query.mockResolvedValueOnce({
-      values: Array.from({ length: 25 }, (_value, index) => ({ version: index + 1 })),
+      values: Array.from({ length: 26 }, (_value, index) => ({ version: index + 1 })),
     });
 
     await runMigrations();
@@ -156,7 +177,7 @@ describe('Database SQLite Tests', () => {
     // Migrations 3 & 4 should run
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN deleted_at');
     expectExecuteContaining('ALTER TABLE transactions ADD COLUMN receipt_path');
-    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(23);
+    expect(mockDb.beginTransaction).toHaveBeenCalledTimes(24);
   });
 
   it('marks category description migration done when the column already exists', async () => {
@@ -175,7 +196,51 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(22, '022_credit_card_statements');
     expectMigrationMarked(23, '023_loans');
     expectMigrationMarked(24, '024_loan_categories');
-    expectMigrationMarked(25, '024_loan_skip_transaction');
+    expectMigrationMarked(25, '025_loan_skip_transaction');
+    expectMigrationMarked(26, '026_loan_linked_transaction');
+  });
+
+  it('repairs legacy loan numbering when linked transaction was recorded as version 25 before skip transaction', async () => {
+    const legacyRows = [
+      ...Array.from({ length: 24 }, (_value, index) => ({
+        version: index + 1,
+        name: String(index + 1).padStart(3, '0'),
+      })),
+      { version: 25, name: '025_loan_linked_transaction' },
+    ];
+    const repairedRows = [
+      ...legacyRows.slice(0, 24),
+      { version: 25, name: '025_loan_skip_transaction' },
+    ];
+    const loanColumnsWithLinkedOnly = [
+      { name: 'id' },
+      { name: 'wallet_id' },
+      { name: 'linked_transaction_id' },
+    ];
+
+    mockDb.query
+      .mockResolvedValueOnce({ values: legacyRows })
+      .mockResolvedValueOnce({ values: [{ name: 'loans' }] })
+      .mockResolvedValueOnce({ values: loanColumnsWithLinkedOnly })
+      .mockResolvedValueOnce({ values: loanColumnsWithLinkedOnly })
+      .mockResolvedValueOnce({ values: repairedRows })
+      .mockResolvedValueOnce({ values: loanColumnsWithLinkedOnly });
+    mockDb.execute.mockImplementation(async (sql: string) => {
+      if (sql.includes('ALTER TABLE loans ADD COLUMN linked_transaction_id')) {
+        throw new Error('Execute: duplicate column name: linked_transaction_id');
+      }
+    });
+
+    await runMigrations();
+
+    expectExecuteContaining('ALTER TABLE loans ADD COLUMN skip_transaction INTEGER NOT NULL DEFAULT 0');
+    expectExecuteContaining('linked_transaction_id TEXT REFERENCES transactions(id) ON DELETE SET NULL');
+    expect(mockDb.run).toHaveBeenCalledWith(
+      'UPDATE migrations SET name = ? WHERE version = ?',
+      ['025_loan_skip_transaction', 25],
+      false
+    );
+    expectMigrationMarked(26, '026_loan_linked_transaction');
   });
 
   it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
@@ -192,7 +257,7 @@ describe('Database SQLite Tests', () => {
 
     expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
     expectMigrationMarked(3, '003_transactions_soft_delete');
-    expectMigrationMarked(25, '024_loan_skip_transaction');
+    expectMigrationMarked(26, '026_loan_linked_transaction');
   });
 
   it('ignores consecutive SQL comments that contain semicolons', () => {
@@ -262,6 +327,226 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.beginTransaction).toHaveBeenCalledTimes(2);
     expect(mockDb.commitTransaction).toHaveBeenCalledTimes(2);
     expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  it('serializes concurrent web root transactions without native BEGIN/COMMIT', async () => {
+    vi.mocked(Capacitor.getPlatform).mockReturnValue('web');
+    let running = 0;
+    let maxRunning = 0;
+
+    const results = await Promise.all([
+      runInTransaction(async () => {
+        running += 1;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        running -= 1;
+        return 'first';
+      }),
+      runInTransaction(async () => {
+        running += 1;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        running -= 1;
+        return 'second';
+      }),
+    ]);
+
+    expect(results).toEqual(['first', 'second']);
+    expect(maxRunning).toBe(1);
+    expect(mockDb.beginTransaction).not.toHaveBeenCalled();
+    expect(mockDb.commitTransaction).not.toHaveBeenCalled();
+    expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  it('runs direct nested web transactions inline inside the outer managed scope', async () => {
+    vi.mocked(Capacitor.getPlatform).mockReturnValue('web');
+    const states: boolean[] = [];
+
+    const result = await runInTransaction(async () => {
+      states.push(isManagedTransactionActive());
+
+      const nested = await runInTransaction(async () => {
+        states.push(isManagedTransactionActive());
+        return 'nested';
+      });
+
+      states.push(isManagedTransactionActive());
+      return `outer-${nested}`;
+    });
+
+    expect(result).toBe('outer-nested');
+    expect(states).toEqual([true, true, true]);
+    expect(mockDb.beginTransaction).not.toHaveBeenCalled();
+    expect(mockDb.commitTransaction).not.toHaveBeenCalled();
+    expect(mockDb.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  it('keeps the managed db context across awaited transaction work', async () => {
+    const leakedDb = {
+      ...mockDb,
+      run: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.mocked(connection.getDbConnection)
+      .mockResolvedValueOnce(mockDb)
+      .mockResolvedValue(leakedDb);
+
+    const walletRepository = new SQLiteWalletRepository();
+
+    await runInTransaction(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      await walletRepository.updateBalanceDelta('w-1', 100, 2000);
+    });
+
+    expect(mockDb.run).toHaveBeenCalledWith(
+      'UPDATE wallets SET balance = balance + ?, updated_at = ? WHERE id = ?',
+      [100, 2000, 'w-1'],
+      false
+    );
+    expect(leakedDb.run).not.toHaveBeenCalled();
+  });
+
+  it('rolls back wallet balance adjustment category when adjustment transaction creation fails', async () => {
+    const wallets = new Map<string, Record<string, unknown>>([[
+      'w-1',
+      {
+        id: 'w-1',
+        name: 'Cash',
+        currency: 'VND',
+        balance: 10_000,
+        account_type: 'cash',
+        icon: null,
+        color: null,
+        sort_order: 0,
+        is_active: 1,
+        exclude_from_total: 0,
+        credit_limit: null,
+        statement_day: null,
+        due_day: null,
+        annual_fee: null,
+        created_at: 0,
+        updated_at: 0,
+      },
+    ]]);
+    const categories = new Map<string, Record<string, unknown>>();
+    const transactions = new Map<string, Record<string, unknown>>();
+    let snapshot: {
+      wallets: Map<string, Record<string, unknown>>;
+      categories: Map<string, Record<string, unknown>>;
+      transactions: Map<string, Record<string, unknown>>;
+    } | null = null;
+    const cloneMap = (source: Map<string, Record<string, unknown>>) =>
+      new Map(Array.from(source, ([key, value]) => [key, { ...value }]));
+
+    mockDb.beginTransaction.mockImplementation(async () => {
+      snapshot = {
+        wallets: cloneMap(wallets),
+        categories: cloneMap(categories),
+        transactions: cloneMap(transactions),
+      };
+    });
+    mockDb.rollbackTransaction.mockImplementation(async () => {
+      if (!snapshot) return;
+      wallets.clear();
+      categories.clear();
+      transactions.clear();
+      snapshot.wallets.forEach((value, key) => wallets.set(key, { ...value }));
+      snapshot.categories.forEach((value, key) => categories.set(key, { ...value }));
+      snapshot.transactions.forEach((value, key) => transactions.set(key, { ...value }));
+      snapshot = null;
+    });
+    mockDb.commitTransaction.mockImplementation(async () => {
+      snapshot = null;
+    });
+    mockDb.query.mockImplementation(async (sql: string, values: unknown[] = []) => {
+      if (sql.includes('FROM wallets') && sql.includes('WHERE id = ?')) {
+        const wallet = wallets.get(values[0] as string);
+        return { values: wallet ? [{ ...wallet }] : [] };
+      }
+
+      if (sql.includes('FROM categories')) {
+        const [categoryId, categoryName, categoryType] = values;
+        const category = categories.get(categoryId as string)
+          ?? Array.from(categories.values()).find((item) =>
+            item.name === categoryName && item.type === categoryType
+          );
+        return { values: category ? [{ ...category }] : [] };
+      }
+
+      if (sql.includes('FROM transactions') && sql.includes('WHERE id = ?')) {
+        const transaction = transactions.get(values[0] as string);
+        return { values: transaction ? [{ ...transaction }] : [] };
+      }
+
+      return { values: [] };
+    });
+    mockDb.run.mockImplementation(async (sql: string, values: unknown[] = []) => {
+      if (sql.includes('INSERT OR IGNORE INTO categories')) {
+        const [id, name, type, icon, color, description, createdAt, updatedAt] = values;
+        if (!categories.has(id as string)) {
+          categories.set(id as string, {
+            id,
+            name,
+            type,
+            icon,
+            color,
+            description,
+            is_system: 0,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          });
+        }
+        return { changes: { changes: 1 } };
+      }
+
+      if (sql.includes('INSERT INTO transactions')) {
+        throw new Error('transaction insert failed');
+      }
+
+      if (sql.includes('UPDATE wallets SET balance = balance +')) {
+        const [delta, updatedAt, id] = values;
+        const wallet = wallets.get(id as string);
+        if (wallet) {
+          wallets.set(id as string, {
+            ...wallet,
+            balance: Number(wallet.balance) + Number(delta),
+            updated_at: updatedAt,
+          });
+        }
+        return { changes: { changes: wallet ? 1 : 0 } };
+      }
+
+      if (sql.includes('UPDATE wallets SET')) {
+        const id = values[values.length - 1] as string;
+        const wallet = wallets.get(id);
+        if (wallet) {
+          wallets.set(id, { ...wallet, name: values[0], updated_at: values[values.length - 2] });
+        }
+        return { changes: { changes: wallet ? 1 : 0 } };
+      }
+
+      return { changes: { changes: 0 } };
+    });
+
+    const walletService = new WalletService(
+      new SQLiteWalletRepository(),
+      new SQLiteTransactionRepository()
+    );
+
+    await expect(walletService.updateWallet('w-1', {
+      name: 'Cash Updated',
+      balance: 12_500,
+    })).rejects.toThrow('transaction insert failed');
+
+    expect(mockDb.run).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT OR IGNORE INTO categories'),
+      expect.any(Array),
+      false
+    );
+    expect(mockDb.rollbackTransaction).toHaveBeenCalledTimes(1);
+    expect(mockDb.commitTransaction).not.toHaveBeenCalled();
+    expect(wallets.get('w-1')).toMatchObject({ name: 'Cash', balance: 10_000 });
+    expect(categories.size).toBe(0);
+    expect(transactions.size).toBe(0);
   });
 
   it('disables implicit db.run transactions inside a managed transaction', async () => {
@@ -427,6 +712,7 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.run).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO categories'),
       expect.arrayContaining(['cat-custom', 'Custom', 'expense', 'coffee', '#f59e0b', null, 1000, 1000]),
+      true,
     );
 
     await repository.update('cat-custom', {
@@ -440,6 +726,7 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.run).toHaveBeenCalledWith(
       expect.stringContaining('UPDATE categories'),
       expect.arrayContaining(['Custom', 'expense', 'receipt', '#f59e0b', null, 2000, 'cat-custom']),
+      true,
     );
   });
 
@@ -489,6 +776,7 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.run).toHaveBeenCalledWith(
       expect.stringContaining('UPDATE categories'),
       expect.arrayContaining(['Custom', 'income', null, '#10b981', null, 3000, 'cat-custom']),
+      true,
     );
   });
 });

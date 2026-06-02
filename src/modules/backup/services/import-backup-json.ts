@@ -1,4 +1,4 @@
-import { assertBackupPayload } from './validate-backup-payload';
+import { normalizeBackupPayload } from './validate-backup-payload';
 import { restoreDatabase } from './restore-database';
 
 async function readBackupFile(file: File): Promise<string> {
@@ -32,6 +32,5 @@ export async function importBackupJson(file: File): Promise<void> {
   const text = await readBackupFile(file);
   const payload = JSON.parse(text);
 
-  assertBackupPayload(payload);
-  await restoreDatabase(payload);
+  await restoreDatabase(normalizeBackupPayload(payload));
 }

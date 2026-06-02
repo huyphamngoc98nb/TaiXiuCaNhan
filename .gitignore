@@ -1,13 +1,22 @@
-node_modules
-.env.local
+node_modules/
 
-# ============================================================
-# OTA Signing Keys — NEVER commit private key to repository
-# ============================================================
+# Environment overrides
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# OTA signing keys - never commit private keys
 private_key.pem
 *.pem
 
-# Artifacts tạm thời trong quá trình build bundle
+# Build outputs
 artifacts/
 dist/
-dist/index.html
+server/dist/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Local test/debug output
+test-output.txt

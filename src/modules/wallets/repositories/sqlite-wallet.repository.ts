@@ -1,5 +1,4 @@
-import { getDbConnection } from '@/core/db/sqlite/connection';
-import { isManagedTransactionActive } from '@/core/db/sqlite/transaction';
+import { getDbConnectionForTransaction, isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import type {
   AccountType,
   CreateWalletInput,
@@ -53,7 +52,7 @@ function generateId(): string {
 
 export class SQLiteWalletRepository implements IWalletRepository {
   async getById(id: string): Promise<Wallet | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT ${WALLET_COLUMNS} FROM wallets WHERE id = ? LIMIT 1`,
       [id]
@@ -64,18 +63,18 @@ export class SQLiteWalletRepository implements IWalletRepository {
 
   /** Returns wallets ordered by sort_order. */
   async getAllActive(): Promise<Wallet[]> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT ${WALLET_COLUMNS}
        FROM wallets
        WHERE is_active = 1
        ORDER BY sort_order ASC, created_at ASC`
     );
-    return (values ?? []).map((row) => mapWallet(row as Record<string, unknown>));
+    return (values ?? []).map((row: Record<string, unknown>) => mapWallet(row));
   }
 
   async getActiveCreditCards(): Promise<Wallet[]> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT ${WALLET_COLUMNS}
        FROM wallets
@@ -83,7 +82,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
          AND account_type = 'credit_card'
        ORDER BY sort_order ASC, created_at ASC`
     );
-    return (values ?? []).map((row) => mapWallet(row as Record<string, unknown>));
+    return (values ?? []).map((row: Record<string, unknown>) => mapWallet(row));
   }
 
   /**
@@ -92,7 +91,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
    * reduce net worth when summed.
    */
   async getTotalBalance(): Promise<number> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT COALESCE(SUM(balance), 0) AS total
        FROM wallets
@@ -102,7 +101,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async getCreditCardOutstandingBalance(walletId: string): Promise<number> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT CASE
           WHEN balance < 0 THEN -balance
@@ -122,7 +121,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     startDate: number,
     endDate: number
   ): Promise<number> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT COALESCE(SUM(amount), 0) AS statement_balance
        FROM transactions
@@ -141,7 +140,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     periodStart: number,
     dueAt: number
   ): Promise<number> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT COALESCE(SUM(t.amount), 0) AS paid_amount
        FROM transactions t
@@ -156,7 +155,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async upsertCreditCardStatement(data: UpsertCreditCardStatementInput): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       `INSERT OR REPLACE INTO credit_card_statements
          (id, wallet_id, period_start, period_end, closing_at, due_at,
@@ -191,7 +190,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async getCreditCardAvailableCredit(walletId: string): Promise<number | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT credit_limit, balance
        FROM wallets
@@ -217,7 +216,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
       statement_balance: number;
     }[]
   > {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT
          s.wallet_id,
@@ -249,7 +248,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     data: CreateWalletInput,
     now: number
   ): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       `INSERT INTO wallets
          (id, name, currency, balance, account_type, icon, color,
@@ -279,7 +278,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async update(id: string, data: UpdateWalletInput, now: number): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sets: string[] = [];
     const values: unknown[] = [];
 
@@ -307,7 +306,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async getReferenceCounts(id: string): Promise<WalletReferenceCounts> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const transactions = await db.query(
       `SELECT COUNT(*) AS count
        FROM transactions
@@ -332,7 +331,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run('DELETE FROM wallets WHERE id = ?', [id], !isManagedTransactionActive());
   }
 
@@ -341,7 +340,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
    * Only valid for the initial balance set at wallet creation time.
    */
   async updateBalance(id: string, newBalance: number, updatedAt: number): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       'UPDATE wallets SET balance = ?, updated_at = ? WHERE id = ?',
       [newBalance, updatedAt, id],
@@ -354,7 +353,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
    * Uses a single SQL statement so concurrent calls cannot interleave.
    */
   async updateBalanceDelta(id: string, delta: number, updatedAt: number): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       'UPDATE wallets SET balance = balance + ?, updated_at = ? WHERE id = ?',
       [delta, updatedAt, id],

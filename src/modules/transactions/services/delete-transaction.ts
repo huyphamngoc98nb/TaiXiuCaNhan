@@ -13,46 +13,49 @@ export class DeleteTransactionUseCase {
   ) {}
 
   async execute(id: string) {
-    // Bug #5 fix: use getByIdIncludeDeleted for idempotency check
-    // (getById now filters deleted_at IS NULL, so a deleted record
-    //  would throw "Transaction not found" instead of returning early)
-    const transaction = await this.repository.getByIdIncludeDeleted(id);
-    if (!transaction) throw new Error('Transaction not found');
-    if (transaction.deleted_at) return true; // Already soft-deleted — idempotent
-
-    const wallet = await this.walletRepository.getById(transaction.wallet_id);
-    if (!wallet) throw new Error('Wallet not found');
-
-    if (transaction.type === 'transfer') {
-      const toWallet = transaction.to_wallet_id
-        ? await this.walletRepository.getById(transaction.to_wallet_id)
-        : null;
-      if (!toWallet) throw new Error('Destination wallet not found');
-    }
-
-    const now = Date.now();
-
-    // Compute source wallet revert delta.
-    let sourceDelta = 0;
-    if (transaction.type === 'income') sourceDelta = -transaction.amount;
-    else if (transaction.type === 'expense' || transaction.type === 'transfer') {
-      sourceDelta = transaction.amount;
-    }
+    let didMutate = false;
 
     await this.runTransaction(async () => {
+      // Read include-deleted inside serialized work so repeated delete calls
+      // return success without applying balance deltas more than once.
+      const transaction = await this.repository.getByIdIncludeDeleted(id);
+      if (!transaction) throw new Error('Transaction not found');
+      if (transaction.deleted_at !== null) return true;
+
+      const wallet = await this.walletRepository.getById(transaction.wallet_id);
+      if (!wallet) throw new Error('Wallet not found');
+
+      const destinationWallet = transaction.type === 'transfer' && transaction.to_wallet_id
+        ? await this.walletRepository.getById(transaction.to_wallet_id)
+        : null;
+      const shouldRevertDestinationWallet = destinationWallet !== null;
+      const now = Date.now();
+
+      // Compute source wallet revert delta.
+      let sourceDelta = 0;
+      if (transaction.type === 'income') sourceDelta = -transaction.amount;
+      else if (transaction.type === 'expense' || transaction.type === 'transfer') {
+        sourceDelta = transaction.amount;
+      }
+
       await this.repository.softDelete(id, now);
 
-      // Atomic delta update — no race condition
+      // Atomic delta update: no race condition.
       await this.walletRepository.updateBalanceDelta(transaction.wallet_id, sourceDelta, now);
 
-      if (transaction.type === 'transfer' && transaction.to_wallet_id) {
+      // If the destination wallet was physically removed, there is no balance
+      // row left to reconcile. Soft-delete still removes the active ledger
+      // entry, and the source wallet revert is the only valid remaining delta.
+      if (transaction.type === 'transfer' && transaction.to_wallet_id && shouldRevertDestinationWallet) {
         await this.walletRepository.updateBalanceDelta(transaction.to_wallet_id, -transaction.amount, now);
       }
+
+      didMutate = true;
+      return true;
     });
 
-    // Persist web store after successful commit
-    const isWeb = Capacitor.getPlatform() === 'web';
-    if (isWeb) {
+    // Persist web store after successful commit.
+    if (didMutate && Capacitor.getPlatform() === 'web') {
       const { sqlite } = await import('@/core/db/sqlite/pragmas');
       await sqlite.saveToStore(DB_NAME);
     }

@@ -1,4 +1,4 @@
-import { getDbConnection } from '@/core/db/sqlite/connection';
+import { getDbConnectionForTransaction, isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import type {
   Category,
   CategoryInput,
@@ -26,7 +26,7 @@ const CATEGORY_COLUMNS = 'id, slug, name, type, icon, color, description, is_sys
 
 export class SQLiteCategoryRepository {
   async list(type?: CategoryType): Promise<Category[]> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const where = type ? 'AND type = ?' : '';
     const params = type ? [type] : [];
     const { values } = await db.query(
@@ -39,11 +39,11 @@ export class SQLiteCategoryRepository {
       `,
       [TRANSFER_CATEGORY_ID, ...params],
     );
-    return (values ?? []).map((row) => mapCategory(row as Record<string, unknown>));
+    return (values ?? []).map((row: Record<string, unknown>) => mapCategory(row));
   }
 
   async getById(id: string): Promise<Category | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT ${CATEGORY_COLUMNS} FROM categories WHERE id = ? LIMIT 1`,
       [id],
@@ -53,7 +53,7 @@ export class SQLiteCategoryRepository {
   }
 
   async findBySlug(slug: string): Promise<Category | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const { values } = await db.query(
       `SELECT ${CATEGORY_COLUMNS} FROM categories WHERE slug = ? LIMIT 1`,
       [slug],
@@ -63,7 +63,7 @@ export class SQLiteCategoryRepository {
   }
 
   async create(id: string, input: CategoryInput, now: number): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       `
         INSERT INTO categories (id, name, type, icon, color, description, created_at, updated_at)
@@ -79,11 +79,12 @@ export class SQLiteCategoryRepository {
         now,
         now,
       ],
+      !isManagedTransactionActive(),
     );
   }
 
   async update(id: string, input: CategoryInput, now: number): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       `
         UPDATE categories
@@ -100,11 +101,12 @@ export class SQLiteCategoryRepository {
         id,
         TRANSFER_CATEGORY_ID,
       ],
+      !isManagedTransactionActive(),
     );
   }
 
   async getReferenceCounts(id: string): Promise<CategoryReferenceCounts> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const transactions = await db.query(
       'SELECT COUNT(*) AS count FROM transactions WHERE category_id = ? AND deleted_at IS NULL',
       [id],
@@ -126,10 +128,11 @@ export class SQLiteCategoryRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     await db.run(
       'DELETE FROM categories WHERE id = ? AND id <> ? AND COALESCE(is_system, 0) = 0',
       [id, TRANSFER_CATEGORY_ID],
+      !isManagedTransactionActive(),
     );
   }
 }

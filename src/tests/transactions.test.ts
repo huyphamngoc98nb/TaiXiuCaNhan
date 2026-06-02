@@ -146,6 +146,40 @@ describe('Transaction Module QA Tests', () => {
       due_day: 5,
     } satisfies Wallet;
 
+    function queuedTransactionRunner() {
+      let queue: Promise<void> = Promise.resolve();
+
+      return async <T>(work: () => Promise<T>): Promise<T> => {
+        const previous = queue;
+        let release = () => {};
+        const lock = new Promise<void>((resolve) => {
+          release = resolve;
+        });
+
+        queue = previous.catch(() => undefined).then(() => lock);
+        await previous.catch(() => undefined);
+
+        try {
+          return await work();
+        } finally {
+          release();
+        }
+      };
+    }
+
+    function transactionRunnerWithBeforeWork(beforeWork: () => Promise<void>) {
+      let hasRun = false;
+
+      return async <T>(work: () => Promise<T>): Promise<T> => {
+        if (!hasRun) {
+          hasRun = true;
+          await beforeWork();
+        }
+
+        return work();
+      };
+    }
+
     it('CreateTransactionUseCase validates input before executing', async () => {
       const transactionRepository = new InMemoryTransactionRepository();
       const walletRepository = new InMemoryWalletRepository([walletRow]);
@@ -248,6 +282,129 @@ describe('Transaction Module QA Tests', () => {
       });
     });
 
+    it('UpdateTransactionUseCase rechecks balance when increasing an expense amount', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        type: 'expense' as const,
+        amount: 20,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([{ ...walletRow, balance: 80 }]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        transactionRunnerWithBeforeWork(() => walletRepository.updateBalanceDelta('w-1', -40, Date.now()))
+      );
+
+      await expect(updateUseCase.execute('tx-1', { amount: 70 })).rejects.toThrow(TransactionValidationError);
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 40 });
+      await expect(transactionRepository.getById('tx-1')).resolves.toMatchObject({ amount: 20 });
+    });
+
+    it('UpdateTransactionUseCase rechecks the new source wallet when changing wallet', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        type: 'expense' as const,
+        amount: 20,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 80 },
+        { ...destinationWallet, balance: 100 },
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        transactionRunnerWithBeforeWork(() => walletRepository.updateBalanceDelta('w-2', -80, Date.now()))
+      );
+
+      await expect(updateUseCase.execute('tx-1', { wallet_id: 'w-2', amount: 50 })).rejects.toThrow(TransactionValidationError);
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 80 });
+      await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 20 });
+      await expect(transactionRepository.getById('tx-1')).resolves.toMatchObject({ wallet_id: 'w-1', amount: 20 });
+    });
+
+    it('UpdateTransactionUseCase rechecks source balance when changing to transfer', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        type: 'expense' as const,
+        amount: 20,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 80 },
+        destinationWallet,
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        transactionRunnerWithBeforeWork(() => walletRepository.updateBalanceDelta('w-1', -60, Date.now()))
+      );
+
+      await expect(updateUseCase.execute('tx-1', {
+        type: 'transfer',
+        amount: 50,
+        to_wallet_id: 'w-2',
+      })).rejects.toThrow(TransactionValidationError);
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 20 });
+      await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 1_000 });
+      await expect(transactionRepository.getById('tx-1')).resolves.toMatchObject({ type: 'expense', to_wallet_id: null });
+    });
+
+    it('UpdateTransactionUseCase rechecks credit card limit with current liability', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        wallet_id: 'cc-1',
+        type: 'expense' as const,
+        amount: 100,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...creditCardWallet, balance: -100, credit_limit: 200 },
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        transactionRunnerWithBeforeWork(() => walletRepository.updateBalanceDelta('cc-1', -50, Date.now()))
+      );
+
+      await expect(updateUseCase.execute('tx-1', { amount: 180 })).rejects.toThrow(TransactionValidationError);
+
+      await expect(walletRepository.getById('cc-1')).resolves.toMatchObject({ balance: -150 });
+      await expect(transactionRepository.getById('tx-1')).resolves.toMatchObject({ amount: 100 });
+    });
+
     it('CreateTransactionUseCase moves balance between wallets for transfers', async () => {
       const transactionRepository = new InMemoryTransactionRepository();
       const walletRepository = new InMemoryWalletRepository([walletRow, destinationWallet]);
@@ -281,6 +438,38 @@ describe('Transaction Module QA Tests', () => {
       await createUseCase.execute(validCreateInput);
 
       await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 9_950 });
+    });
+
+    it('rechecks wallet balance inside serialized create transaction work', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 100 },
+      ]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        queuedTransactionRunner()
+      );
+      const input = {
+        ...validCreateInput,
+        amount: 60,
+      };
+
+      const results = await Promise.allSettled([
+        createUseCase.execute(input),
+        createUseCase.execute({
+          ...input,
+          transaction_date: input.transaction_date + 1,
+        }),
+      ]);
+
+      expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+      const rejected = results.find((result) => result.status === 'rejected');
+      expect(rejected?.status).toBe('rejected');
+      if (rejected?.status !== 'rejected') throw new Error('Expected one rejected transaction');
+      expect(rejected.reason).toBeInstanceOf(TransactionValidationError);
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 40 });
+      await expect(transactionRepository.list({ wallet_id: 'w-1' })).resolves.toHaveLength(1);
     });
 
     it('creating an expense on a credit card increases liability without touching cash', async () => {
@@ -396,6 +585,63 @@ describe('Transaction Module QA Tests', () => {
 
       await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
       await expect(walletRepository.getById('w-2')).resolves.toMatchObject({ balance: 1_000 });
+    });
+
+    it('DeleteTransactionUseCase soft-deletes transfer when destination wallet is missing', async () => {
+      const transactionRepository = new InMemoryTransactionRepository([{
+        ...validCreateInput,
+        id: 'tx-transfer-missing-destination',
+        type: 'transfer',
+        amount: 2_500,
+        to_wallet_id: 'w-2',
+        note: null,
+        receipt_path: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      }]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...walletRow, balance: 7_500 },
+      ]);
+      const deleteUseCase = new DeleteTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      await expect(deleteUseCase.execute('tx-transfer-missing-destination')).resolves.toBe(true);
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+      await expect(walletRepository.getById('w-2')).resolves.toBeNull();
+      await expect(transactionRepository.getById('tx-transfer-missing-destination')).resolves.toBeNull();
+      await expect(transactionRepository.getByIdIncludeDeleted('tx-transfer-missing-destination')).resolves.toMatchObject({
+        deleted_at: expect.any(Number),
+      });
+
+      await expect(deleteUseCase.execute('tx-transfer-missing-destination')).resolves.toBe(true);
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+    });
+
+    it('WalletService calculates balance adjustment from the wallet state inside the transaction', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const walletRepository = new InMemoryWalletRepository([walletRow]);
+      const walletService = new WalletService(
+        walletRepository,
+        transactionRepository,
+        transactionRunnerWithBeforeWork(() => walletRepository.updateBalanceDelta('w-1', 2_000, Date.now()))
+      );
+      mockDb.query.mockResolvedValueOnce({ values: [] });
+
+      await walletService.updateWallet('w-1', { balance: 7_500 });
+
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 7_500 });
+      const transactions = await transactionRepository.list({ wallet_id: 'w-1' });
+      expect(transactions).toHaveLength(1);
+      expect(transactions[0]).toMatchObject({
+        type: 'expense',
+        amount: 4_500,
+        note: 'Cân bằng số dư',
+      });
     });
 
     it('WalletService records a balance adjustment transaction when editing wallet balance', async () => {

@@ -4,26 +4,112 @@ import { classifyDueStatus, daysDiff } from '../modules/recurring-bills/services
 
 describe('Recurring Bills Logic', () => {
   describe('computeNextDueDate', () => {
-    it('computes next month correctly', () => {
-      const start = new Date(2026, 0, 15).getTime(); // Jan 15
-      const next = computeNextDueDate(start, 'monthly');
-      const nextDate = new Date(next);
-      expect(nextDate.getMonth()).toBe(1); // Feb
-      expect(nextDate.getDate()).toBe(15);
+    function localDate(year: number, monthIndex: number, day: number, hour = 0) {
+      return new Date(year, monthIndex, day, hour).getTime();
+    }
+
+    function expectLocalDate(ms: number, year: number, monthIndex: number, day: number, hour = 0) {
+      const date = new Date(ms);
+      expect(date.getFullYear()).toBe(year);
+      expect(date.getMonth()).toBe(monthIndex);
+      expect(date.getDate()).toBe(day);
+      expect(date.getHours()).toBe(hour);
+    }
+
+    it('computes next day and next week as local calendar dates', () => {
+      expectLocalDate(
+        computeNextDueDate(localDate(2026, 0, 15, 9), 'daily'),
+        2026,
+        0,
+        16,
+        9,
+      );
+      expectLocalDate(
+        computeNextDueDate(localDate(2026, 0, 15, 9), 'weekly'),
+        2026,
+        0,
+        22,
+        9,
+      );
     });
 
-    it('handles month boundary (clamping) - Jan 31 -> Feb 28/29', () => {
-      const start = new Date(2026, 0, 31).getTime(); // Jan 31
+    it('computes next month correctly', () => {
+      const start = localDate(2026, 0, 15); // Jan 15
       const next = computeNextDueDate(start, 'monthly');
-      const nextDate = new Date(next);
-      expect(nextDate.getMonth()).toBe(1); // Feb
-      expect(nextDate.getDate()).toBe(28);
+      expectLocalDate(next, 2026, 1, 15); // Feb 15
+    });
+
+    it('clamps monthly recurrence from Jan 31 to Feb 28 in non-leap years', () => {
+      const next = computeNextDueDate(localDate(2026, 0, 31), 'monthly');
+      expectLocalDate(next, 2026, 1, 28);
+    });
+
+    it('clamps monthly recurrence from Jan 31 to Feb 29 in leap years', () => {
+      const next = computeNextDueDate(localDate(2024, 0, 31), 'monthly');
+      expectLocalDate(next, 2024, 1, 29);
+    });
+
+    it('clamps monthly recurrence from Jan 30 to February end', () => {
+      expectLocalDate(
+        computeNextDueDate(localDate(2026, 0, 30), 'monthly'),
+        2026,
+        1,
+        28,
+      );
+      expectLocalDate(
+        computeNextDueDate(localDate(2024, 0, 30), 'monthly'),
+        2024,
+        1,
+        29,
+      );
+    });
+
+    it('clamps monthly recurrence from a 31-day month to a 30-day month', () => {
+      const next = computeNextDueDate(localDate(2026, 2, 31), 'monthly'); // Mar 31
+      expectLocalDate(next, 2026, 3, 30); // Apr 30
+    });
+
+    it('keeps monthly recurrence day when the target month has that day', () => {
+      const next = computeNextDueDate(localDate(2024, 1, 29), 'monthly'); // Feb 29
+      expectLocalDate(next, 2024, 2, 29); // Mar 29
+    });
+
+    it('handles monthly year rollover', () => {
+      const next = computeNextDueDate(localDate(2026, 11, 31), 'monthly'); // Dec 31
+      expectLocalDate(next, 2027, 0, 31); // Jan 31
     });
 
     it('computes next year correctly', () => {
-      const start = new Date(2026, 5, 1).getTime();
+      const start = localDate(2026, 5, 1);
       const next = computeNextDueDate(start, 'yearly');
-      expect(new Date(next).getFullYear()).toBe(2027);
+      expectLocalDate(next, 2027, 5, 1);
+    });
+
+    it('clamps yearly recurrence from Feb 29 to Feb 28 in non-leap years', () => {
+      const next = computeNextDueDate(localDate(2024, 1, 29), 'yearly');
+      expectLocalDate(next, 2025, 1, 28);
+    });
+
+    it('keeps yearly recurrence day when the target year has that date', () => {
+      const next = computeNextDueDate(localDate(2027, 1, 28), 'yearly');
+      expectLocalDate(next, 2028, 1, 28);
+    });
+
+    it('preserves local time of day for monthly and yearly recurrence', () => {
+      expectLocalDate(
+        computeNextDueDate(localDate(2026, 0, 31, 9), 'monthly'),
+        2026,
+        1,
+        28,
+        9,
+      );
+      expectLocalDate(
+        computeNextDueDate(localDate(2024, 1, 29, 9), 'yearly'),
+        2025,
+        1,
+        28,
+        9,
+      );
     });
   });
 

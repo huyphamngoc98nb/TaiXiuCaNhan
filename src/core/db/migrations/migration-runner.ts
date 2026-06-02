@@ -26,10 +26,28 @@ import removeUnusedSeedWalletsSql from './021_remove_unused_seed_wallets.sql?raw
 import creditCardStatementsSql from './022_credit_card_statements.sql?raw';
 import loansSql from './023_loans.sql?raw';
 import loanCategoriesSql from './024_loan_categories.sql?raw';
-import loanSkipTransactionSql from './024_loan_skip_transaction.sql?raw';
-import loanLinkedTransactionSql from './025_loan_linked_transaction.sql?raw';
+import loanSkipTransactionSql from './025_loan_skip_transaction.sql?raw';
+import loanLinkedTransactionSql from './026_loan_linked_transaction.sql?raw';
 
-const MIGRATIONS = [
+type DbConnection = Awaited<ReturnType<typeof getDbConnection>>;
+
+type Migration = {
+  version: number;
+  name: string;
+  sql: string;
+};
+
+type AppliedMigration = {
+  version: number;
+  name: string;
+};
+
+const LEGACY_LOAN_SKIP_TRANSACTION_NAME = '024_loan_skip_transaction';
+const LEGACY_LOAN_LINKED_TRANSACTION_NAME = '025_loan_linked_transaction';
+const LOAN_SKIP_TRANSACTION_NAME = '025_loan_skip_transaction';
+const LOAN_LINKED_TRANSACTION_NAME = '026_loan_linked_transaction';
+
+export const MIGRATIONS: Migration[] = [
   { version: 1,  name: '001_init',                          sql: initSql },
   { version: 2,  name: '002_indexes',                       sql: indexesSql },
   { version: 3,  name: '003_transactions_soft_delete',      sql: softDeleteSql },
@@ -54,12 +72,12 @@ const MIGRATIONS = [
   { version: 22, name: '022_credit_card_statements',           sql: creditCardStatementsSql },
   { version: 23, name: '023_loans',                            sql: loansSql },
   { version: 24, name: '024_loan_categories',                  sql: loanCategoriesSql },
-  { version: 25, name: '024_loan_skip_transaction',            sql: loanSkipTransactionSql },
-  { version: 26, name: '025_loan_linked_transaction',          sql: loanLinkedTransactionSql },
+  { version: 25, name: LOAN_SKIP_TRANSACTION_NAME,             sql: loanSkipTransactionSql },
+  { version: 26, name: LOAN_LINKED_TRANSACTION_NAME,           sql: loanLinkedTransactionSql },
 ];
 
 async function markMigrationDone(
-  db: Awaited<ReturnType<typeof getDbConnection>>,
+  db: DbConnection,
   version: number,
   name: string,
 ) {
@@ -70,8 +88,43 @@ async function markMigrationDone(
   );
 }
 
+async function updateMigrationName(
+  db: DbConnection,
+  version: number,
+  name: string,
+) {
+  await db.run(
+    'UPDATE migrations SET name = ? WHERE version = ?',
+    [name, version],
+    false
+  );
+}
+
+async function getAppliedMigrations(db: DbConnection): Promise<AppliedMigration[]> {
+  const { values } = await db.query('SELECT version, name FROM migrations');
+  return (values ?? []).map((row: any) => ({
+    version: Number(row.version),
+    name: typeof row.name === 'string' ? row.name : '',
+  }));
+}
+
+function migrationNameAt(appliedMigrations: AppliedMigration[], version: number) {
+  return appliedMigrations.find((migration) => migration.version === version)?.name;
+}
+
+async function tableExists(
+  db: DbConnection,
+  tableName: string,
+) {
+  if (!/^\w+$/.test(tableName)) {
+    throw new Error(`Invalid table name: ${tableName}`);
+  }
+  const { values } = await db.query(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+  return (values ?? []).length > 0;
+}
+
 async function columnExists(
-  db: Awaited<ReturnType<typeof getDbConnection>>,
+  db: DbConnection,
   tableName: string,
   columnName: string,
 ) {
@@ -86,7 +139,7 @@ function parseAddColumnStatement(stmt: string): { tableName: string; columnName:
 }
 
 async function executeMigrationStatement(
-  db: Awaited<ReturnType<typeof getDbConnection>>,
+  db: DbConnection,
   stmt: string,
 ) {
   try {
@@ -106,6 +159,164 @@ async function executeMigrationStatement(
 
     throw err;
   }
+}
+
+async function runMigrationTransaction(
+  db: DbConnection,
+  isWeb: boolean,
+  migrationName: string,
+  fn: () => Promise<void>,
+) {
+  let transactionStarted = false;
+
+  if (!isWeb) {
+    const { result: isActive } = await db.isTransactionActive();
+    if (!isActive) {
+      await db.beginTransaction();
+      transactionStarted = true;
+    }
+  }
+
+  try {
+    await fn();
+    if (transactionStarted) await db.commitTransaction();
+  } catch (err) {
+    if (transactionStarted) {
+      try { await db.rollbackTransaction(); }
+      catch (re) { logger.warn(`Rollback failed for ${migrationName}:`, re); }
+    }
+    throw err;
+  }
+}
+
+function buildLoanSkipTransactionSql(preserveLinkedTransactionId: boolean) {
+  const linkedColumnDefinition = preserveLinkedTransactionId
+    ? '  linked_transaction_id TEXT REFERENCES transactions(id) ON DELETE SET NULL,\n'
+    : '';
+  const linkedInsertColumn = preserveLinkedTransactionId
+    ? ', linked_transaction_id'
+    : '';
+  const linkedSelectColumn = preserveLinkedTransactionId
+    ? ', linked_transaction_id'
+    : '';
+
+  return `
+PRAGMA foreign_keys=OFF;
+PRAGMA defer_foreign_keys=ON;
+
+ALTER TABLE loans ADD COLUMN skip_transaction INTEGER NOT NULL DEFAULT 0;
+
+DROP TABLE IF EXISTS loans_new;
+
+CREATE TABLE loans_new (
+  id TEXT PRIMARY KEY,
+  wallet_id TEXT,
+  type TEXT NOT NULL CHECK (type IN ('lend', 'borrow')),
+  contact_name TEXT NOT NULL,
+  contact_info TEXT,
+  principal INTEGER NOT NULL CHECK (principal > 0),
+  due_date TEXT,
+  note TEXT,
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'settled', 'cancelled')),
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  deleted_at INTEGER,
+  skip_transaction INTEGER NOT NULL DEFAULT 0 CHECK (skip_transaction IN (0, 1)),
+${linkedColumnDefinition}  CHECK (skip_transaction = 1 OR wallet_id IS NOT NULL),
+  FOREIGN KEY (wallet_id) REFERENCES wallets (id)
+);
+
+INSERT INTO loans_new (
+  id, wallet_id, type, contact_name, contact_info, principal,
+  due_date, note, status, created_at, updated_at, deleted_at, skip_transaction${linkedInsertColumn}
+)
+SELECT
+  id, wallet_id, type, contact_name, contact_info, principal,
+  due_date, note, status, created_at, updated_at, deleted_at, COALESCE(skip_transaction, 0)${linkedSelectColumn}
+FROM loans;
+
+DROP TABLE loans;
+ALTER TABLE loans_new RENAME TO loans;
+
+CREATE INDEX IF NOT EXISTS idx_loans_status ON loans(status) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_loans_due_date ON loans(due_date);
+
+PRAGMA foreign_keys=ON;
+`;
+}
+
+async function executeMigrationSql(
+  db: DbConnection,
+  sql: string,
+) {
+  const stmts = splitSqlStatements(sql);
+  for (const stmt of stmts) {
+    await executeMigrationStatement(db, stmt);
+  }
+  return stmts.length;
+}
+
+async function normalizeLegacyLoanMigrationNames(
+  db: DbConnection,
+  appliedMigrations: AppliedMigration[],
+  canNormalizeLinkedAt25: boolean,
+) {
+  let changed = false;
+  const version25Name = migrationNameAt(appliedMigrations, 25);
+  const version26Name = migrationNameAt(appliedMigrations, 26);
+
+  if (
+    version25Name === LEGACY_LOAN_SKIP_TRANSACTION_NAME ||
+    (canNormalizeLinkedAt25 && version25Name === LEGACY_LOAN_LINKED_TRANSACTION_NAME)
+  ) {
+    logger.warn(`Normalizing migration 25 name from ${version25Name} to ${LOAN_SKIP_TRANSACTION_NAME}.`);
+    await updateMigrationName(db, 25, LOAN_SKIP_TRANSACTION_NAME);
+    changed = true;
+  }
+
+  if (version26Name === LEGACY_LOAN_LINKED_TRANSACTION_NAME) {
+    logger.warn(`Normalizing migration 26 name from ${version26Name} to ${LOAN_LINKED_TRANSACTION_NAME}.`);
+    await updateMigrationName(db, 26, LOAN_LINKED_TRANSACTION_NAME);
+    changed = true;
+  }
+
+  return changed;
+}
+
+async function repairLegacyLoanMigrationState(
+  db: DbConnection,
+  appliedMigrations: AppliedMigration[],
+  isWeb: boolean,
+) {
+  let changed = false;
+  let canNormalizeLinkedAt25 = false;
+  const version25Name = migrationNameAt(appliedMigrations, 25);
+
+  if (version25Name === LEGACY_LOAN_LINKED_TRANSACTION_NAME) {
+    const hasLoansTable = await tableExists(db, 'loans');
+    if (hasLoansTable) {
+      const hasSkipTransaction = await columnExists(db, 'loans', 'skip_transaction');
+      const hasLinkedTransaction = await columnExists(db, 'loans', 'linked_transaction_id');
+      canNormalizeLinkedAt25 = true;
+
+      if (!hasSkipTransaction) {
+        logger.warn(
+          `${LEGACY_LOAN_LINKED_TRANSACTION_NAME} was recorded at version 25 before ${LOAN_SKIP_TRANSACTION_NAME}. ` +
+          `Repairing the missing loan skip-transaction schema.`
+        );
+        await runMigrationTransaction(db, isWeb, LOAN_SKIP_TRANSACTION_NAME, async () => {
+          await executeMigrationSql(db, buildLoanSkipTransactionSql(hasLinkedTransaction));
+        });
+        changed = true;
+      }
+    }
+  }
+
+  if (await normalizeLegacyLoanMigrationNames(db, appliedMigrations, canNormalizeLinkedAt25)) {
+    changed = true;
+  }
+
+  return changed;
 }
 
 /**
@@ -174,6 +385,7 @@ export function splitSqlStatements(sql: string): string[] {
 
 export async function runMigrations() {
   const db = await getDbConnection();
+  const isWeb = Capacitor.getPlatform() === 'web';
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS migrations (
@@ -183,9 +395,12 @@ export async function runMigrations() {
     )
   `);
 
-  const { values } = await db.query('SELECT version FROM migrations');
-  const appliedVersions = new Set(values?.map((v: any) => v.version) || []);
-  const isWeb = Capacitor.getPlatform() === 'web';
+  const migrationRows = await getAppliedMigrations(db);
+  const repairedLegacyLoanState = await repairLegacyLoanMigrationState(db, migrationRows, isWeb);
+  const appliedMigrations = repairedLegacyLoanState
+    ? await getAppliedMigrations(db)
+    : migrationRows;
+  const appliedVersions = new Set(appliedMigrations.map((migration) => migration.version));
 
   for (const migration of MIGRATIONS) {
     if (appliedVersions.has(migration.version)) continue;
@@ -200,29 +415,20 @@ export async function runMigrations() {
     }
 
     logger.info(`Running migration: ${migration.name}`);
-    const stmts = splitSqlStatements(migration.sql);
-    let transactionStarted = false;
-
-    if (!isWeb) {
-      const { result: isActive } = await db.isTransactionActive();
-      if (!isActive) {
-        await db.beginTransaction();
-        transactionStarted = true;
-      }
-    }
+    const migrationSql = migration.version === 25 && await columnExists(db, 'loans', 'linked_transaction_id')
+      ? buildLoanSkipTransactionSql(true)
+      : migration.sql;
+    const stmts = splitSqlStatements(migrationSql);
 
     try {
-      for (const stmt of stmts) {
-        await executeMigrationStatement(db, stmt);
-      }
-      await markMigrationDone(db, migration.version, migration.name);
-      if (transactionStarted) await db.commitTransaction();
+      await runMigrationTransaction(db, isWeb, migration.name, async () => {
+        for (const stmt of stmts) {
+          await executeMigrationStatement(db, stmt);
+        }
+        await markMigrationDone(db, migration.version, migration.name);
+      });
       logger.info(`Migration ${migration.name} completed (${stmts.length} stmts).`);
     } catch (err: any) {
-      if (transactionStarted) {
-        try { await db.rollbackTransaction(); }
-        catch (re) { logger.warn(`Rollback failed for ${migration.name}:`, re); }
-      }
       const msg = err.message || '';
       const isDupe = msg.includes('already exists') || msg.includes('duplicate column');
       if (isWeb && isDupe) {

@@ -7,8 +7,7 @@ import type {
 import { appRepositories } from '@/core/repositories/app-repositories';
 import type { IWalletRepository } from '../repositories/wallet.repository';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
-import { getDbConnection } from '@/core/db/sqlite/connection';
-import { isManagedTransactionActive } from '@/core/db/sqlite/transaction';
+import { getDbConnectionForTransaction, isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import { sqliteTransactionRunner, TransactionRunner } from '@/core/db/transaction-runner';
 
 function generateId(): string {
@@ -62,7 +61,7 @@ const BALANCE_ADJUSTMENT_CATEGORIES = {
 
 async function ensureBalanceAdjustmentCategory(type: 'income' | 'expense', now: number): Promise<string> {
   const category = BALANCE_ADJUSTMENT_CATEGORIES[type];
-  const db = await getDbConnection();
+  const db = await getDbConnectionForTransaction();
   const { values } = await db.query(
     'SELECT id FROM categories WHERE id = ? OR (name = ? AND type = ?) LIMIT 1',
     [category.id, category.name, category.type]
@@ -117,7 +116,9 @@ export class WalletService {
 
     const id = generateId();
     const now = Date.now();
-    await this.repo.create(id, data, now);
+    await this.runTransaction(async () => {
+      await this.repo.create(id, data, now);
+    });
     await persistWeb();
     const wallet = await this.repo.getById(id);
     if (!wallet) throw new Error('Wallet creation failed: not found after insert.');
@@ -128,39 +129,42 @@ export class WalletService {
     if (data.name !== undefined && !data.name.trim()) {
       throw new Error('Wallet name is required.');
     }
-    const existing = await this.repo.getById(id);
-    if (!existing) throw new Error('Wallet not found.');
-    const nextAccountType = data.account_type ?? existing.account_type;
-    const nextCreditLimit = data.credit_limit ?? existing.credit_limit;
-    if (nextAccountType === 'credit_card' && (!nextCreditLimit || nextCreditLimit <= 0)) {
-      throw new Error('Credit limit must be greater than 0 for credit card accounts.');
-    }
-    assertCreditCardSettings(data);
 
     const now = Date.now();
     const { balance, ...walletData } = data;
-    const hasBalanceChange = balance !== undefined && Math.abs(balance - existing.balance) > 0.000001;
 
     await this.runTransaction(async () => {
+      const existing = await this.repo.getById(id);
+      if (!existing) throw new Error('Wallet not found.');
+
+      const nextAccountType = data.account_type ?? existing.account_type;
+      const nextCreditLimit = data.credit_limit ?? existing.credit_limit;
+      if (nextAccountType === 'credit_card' && (!nextCreditLimit || nextCreditLimit <= 0)) {
+        throw new Error('Credit limit must be greater than 0 for credit card accounts.');
+      }
+      assertCreditCardSettings(data);
+
+      const hasBalanceChange = balance !== undefined && Math.abs(balance - existing.balance) > 0.000001;
+
+      if (hasBalanceChange) {
+        const delta = balance - existing.balance;
+        const transactionType = delta > 0 ? 'income' : 'expense';
+        const categoryId = await ensureBalanceAdjustmentCategory(transactionType, now);
+        await this.transactionRepo.create({
+          id: generateId(),
+          wallet_id: id,
+          category_id: categoryId,
+          type: transactionType,
+          amount: Math.abs(delta),
+          note: BALANCE_ADJUSTMENT_NOTE,
+          transaction_date: now,
+          created_at: now,
+          updated_at: now,
+        });
+        await this.repo.updateBalanceDelta(id, delta, now);
+      }
+
       await this.repo.update(id, walletData, now);
-
-      if (!hasBalanceChange) return;
-
-      const delta = balance - existing.balance;
-      const transactionType = delta > 0 ? 'income' : 'expense';
-      const categoryId = await ensureBalanceAdjustmentCategory(transactionType, now);
-      await this.transactionRepo.create({
-        id: generateId(),
-        wallet_id: id,
-        category_id: categoryId,
-        type: transactionType,
-        amount: Math.abs(delta),
-        note: BALANCE_ADJUSTMENT_NOTE,
-        transaction_date: now,
-        created_at: now,
-        updated_at: now,
-      });
-      await this.repo.updateBalanceDelta(id, delta, now);
     });
     await persistWeb();
     const wallet = await this.repo.getById(id);
@@ -175,7 +179,9 @@ export class WalletService {
       throw new Error('Cannot delete a wallet that is used by transactions, bills, or budgets.');
     }
 
-    await this.repo.delete(id);
+    await this.runTransaction(async () => {
+      await this.repo.delete(id);
+    });
     await persistWeb();
   }
 

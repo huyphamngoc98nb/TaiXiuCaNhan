@@ -2,58 +2,78 @@ import { RecurringBill } from '../domain/recurring-bill.model';
 
 type Frequency = RecurringBill['frequency'];
 
+function lastDayOfMonth(year: number, monthIndex: number): number {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function withLocalDate(
+  source: Date,
+  year: number,
+  monthIndex: number,
+  day: number,
+): number {
+  return new Date(
+    year,
+    monthIndex,
+    day,
+    source.getHours(),
+    source.getMinutes(),
+    source.getSeconds(),
+    source.getMilliseconds(),
+  ).getTime();
+}
+
+function addLocalCalendarDays(fromDateMs: number, days: number): number {
+  const source = new Date(fromDateMs);
+  return withLocalDate(
+    source,
+    source.getFullYear(),
+    source.getMonth(),
+    source.getDate() + days,
+  );
+}
+
+function addLocalCalendarMonthsClamped(fromDateMs: number, months: number): number {
+  const source = new Date(fromDateMs);
+  const target = new Date(source.getFullYear(), source.getMonth() + months, 1);
+  const targetYear = target.getFullYear();
+  const targetMonth = target.getMonth();
+  const targetDay = Math.min(
+    source.getDate(),
+    lastDayOfMonth(targetYear, targetMonth),
+  );
+
+  return withLocalDate(source, targetYear, targetMonth, targetDay);
+}
+
 /**
  * Compute the next due date after `fromDateMs` for a given frequency.
  *
- * Edge-case rules:
- * - Monthly: adds exactly 1 month; if day overflows (e.g. Jan 31 → Mar 3),
- *   clamps to last day of target month.
- * - Yearly: same as monthly but +1 year; includes Feb 29 clamp for non-leap years.
- *   e.g. Feb 29, 2024 → Feb 28, 2025 (not Mar 1).
- * - Daily/Weekly: fixed ms offsets.
+ * Due dates are calendar recurrences in local time:
+ * - Daily/weekly add calendar days, not fixed millisecond offsets. This keeps
+ *   the local due time stable across daylight-saving transitions.
+ * - Monthly adds one calendar month. If the current due day does not exist in
+ *   the target month, clamp to the target month's last day.
+ *   Example: Jan 31 -> Feb 28/29, Mar 31 -> Apr 30.
+ * - Yearly adds twelve calendar months with the same clamp rule.
+ *   Example: Feb 29, 2024 -> Feb 28, 2025.
  *
- * @param fromDateMs  - the current due date in unix ms
- * @param frequency   - recurrence frequency
+ * The current `next_due_date` is the source date for the next cycle; the model
+ * does not store a separate original anchor day.
  */
 export function computeNextDueDate(fromDateMs: number, frequency: Frequency): number {
-  const d = new Date(fromDateMs);
-
   switch (frequency) {
     case 'daily':
-      return fromDateMs + 86_400_000;
+      return addLocalCalendarDays(fromDateMs, 1);
 
     case 'weekly':
-      return fromDateMs + 7 * 86_400_000;
+      return addLocalCalendarDays(fromDateMs, 7);
 
-    case 'monthly': {
-      const targetYear = d.getFullYear();
-      const targetMonth = d.getMonth() + 1; // +1 month
-      const originalDay = d.getDate();
+    case 'monthly':
+      return addLocalCalendarMonthsClamped(fromDateMs, 1);
 
-      const next = new Date(targetYear, targetMonth, originalDay);
-
-      // Day overflow: Jan 31 → targetMonth=1 day=31 → JS rolls to Mar 3
-      // Clamp: lấy ngày cuối cùng của targetMonth (day=0 của tháng kế tiếp)
-      if (next.getDate() !== originalDay) {
-        return new Date(targetYear, targetMonth + 1, 0).getTime();
-      }
-      return next.getTime();
-    }
-
-    case 'yearly': {
-      const targetYear = d.getFullYear() + 1;
-      const targetMonth = d.getMonth(); // 0-indexed
-      const originalDay = d.getDate();
-
-      const next = new Date(targetYear, targetMonth, originalDay);
-
-      // WARN-3 fix: Feb 29 của năm nhuận → năm thường không có ngày 29
-      // JS tự roll sang Mar 1 — clamp về Feb 28 (= day 0 của tháng 3)
-      if (next.getDate() !== originalDay) {
-        return new Date(targetYear, targetMonth + 1, 0).getTime();
-      }
-      return next.getTime();
-    }
+    case 'yearly':
+      return addLocalCalendarMonthsClamped(fromDateMs, 12);
 
     default:
       throw new Error(`Unknown frequency: ${frequency}`);

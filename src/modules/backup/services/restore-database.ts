@@ -59,9 +59,9 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
       insertStatements.push({
         statement: `INSERT INTO wallets (
           id, name, currency, balance, account_type, icon, color, sort_order,
-          is_active, exclude_from_total, credit_limit, statement_day, due_day,
+          is_active, exclude_from_total, credit_limit, statement_day, due_day, annual_fee,
           created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         values: [
           row.id,
           row.name,
@@ -76,6 +76,7 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
           value(row, 'credit_limit'),
           value(row, 'statement_day'),
           value(row, 'due_day'),
+          value(row, 'annual_fee'),
           row.created_at,
           row.updated_at,
         ]

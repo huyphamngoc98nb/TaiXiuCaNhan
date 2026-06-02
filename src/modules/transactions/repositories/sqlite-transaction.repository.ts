@@ -1,12 +1,11 @@
-import { getDbConnection } from '@/core/db/sqlite/connection';
-import { isManagedTransactionActive } from '@/core/db/sqlite/transaction';
+import { getDbConnectionForTransaction, isManagedTransactionActive } from '@/core/db/sqlite/transaction';
 import { ITransactionRepository } from './transaction.repository';
 import { Transaction, CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '../domain/transaction.model';
 import { mapToTransaction } from '../domain/transaction.mapper';
 
 export class SQLiteTransactionRepository implements ITransactionRepository {
   async create(data: CreateTransactionInput & { id: string, created_at: number, updated_at: number }): Promise<Transaction> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sql = `
       INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -22,7 +21,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
 
   // MINOR-1 fix: thay any[] bằng unknown[] — an toàn hơn về type
   async update(id: string, data: UpdateTransactionInput & { updated_at: number }): Promise<Transaction | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
 
     const sets: string[] = [];
     const values: unknown[] = [];
@@ -46,7 +45,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   }
 
   async softDelete(id: string, deleted_at: number): Promise<boolean> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sql = `UPDATE transactions SET deleted_at = ?, updated_at = ? WHERE id = ?`;
     const res = await db.run(sql, [deleted_at, deleted_at, id], !isManagedTransactionActive());
     return (res.changes?.changes ?? 0) > 0;
@@ -57,7 +56,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
    * are never returned to business logic as if they were active.
    */
   async getById(id: string): Promise<Transaction | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
              transaction_date, created_at, updated_at, deleted_at
@@ -74,7 +73,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
    * (e.g. idempotency check in DeleteTransactionUseCase).
    */
   async getByIdIncludeDeleted(id: string): Promise<Transaction | null> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
              transaction_date, created_at, updated_at, deleted_at
@@ -87,7 +86,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   }
 
   async list(filter: TransactionFilter): Promise<Transaction[]> {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     let sql = `
       SELECT
         t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note,
@@ -152,7 +151,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async getSummaryByAccountType(): Promise<
     { account_type: string; total_expense: number; total_income: number }[]
   > {
-    const db = await getDbConnection();
+    const db = await getDbConnectionForTransaction();
     const sql = `
       SELECT
         w.account_type,

@@ -1,5 +1,4 @@
 -- Migration 025: Allow tracking loans without recording an opening wallet transaction.
--- File name follows the loan skip-transaction feature request. Migration version 24 is already used.
 
 PRAGMA foreign_keys=OFF;
 PRAGMA defer_foreign_keys=ON;

@@ -1,22 +1,36 @@
 import { getDbConnection } from './connection';
 import { Capacitor } from '@capacitor/core';
 
-let nativeTransactionQueue: Promise<void> = Promise.resolve();
+let transactionQueue: Promise<void> = Promise.resolve();
 let managedTransactionDepth = 0;
+let transactionCallbackDepth = 0;
+let currentManagedDb: any = null;
 
 export function isManagedTransactionActive(): boolean {
   return managedTransactionDepth > 0;
 }
 
+export async function getDbConnectionForTransaction(): Promise<any> {
+  return currentManagedDb ?? getDbConnection();
+}
+
+function isReentrantTransactionCall(): boolean {
+  return transactionCallbackDepth > 0;
+}
+
+function getReentrantDb(): any | null {
+  return isReentrantTransactionCall() ? currentManagedDb : null;
+}
+
 async function runExclusive<T>(work: () => Promise<T>): Promise<T> {
-  const previous = nativeTransactionQueue;
+  const previous = transactionQueue;
   let release = () => {};
 
   const lock = new Promise<void>((resolve) => {
     release = resolve;
   });
 
-  nativeTransactionQueue = previous.catch(() => undefined).then(() => lock);
+  transactionQueue = previous.catch(() => undefined).then(() => lock);
   await previous.catch(() => undefined);
 
   try {
@@ -26,30 +40,47 @@ async function runExclusive<T>(work: () => Promise<T>): Promise<T> {
   }
 }
 
+async function runManagedWork<T>(db: any, work: () => Promise<T>): Promise<T> {
+  managedTransactionDepth += 1;
+  transactionCallbackDepth += 1;
+  const previousManagedDb = currentManagedDb;
+  currentManagedDb = db;
+
+  try {
+    return await work();
+  } finally {
+    currentManagedDb = previousManagedDb;
+    transactionCallbackDepth -= 1;
+    managedTransactionDepth -= 1;
+  }
+}
+
 /**
  * Wraps `work` in a SQLite transaction.
  *
  * - Native (iOS/Android): uses BEGIN / COMMIT / ROLLBACK.
  * - Web: CapacitorSQLite does not support explicit transactions on the web
- *   store; we execute the work directly and let the caller invoke
- *   `sqlite.saveToStore()` afterwards if persistence is needed.
+ *   store; root transaction work is serialized through the same queue and
+ *   callers still invoke `sqlite.saveToStore()` afterwards if persistence is
+ *   needed.
  *
- * Nested-transaction safe: if a transaction is already active the inner
- * call simply participates in the outer one (no SAVEPOINT).
+ * Nested-transaction safe: direct nested calls made from inside the active
+ * transaction callback participate in the outer transaction (no SAVEPOINT).
  */
 export async function runInTransaction<T>(
   work: (db: any) => Promise<T>
 ): Promise<T> {
+  // Direct nested calls share the outer managed scope and must not wait on the queue.
+  const reentrantDb = getReentrantDb();
+  if (reentrantDb) {
+    return work(reentrantDb);
+  }
+
   const db = await getDbConnection();
   const isWeb = Capacitor.getPlatform() === 'web';
 
-  // On web, CapacitorSQLite does not support beginTransaction — run directly.
   if (isWeb) {
-    return work(db);
-  }
-
-  if (isManagedTransactionActive()) {
-    return work(db);
+    return runExclusive(() => runManagedWork(db, () => work(db)));
   }
 
   return runExclusive(async () => {
@@ -58,11 +89,10 @@ export async function runInTransaction<T>(
 
     if (shouldManage) {
       await db.beginTransaction();
-      managedTransactionDepth += 1;
     }
 
     try {
-      const result = await work(db);
+      const result = await runManagedWork(db, () => work(db));
       if (shouldManage) {
         await db.commitTransaction();
       }
@@ -72,10 +102,6 @@ export async function runInTransaction<T>(
         await db.rollbackTransaction();
       }
       throw error;
-    } finally {
-      if (shouldManage) {
-        managedTransactionDepth -= 1;
-      }
     }
   });
 }

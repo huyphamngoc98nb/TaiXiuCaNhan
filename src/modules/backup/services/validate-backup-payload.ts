@@ -1,4 +1,4 @@
-import { BackupPayload, BackupRow, ValidationResult } from '../domain/backup.model';
+import { BackupMetadata, BackupPayload, BackupRow, ValidationResult } from '../domain/backup.model';
 import { CURRENT_BACKUP_VERSION, CURRENT_SCHEMA_VERSION } from './export-backup-json';
 
 type FieldType = 'string' | 'number';
@@ -24,6 +24,8 @@ const LOAN_TYPES = ['lend', 'borrow'] as const;
 const LOAN_STATUSES = ['active', 'settled', 'cancelled'] as const;
 const ACTIVE_FLAGS = [0, 1] as const;
 const RECURRING_ACTIVE_FLAGS = [-1, 0, 1] as const;
+const LEGACY_BACKUP_VERSION = '1.0';
+const LEGACY_SCHEMA_VERSION = 1;
 
 const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
   '2.0': {
@@ -35,14 +37,15 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
         currency: { type: 'string', required: true },
         balance: { type: 'number', required: true },
         account_type: { type: 'string', required: true, enum: ACCOUNT_TYPES },
-        icon: { type: 'string', nullable: true },
-        color: { type: 'string', nullable: true },
+        icon: { type: 'string', required: true, nullable: true },
+        color: { type: 'string', required: true, nullable: true },
         sort_order: { type: 'number', required: true },
         is_active: { type: 'number', required: true, enum: ACTIVE_FLAGS },
         exclude_from_total: { type: 'number', required: true, enum: ACTIVE_FLAGS },
-        credit_limit: { type: 'number', nullable: true },
-        statement_day: { type: 'number', nullable: true },
-        due_day: { type: 'number', nullable: true },
+        credit_limit: { type: 'number', required: true, nullable: true },
+        statement_day: { type: 'number', required: true, nullable: true },
+        due_day: { type: 'number', required: true, nullable: true },
+        annual_fee: { type: 'number', required: true, nullable: true },
         created_at: { type: 'number', required: true },
         updated_at: { type: 'number', required: true },
       },
@@ -53,9 +56,9 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
         id: { type: 'string', required: true },
         name: { type: 'string', required: true },
         type: { type: 'string', required: true, enum: CATEGORY_TYPES },
-        icon: { type: 'string', nullable: true },
-        color: { type: 'string', nullable: true },
-        description: { type: 'string', nullable: true },
+        icon: { type: 'string', required: true, nullable: true },
+        color: { type: 'string', required: true, nullable: true },
+        description: { type: 'string', required: true, nullable: true },
         created_at: { type: 'number', required: true },
         updated_at: { type: 'number', required: true },
       },
@@ -68,13 +71,13 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
         category_id: { type: 'string', required: true },
         type: { type: 'string', required: true, enum: TRANSACTION_TYPES },
         amount: { type: 'number', required: true },
-        note: { type: 'string', nullable: true },
-        receipt_path: { type: 'string', nullable: true },
+        note: { type: 'string', required: true, nullable: true },
+        receipt_path: { type: 'string', required: true, nullable: true },
         transaction_date: { type: 'number', required: true },
-        to_wallet_id: { type: 'string', nullable: true },
+        to_wallet_id: { type: 'string', required: true, nullable: true },
         created_at: { type: 'number', required: true },
         updated_at: { type: 'number', required: true },
-        deleted_at: { type: 'number', nullable: true },
+        deleted_at: { type: 'number', required: true, nullable: true },
       },
     },
     recurring_bills: {
@@ -106,12 +109,12 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
       fields: {
         id: { type: 'string', required: true },
         category_id: { type: 'string', required: true },
-        wallet_id: { type: 'string', nullable: true },
-        account_type_scope: { type: 'string', nullable: true, enum: ACCOUNT_TYPES },
+        wallet_id: { type: 'string', required: true, nullable: true },
+        account_type_scope: { type: 'string', required: true, nullable: true, enum: ACCOUNT_TYPES },
         amount: { type: 'number', required: true },
         period: { type: 'string', required: true, enum: BUDGET_PERIODS },
         start_date: { type: 'number', required: true },
-        end_date: { type: 'number', nullable: true },
+        end_date: { type: 'number', required: true, nullable: true },
         is_active: { type: 'number', required: true, enum: ACTIVE_FLAGS },
         created_at: { type: 'number', required: true },
         updated_at: { type: 'number', required: true },
@@ -123,47 +126,106 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
         id: { type: 'string', required: true },
         level: { type: 'string', required: true, enum: ['info', 'warn', 'error', 'debug'] as const },
         message: { type: 'string', required: true },
-        context: { type: 'string', nullable: true },
-        stack: { type: 'string', nullable: true },
-        metadata_json: { type: 'string', nullable: true },
+        context: { type: 'string', required: true, nullable: true },
+        stack: { type: 'string', required: true, nullable: true },
+        metadata_json: { type: 'string', required: true, nullable: true },
         created_at: { type: 'number', required: true },
       },
     },
     loans: {
-      required: false,
+      required: true,
       fields: {
         id: { type: 'string', required: true },
-        wallet_id: { type: 'string', nullable: true },
+        wallet_id: { type: 'string', required: true, nullable: true },
         type: { type: 'string', required: true, enum: LOAN_TYPES },
         contact_name: { type: 'string', required: true },
-        contact_info: { type: 'string', nullable: true },
+        contact_info: { type: 'string', required: true, nullable: true },
         principal: { type: 'number', required: true },
-        due_date: { type: 'string', nullable: true },
-        note: { type: 'string', nullable: true },
+        due_date: { type: 'string', required: true, nullable: true },
+        note: { type: 'string', required: true, nullable: true },
         status: { type: 'string', required: true, enum: LOAN_STATUSES },
         created_at: { type: 'number', required: true },
         updated_at: { type: 'number', required: true },
-        deleted_at: { type: 'number', nullable: true },
+        deleted_at: { type: 'number', required: true, nullable: true },
         skip_transaction: { type: 'number', required: true, enum: ACTIVE_FLAGS },
-        linked_transaction_id: { type: 'string', nullable: true },
+        linked_transaction_id: { type: 'string', required: true, nullable: true },
       },
     },
     loan_payments: {
-      required: false,
+      required: true,
       fields: {
         id: { type: 'string', required: true },
         loan_id: { type: 'string', required: true },
         wallet_id: { type: 'string', required: true },
         amount: { type: 'number', required: true },
         payment_date: { type: 'number', required: true },
-        note: { type: 'string', nullable: true },
+        note: { type: 'string', required: true, nullable: true },
         created_at: { type: 'number', required: true },
       },
     },
   },
 };
 
-const LEGACY_V1_SECTIONS = ['metadata', 'wallets', 'categories', 'transactions', 'recurring_bills', 'app_settings'];
+const LEGACY_V1_SCHEMAS: Record<string, SectionSchema> = {
+  wallets: {
+    required: true,
+    fields: {
+      id: { type: 'string', required: true },
+      name: { type: 'string', required: true },
+      currency: { type: 'string' },
+      balance: { type: 'number', required: true },
+      created_at: { type: 'number', required: true },
+      updated_at: { type: 'number', required: true },
+    },
+  },
+  categories: {
+    required: true,
+    fields: {
+      id: { type: 'string', required: true },
+      name: { type: 'string', required: true },
+      type: { type: 'string', required: true, enum: CATEGORY_TYPES },
+      created_at: { type: 'number', required: true },
+      updated_at: { type: 'number', required: true },
+    },
+  },
+  transactions: {
+    required: true,
+    fields: {
+      id: { type: 'string', required: true },
+      wallet_id: { type: 'string', required: true },
+      category_id: { type: 'string', required: true },
+      type: { type: 'string', required: true, enum: TRANSACTION_TYPES },
+      amount: { type: 'number', required: true },
+      note: { type: 'string', nullable: true },
+      transaction_date: { type: 'number', required: true },
+      created_at: { type: 'number', required: true },
+      updated_at: { type: 'number', required: true },
+    },
+  },
+  recurring_bills: {
+    required: true,
+    fields: {
+      id: { type: 'string', required: true },
+      wallet_id: { type: 'string', required: true },
+      category_id: { type: 'string', required: true },
+      name: { type: 'string', required: true },
+      amount: { type: 'number', required: true },
+      frequency: { type: 'string', required: true, enum: BILL_FREQUENCIES },
+      next_due_date: { type: 'number', required: true },
+      is_active: { type: 'number', enum: ACTIVE_FLAGS },
+      created_at: { type: 'number', required: true },
+      updated_at: { type: 'number', required: true },
+    },
+  },
+  app_settings: {
+    required: true,
+    fields: {
+      key: { type: 'string', required: true },
+      value: { type: 'string', required: true },
+      updated_at: { type: 'number', required: true },
+    },
+  },
+};
 
 function isPlainObject(value: unknown): value is BackupRow {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -171,25 +233,45 @@ function isPlainObject(value: unknown): value is BackupRow {
 
 function validateMetadata(payload: BackupRow): ValidationResult {
   if (!isPlainObject(payload.metadata)) {
-    return { isValid: false, error: 'Invalid or missing metadata' };
+    return { isValid: false, error: 'Invalid or missing metadata. Expected metadata.version, metadata.schema_version, metadata.exported_at, and metadata.app_version.' };
   }
 
   const { version, schema_version, exported_at, app_version } = payload.metadata;
   if (typeof version !== 'string' || typeof exported_at !== 'number' || typeof app_version !== 'string') {
-    return { isValid: false, error: 'Invalid or missing metadata' };
+    return { isValid: false, error: 'Invalid or missing metadata. metadata.version must be a string, metadata.exported_at must be a number, and metadata.app_version must be a string.' };
   }
 
-  if (!BACKUP_SCHEMAS[version] && version !== '1.0') {
-    return { isValid: false, error: `Unsupported backup version: ${version}` };
+  if (!BACKUP_SCHEMAS[version] && version !== LEGACY_BACKUP_VERSION) {
+    return {
+      isValid: false,
+      error: `Unsupported backup version: ${version}. Supported versions are ${CURRENT_BACKUP_VERSION}/schema ${CURRENT_SCHEMA_VERSION} and legacy ${LEGACY_BACKUP_VERSION}/schema ${LEGACY_SCHEMA_VERSION}.`,
+    };
   }
 
-  if (version === CURRENT_BACKUP_VERSION) {
-    if (schema_version !== CURRENT_SCHEMA_VERSION) {
+  if (schema_version !== undefined && typeof schema_version !== 'number') {
+    return { isValid: false, error: 'metadata.schema_version must be a number.' };
+  }
+
+  if (version === LEGACY_BACKUP_VERSION) {
+    if (schema_version !== undefined && schema_version !== LEGACY_SCHEMA_VERSION) {
       return {
         isValid: false,
-        error: `Unsupported schema version: ${String(schema_version)}`,
+        error: `Unsupported legacy schema version: ${String(schema_version)}. Legacy backup version ${LEGACY_BACKUP_VERSION} can only be imported when schema_version is ${LEGACY_SCHEMA_VERSION} or omitted.`,
       };
     }
+
+    return { isValid: true };
+  }
+
+  if (schema_version === undefined) {
+    return { isValid: false, error: `metadata.schema_version is required for backup version ${version}.` };
+  }
+
+  if (version === CURRENT_BACKUP_VERSION && schema_version !== CURRENT_SCHEMA_VERSION) {
+    return {
+      isValid: false,
+      error: `Unsupported schema version: ${String(schema_version)} for backup version ${version}. Only schema ${CURRENT_SCHEMA_VERSION} is supported; create a fresh export with the current app.`,
+    };
   }
 
   return { isValid: true };
@@ -244,19 +326,95 @@ function validateSection(sectionName: string, rows: unknown, schema: SectionSche
 }
 
 function validateLegacyV1(payload: BackupRow): ValidationResult {
-  for (const section of LEGACY_V1_SECTIONS) {
-    if (!(section in payload)) {
-      return { isValid: false, error: `Missing required section: ${section}` };
-    }
-  }
-
-  for (const section of LEGACY_V1_SECTIONS.filter((section) => section !== 'metadata')) {
-    if (!Array.isArray(payload[section])) {
-      return { isValid: false, error: `Section ${section} must be an array` };
+  for (const [sectionName, sectionSchema] of Object.entries(LEGACY_V1_SCHEMAS)) {
+    const result = validateSection(sectionName, payload[sectionName], sectionSchema);
+    if (!result.isValid) {
+      return {
+        isValid: false,
+        error: `Legacy backup ${result.error}`,
+      };
     }
   }
 
   return { isValid: true };
+}
+
+function rows(value: unknown): BackupRow[] {
+  return Array.isArray(value) ? value.filter(isPlainObject).map((row) => ({ ...row })) : [];
+}
+
+function normalizeLegacyV1(payload: BackupRow): BackupPayload {
+  const metadata = payload.metadata as BackupMetadata;
+
+  return {
+    metadata: {
+      version: CURRENT_BACKUP_VERSION,
+      schema_version: CURRENT_SCHEMA_VERSION,
+      exported_at: metadata.exported_at,
+      app_version: metadata.app_version,
+    },
+    wallets: rows(payload.wallets).map((row) => ({
+      ...row,
+      currency: row.currency ?? 'VND',
+      account_type: row.account_type ?? row.type ?? 'cash',
+      icon: row.icon ?? null,
+      color: row.color ?? null,
+      sort_order: row.sort_order ?? 0,
+      is_active: row.is_active ?? 1,
+      exclude_from_total: row.exclude_from_total ?? 0,
+      credit_limit: row.credit_limit ?? null,
+      statement_day: row.statement_day ?? null,
+      due_day: row.due_day ?? null,
+      annual_fee: row.annual_fee ?? null,
+    })),
+    categories: rows(payload.categories).map((row) => ({
+      ...row,
+      icon: row.icon ?? null,
+      color: row.color ?? null,
+      description: row.description ?? null,
+    })),
+    transactions: rows(payload.transactions).map((row) => ({
+      ...row,
+      note: row.note ?? null,
+      receipt_path: row.receipt_path ?? null,
+      to_wallet_id: row.to_wallet_id ?? null,
+      deleted_at: row.deleted_at ?? null,
+    })),
+    recurring_bills: rows(payload.recurring_bills).map((row) => ({
+      ...row,
+      reminder_days: row.reminder_days ?? 3,
+      is_active: row.is_active ?? 1,
+    })),
+    app_settings: rows(payload.app_settings),
+    budgets: rows(payload.budgets).map((row) => ({
+      ...row,
+      wallet_id: row.wallet_id ?? null,
+      account_type_scope: row.account_type_scope ?? null,
+      end_date: row.end_date ?? null,
+      is_active: row.is_active ?? 1,
+    })),
+    error_logs: rows(payload.error_logs).map((row) => ({
+      ...row,
+      context: row.context ?? null,
+      stack: row.stack ?? null,
+      metadata_json: row.metadata_json ?? null,
+    })),
+    loans: rows(payload.loans).map((row) => ({
+      ...row,
+      wallet_id: row.wallet_id ?? null,
+      contact_info: row.contact_info ?? null,
+      due_date: row.due_date ?? null,
+      note: row.note ?? null,
+      status: row.status ?? 'active',
+      deleted_at: row.deleted_at ?? null,
+      skip_transaction: row.skip_transaction ?? 0,
+      linked_transaction_id: row.linked_transaction_id ?? null,
+    })),
+    loan_payments: rows(payload.loan_payments).map((row) => ({
+      ...row,
+      note: row.note ?? null,
+    })),
+  };
 }
 
 export function validateBackupPayload(payload: unknown): ValidationResult {
@@ -268,7 +426,7 @@ export function validateBackupPayload(payload: unknown): ValidationResult {
   if (!metadataResult.isValid) return metadataResult;
 
   const version = (payload.metadata as BackupRow).version;
-  if (version === '1.0') return validateLegacyV1(payload);
+  if (version === LEGACY_BACKUP_VERSION) return validateLegacyV1(payload);
 
   const schema = BACKUP_SCHEMAS[String(version)];
   for (const [sectionName, sectionSchema] of Object.entries(schema)) {
@@ -277,6 +435,21 @@ export function validateBackupPayload(payload: unknown): ValidationResult {
   }
 
   return { isValid: true };
+}
+
+export function normalizeBackupPayload(payload: unknown): BackupPayload {
+  const validation = validateBackupPayload(payload);
+  if (!validation.isValid) {
+    throw new Error(validation.error || 'Invalid backup file');
+  }
+
+  const backup = payload as BackupRow;
+  const version = (backup.metadata as BackupRow).version;
+  if (version === LEGACY_BACKUP_VERSION) {
+    return normalizeLegacyV1(backup);
+  }
+
+  return backup as unknown as BackupPayload;
 }
 
 export function assertBackupPayload(payload: unknown): asserts payload is BackupPayload {
