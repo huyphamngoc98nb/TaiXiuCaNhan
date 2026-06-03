@@ -370,9 +370,9 @@ describe('Backup Module Tests', () => {
       };
       await restoreDatabase(payload);
       
-      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = OFF');
+      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = OFF', [], false);
       expect(mockDb.executeSet).toHaveBeenCalled();
-      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = ON');
+      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = ON', [], false);
     });
 
     it('re-enables foreign keys even if restore fails', async () => {
@@ -383,7 +383,7 @@ describe('Backup Module Tests', () => {
       mockDb.executeSet.mockRejectedValue(new Error('Batch Error'));
 
       await expect(restoreDatabase(payload)).rejects.toThrow('Batch Error');
-      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = ON');
+      expect(mockDb.run).toHaveBeenCalledWith('PRAGMA foreign_keys = ON', [], false);
     });
 
     it('restores current wallet and budget schema columns', async () => {
@@ -497,6 +497,89 @@ describe('Backup Module Tests', () => {
           }),
         ])
       );
+    });
+
+    it('restores transactions before linked loans', async () => {
+      const payload = {
+        metadata: { version: '2.0', schema_version: 16, exported_at: 0, app_version: '' },
+        wallets: [{
+          id: 'wallet-1',
+          name: 'Cash',
+          currency: 'VND',
+          balance: 1000,
+          account_type: 'cash',
+          icon: null,
+          color: null,
+          sort_order: 0,
+          is_active: 1,
+          exclude_from_total: 0,
+          credit_limit: null,
+          statement_day: null,
+          due_day: null,
+          annual_fee: null,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        categories: [{
+          id: 'category-1',
+          name: 'Loan',
+          type: 'expense',
+          icon: null,
+          color: null,
+          description: null,
+          created_at: 1,
+          updated_at: 1,
+        }],
+        transactions: [{
+          id: 'transaction-1',
+          wallet_id: 'wallet-1',
+          category_id: 'category-1',
+          type: 'expense',
+          amount: 500,
+          note: null,
+          receipt_path: null,
+          transaction_date: 2,
+          to_wallet_id: null,
+          created_at: 2,
+          updated_at: 2,
+          deleted_at: null,
+        }],
+        recurring_bills: [],
+        app_settings: [],
+        budgets: [],
+        error_logs: [],
+        loans: [{
+          id: 'loan-1',
+          wallet_id: 'wallet-1',
+          type: 'lend',
+          contact_name: 'Alice',
+          contact_info: null,
+          principal: 500,
+          due_date: null,
+          note: null,
+          status: 'active',
+          created_at: 3,
+          updated_at: 3,
+          deleted_at: null,
+          skip_transaction: 0,
+          linked_transaction_id: 'transaction-1',
+        }],
+        loan_payments: [],
+      };
+
+      await restoreDatabase(payload);
+
+      const statements = mockDb.executeSet.mock.calls[0][0];
+      const transactionIndex = statements.findIndex((item: { statement: string }) =>
+        item.statement.includes('INSERT INTO transactions')
+      );
+      const loanIndex = statements.findIndex((item: { statement: string }) =>
+        item.statement.includes('INSERT INTO loans')
+      );
+
+      expect(transactionIndex).toBeGreaterThan(-1);
+      expect(loanIndex).toBeGreaterThan(-1);
+      expect(transactionIndex).toBeLessThan(loanIndex);
     });
   });
 });

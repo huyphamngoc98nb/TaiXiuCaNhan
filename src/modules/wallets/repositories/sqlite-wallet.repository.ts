@@ -185,7 +185,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
         data.now,
         data.now,
       ],
-      !isManagedTransactionActive()
+      false
     );
   }
 

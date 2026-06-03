@@ -52,7 +52,8 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
     // 2. Prepare insertion statements
     const insertStatements: any[] = [];
 
-    // Order matters for foreign keys: wallets -> categories -> transactions -> recurring_bills
+    // Order matters for foreign keys: wallets/categories before dependents,
+    // and transactions before loans that reference linked_transaction_id.
     
     // Wallets
     payload.wallets.forEach((row) => {
@@ -114,7 +115,32 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
       });
     });
 
-    // Loans
+    // Transactions
+    payload.transactions.forEach((row) => {
+      insertStatements.push({
+        statement: `INSERT INTO transactions (
+          id, wallet_id, category_id, type, amount, note, receipt_path,
+          transaction_date, to_wallet_id, created_at, updated_at, deleted_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        values: [
+          row.id,
+          row.wallet_id,
+          row.category_id,
+          row.type,
+          row.amount,
+          value(row, 'note'),
+          value(row, 'receipt_path'),
+          row.transaction_date,
+          value(row, 'to_wallet_id'),
+          row.created_at,
+          row.updated_at,
+          value(row, 'deleted_at'),
+        ]
+      });
+    });
+
+    // Loans. This must run after transactions because linked_transaction_id may
+    // reference a transaction restored from the same backup.
     (payload.loans ?? []).forEach((row) => {
       insertStatements.push({
         statement: `INSERT INTO loans (
@@ -156,30 +182,6 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
           value(row, 'note'),
           row.created_at,
         ],
-      });
-    });
-
-    // Transactions
-    payload.transactions.forEach((row) => {
-      insertStatements.push({
-        statement: `INSERT INTO transactions (
-          id, wallet_id, category_id, type, amount, note, receipt_path,
-          transaction_date, to_wallet_id, created_at, updated_at, deleted_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        values: [
-          row.id,
-          row.wallet_id,
-          row.category_id,
-          row.type,
-          row.amount,
-          value(row, 'note'),
-          value(row, 'receipt_path'),
-          row.transaction_date,
-          value(row, 'to_wallet_id'),
-          row.created_at,
-          row.updated_at,
-          value(row, 'deleted_at'),
-        ]
       });
     });
 
@@ -231,7 +233,7 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
     const set = [...deleteStatements, ...insertStatements];
     
     // We should disable foreign keys during wipe-and-reload to avoid constraint errors during the transition
-    await db.run('PRAGMA foreign_keys = OFF');
+    await db.run('PRAGMA foreign_keys = OFF', [], false);
     
     const result = await db.executeSet(set);
     
@@ -239,7 +241,7 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
       throw new Error('Database restore failed: Batch execution returned error status.');
     }
 
-    await db.run('PRAGMA foreign_keys = ON');
+    await db.run('PRAGMA foreign_keys = ON', [], false);
 
     // On web, we must save to store
     const isWeb = (await import('@capacitor/core')).Capacitor.getPlatform() === 'web';
@@ -252,7 +254,7 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
   } catch (error) {
     logger.error('Failed to restore database', error);
     // Ensure foreign keys are back on even if we fail
-    await db.run('PRAGMA foreign_keys = ON');
+    await db.run('PRAGMA foreign_keys = ON', [], false);
     throw error;
   }
 }

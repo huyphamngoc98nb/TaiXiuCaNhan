@@ -55,7 +55,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1780454813.1088111,
+    "mtime": 1780459965.7284641,
     "ast_hash": "7d20bbb6ddd9b895546d6342e84c45a4",
     "semantic_hash": ""
   },
@@ -80,7 +80,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1780454813.1098104,
+    "mtime": 1780459965.7284641,
     "ast_hash": "3deacd894fa096455ce58f3b2df33e10",
     "semantic_hash": ""
   },
@@ -90,12 +90,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1780454812.62161,
+    "mtime": 1780459965.5660312,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1780454812.696835,
+    "mtime": 1780459965.670975,
     "ast_hash": "f63e79d46b1f8b3fe5f4af0d8fcd322a",
     "semantic_hash": ""
   },
@@ -120,12 +120,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1780454813.1118112,
+    "mtime": 1780459965.7284641,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1780454813.1118112,
+    "mtime": 1780459965.7284641,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\restore-database.ts": {
-    "mtime": 1780448468.0214324,
-    "ast_hash": "3af46ad0e42c4a4630910dbfdbec3083",
+    "mtime": 1780459801.4070358,
+    "ast_hash": "34552f507238f2db29831640be8078d6",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\save-auto-backup-file.ts": {
@@ -980,8 +980,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionList.tsx": {
-    "mtime": 1780368539.568367,
-    "ast_hash": "66477fdf19861c99e012c29e86f03e01",
+    "mtime": 1780461090.9491012,
+    "ast_hash": "a46f2eb05556b5502b98b63defb372a2",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\dev\\sample-data-helper.ts": {
@@ -1140,8 +1140,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\repositories\\sqlite-wallet.repository.ts": {
-    "mtime": 1780448468.0397294,
-    "ast_hash": "8631d9c0fb1107b66d539c7fd99ccae9",
+    "mtime": 1780459807.4835265,
+    "ast_hash": "ddd1d54492829cb27b68e98c40ba1155",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\repositories\\wallet.repository.ts": {
@@ -1255,8 +1255,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1780368539.5756211,
-    "ast_hash": "74028aa404305740913f2d030749f44f",
+    "mtime": 1780460424.0694962,
+    "ast_hash": "38e221a16ef5eb205a9a36aa735c9a40",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\backup.test.ts": {
-    "mtime": 1780448468.0444233,
-    "ast_hash": "ef3503bd4a8064889470fd080d0e816f",
+    "mtime": 1780459833.5407314,
+    "ast_hash": "347ef3751214dc92e24d7e48fa0583df",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\budgets.test.ts": {
@@ -1345,8 +1345,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\db.test.ts": {
-    "mtime": 1780448468.0466025,
-    "ast_hash": "fc214c4f9f5185f2e3ad93e53d636959",
+    "mtime": 1780459845.5917354,
+    "ast_hash": "f1c5d540e141c60c06524daa012eb566",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\dropdown-list.test.tsx": {

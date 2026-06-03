@@ -762,6 +762,29 @@ describe('Database SQLite Tests', () => {
     );
   });
 
+  it('upserts credit card statements without opening an implicit transaction', async () => {
+    const walletRepository = new SQLiteWalletRepository();
+
+    await walletRepository.upsertCreditCardStatement({
+      wallet_id: 'cc-1',
+      period_start: 1,
+      period_end: 2,
+      closing_at: 2,
+      due_at: 3,
+      statement_balance: 1000,
+      paid_amount: 250,
+      remaining_amount: 750,
+      status: 'partial',
+      now: 4,
+    });
+
+    expect(mockDb.run).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT OR REPLACE INTO credit_card_statements'),
+      expect.arrayContaining(['cc-1', 1, 2, 3, 1000, 250, 750, 'partial', 4]),
+      false
+    );
+  });
+
   it('category repository clears icon by persisting null', async () => {
     const repository = new SQLiteCategoryRepository();
 
