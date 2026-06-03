@@ -1,4 +1,6 @@
-import { X } from 'lucide-react';
+import { useRef } from 'react';
+import type { CSSProperties } from 'react';
+import { Calendar, X } from 'lucide-react';
 import { BottomSheet } from '@/shared/components/BottomSheet';
 import { DropdownList } from '@/shared/components/DropdownList';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -25,6 +27,15 @@ function toDateInputValue(timestamp?: number) {
   return `${year}-${month}-${day}`;
 }
 
+function toDateDisplayValue(timestamp?: number) {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}`;
+}
+
 function startOfLocalDay(value: string) {
   if (!value) return undefined;
   const [year, month, day] = value.split('-').map(Number);
@@ -37,7 +48,7 @@ function endOfLocalDay(value: string) {
   return new Date(year, month - 1, day, 23, 59, 59, 999).getTime();
 }
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   minHeight: '44px',
   width: '100%',
   padding: '0 10px',
@@ -49,7 +60,7 @@ const inputStyle: React.CSSProperties = {
   fontWeight: 600,
 };
 
-const labelStyle: React.CSSProperties = {
+const labelStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: '6px',
@@ -57,6 +68,93 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 600,
   color: 'var(--text-muted)',
 };
+
+const dateInputShellStyle: CSSProperties = {
+  position: 'relative',
+};
+
+const hiddenDateInputStyle: CSSProperties = {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  width: '1px',
+  height: '1px',
+  opacity: 0,
+  pointerEvents: 'none',
+};
+
+const dateIconStyle: CSSProperties = {
+  position: 'absolute',
+  left: '11px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  color: 'var(--text-muted)',
+  pointerEvents: 'none',
+};
+
+const dateDisplayInputStyle: CSSProperties = {
+  ...inputStyle,
+  padding: '0 10px 0 34px',
+  cursor: 'pointer',
+};
+
+interface DateDisplayInputProps {
+  value?: number;
+  onChange: (timestamp?: number) => void;
+  endOfDay?: boolean;
+}
+
+function DateDisplayInput({ value, onChange, endOfDay = false }: DateDisplayInputProps) {
+  const nativeInputRef = useRef<HTMLInputElement>(null);
+
+  const openDatePicker = () => {
+    const input = nativeInputRef.current;
+    if (!input) return;
+
+    if (input.showPicker) {
+      input.showPicker();
+    } else {
+      input.click();
+    }
+    input.focus();
+  };
+
+  const handleNativeDateChange = (nextValue: string) => {
+    onChange(endOfDay ? endOfLocalDay(nextValue) : startOfLocalDay(nextValue));
+  };
+
+  return (
+    <div style={dateInputShellStyle}>
+      <span style={dateIconStyle}>
+        <Calendar size={15} />
+      </span>
+      <input
+        ref={nativeInputRef}
+        type="date"
+        value={toDateInputValue(value)}
+        onChange={event => handleNativeDateChange(event.target.value)}
+        style={hiddenDateInputStyle}
+        tabIndex={-1}
+        aria-hidden="true"
+      />
+      <input
+        type="text"
+        value={toDateDisplayValue(value)}
+        readOnly
+        placeholder="dd/mm/yyyy"
+        onClick={openDatePicker}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openDatePicker();
+          }
+        }}
+        style={dateDisplayInputStyle}
+      />
+    </div>
+  );
+}
 
 export function AdvancedTransactionFilterSheet({
   isOpen,
@@ -103,21 +201,18 @@ export function AdvancedTransactionFilterSheet({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
           <label style={labelStyle}>
             Từ ngày
-            <input
-              type="date"
-              value={toDateInputValue(filter.startDate)}
-              onChange={event => onChange({ ...filter, startDate: startOfLocalDay(event.target.value) })}
-              style={inputStyle}
+            <DateDisplayInput
+              value={filter.startDate}
+              onChange={timestamp => onChange({ ...filter, startDate: timestamp })}
             />
           </label>
 
           <label style={labelStyle}>
             Đến ngày
-            <input
-              type="date"
-              value={toDateInputValue(filter.endDate)}
-              onChange={event => onChange({ ...filter, endDate: endOfLocalDay(event.target.value) })}
-              style={inputStyle}
+            <DateDisplayInput
+              value={filter.endDate}
+              endOfDay
+              onChange={timestamp => onChange({ ...filter, endDate: timestamp })}
             />
           </label>
         </div>
