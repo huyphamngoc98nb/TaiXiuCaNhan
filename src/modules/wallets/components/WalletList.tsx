@@ -64,7 +64,7 @@ export function WalletList({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="bg-gray-200 rounded-2xl h-24 mb-3 animate-pulse"
+            className="bg-surface-muted rounded-2xl h-24 mb-3 animate-pulse"
           />
         ))}
       </div>
@@ -73,7 +73,7 @@ export function WalletList({
 
   if (error) {
     return (
-      <div style={{ padding: '16px', color: '#ef4444', textAlign: 'center' }}>
+      <div style={{ padding: '16px', color: 'var(--danger)', textAlign: 'center' }}>
         {error}
       </div>
     );
@@ -125,7 +125,7 @@ export function WalletList({
           if (group.length === 0) return null;
           return (
             <div key={type} className="mb-4">
-              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
+              <p className="text-[12px] font-semibold text-subtle uppercase tracking-wide mb-2 px-1">
                 {accountTypeLabels[type]}
               </p>
               {group.map((w) => (

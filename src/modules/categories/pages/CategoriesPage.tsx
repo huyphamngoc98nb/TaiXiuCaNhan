@@ -80,17 +80,17 @@ export function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
+    <div className="min-h-screen bg-bg">
       <div className="flex items-center gap-3 px-4 pt-4 pb-3">
         <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
         <div className="flex-1 min-w-0">
-          <h1 className="text-[20px] font-bold text-gray-900">{t('categories.title')}</h1>
-          <p className="text-[12px] text-gray-500">{t('categories.subtitle')}</p>
+          <h1 className="text-[20px] font-bold text-text">{t('categories.title')}</h1>
+          <p className="text-[12px] text-muted">{t('categories.subtitle')}</p>
         </div>
       </div>
 
       <div className="px-4 pb-24">
-        <div className="flex bg-gray-100 p-1 rounded-[12px] h-[48px] mb-4">
+        <div className="flex bg-surface-muted p-1 rounded-[12px] h-[48px] mb-4">
           {[
             { id: 'expense' as const, label: t('categories.expense_type') },
             { id: 'income' as const, label: t('categories.income_type') },
@@ -100,7 +100,7 @@ export function CategoriesPage() {
               type="button"
               onClick={() => setActiveType(item.id)}
               className={`flex-1 rounded-[9px] text-[14px] font-semibold transition-all ${
-                activeType === item.id ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500'
+                activeType === item.id ? 'bg-indigo-500 text-white shadow-sm' : 'text-muted'
               }`}
             >
               {item.label}
@@ -111,15 +111,15 @@ export function CategoriesPage() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-[72px] rounded-[14px] bg-gray-200 animate-pulse" />
+              <div key={item} className="h-[72px] rounded-[14px] bg-surface-muted animate-pulse" />
             ))}
           </div>
         ) : error ? (
           <div className="text-center text-red-500 py-10">{error}</div>
         ) : categories.length === 0 ? (
-          <div className="text-center text-gray-400 py-12">
-            <Tags size={36} className="mx-auto mb-3 text-gray-300" />
-            <p className="text-[15px] font-semibold text-gray-500">
+          <div className="text-center text-subtle py-12">
+            <Tags size={36} className="mx-auto mb-3 text-subtle" />
+            <p className="text-[15px] font-semibold text-muted">
               {t('categories.no_categories')}
             </p>
             <p className="text-[13px] mt-1">{t('categories.no_categories_hint')}</p>

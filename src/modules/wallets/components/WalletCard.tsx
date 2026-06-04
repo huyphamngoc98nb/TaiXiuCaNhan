@@ -71,8 +71,8 @@ export function WalletCard({ wallet, onClick }: Props) {
       tabIndex={0}
       onClick={() => onClick?.(wallet)}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.(wallet)}
-      className="bg-white rounded-2xl p-4 mb-3 cursor-pointer active:scale-[0.98] transition-transform"
-      style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+      className="bg-surface rounded-2xl border border-border p-4 mb-3 cursor-pointer active:scale-[0.98] transition-transform"
+      style={{ boxShadow: '0 2px 8px var(--shadow-color)' }}
     >
       {/* Header row */}
       <div className="flex items-center justify-between mb-3">
@@ -109,7 +109,7 @@ export function WalletCard({ wallet, onClick }: Props) {
         </p>
         <p
           className="text-[20px] font-bold tabular-nums"
-          style={{ color: wallet.balance < 0 ? '#ef4444' : '#111827' }}
+          style={{ color: wallet.balance < 0 ? 'var(--danger)' : 'var(--text)' }}
         >
           {formatAmount(outstandingBalance ?? wallet.balance)}
         </p>
@@ -168,12 +168,12 @@ export function WalletCard({ wallet, onClick }: Props) {
 
             return (
               <div
-                className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold mb-2"
-                style={
-                  isOverdue
-                    ? { background: '#fef2f2', color: '#b91c1c' }
-                    : { background: '#fffbeb', color: '#92400e' }
-                }
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold mb-2"
+              style={
+                isOverdue
+                    ? { background: 'rgba(244, 63, 94, 0.14)', color: 'var(--danger)' }
+                    : { background: 'rgba(245, 158, 11, 0.14)', color: 'var(--warning)' }
+              }
               >
                 <span>{isOverdue ? '🔴' : '🟡'}</span>
                 <span>

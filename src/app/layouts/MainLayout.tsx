@@ -21,6 +21,7 @@ import {
 import { ROUTES } from '@/shared/constants/routes';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
 import { consumeAppBackButton } from '@/shared/utils/app-back-stack';
 import { getParentRoute } from '@/shared/utils/route-parent';
 import './MainLayout.css';
@@ -85,11 +86,20 @@ export function MainLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDrawerOnHome, setOpenDrawerOnHome] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | 'none'>('none');
+  const drawerSheetRef = useRef<HTMLDivElement>(null);
   const drawerOpenRef = useRef(drawerOpen);
   const confirmingExitRef = useRef(false);
 
+  useBodyScrollLock(drawerOpen);
+
   useEffect(() => {
     drawerOpenRef.current = drawerOpen;
+  }, [drawerOpen]);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      drawerSheetRef.current?.scrollTo({ top: 0, left: 0 });
+    }
   }, [drawerOpen]);
 
   useEffect(() => {
@@ -276,7 +286,7 @@ export function MainLayout() {
       {drawerOpen && (
         <>
           <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />
-          <div className="drawer-sheet">
+          <div ref={drawerSheetRef} className="drawer-sheet">
             <div className="drawer-handle" />
             <div className="drawer-header">
               <span className="drawer-title">{t('navigation.more')}</span>

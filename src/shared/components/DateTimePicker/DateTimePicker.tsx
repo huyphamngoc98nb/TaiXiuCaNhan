@@ -126,7 +126,7 @@ export function DateTimePicker({ value, onChange, label }: Props) {
   return (
     <div className="space-y-2.5">
       {/* Label */}
-      <p className="text-[13px] font-semibold text-gray-700">{label ?? t('date_time.transaction_date')}</p>
+      <p className="text-[13px] font-semibold text-muted">{label ?? t('date_time.transaction_date')}</p>
 
       {/* Quick chips */}
       <div className="flex gap-2">
@@ -140,7 +140,7 @@ export function DateTimePicker({ value, onChange, label }: Props) {
               ${
                 mode === chip.id
                   ? 'bg-indigo-500 text-white shadow-sm shadow-indigo-200'
-                  : 'bg-gray-100 text-gray-600'
+                  : 'bg-surface-muted text-muted'
               }`}
           >
             {chip.id === 'custom' && <ChevronDown size={13} />}
@@ -177,9 +177,9 @@ export function DateTimePicker({ value, onChange, label }: Props) {
                   openDatePicker();
                 }
               }}
-              className="w-full h-[48px] pl-9 pr-3 bg-gray-50 border border-gray-200
-                rounded-[12px] text-[14px] text-gray-800 font-medium
-                focus:outline-none focus:border-indigo-400 appearance-none cursor-pointer"
+              className="w-full h-[48px] pl-9 pr-3 bg-bg-subtle border border-border
+                rounded-[12px] text-[14px] text-text font-medium
+                focus:outline-none focus:border-primary appearance-none cursor-pointer"
             />
           </label>
 
@@ -192,16 +192,16 @@ export function DateTimePicker({ value, onChange, label }: Props) {
               type="time"
               value={timeStr}
               onChange={e => handleTimeChange(e.target.value)}
-              className="w-full h-[48px] pl-9 pr-3 bg-gray-50 border border-gray-200
-                rounded-[12px] text-[14px] text-gray-800 font-medium
-                focus:outline-none focus:border-indigo-400 appearance-none"
+              className="w-full h-[48px] pl-9 pr-3 bg-bg-subtle border border-border
+                rounded-[12px] text-[14px] text-text font-medium
+                focus:outline-none focus:border-primary appearance-none"
             />
           </label>
         </div>
       )}
 
       {/* Preview */}
-      <p className="text-[11px] text-gray-400 ml-0.5">
+      <p className="text-[11px] text-subtle ml-0.5">
         📅 {formatPreview(buildTimestamp(dateStr, timeStr), locale, language)}
       </p>
     </div>

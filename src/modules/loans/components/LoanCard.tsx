@@ -58,7 +58,7 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
     <button
       type="button"
       onClick={() => onPress(loan.id)}
-      className={`w-full rounded-[14px] border border-gray-200 bg-white p-4 text-left shadow-sm active:scale-[0.99] transition-all ${
+      className={`w-full rounded-[14px] border border-border bg-surface p-4 text-left shadow-sm active:scale-[0.99] transition-all ${
         isDeleted ? 'opacity-60' : ''
       }`}
     >

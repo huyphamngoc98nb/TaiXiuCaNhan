@@ -170,12 +170,12 @@ export function DropdownList<T extends string>({
             setIsOpen((open) => !open);
           }
         }}
-        className={`w-full min-h-[48px] flex items-center justify-between gap-3 rounded-[12px] border border-gray-200 bg-gray-50 px-4 text-left text-[14px] font-semibold text-gray-800 shadow-sm outline-none transition-colors active:bg-gray-100 focus:border-indigo-400 disabled:cursor-not-allowed disabled:opacity-60 ${buttonClassName}`}
+        className={`w-full min-h-[48px] flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg-subtle px-4 text-left text-[14px] font-semibold text-text shadow-sm outline-none transition-colors active:bg-surface-muted focus:border-primary disabled:cursor-not-allowed disabled:opacity-60 ${buttonClassName}`}
       >
         <span className="min-w-0 flex-1 truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown
           size={18}
-          className={`shrink-0 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`shrink-0 text-subtle transition-transform ${isOpen ? 'rotate-180' : ''}`}
           aria-hidden="true"
         />
       </button>
@@ -187,7 +187,7 @@ export function DropdownList<T extends string>({
           role="listbox"
           aria-label={ariaLabel}
           style={menuStyle}
-          className={`overscroll-contain overflow-y-auto rounded-[14px] border border-gray-200 bg-white p-1 shadow-xl shadow-gray-900/12 ${menuClassName}`}
+          className={`overscroll-contain overflow-y-auto rounded-[14px] border border-border bg-surface p-1 shadow-xl shadow-gray-900/12 ${menuClassName}`}
         >
           {options.map((option) => {
             const isSelected = option.value === value;
@@ -202,7 +202,7 @@ export function DropdownList<T extends string>({
                 className={`flex min-h-[42px] w-full items-center justify-between gap-3 rounded-[10px] px-3 text-left text-[14px] font-medium transition-colors ${
                   isSelected
                     ? 'bg-indigo-50 text-indigo-600'
-                    : 'text-gray-700 active:bg-gray-100 hover:bg-gray-50'
+                    : 'text-muted active:bg-surface-muted hover:bg-bg-subtle'
                 } disabled:cursor-not-allowed disabled:opacity-50 ${optionClassName}`}
               >
                 <span className="min-w-0 flex-1 truncate">{option.label}</span>

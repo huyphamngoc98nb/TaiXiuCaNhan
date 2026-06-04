@@ -30,8 +30,8 @@ export function CategoryList({ categories, onEdit, onDelete }: Props) {
         return (
         <div
           key={category.id}
-          className="bg-white rounded-[14px] px-4 py-3 flex items-center gap-3"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}
+          className="bg-surface rounded-[14px] border border-border px-4 py-3 flex items-center gap-3"
+          style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}
         >
           <div
             className="w-11 h-11 rounded-[12px] flex items-center justify-center text-[16px] font-bold shrink-0"

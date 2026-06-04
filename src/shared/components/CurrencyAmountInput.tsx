@@ -86,8 +86,8 @@ export function CurrencyAmountInput({
   };
 
   return (
-    <div className={`flex items-center h-[56px] bg-gray-50 border rounded-[14px] px-4 transition-colors focus-within:border-indigo-400 ${className}`}>
-      <span className="text-[14px] font-semibold text-gray-400 mr-2">{currency}</span>
+    <div className={`flex items-center h-[56px] bg-bg-subtle border rounded-[14px] px-4 transition-colors focus-within:border-primary ${className}`}>
+      <span className="text-[14px] font-semibold text-subtle mr-2">{currency}</span>
       <input
         type="text"
         inputMode={fractionDigits === 0 ? 'numeric' : 'decimal'}
@@ -96,7 +96,7 @@ export function CurrencyAmountInput({
         required={required}
         placeholder={placeholder}
         autoFocus={autoFocus}
-        className={`flex-1 min-w-0 bg-transparent text-[26px] font-bold text-gray-900 outline-none tabular-nums ${inputClassName}`}
+        className={`flex-1 min-w-0 bg-transparent text-[26px] font-bold text-text outline-none tabular-nums placeholder:text-subtle ${inputClassName}`}
       />
     </div>
   );

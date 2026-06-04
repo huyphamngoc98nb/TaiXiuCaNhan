@@ -5,7 +5,7 @@
   height: 100%;
   min-height: 0;
   width: 100%;
-  background: #F5F7FA;
+  background: var(--bg);
 }
 
 .main-content {
@@ -36,8 +36,9 @@
   left: 0;
   right: 0;
   min-height: calc(64px + env(safe-area-inset-bottom));
-  background: #ffffff;
-  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 16px var(--shadow-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -72,7 +73,7 @@
   justify-content: center;
   flex: 1;
   text-decoration: none;
-  color: #6B7280;
+  color: var(--text-muted);
   font-size: 0.68rem;
   font-weight: 700;
   gap: 3px;
@@ -88,7 +89,7 @@
 }
 
 .nav-item.active {
-  color: #6366F1;
+  color: var(--primary);
   transform: translateY(-1px);
 }
 
@@ -121,7 +122,7 @@
   padding: 0;
   border-radius: 999px;
   color: #ffffff;
-  background: #6366F1;
+  background: var(--primary);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   transform: translate(-50%, -50%);
 }
@@ -147,9 +148,10 @@
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: var(--overlay);
   z-index: 60;
   animation: fadeIn 0.18s ease;
+  touch-action: none;
 }
 
 .drawer-sheet {
@@ -157,18 +159,24 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #ffffff;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
   border-radius: 20px 20px 0 0;
   z-index: 61;
   padding: 12px 20px 32px;
   animation: slideUp 0.22s ease;
   padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  max-height: min(85dvh, calc(var(--visual-viewport-height) - 24px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .drawer-handle {
   width: 36px;
   height: 4px;
-  background: #E5E7EB;
+  background: var(--border-strong);
   border-radius: 2px;
   margin: 0 auto 16px;
 }
@@ -183,20 +191,20 @@
 .drawer-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text);
 }
 
 .drawer-close {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #F3F4F6;
+  background: var(--surface-muted);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #6B7280;
+  color: var(--text-muted);
 }
 
 .drawer-grid {
@@ -213,31 +221,32 @@
   gap: 8px;
   padding: 14px 8px;
   border-radius: 16px;
-  background: #F9FAFB;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
   border: none;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .drawer-grid-item:active {
-  background: #EEF2FF;
+  background: var(--primary-soft);
 }
 
 .drawer-grid-icon {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #EEF2FF;
+  background: var(--primary-soft);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6366F1;
+  color: var(--primary);
 }
 
 .drawer-grid-label {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text);
   text-align: center;
   line-height: 1.3;
 }

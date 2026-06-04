@@ -4,6 +4,7 @@ import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { CurrencySettings } from '../components/CurrencySettings';
 import { BiometricUnlockSettings } from '../components/BiometricUnlockSettings';
+import { ThemeSelector } from '../components/ThemeSelector';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import {
   Database,
@@ -80,29 +81,30 @@ export function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
+    <div className="min-h-screen bg-bg">
       <div className="px-4 pt-10 pb-2">
-        <h1 className="text-[24px] font-bold text-gray-900">{t('settings.title')}</h1>
-        <p className="text-[12px] text-gray-500 mt-0.5">{t('settings.app_customization')}</p>
+        <h1 className="text-[24px] font-bold text-text">{t('settings.title')}</h1>
+        <p className="text-[12px] text-muted mt-0.5">{t('settings.app_customization')}</p>
       </div>
 
       <div className="px-4 pb-24 space-y-4 mt-4">
         {/* Language + Currency */}
-        <div className="bg-white rounded-[16px] divide-y divide-gray-100 overflow-hidden"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
+        <div className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
+          style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}>
+          <div className="px-4 py-3"><ThemeSelector /></div>
           <div className="px-4 py-3"><LanguageSettings /></div>
           <div className="px-4 py-3"><CurrencySettings /></div>
           <div className="px-4 py-3"><BiometricUnlockSettings /></div>
         </div>
 
         {/* Navigation menu items */}
-        <div className="bg-white rounded-[16px] divide-y divide-gray-100 overflow-hidden"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
+        <div className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
+          style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}>
           {menuItems.map(item => (
             <button
               key={item.route}
               onClick={() => navigate(item.route)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-gray-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-bg-subtle transition-colors"
             >
               <div
                 className="w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0"
@@ -111,8 +113,8 @@ export function SettingsPage() {
                 {item.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-gray-900">{item.label}</p>
-                <p className="text-[11px] text-gray-500 truncate">{item.desc}</p>
+                <p className="text-[14px] font-semibold text-text">{item.label}</p>
+                <p className="text-[11px] text-muted truncate">{item.desc}</p>
               </div>
               <ChevronRight size={18} className="text-gray-300 shrink-0" />
             </button>
@@ -120,8 +122,8 @@ export function SettingsPage() {
         </div>
 
         {/* DB Diagnostics */}
-        <div className="bg-white rounded-[16px] overflow-hidden"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
+        <div className="bg-surface rounded-[16px] overflow-hidden border border-border"
+          style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}>
           <div className="px-4 py-3">
             <DatabaseDiagnostics />
           </div>

@@ -51,7 +51,7 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+      boxShadow: '0 1px 2px var(--shadow-color)',
       textAlign: 'left',
       cursor: 'pointer',
     }}

@@ -62,11 +62,11 @@ export function BudgetSettingsPage() {
 
   if (isLoading && categories.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] px-4 pt-10 pb-20 space-y-4">
-        <div className="h-10 bg-gray-200 rounded w-1/3 animate-pulse" />
+      <div className="min-h-screen bg-bg px-4 pt-10 pb-20 space-y-4">
+        <div className="h-10 bg-surface-muted rounded w-1/3 animate-pulse" />
         <div className="flex space-x-2 mt-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="flex-1 h-20 bg-gray-200 rounded-[12px] animate-pulse" />
+            <div key={i} className="flex-1 h-20 bg-surface-muted rounded-[12px] animate-pulse" />
           ))}
         </div>
         {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
@@ -80,13 +80,13 @@ export function BudgetSettingsPage() {
 
   if (!isLoading && categories.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex flex-col items-center justify-center p-8 text-center space-y-6">
-        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-8 text-center space-y-6">
+        <div className="w-16 h-16 bg-surface-muted rounded-full flex items-center justify-center text-muted">
           <Wallet size={48} />
         </div>
         <div className="space-y-2">
-          <h3 className="text-[16px] font-semibold text-gray-900">{t('budgets.no_categories')}</h3>
-          <p className="text-[13px] text-gray-500 max-w-[240px]">
+          <h3 className="text-[16px] font-semibold text-text">{t('budgets.no_categories')}</h3>
+          <p className="text-[13px] text-muted max-w-[240px]">
             {t('budgets.no_categories_hint')}
           </p>
         </div>
@@ -101,14 +101,14 @@ export function BudgetSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]" style={{ padding: '0 16px' }}>
-      <div className="sticky top-0 z-20 -mx-4 bg-[#F5F7FA] px-4 pb-4 shadow-[0_1px_0_rgba(15,23,42,0.06)]">
+    <div className="min-h-screen bg-bg" style={{ padding: '0 16px' }}>
+      <div className="sticky top-0 z-20 -mx-4 bg-bg px-4 pb-4 shadow-[0_1px_0_var(--border)]">
         {/* Header */}
         <header className="pt-4 pb-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
-              <h1 className="min-w-0 truncate text-[20px] font-bold leading-tight text-gray-900">
+              <h1 className="min-w-0 truncate text-[20px] font-bold leading-tight text-text">
                 {t('budgets.title')}
               </h1>
             </div>
@@ -131,7 +131,7 @@ export function BudgetSettingsPage() {
               className={`flex-1 py-2 rounded-[10px] text-[13px] font-semibold transition-colors ${
                 activeTab === 'all'
                   ? 'bg-indigo-500 text-white'
-                  : 'bg-white text-gray-600 border border-gray-200'
+                  : 'bg-surface text-muted border border-border'
               }`}
             >
               {t('budgets.all')}
@@ -141,7 +141,7 @@ export function BudgetSettingsPage() {
               className={`flex-1 py-2 rounded-[10px] text-[13px] font-semibold transition-colors ${
                 activeTab === 'account_type'
                   ? 'bg-orange-500 text-white'
-                  : 'bg-white text-gray-600 border border-gray-200'
+                  : 'bg-surface text-muted border border-border'
               }`}
             >
               {t('budgets.account_type_tab')}

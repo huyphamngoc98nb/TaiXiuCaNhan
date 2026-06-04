@@ -56,7 +56,7 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
             background: 'var(--surface)',
             borderRadius: '14px',
             border: '1px solid var(--border)',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            boxShadow: '0 1px 3px var(--shadow-color)',
             opacity: isActive ? 1 : 0.55,
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -72,7 +72,7 @@ export const RecurringBillList: React.FC<Props> = ({ bills, onEdit, onDelete, on
                 </div>
               </div>
 
-              <div style={{ fontWeight: '700', fontSize: '1.1rem', color: '#e11d48', marginLeft: '12px', flexShrink: 0 }}>
+              <div style={{ fontWeight: '700', fontSize: '1.1rem', color: 'var(--danger)', marginLeft: '12px', flexShrink: 0 }}>
                 {formatAmount(bill.amount)}
               </div>
             </div>

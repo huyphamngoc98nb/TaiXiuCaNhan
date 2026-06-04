@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
 import './ConfirmDialog.css';
 
 interface ConfirmDialogProps {
@@ -18,6 +19,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   confirmText = 'Yes',
   cancelText = 'No'
 }) => {
+  useBodyScrollLock(true);
+
   return (
     <div className="confirm-overlay" onClick={onCancel}>
       <div className="confirm-dialog" onClick={e => e.stopPropagation()}>

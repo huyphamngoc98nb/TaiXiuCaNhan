@@ -15,7 +15,7 @@ const PIN_CLEAR_DELAY_MS = 750;
 const DELETE_HOLD_DELAY_MS = 320;
 const DELETE_REPEAT_MS = 80;
 const PIN_KEY_BUTTON_CLASS =
-  'flex aspect-square items-center justify-center rounded-2xl bg-white text-[26px] font-semibold text-[#16171D] shadow-[0_8px_22px_rgba(17,24,39,0.10),0_1px_2px_rgba(17,24,39,0.08)] transition-[transform,background-color,box-shadow] duration-100 active:scale-[0.94] active:bg-[#E7EEF8] active:shadow-[0_3px_10px_rgba(17,24,39,0.12)] disabled:opacity-50';
+  'flex aspect-square items-center justify-center rounded-2xl bg-surface text-[26px] font-semibold text-text shadow-[0_8px_22px_var(--shadow-color),0_1px_2px_var(--shadow-color)] transition-[transform,background-color,box-shadow] duration-100 active:scale-[0.94] active:bg-surface-muted active:shadow-[0_3px_10px_var(--shadow-color)] disabled:opacity-50';
 type UnlockMode = 'loading' | 'setup' | 'confirm' | 'unlock';
 
 export function AppUnlock({ onUnlocked }: AppUnlockProps) {
@@ -245,7 +245,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F5F7] text-[#1A1B22]">
+    <div className="flex min-h-screen flex-col bg-bg text-text">
       <style>
         {`
           @keyframes pin-dot-row-shake {
@@ -263,19 +263,19 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
           className="w-full max-w-[390px]"
         >
           <div className="flex flex-col items-center text-center">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-surface shadow-[0_10px_30px_var(--shadow-color)]">
               <LockKeyhole
                 size={30}
                 strokeWidth={2.35}
-                className="text-[#4A6FA5]"
+                className="text-primary"
                 aria-hidden="true"
               />
             </div>
 
-            <h1 className="text-center text-[24px] font-extrabold leading-[30px] text-[#1A1B22]">
+            <h1 className="text-center text-[24px] font-extrabold leading-[30px] text-text">
               {mode === 'setup' ? t('app_lock.setup_title') : mode === 'confirm' ? t('app_lock.confirm_title') : t('app_lock.unlock_title')}
             </h1>
-            <p className="mt-2 max-w-[260px] text-center text-[14px] font-normal leading-5 text-[#454653]">
+            <p className="mt-2 max-w-[260px] text-center text-[14px] font-normal leading-5 text-muted">
               {mode === 'setup'
                 ? t('app_lock.setup_desc')
                 : mode === 'confirm'
@@ -313,11 +313,11 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
                   <span
                     key={index}
                     className={`flex h-[22px] w-[22px] items-center justify-center rounded-full border transition-colors duration-150 ${
-                      isFilled ? 'border-[#2F5F9D] bg-[#DCE8F7]' : 'border-[#C3CBD8] bg-[#EEF1F5]'
+                      isFilled ? 'border-primary bg-[var(--primary-soft)]' : 'border-border bg-surface-muted'
                     }`}
                   >
                     <span
-                      className={`h-[14px] w-[14px] rounded-full bg-[#245A99] shadow-[0_2px_7px_rgba(36,90,153,0.30)] transition-all duration-200 ease-out ${
+                      className={`h-[14px] w-[14px] rounded-full bg-primary shadow-[0_2px_7px_rgba(99,102,241,0.30)] transition-all duration-200 ease-out ${
                         isFilled ? 'scale-100 opacity-100' : 'scale-[0.35] opacity-0'
                       }`}
                     />
@@ -327,7 +327,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
             </div>
 
             <p
-              className={`mt-2 min-h-5 text-center text-[13px] font-semibold text-[#BA1A1A] transition-opacity duration-150 ${
+              className={`mt-2 min-h-5 text-center text-[13px] font-semibold text-rose-500 transition-opacity duration-150 ${
                 error ? 'opacity-100' : 'opacity-0'
               }`}
               role={error ? 'alert' : undefined}
@@ -370,7 +370,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
               onPointerCancel={stopDeleteHold}
               onPointerLeave={stopDeleteHold}
               disabled={inputLocked || pin.length === 0}
-              className={`${PIN_KEY_BUTTON_CLASS} text-[#20222A] disabled:opacity-40`}
+              className={`${PIN_KEY_BUTTON_CLASS} disabled:opacity-40`}
               aria-label={t('app_lock.delete_digit')}
             >
               <Delete size={31} strokeWidth={2.35} />
@@ -381,7 +381,7 @@ export function AppUnlock({ onUnlocked }: AppUnlockProps) {
             type="button"
             onClick={() => void unlockFromBiometrics()}
             disabled={inputLocked || mode !== 'unlock'}
-            className="mx-auto mt-7 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-bold text-[#2F5F9D] transition-[transform,background-color] duration-100 active:scale-[0.94] active:bg-[#E0EAF6] disabled:opacity-50"
+            className="mx-auto mt-7 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-bold text-primary transition-[transform,background-color] duration-100 active:scale-[0.94] active:bg-[var(--primary-soft)] disabled:opacity-50"
             aria-label="Dùng sinh trắc học"
           >
             <Fingerprint size={27} strokeWidth={2.35} />

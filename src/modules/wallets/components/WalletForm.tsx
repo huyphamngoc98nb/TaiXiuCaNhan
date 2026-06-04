@@ -140,7 +140,11 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        data-modal-scroll-container="true"
+        className="form-scroll-container min-h-0 max-h-full flex-1 space-y-5"
+      >
         {error && (
           <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-[12px] text-[13px] text-red-600 font-medium">
             {error}

@@ -90,7 +90,10 @@ export function BudgetAddSheet({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div
+        data-modal-scroll-container="true"
+        className="form-scroll-container min-h-0 max-h-full flex-1 pr-1"
+      >
         <div className="space-y-6 pb-4">
           {/* Category Picker */}
           <div className="space-y-1.5">

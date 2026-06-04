@@ -338,7 +338,7 @@ export function TransactionList({
                       background: 'var(--surface)',
                       borderRadius: '10px',
                       border: '1px solid var(--border)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                      boxShadow: '0 1px 2px var(--shadow-color)',
                       overflow: 'hidden',
                     }}
                   >
@@ -414,7 +414,7 @@ export function TransactionList({
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '8px',
-                          background: '#f1f5f9',
+                          background: 'var(--bg-subtle)',
                           borderTop: '1px solid var(--border)',
                           padding: '8px',
                         }}
@@ -432,8 +432,8 @@ export function TransactionList({
                             }
                             style={{
                               padding: '9px 12px',
-                              background: '#e2e8f0',
-                              border: '1px solid #cbd5e1',
+                              background: 'var(--surface-muted)',
+                              border: '1px solid var(--border)',
                               borderRadius: '8px',
                               display: 'flex',
                               justifyContent: 'space-between',
@@ -505,7 +505,7 @@ export function TransactionList({
                       background: 'var(--surface)',
                       borderRadius: '10px',
                       border: '1px solid var(--border)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                      boxShadow: '0 1px 2px var(--shadow-color)',
                       overflow: 'hidden',
                     }}
                   >
@@ -582,7 +582,7 @@ export function TransactionList({
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '8px',
-                          background: '#f1f5f9',
+                          background: 'var(--bg-subtle)',
                           borderTop: '1px solid var(--border)',
                           padding: '8px',
                         }}
@@ -600,8 +600,8 @@ export function TransactionList({
                             }
                             style={{
                               padding: '9px 12px',
-                              background: '#e2e8f0',
-                              border: '1px solid #cbd5e1',
+                              background: 'var(--surface-muted)',
+                              border: '1px solid var(--border)',
                               borderRadius: '8px',
                               display: 'flex',
                               justifyContent: 'space-between',

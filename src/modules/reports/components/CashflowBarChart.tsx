@@ -86,56 +86,64 @@ export const CashflowBarChart: React.FC<Props> = ({ data }) => {
         <ResponsiveContainer width="100%" height="100%">
           {view === 'cashflow' ? (
             <BarChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }} barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
               <XAxis
                 dataKey="period"
                 axisLine={false}
                 tickLine={false}
                 interval="preserveStartEnd"
                 minTickGap={14}
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
+                tick={{ fontSize: 11, fill: 'var(--text-subtle)' }}
                 tickFormatter={formatPeriod}
                 tickMargin={8}
               />
               <Tooltip
                 formatter={fmtTooltip}
                 labelFormatter={formatPeriod}
-                cursor={{ fill: '#f9fafb' }}
+                cursor={{ fill: 'var(--bg-subtle)' }}
                 contentStyle={{
                   borderRadius: 12,
-                  border: '1px solid #e5e7eb',
-                  boxShadow: '0 8px 20px rgba(15,23,42,0.08)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--surface)',
+                  boxShadow: '0 8px 20px var(--shadow-color)',
+                  color: 'var(--text)',
                   fontSize: 12,
                 }}
+                labelStyle={{ color: 'var(--text)' }}
+                itemStyle={{ color: 'var(--text)' }}
               />
               <Bar dataKey="income" fill="#10B981" name={t('reports.bar_income')} radius={[3, 3, 0, 0]} maxBarSize={26} />
               <Bar dataKey="expense" fill="#EF4444" name={t('reports.bar_expense')} radius={[3, 3, 0, 0]} maxBarSize={26} />
             </BarChart>
           ) : (
             <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
               <XAxis
                 dataKey="period"
                 axisLine={false}
                 tickLine={false}
                 interval="preserveStartEnd"
                 minTickGap={14}
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
+                tick={{ fontSize: 11, fill: 'var(--text-subtle)' }}
                 tickFormatter={formatPeriod}
                 tickMargin={8}
               />
               <Tooltip
                 formatter={fmtTooltip}
                 labelFormatter={formatPeriod}
-                cursor={{ stroke: '#d1d5db' }}
+                cursor={{ stroke: 'var(--border-strong)' }}
                 contentStyle={{
                   borderRadius: 12,
-                  border: '1px solid #e5e7eb',
-                  boxShadow: '0 8px 20px rgba(15,23,42,0.08)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--surface)',
+                  boxShadow: '0 8px 20px var(--shadow-color)',
+                  color: 'var(--text)',
                   fontSize: 12,
                 }}
+                labelStyle={{ color: 'var(--text)' }}
+                itemStyle={{ color: 'var(--text)' }}
               />
-              <Area type="monotone" dataKey="balance" name={t('reports.balance')} stroke="#2563EB" fill="#DBEAFE" strokeWidth={2} />
+              <Area type="monotone" dataKey="balance" name={t('reports.balance')} stroke="var(--primary)" fill="var(--primary-soft)" strokeWidth={2} />
             </AreaChart>
           )}
       </ResponsiveContainer>

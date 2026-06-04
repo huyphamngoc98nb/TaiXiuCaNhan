@@ -70,8 +70,8 @@ export function BiometricUnlockSettings() {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-semibold text-gray-900">{t('settings.biometric_unlock')}</p>
-        <p className="text-[11px] text-gray-500 truncate">
+        <p className="text-[14px] font-semibold text-text">{t('settings.biometric_unlock')}</p>
+        <p className="text-[11px] text-muted truncate">
           {available
             ? t('settings.biometric_available_desc')
             : t('settings.biometric_unavailable_desc')}
@@ -80,14 +80,15 @@ export function BiometricUnlockSettings() {
 
       <span
         className={`w-12 h-6 rounded-full transition-colors flex items-center px-1 ${
-          enabled ? 'bg-indigo-500' : 'bg-gray-300'
+          enabled ? 'bg-indigo-500' : 'bg-surface-muted'
         }`}
         aria-hidden="true"
       >
         <span
-          className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${
+          className={`w-4 h-4 rounded-full shadow transition-transform ${
             enabled ? 'translate-x-6' : 'translate-x-0'
           }`}
+          style={{ background: '#ffffff' }}
         />
       </span>
     </button>

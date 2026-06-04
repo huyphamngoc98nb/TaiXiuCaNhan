@@ -161,15 +161,15 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gray-50 px-4 py-4">
-        <div className="h-[220px] animate-pulse rounded-[16px] bg-gray-200" />
+      <div className="min-h-full bg-bg px-4 py-4">
+        <div className="h-[220px] animate-pulse rounded-[16px] bg-surface-muted" />
       </div>
     );
   }
 
   if (error || !loan) {
     return (
-      <div className="min-h-full bg-gray-50 px-4 py-4">
+      <div className="min-h-full bg-bg px-4 py-4">
         <div className="mb-4">
           <BackButton onClick={() => navigate(-1)} ariaLabel="Quay lại" />
         </div>
@@ -181,12 +181,12 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
   }
 
   return (
-    <div className="min-h-full bg-gray-50 pb-24">
-      <div className="sticky top-0 z-20 bg-gray-50 px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
+    <div className="min-h-full bg-bg pb-24">
+      <div className="sticky top-0 z-20 bg-bg px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
         <div className="flex items-center gap-3">
           <BackButton onClick={() => navigate(-1)} ariaLabel="Quay lại" />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-[20px] font-extrabold text-gray-900">
+            <h1 className="truncate text-[20px] font-extrabold text-text">
               {loan.contact_name}
             </h1>
             <p className="text-[12px] font-medium text-gray-500">
@@ -197,13 +197,13 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
       </div>
 
       <div className="space-y-4 px-4 pt-4">
-        <section className="rounded-[16px] border border-gray-200 bg-white p-4 shadow-sm">
+        <section className="rounded-[16px] border border-border bg-surface p-4 shadow-sm">
           <div className="mb-4 flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-[12px] font-semibold uppercase tracking-wide text-gray-400">
                 Người liên hệ
               </p>
-              <p className="mt-1 truncate text-[18px] font-extrabold text-gray-900">
+              <p className="mt-1 truncate text-[18px] font-extrabold text-text">
                 {loan.contact_name}
               </p>
               {loan.contact_info && (
@@ -225,13 +225,13 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-[12px] bg-gray-50 p-3">
+            <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="text-[12px] font-semibold text-gray-400">Gốc</p>
-              <p className="mt-1 text-[15px] font-extrabold text-gray-900">
+              <p className="mt-1 text-[15px] font-extrabold text-text">
                 {formatVnd(loan.principal)}
               </p>
             </div>
-            <div className="rounded-[12px] bg-gray-50 p-3">
+            <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="text-[12px] font-semibold text-gray-400">Còn lại</p>
               <p className="mt-1 text-[15px] font-extrabold text-rose-600">
                 {formatVnd(loan.remaining)}
@@ -240,7 +240,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <div className="rounded-[12px] bg-gray-50 p-3">
+            <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-400">
                 <CalendarDays size={14} />
                 Hạn trả
@@ -249,7 +249,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
                 {formatIsoDate(loan.due_date)}
               </p>
             </div>
-            <div className="rounded-[12px] bg-gray-50 p-3">
+            <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-400">
                 <CircleDollarSign size={14} />
                 Đã trả
@@ -261,7 +261,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           </div>
 
           {loan.note && (
-            <div className="mt-3 rounded-[12px] bg-gray-50 p-3 text-[13px] font-medium text-gray-600">
+            <div className="mt-3 rounded-[12px] bg-bg-subtle p-3 text-[13px] font-medium text-muted">
               {loan.note}
             </div>
           )}
@@ -309,9 +309,9 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
         </button>
 
         <section>
-          <h2 className="mb-3 text-[16px] font-extrabold text-gray-900">Thanh toán</h2>
+          <h2 className="mb-3 text-[16px] font-extrabold text-text">Thanh toán</h2>
           {payments.length === 0 ? (
-            <div className="rounded-[14px] border border-dashed border-gray-200 bg-white px-4 py-8 text-center text-[13px] font-medium text-gray-400">
+            <div className="rounded-[14px] border border-dashed border-border bg-surface px-4 py-8 text-center text-[13px] font-medium text-subtle">
               Chưa có thanh toán nào.
             </div>
           ) : (
@@ -319,7 +319,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
               {payments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="rounded-[14px] border border-gray-200 bg-white px-4 py-3 shadow-sm"
+                  className="rounded-[14px] border border-border bg-surface px-4 py-3 shadow-sm"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-[15px] font-extrabold text-emerald-600">
@@ -359,8 +359,8 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
       <BottomSheet isOpen={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <div className="space-y-4">
           <div>
-            <h3 className="text-[18px] font-bold text-gray-900">Xoá khoản này</h3>
-            <p className="mt-1 text-[12px] font-medium text-gray-500">
+            <h3 className="text-[18px] font-bold text-text">Xoá khoản này</h3>
+            <p className="mt-1 text-[12px] font-medium text-muted">
               Giao dịch trong ví vẫn được giữ lại như lịch sử thực tế.
             </p>
           </div>
@@ -369,7 +369,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             type="button"
             onClick={() => void performDelete('soft')}
             disabled={mutationLoading || loan.deleted_at != null}
-            className="h-[48px] w-full rounded-[14px] bg-gray-100 text-[14px] font-bold text-gray-700 active:scale-[0.98] disabled:opacity-50"
+            className="h-[48px] w-full rounded-[14px] bg-surface-muted text-[14px] font-bold text-muted active:scale-[0.98] disabled:opacity-50"
           >
             Ẩn khỏi danh sách
           </button>

@@ -30,8 +30,8 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
 
   return (
     <div
-      className="bg-white rounded-xl p-4 mb-2 cursor-pointer"
-      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}
+      className="bg-surface rounded-xl border border-border p-4 mb-2 cursor-pointer"
+      style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}
       onClick={onClick}
     >
       {/* Row 1 */}

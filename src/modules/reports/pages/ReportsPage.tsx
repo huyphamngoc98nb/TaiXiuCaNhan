@@ -173,14 +173,14 @@ export const ReportsPage = () => {
   ];
 
   return (
-    <div className="mx-auto max-w-4xl p-4 pb-24">
+    <div className="mx-auto min-h-full max-w-4xl bg-bg p-4 pb-24 text-text">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t('reports.title')}</h1>
+        <h1 className="text-2xl font-bold text-text">{t('reports.title')}</h1>
         <button
           onClick={() => navigate(ROUTES.EXPORT)}
           aria-label={t('reports.export')}
           title={t('reports.export')}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors active:bg-gray-200"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-muted transition-colors active:bg-border"
         >
           <FileText size={19} />
         </button>
@@ -204,7 +204,7 @@ export const ReportsPage = () => {
       )}
 
       {loading ? (
-        <div className="mb-5 rounded-[18px] bg-white p-5 text-sm text-gray-500 shadow-sm">{t('reports.loading_summaries')}</div>
+        <div className="mb-5 rounded-[18px] border border-border bg-surface p-5 text-sm text-muted shadow-sm">{t('reports.loading_summaries')}</div>
       ) : (
         <div className="mb-4 rounded-[18px] bg-gray-900 p-5 text-white shadow-sm">
           <div className="mb-2 flex items-center justify-between gap-3">
@@ -253,15 +253,15 @@ export const ReportsPage = () => {
             {insightItems.map(item => {
               const Icon = item.icon;
               return (
-                <div key={item.label} className="flex items-center gap-3 rounded-[14px] border border-gray-100 bg-white p-3 shadow-sm">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+                <div key={item.label} className="flex items-center gap-3 rounded-[14px] border border-border bg-surface p-3 shadow-sm">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted">
                     <Icon size={17} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[12px] font-semibold uppercase text-gray-400">{item.label}</div>
-                    <div className="truncate text-[14px] font-bold text-gray-900">{item.value}</div>
+                    <div className="truncate text-[14px] font-bold text-text">{item.value}</div>
                   </div>
-                  {item.detail && <div className="max-w-[38%] text-right text-[12px] font-semibold text-gray-500">{item.detail}</div>}
+                  {item.detail && <div className="max-w-[38%] text-right text-[12px] font-semibold text-muted">{item.detail}</div>}
                 </div>
               );
             })}

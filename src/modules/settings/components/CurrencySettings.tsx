@@ -23,7 +23,7 @@ export const CurrencySettings: React.FC = () => {
         value={currency}
         onChange={(value) => setCurrency(value)}
         ariaLabel={t('settings.currency')}
-        buttonClassName="bg-white"
+        buttonClassName="bg-surface"
         options={CURRENCIES.map((c) => {
           const label = language === 'vi' ? c.name_vi : c.name_en;
           return {

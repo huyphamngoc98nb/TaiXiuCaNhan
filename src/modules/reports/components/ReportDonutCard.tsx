@@ -211,7 +211,7 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
                 <Cell
                   key={item.id}
                   fill={item.color}
-                  stroke={selectedId === item.id ? '#111827' : '#ffffff'}
+                  stroke={selectedId === item.id ? 'var(--text)' : 'var(--surface)'}
                   strokeWidth={selectedId === item.id ? 3 : 1.5}
                   opacity={!selectedId || selectedId === item.id ? 1 : 0.45}
                   style={{ cursor: 'pointer', outline: 'none' }}

@@ -11,7 +11,7 @@ export function BackButton({ ariaLabel, onClick }: BackButtonProps) {
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors active:bg-gray-200"
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted transition-colors active:bg-border"
     >
       <ArrowLeft size={20} />
     </button>

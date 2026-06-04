@@ -70,7 +70,10 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
           </div>
         </div>
 
-        <div className="max-h-[42vh] overflow-y-auto pr-1">
+        <div
+          data-modal-scroll-container="true"
+          className="form-scroll-container max-h-[42vh] pr-1"
+        >
           {matchingIcons.length === 0 ? (
             <div className="py-8 text-center text-[13px] text-gray-400">
               {t('categories.no_matching_icons')}

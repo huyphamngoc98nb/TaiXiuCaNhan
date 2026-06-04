@@ -27,14 +27,14 @@ export function AddRecurringBillPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
+    <div className="min-h-screen bg-bg">
       <div className="flex items-center gap-3 px-4 pt-4 pb-4">
         <BackButton onClick={() => navigate(ROUTES.RECURRING_BILLS)} ariaLabel={t('common.back')} />
-        <h2 className="text-[18px] font-bold text-gray-900">{t('recurring_bills.new')}</h2>
+        <h2 className="text-[18px] font-bold text-text">{t('recurring_bills.new')}</h2>
       </div>
 
       <div className="px-4 pb-24">
-        <div className="rounded-[16px] border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-[16px] border border-border bg-surface p-5 shadow-sm">
           <RecurringBillForm
             onSave={handleSave}
             onCancel={() => navigate(ROUTES.RECURRING_BILLS)}

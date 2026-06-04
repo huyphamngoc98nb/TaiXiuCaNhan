@@ -142,12 +142,12 @@ export function LoanListPage() {
   }
 
   return (
-    <div className="min-h-full bg-gray-50 pb-24">
-      <div className="sticky top-0 z-20 bg-gray-50 px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
+    <div className="min-h-full bg-bg pb-24">
+      <div className="sticky top-0 z-20 bg-bg px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
         <div className="mb-4 flex items-center gap-3">
           <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel="Quay lại" />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-[22px] font-extrabold text-gray-900">
+            <h1 className="truncate text-[22px] font-extrabold text-text">
               Cho vay & Vay nợ
             </h1>
           </div>
@@ -161,7 +161,7 @@ export function LoanListPage() {
           </button>
         </div>
 
-        <div className="flex h-[44px] gap-1 overflow-x-auto rounded-[12px] bg-gray-100 p-1">
+        <div className="flex h-[44px] gap-1 overflow-x-auto rounded-[12px] bg-surface-muted p-1">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.id}
@@ -169,8 +169,8 @@ export function LoanListPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`min-w-fit flex-1 rounded-[9px] px-3 text-[13px] font-bold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-white text-indigo-600 shadow-sm'
-                  : 'text-gray-500'
+                  ? 'bg-surface text-indigo-600 shadow-sm'
+                  : 'text-muted'
               }`}
             >
               {tab.label}
@@ -178,8 +178,8 @@ export function LoanListPage() {
           ))}
         </div>
 
-        <label className="mt-3 flex items-center justify-between gap-3 rounded-[12px] bg-white px-3 py-2 shadow-sm">
-          <span className="text-[12px] font-bold text-gray-600">Hiện khoản đã ẩn</span>
+        <label className="mt-3 flex items-center justify-between gap-3 rounded-[12px] border border-border bg-surface px-3 py-2 shadow-sm">
+          <span className="text-[12px] font-bold text-muted">Hiện khoản đã ẩn</span>
           <input
             type="checkbox"
             checked={showDeleted}
@@ -193,7 +193,7 @@ export function LoanListPage() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-[154px] animate-pulse rounded-[14px] bg-gray-200" />
+              <div key={item} className="h-[154px] animate-pulse rounded-[14px] bg-surface-muted" />
             ))}
           </div>
         ) : error ? (
@@ -202,7 +202,7 @@ export function LoanListPage() {
           </div>
         ) : loans.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-[15px] font-bold text-gray-500">Chưa có khoản nào. Nhấn + để thêm</p>
+            <p className="text-[15px] font-bold text-muted">Chưa có khoản nào. Nhấn + để thêm</p>
           </div>
         ) : (
           <div className="space-y-3">

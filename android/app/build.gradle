@@ -5,8 +5,79 @@ import groovy.json.JsonSlurper
 // Xem docs/versioning.md để hiểu quy ước 3 lớp.
 // KHÔNG sửa versionCode/versionName trực tiếp ở đây.
 // ─────────────────────────────────────────────────────────────
-def versionConfigFile = file("${rootProject.projectDir}/../version.config.json")
-def versionConfig = new groovy.json.JsonSlurper().parse(versionConfigFile)
+def repoRootDir = rootProject.projectDir.parentFile
+def androidVersionScript = new File(repoRootDir, "scripts/bump-android-version.cjs")
+def releaseAssembleRequested = gradle.startParameter.taskNames.any { requestedTask ->
+    def normalizedTask = requestedTask.replace('\\', '/').toLowerCase()
+    normalizedTask == "assemblerelease" || normalizedTask.endsWith(":assemblerelease") || normalizedTask.endsWith("/assemblerelease")
+}
+def skipAndroidVersionBump = providers.gradleProperty("skipAndroidVersionBump").map { it.toBoolean() }.orElse(false).get()
+ext.androidReleaseVersionBumped = false
+
+// Android captures versionCode/versionName while Gradle configures the project.
+// The release bump must happen before reading the version source, not only as a task dependency.
+if (releaseAssembleRequested && !gradle.startParameter.dryRun && !skipAndroidVersionBump) {
+    logger.lifecycle("[android-version] Bumping version before assembleRelease")
+    exec {
+        workingDir repoRootDir
+        commandLine "node", androidVersionScript.absolutePath
+    }
+    ext.androidReleaseVersionBumped = true
+}
+
+tasks.register("bumpAndroidReleaseVersion", Exec) {
+    group = "versioning"
+    description = "Bumps Android versionCode and versionName from the configured version source."
+    workingDir repoRootDir
+    commandLine "node", androidVersionScript.absolutePath
+    onlyIf { !project.ext.androidReleaseVersionBumped && !skipAndroidVersionBump }
+}
+
+tasks.matching { it.name == "assembleRelease" }.configureEach {
+    dependsOn("bumpAndroidReleaseVersion")
+}
+
+def firstExistingVersionKey = { Map data, List<String> keys ->
+    keys.find { key -> data.containsKey(key) }
+}
+
+def readAndroidVersion = {
+    def versionConfigFile = new File(repoRootDir, "version.config.json")
+    def packageJsonFile = new File(repoRootDir, "package.json")
+    def jsonSlurper = new JsonSlurper()
+    def sourceFile
+    def sourceData
+    def versionNameKeys
+    def versionCodeKeys
+
+    if (versionConfigFile.exists()) {
+        sourceFile = versionConfigFile
+        sourceData = jsonSlurper.parse(versionConfigFile)
+        versionNameKeys = ["nativeVersionName", "versionName", "version"]
+        versionCodeKeys = ["nativeVersionCode", "versionCode", "build", "androidVersionCode"]
+    } else if (packageJsonFile.exists()) {
+        sourceFile = packageJsonFile
+        sourceData = jsonSlurper.parse(packageJsonFile)
+        versionNameKeys = ["versionName", "version"]
+        versionCodeKeys = ["androidVersionCode", "versionCode", "build"]
+    } else {
+        throw new GradleException("No version.config.json or package.json found at repository root.")
+    }
+
+    def versionNameKey = firstExistingVersionKey(sourceData, versionNameKeys)
+    def versionCodeKey = firstExistingVersionKey(sourceData, versionCodeKeys)
+
+    if (versionNameKey == null || versionCodeKey == null) {
+        throw new GradleException("${sourceFile.name} must define Android version name and version code fields.")
+    }
+
+    return [
+        nativeVersionName: sourceData[versionNameKey].toString(),
+        nativeVersionCode: sourceData[versionCodeKey] as Integer
+    ]
+}
+
+def versionConfig = readAndroidVersion()
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 
