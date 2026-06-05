@@ -75,7 +75,7 @@ export function useTransactionForm(existing?: Transaction) {
              AND TRIM(name) <> ''
            ORDER BY sort_order ASC, name ASC`
         );
-        const { values: categories } = await db.query('SELECT id, name, type FROM categories');
+        const { values: categories } = await db.query('SELECT id, name, type, slug FROM categories');
         
         const loadedWallets = wallets || [];
         const loadedCategories = categories || [];

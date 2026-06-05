@@ -16,6 +16,38 @@ interface Props {
   pinTypeSelector?: boolean;
 }
 
+const HIDDEN_MANUAL_TRANSACTION_CATEGORY_KEYS = new Set([
+  'cho_vay',
+  'vay_no',
+  'thu_no',
+  'tra_no',
+]);
+
+interface TransactionFormCategoryOption {
+  id: string;
+  name: string;
+  type: string;
+  slug?: string | null;
+}
+
+function normalizeCategoryFilterKey(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function isHiddenManualTransactionCategory(category: TransactionFormCategoryOption): boolean {
+  const keys = [category.slug, category.name]
+    .filter((value): value is string => Boolean(value))
+    .map(normalizeCategoryFilterKey);
+
+  return keys.some((key) => HIDDEN_MANUAL_TRANSACTION_CATEGORY_KEYS.has(key));
+}
+
 function blurActiveEditableElement() {
   const activeElement = document.activeElement;
   if (!(activeElement instanceof HTMLElement)) return;
@@ -195,10 +227,12 @@ export function TransactionForm({
             options={[
               { value: '', label: t('form.select_category'), disabled: true },
               ...options.categories
-                .filter((category: { id: string; type: string }) => (
-                  category.id !== TRANSFER_CATEGORY_ID && category.type === formData.type
+                .filter((category: TransactionFormCategoryOption) => (
+                  category.id !== TRANSFER_CATEGORY_ID
+                    && category.type === formData.type
+                    && !isHiddenManualTransactionCategory(category)
                 ))
-                .map((category: { id: string; name: string }) => ({
+                .map((category: TransactionFormCategoryOption) => ({
                   value: category.id,
                   label: category.name,
                 })),

@@ -59,6 +59,7 @@ export function DropdownList<T extends string>({
     () => options.find((option) => option.value === value),
     [options, value],
   );
+  const isPlaceholderValue = !selected || selected.disabled;
 
   const updateMenuPosition = () => {
     const rect = buttonRef.current?.getBoundingClientRect();
@@ -172,7 +173,9 @@ export function DropdownList<T extends string>({
         }}
         className={`w-full min-h-[48px] flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg-subtle px-4 text-left text-[14px] font-semibold text-text shadow-sm outline-none transition-colors active:bg-surface-muted focus:border-primary disabled:cursor-not-allowed disabled:opacity-60 ${buttonClassName}`}
       >
-        <span className="min-w-0 flex-1 truncate">{selected?.label ?? placeholder}</span>
+        <span className={`min-w-0 flex-1 truncate ${isPlaceholderValue ? 'font-medium text-subtle' : 'text-text'}`}>
+          {selected?.label ?? placeholder}
+        </span>
         <ChevronDown
           size={18}
           className={`shrink-0 text-subtle transition-transform ${isOpen ? 'rotate-180' : ''}`}
