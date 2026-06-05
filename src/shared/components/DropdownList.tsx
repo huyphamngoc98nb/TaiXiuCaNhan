@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, ChevronDown } from 'lucide-react';
 import { registerAppBackHandler } from '@/shared/utils/app-back-stack';
 
@@ -89,7 +90,8 @@ export function DropdownList<T extends string>({
     updateMenuPosition();
 
     const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) {
         setIsOpen(false);
       }
     };
@@ -183,7 +185,7 @@ export function DropdownList<T extends string>({
         />
       </button>
 
-      {isOpen && (
+      {isOpen && createPortal(
         <div
           ref={menuRef}
           id={`${id}-listbox`}
@@ -213,7 +215,8 @@ export function DropdownList<T extends string>({
               </button>
             );
           })}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

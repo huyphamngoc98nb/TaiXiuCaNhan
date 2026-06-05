@@ -121,9 +121,19 @@ body.body-scroll-locked .main-content {
 }
 
 .form-scroll-container {
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
+  contain: layout paint;
+  touch-action: pan-y;
+}
+
+.form-scroll-container[aria-hidden="true"],
+.form-scroll-container.hidden {
+  overflow: hidden;
+  pointer-events: none;
 }
 
 /* Minimal Utilities */

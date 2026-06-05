@@ -22,6 +22,7 @@ import { ROUTES } from '@/shared/constants/routes';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
+import { useScrollRestoration } from '@/shared/hooks/useScrollRestoration';
 import { consumeAppBackButton } from '@/shared/utils/app-back-stack';
 import { getParentRoute } from '@/shared/utils/route-parent';
 import './MainLayout.css';
@@ -86,6 +87,9 @@ export function MainLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDrawerOnHome, setOpenDrawerOnHome] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | 'none'>('none');
+  const mainContentRef = useScrollRestoration<HTMLElement>(
+    `${location.pathname}${location.search}`,
+  );
   const drawerSheetRef = useRef<HTMLDivElement>(null);
   const drawerOpenRef = useRef(drawerOpen);
   const confirmingExitRef = useRef(false);
@@ -221,7 +225,7 @@ export function MainLayout() {
 
   return (
     <div className="app-container">
-      <main className="main-content">
+      <main ref={mainContentRef} className="main-content">
         <div
           key={location.pathname}
           className={`main-content-page main-content-page--slide-${slideDirection}`}

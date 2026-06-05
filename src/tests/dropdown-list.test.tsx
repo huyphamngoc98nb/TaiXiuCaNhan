@@ -33,4 +33,26 @@ describe('DropdownList', () => {
     expect(document.activeElement).not.toBe(amountInput);
     expect(screen.getByRole('listbox', { name: 'Category' })).toBeTruthy();
   });
+
+  it('keeps portaled menu options clickable', () => {
+    const onChange = vi.fn();
+
+    render(
+      <DropdownList
+        value=""
+        onChange={onChange}
+        ariaLabel="Category"
+        placeholder="Select category"
+        options={[
+          { value: '', label: 'Select category', disabled: true },
+          { value: 'food', label: 'Food' },
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Category' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Food' }));
+
+    expect(onChange).toHaveBeenCalledWith('food');
+  });
 });

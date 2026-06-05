@@ -15,6 +15,8 @@ describe('useBodyScrollLock', () => {
     document.body.style.overflowY = '';
     document.body.style.position = '';
     document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
     document.body.style.width = '';
     document.body.classList.remove('body-scroll-locked');
   });
@@ -25,6 +27,8 @@ describe('useBodyScrollLock', () => {
     document.body.style.overflowY = '';
     document.body.style.position = '';
     document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
     document.body.style.width = '';
     document.body.classList.remove('body-scroll-locked');
   });

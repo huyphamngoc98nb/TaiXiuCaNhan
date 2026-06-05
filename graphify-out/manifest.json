@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\layouts\\MainLayout.tsx": {
-    "mtime": 1780542721.4867625,
-    "ast_hash": "13e4e361d1540aa88f89a5e6867eb76b",
+    "mtime": 1780628039.1782591,
+    "ast_hash": "6581b4b4ca90912417b5c1d51b14fe17",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\app-lock-events.ts": {
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\DropdownList.tsx": {
-    "mtime": 1780622640.5208864,
-    "ast_hash": "7595d859cac0c3978db3531bab0e830c",
+    "mtime": 1780628051.7982702,
+    "ast_hash": "109affb639a34d3b2dfe394cfa712305",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\EmptyState.tsx": {
@@ -1350,8 +1350,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\dropdown-list.test.tsx": {
-    "mtime": 1780368539.5784664,
-    "ast_hash": "e631eaeae4fb6c574ec50959cb27c767",
+    "mtime": 1780628124.3893983,
+    "ast_hash": "e97b33442817a7cc37f6e03f25240745",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\export.test.ts": {
@@ -1635,13 +1635,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useBodyScrollLock.ts": {
-    "mtime": 1780542830.7538018,
-    "ast_hash": "b65ff42a7775e35718cfaaa1180acca9",
+    "mtime": 1780628080.3693109,
+    "ast_hash": "d36a0a1d4d78d57698d2c41d3bb3f08d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\body-scroll-lock.test.tsx": {
-    "mtime": 1780543022.2259755,
-    "ast_hash": "71b9254e98753729c41bd460000439e5",
+    "mtime": 1780628090.2547379,
+    "ast_hash": "78dd4f7421a359d77e43acacde4413cc",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\ThemeSelector.tsx": {
@@ -1682,6 +1682,16 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon.svg": {
     "mtime": 1780566757.7805943,
     "ast_hash": "e50f0345f7e280c3e1474f6b3817398c",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useScrollRestoration.ts": {
+    "mtime": 1780628026.0655012,
+    "ast_hash": "2825746644b57dd7bd6f2460af9d0e3b",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\scroll-restoration.test.tsx": {
+    "mtime": 1780628110.1910086,
+    "ast_hash": "ab241123089a9eb57f64bf227651dbea",
     "semantic_hash": ""
   }
 }

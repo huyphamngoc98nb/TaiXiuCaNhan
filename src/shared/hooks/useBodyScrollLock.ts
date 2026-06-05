@@ -7,6 +7,8 @@ interface BodyScrollLockSnapshot {
   overflowY: string;
   position: string;
   top: string;
+  left: string;
+  right: string;
   width: string;
   hadScrollLockedClass: boolean;
 }
@@ -34,6 +36,8 @@ function lockBodyScroll() {
       overflowY: body.style.overflowY,
       position: body.style.position,
       top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
       width: body.style.width,
       hadScrollLockedClass: body.classList.contains('body-scroll-locked'),
     };
@@ -44,6 +48,8 @@ function lockBodyScroll() {
     if (shouldUseFixedBodyLock()) {
       body.style.position = 'fixed';
       body.style.top = `-${scrollY}px`;
+      body.style.left = '0';
+      body.style.right = '0';
       body.style.width = '100%';
       body.style.overflowY = 'scroll';
     }
@@ -65,6 +71,8 @@ function unlockBodyScroll() {
   body.style.overflowY = snapshot.overflowY;
   body.style.position = snapshot.position;
   body.style.top = snapshot.top;
+  body.style.left = snapshot.left;
+  body.style.right = snapshot.right;
   body.style.width = snapshot.width;
   if (!snapshot.hadScrollLockedClass) {
     body.classList.remove('body-scroll-locked');
