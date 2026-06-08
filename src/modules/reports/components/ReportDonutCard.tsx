@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { DonutItem, normalizeDonutData, RawDonutItem } from './normalize-donut-data';
@@ -27,49 +27,6 @@ interface DonutLegendProps {
   formatAmount: (amount: number) => string;
   onSelect: (item: DonutItem) => void;
 }
-
-const RADIAN = Math.PI / 180;
-
-const renderOutsideLabel = ({ cx, cy, outerRadius, midAngle, payload }: any) => {
-  const angle = -midAngle * RADIAN;
-  const lineStartRadius = outerRadius + 2;
-  const lineMidRadius = outerRadius + 8;
-  const chartWidth = cx * 2;
-  const chartHeight = cy * 2;
-  const labelWidth = 96;
-  const labelHeight = 40;
-  const lineStartX = cx + lineStartRadius * Math.cos(angle);
-  const lineStartY = cy + lineStartRadius * Math.sin(angle);
-  const lineMidX = cx + lineMidRadius * Math.cos(angle);
-  const rawLineMidY = cy + lineMidRadius * Math.sin(angle);
-  const lineMidY = Math.min(Math.max(rawLineMidY, labelHeight / 2), chartHeight - labelHeight / 2);
-  const isRightSide = Math.cos(angle) >= 0;
-  const rawLineEndX = lineMidX + (isRightSide ? 78 : -78);
-  const rawLabelX = isRightSide ? rawLineEndX + 8 : rawLineEndX - labelWidth - 8;
-  const labelY = lineMidY;
-  const clampedLabelX = Math.min(Math.max(rawLabelX, 0), chartWidth - labelWidth);
-  const lineEndX = isRightSide ? clampedLabelX - 8 : clampedLabelX + labelWidth + 8;
-
-  return (
-    <g className="pointer-events-none">
-      <polyline
-        points={`${lineStartX},${lineStartY} ${lineMidX},${lineMidY} ${lineEndX},${labelY}`}
-        fill="none"
-        stroke={payload.color}
-        strokeWidth={1.25}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity={0.85}
-      />
-      <foreignObject x={clampedLabelX} y={labelY - labelHeight / 2} width={labelWidth} height={labelHeight}>
-        <div className={`flex h-full flex-col justify-center text-[10px] leading-[11px] ${isRightSide ? 'items-start text-left' : 'items-end text-right'}`}>
-          <div className="max-w-full whitespace-normal break-words font-semibold text-gray-700">{payload.label}</div>
-          <div className="mt-0.5 font-bold text-gray-500">{payload.percentLabel}</div>
-        </div>
-      </foreignObject>
-    </g>
-  );
-};
 
 export const DonutCenterLabel: React.FC<DonutCenterLabelProps> = ({ label, amount, percent }) => (
   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -132,15 +89,74 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
   const { formatAmount } = useCurrency();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showAllLegend, setShowAllLegend] = useState(false);
 
   const chartData = useMemo(
     () => normalizeDonutData(items, { colors: palette, otherLabel: t('reports.other') }),
     [items, palette, t],
   );
   const total = useMemo(() => chartData.reduce((sum, item) => sum + item.amount, 0), [chartData]);
+  const selectedItem = useMemo(
+    () => chartData.find(item => item.id === selectedId) ?? null,
+    [chartData, selectedId],
+  );
 
-  const formatMoney = (value: number) => formatAmount(value, locale);
+  const formatMoney = useCallback(
+    (value: number) => formatAmount(value, locale),
+    [formatAmount, locale],
+  );
   const totalAmount = formatMoney(total);
+  const legendInitialCount = 5;
+  const legendItems = showAllLegend ? chartData : chartData.slice(0, legendInitialCount);
+  const hasMoreLegend = chartData.length > legendInitialCount;
+  const hiddenLegendCount = Math.max(0, chartData.length - legendInitialCount);
+  const legendToggleLabel = showAllLegend
+    ? (language === 'vi' ? 'Thu gọn' : 'Show less')
+    : (language === 'vi' ? `Xem thêm ${hiddenLegendCount} mục` : `Show ${hiddenLegendCount} more`);
+
+  const TooltipContent = useCallback(
+    ({ active, payload }: any) => {
+      const item = payload?.[0]?.payload as DonutItem | undefined;
+      if (!active || !item) return null;
+
+      return (
+        <div
+          style={{
+            background: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: 10,
+            padding: '8px 12px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+            maxWidth: 200,
+            pointerEvents: 'none',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                background: item.color,
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#111827', wordBreak: 'break-word', maxWidth: 140 }}>
+              {item.label}
+            </span>
+          </div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>
+            {formatMoney(item.amount)}
+          </div>
+          <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>
+            {item.percentLabel}
+          </div>
+        </div>
+      );
+    },
+    [formatMoney],
+  );
 
   if (loading) {
     return (
@@ -183,23 +199,25 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
     >
       <h3 className="text-[15px] font-bold text-gray-900">{title}</h3>
       <div
-        className="relative mx-auto mt-3 h-[260px] w-full max-w-[360px]"
+        className="relative mx-auto mt-3 w-full max-w-[360px]"
+        style={{ height: 260 }}
         role="img"
         aria-label={ariaLabel}
         onClick={event => event.stopPropagation()}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+          <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
             <Pie
               data={chartData}
               dataKey="amount"
               nameKey="label"
               cx="50%"
               cy="50%"
-              innerRadius={0}
-              outerRadius={58}
-              paddingAngle={1}
-              label={renderOutsideLabel}
+              innerRadius={48}
+              outerRadius={82}
+              paddingAngle={chartData.length > 1 ? 2 : 0}
+              minAngle={8}
+              label={false}
               labelLine={false}
               isAnimationActive={false}
               onClick={(item: any) => {
@@ -218,8 +236,22 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
                 />
               ))}
             </Pie>
+            <Tooltip content={TooltipContent} />
           </PieChart>
         </ResponsiveContainer>
+        {selectedItem ? (
+          <DonutCenterLabel
+            label={selectedItem.label}
+            amount={formatMoney(selectedItem.amount)}
+            percent={selectedItem.percentLabel}
+          />
+        ) : (
+          <DonutCenterLabel
+            label={totalLabel}
+            amount={totalAmount}
+            percent={undefined}
+          />
+        )}
       </div>
 
       <div className="mx-auto mt-2 max-w-[320px] rounded-[14px] bg-gray-50 px-3 py-2 text-center">
@@ -230,11 +262,23 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
       </div>
 
       <DonutLegend
-        items={chartData}
+        items={legendItems}
         selectedId={selectedId}
         formatAmount={formatMoney}
         onSelect={item => setSelectedId(currentId => currentId === item.id ? null : item.id)}
       />
+      {hasMoreLegend && (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowAllLegend(value => !value);
+          }}
+          className="mt-1 w-full rounded-[10px] py-2 text-center text-[12px] font-semibold text-gray-500 transition-colors active:bg-gray-50 focus:outline-none"
+        >
+          {legendToggleLabel}
+        </button>
+      )}
     </section>
   );
 };

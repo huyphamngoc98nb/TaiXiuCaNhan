@@ -5,6 +5,8 @@ import { RecurringBill } from '../domain/recurring-bill.model';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { BackButton } from '@/shared/components/BackButton';
+import { ROUTES } from '@/shared/constants/routes';
 
 export function RecurringBillsPage() {
   const { bills, loading, error, remove, toggleActive, advanceDueDate } = useRecurringBills();
@@ -54,8 +56,9 @@ export function RecurringBillsPage() {
   return (
     <div style={{ padding: '16px', paddingBottom: '90px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
+        <div style={{ minWidth: 0, flex: 1 }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text)' }}>{t('recurring_bills.title')}</h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
             {t('recurring_bills.subtitle')} - {bills.filter(b => b.is_active === 1).length} {t('recurring_bills.active_count')}

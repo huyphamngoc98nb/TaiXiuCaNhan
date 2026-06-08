@@ -12,14 +12,23 @@ import { ReportDonutCard } from '../components/ReportDonutCard';
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/constants/routes';
+import { BackButton } from '@/shared/components/BackButton';
 import { AlertTriangle, CalendarDays, FileText, TrendingDown, TrendingUp, WalletCards } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { appRepositories } from '@/core/repositories/app-repositories';
 import { getAppLocale } from '@/shared/utils/locale';
 
-const EXPENSE_DONUT_COLORS = ['#E11D48', '#F97316', '#F59E0B', '#A855F7', '#EC4899', '#64748B'];
-const INCOME_DONUT_COLORS = ['#059669', '#14B8A6', '#0EA5E9', '#6366F1', '#84CC16', '#64748B'];
+const EXPENSE_DONUT_COLORS = [
+  '#E11D48', '#F97316', '#F59E0B', '#A855F7',
+  '#EC4899', '#64748B', '#EF4444', '#FB923C',
+  '#FBBF24', '#C084FC', '#F472B6', '#94A3B8',
+];
+const INCOME_DONUT_COLORS = [
+  '#059669', '#14B8A6', '#0EA5E9', '#6366F1',
+  '#84CC16', '#64748B', '#10B981', '#2DD4BF',
+  '#38BDF8', '#818CF8', '#A3E635', '#CBD5E1',
+];
 
 export const ReportsPage = () => {
   const navigate = useNavigate();
@@ -174,13 +183,16 @@ export const ReportsPage = () => {
 
   return (
     <div className="mx-auto min-h-full max-w-4xl bg-bg p-4 pb-24 text-text">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text">{t('reports.title')}</h1>
+      <div className="mb-4 flex items-center gap-3">
+        <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-2xl font-bold text-text">{t('reports.title')}</h1>
+        </div>
         <button
           onClick={() => navigate(ROUTES.EXPORT)}
           aria-label={t('reports.export')}
           title={t('reports.export')}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-muted transition-colors active:bg-border"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted transition-colors active:bg-border"
         >
           <FileText size={19} />
         </button>

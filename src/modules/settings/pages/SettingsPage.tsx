@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/constants/routes';
+import { BackButton } from '@/shared/components/BackButton';
 import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { CurrencySettings } from '../components/CurrencySettings';
@@ -82,12 +83,15 @@ export function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="px-4 pt-10 pb-2">
-        <h1 className="text-[24px] font-bold text-text">{t('settings.title')}</h1>
-        <p className="text-[12px] text-muted mt-0.5">{t('settings.app_customization')}</p>
+      <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+        <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
+        <div className="flex-1 min-w-0">
+          <h1 className="text-[20px] font-bold text-text">{t('settings.title')}</h1>
+          <p className="text-[12px] text-muted">{t('settings.app_customization')}</p>
+        </div>
       </div>
 
-      <div className="px-4 pb-24 space-y-4 mt-4">
+      <div className="px-4 pb-24 space-y-4">
         {/* Language + Currency */}
         <div className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
           style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}>

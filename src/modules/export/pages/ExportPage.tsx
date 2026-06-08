@@ -12,6 +12,7 @@ import { exportErrorLogsToJson } from '../services/export-error-logs';
 import { saveErrorLogFile } from '../services/save-error-log-file';
 import { shareFile } from '../services/share-file';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { useCurrency } from '@/shared/context/CurrencyContext';
 import { getAppLocale } from '@/shared/utils/locale';
 import { ROUTES } from '@/shared/constants/routes';
 
@@ -67,6 +68,7 @@ export function ExportPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { language, t } = useLanguage();
+  const { currency, currencyInfo } = useCurrency();
   const locale = getAppLocale(language);
   const copy = EXPORT_COPY[language];
   const [loading, setLoading] = useState(false);
@@ -98,11 +100,40 @@ export function ExportPage() {
       const fileName = `expense_report_${startDate}_to_${endDate}.${format}`;
 
       if (format === 'pdf') {
-        const dataUri = await exportToPdf(dataset, locale);
-        // datauristring contains the base64, but shareFile expects raw string or base64?
-        // My shareFile expects string. For PDF I'll just use download via window.open on web,
-        // but for native I should be careful.
-        // Let's simplify: on native we might need base64.
+        const isVietnamese = language === 'vi';
+        const formatPdfAmount = (value: number) => new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency,
+          currencyDisplay: 'code',
+          maximumFractionDigits: currencyInfo.fractionDigits,
+          minimumFractionDigits: currencyInfo.fractionDigits,
+        }).format(value);
+
+        const dataUri = await exportToPdf(dataset, locale, {
+          labels: {
+            title: t('reports.title'),
+            period: t('reports.period_label'),
+            exportedOn: isVietnamese ? 'Ngày xuất' : 'Exported on',
+            financialSummary: isVietnamese ? 'Tổng hợp tài chính' : 'Financial Summary',
+            description: isVietnamese ? 'Mô tả' : 'Description',
+            amount: t('form.label_amount'),
+            totalIncome: t('reports.total_income'),
+            totalExpense: t('reports.total_expense'),
+            netBalance: t('reports.net'),
+            expenseByCategory: t('reports.expense_by_category'),
+            category: t('form.label_category'),
+            transactionDetails: t('transactions.title'),
+            date: t('form.label_date'),
+            type: t('transactions.type'),
+            note: t('form.label_note'),
+            uncategorized: t('reports.other'),
+            typeIncome: t('form.type_income'),
+            typeExpense: t('form.type_expense'),
+            typeTransfer: t('transactions.transfer'),
+          },
+          formatAmount: formatPdfAmount,
+          renderAsImage: isVietnamese,
+        });
         await shareFile(fileName, dataUri, 'application/pdf');
       } else {
         const csvContent = exportToCsv(dataset);
