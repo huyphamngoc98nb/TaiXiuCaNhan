@@ -1,20 +1,10 @@
-import type { LoanStatus, LoanType, LoanWithSummary } from '../domain/loan.model';
+import { useLanguage } from '@/shared/context/LanguageContext';
+import type { LoanWithSummary } from '../domain/loan.model';
 
 interface LoanCardProps {
   loan: LoanWithSummary;
   onPress: (id: string) => void;
 }
-
-const TYPE_LABELS: Record<LoanType, string> = {
-  lend: 'Cho vay',
-  borrow: 'Vay nợ',
-};
-
-const STATUS_LABELS: Record<LoanStatus, string> = {
-  active: 'Còn nợ',
-  settled: 'Đã tất toán',
-  cancelled: 'Đã hủy',
-};
 
 function formatVnd(value: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -22,14 +12,6 @@ function formatVnd(value: number): string {
     currency: 'VND',
     maximumFractionDigits: 0,
   }).format(value);
-}
-
-function formatDate(value: string): string {
-  return new Date(`${value}T00:00:00`).toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
 }
 
 function isOverdue(loan: LoanWithSummary): boolean {
@@ -41,6 +23,16 @@ function isOverdue(loan: LoanWithSummary): boolean {
 }
 
 export function LoanCard({ loan, onPress }: LoanCardProps) {
+  const { t, language } = useLanguage();
+  function formatDate(value: string): string {
+    const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+    return new Date(`${value}T00:00:00`).toLocaleDateString(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
   const isDeleted = loan.deleted_at != null;
   const progress = Math.min(100, Math.max(0, (loan.paid_amount / loan.principal) * 100));
   const overdue = isOverdue(loan);
@@ -73,14 +65,18 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
           <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${typeClass}`}>
-            {TYPE_LABELS[loan.type]}
+            {loan.type === 'lend' ? t('loans.card.typeLend') : t('loans.card.typeBorrow')}
           </span>
           <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${statusClass}`}>
-            {STATUS_LABELS[loan.status]}
+            {loan.status === 'active'
+              ? t('loans.card.statusActive')
+              : loan.status === 'settled'
+                ? t('loans.card.statusSettled')
+                : t('loans.card.statusCancelled')}
           </span>
           {isDeleted && (
             <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-500">
-              Đã ẩn
+              {t('loans.card.statusDeleted')}
             </span>
           )}
         </div>
@@ -88,7 +84,7 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
 
       <div className="mt-4">
         <div className="mb-2 flex items-center justify-between gap-3 text-[12px] font-semibold text-gray-500">
-          <span>{formatVnd(loan.paid_amount)} đã trả</span>
+          <span>{formatVnd(loan.paid_amount)} {t('loans.card.paid')}</span>
           <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
@@ -101,14 +97,14 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
 
       <div className="mt-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[12px] font-medium text-gray-400">Còn lại</p>
+          <p className="text-[12px] font-medium text-gray-400">{t('loans.card.remaining')}</p>
           <p className={`mt-0.5 text-[17px] font-extrabold ${overdue ? 'text-rose-600' : 'text-gray-900'}`}>
             {formatVnd(loan.remaining)}
           </p>
         </div>
         {loan.due_date && (
           <div className="text-right">
-            <p className="text-[12px] font-medium text-gray-400">Hạn trả</p>
+            <p className="text-[12px] font-medium text-gray-400">{t('loans.card.dueDate')}</p>
             <p className={`mt-0.5 text-[13px] font-bold ${overdue ? 'text-rose-600' : 'text-gray-600'}`}>
               {formatDate(loan.due_date)}
             </p>

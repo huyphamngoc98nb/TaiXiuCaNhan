@@ -6,6 +6,7 @@ import { BottomSheet } from '@/shared/components/BottomSheet';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { ROUTES } from '@/shared/constants/routes';
+import { useLanguage } from '@/shared/context/LanguageContext';
 import type { CreateLoanInput, LoanFilter, LoanType, LoanWithSummary } from '../domain/loan.model';
 import { LoanCard } from '../components/LoanCard';
 import { LoanForm } from '../components/LoanForm';
@@ -14,13 +15,6 @@ import { useLoanMutations } from '../hooks/useLoanMutations';
 import { LoanHasPaymentsError, type DeleteLoanMode } from '../services/delete-loan';
 
 type FilterTab = 'all' | LoanType | 'settled';
-
-const FILTER_TABS: Array<{ id: FilterTab; label: string }> = [
-  { id: 'all', label: 'Tất cả' },
-  { id: 'lend', label: 'Cho vay' },
-  { id: 'borrow', label: 'Vay nợ' },
-  { id: 'settled', label: 'Đã tất toán' },
-];
 
 function filterFromTab(tab: FilterTab): LoanFilter {
   if (tab === 'lend' || tab === 'borrow') return { type: tab };
@@ -36,6 +30,7 @@ interface SwipeableLoanRowProps {
 }
 
 function SwipeableLoanRow({ loan, mutationLoading, onOpen, onDelete }: SwipeableLoanRowProps) {
+  const { t } = useLanguage();
   const [actionsOpen, setActionsOpen] = useState(false);
   const startX = useRef<number | null>(null);
 
@@ -67,7 +62,7 @@ function SwipeableLoanRow({ loan, mutationLoading, onOpen, onDelete }: Swipeable
           disabled={mutationLoading || loan.deleted_at != null}
           className="w-[62px] rounded-[12px] bg-gray-600 text-[12px] font-bold text-white disabled:opacity-50"
         >
-          Ẩn
+          {t('loans.pages.common.hide')}
         </button>
         <button
           type="button"
@@ -75,7 +70,7 @@ function SwipeableLoanRow({ loan, mutationLoading, onOpen, onDelete }: Swipeable
           disabled={mutationLoading}
           className="w-[62px] rounded-[12px] bg-rose-500 text-[12px] font-bold text-white disabled:opacity-50"
         >
-          Xoá
+          {t('loans.pages.common.delete')}
         </button>
       </div>
 
@@ -99,6 +94,7 @@ function SwipeableLoanRow({ loan, mutationLoading, onOpen, onDelete }: Swipeable
 }
 
 export function LoanListPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const confirm = useConfirm();
@@ -106,6 +102,12 @@ export function LoanListPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [formOpen, setFormOpen] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
+  const filterTabs = useMemo<Array<{ id: FilterTab; label: string }>>(() => [
+    { id: 'all', label: t('loans.pages.list.filterAll') },
+    { id: 'lend', label: t('loans.card.typeLend') },
+    { id: 'borrow', label: t('loans.card.typeBorrow') },
+    { id: 'settled', label: t('loans.card.statusSettled') },
+  ], [t]);
   const isCreateRoute = location.pathname === ROUTES.LOANS_NEW;
   const filter = useMemo(
     () => ({ ...filterFromTab(activeTab), includeDeleted: showDeleted }),
@@ -129,7 +131,7 @@ export function LoanListPage() {
 
   async function handleCreateLoan(input: CreateLoanInput) {
     await createLoan(input);
-    toast.success('Đã thêm khoản vay.');
+    toast.success(t('loans.pages.list.addedSuccess'));
     await reload();
     closeForm();
   }
@@ -137,22 +139,22 @@ export function LoanListPage() {
   async function handleDeleteLoan(loan: LoanWithSummary, mode: DeleteLoanMode, force = false) {
     try {
       await deleteLoan(loan.id, mode, force);
-      toast.success(mode === 'soft' ? 'Đã ẩn khoản.' : 'Đã xoá vĩnh viễn khoản.');
+      toast.success(mode === 'soft' ? t('loans.pages.common.hiddenSuccess') : t('loans.pages.common.deletedSuccess'));
       await reload();
     } catch (err) {
       if (mode === 'hard' && err instanceof LoanHasPaymentsError) {
         const ok = await confirm.confirm({
-          title: 'Xoá vĩnh viễn?',
+          title: t('loans.pages.common.hardDeleteTitle'),
           message: err.message,
-          confirmText: 'Xác nhận xoá vĩnh viễn',
-          cancelText: 'Huỷ',
+          confirmText: t('loans.pages.common.hardDeleteConfirm'),
+          cancelText: t('loans.pages.common.cancel'),
         });
         if (!ok) return;
         await handleDeleteLoan(loan, 'hard', true);
         return;
       }
 
-      toast.error(err instanceof Error ? err.message : 'Không thể xoá khoản.');
+      toast.error(err instanceof Error ? err.message : t('loans.pages.common.deleteFailed'));
     }
   }
 
@@ -160,16 +162,16 @@ export function LoanListPage() {
     <div className="min-h-full bg-bg pb-24">
       <div className="sticky top-0 z-20 bg-bg px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
         <div className="mb-4 flex items-center gap-3">
-          <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel="Quay lại" />
+          <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('loans.pages.common.back')} />
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-[22px] font-extrabold text-text">
-              Cho vay & Vay nợ
+              {t('loans.pages.list.title')}
             </h1>
           </div>
         </div>
 
         <div className="flex h-[44px] gap-1 overflow-x-auto rounded-[12px] bg-surface-muted p-1">
-          {FILTER_TABS.map((tab) => (
+          {filterTabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -186,7 +188,7 @@ export function LoanListPage() {
         </div>
 
         <label className="mt-3 flex items-center justify-between gap-3 rounded-[12px] border border-border bg-surface px-3 py-2 shadow-sm">
-          <span className="text-[12px] font-bold text-muted">Hiện khoản đã ẩn</span>
+          <span className="text-[12px] font-bold text-muted">{t('loans.pages.list.showDeleted')}</span>
           <input
             type="checkbox"
             checked={showDeleted}
@@ -209,7 +211,7 @@ export function LoanListPage() {
           </div>
         ) : loans.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-[15px] font-bold text-muted">Chưa có khoản nào. Nhấn + để thêm</p>
+            <p className="text-[15px] font-bold text-muted">{t('loans.pages.list.empty')}</p>
           </div>
         ) : (
           <div className="space-y-3">

@@ -188,7 +188,7 @@ export function MainLayout() {
       label: t('recurring_bills.title'),
       route: ROUTES.RECURRING_BILLS,
     },
-    { icon: <CreditCard size={22} />, label: 'Vay nợ', route: ROUTES.LOANS },
+    { icon: <CreditCard size={22} />, label: t('loans.title'), route: ROUTES.LOANS },
     { icon: <Download size={22} />, label: t('reports.export'), route: ROUTES.EXPORT },
     { icon: <Database size={22} />, label: t('settings.backup_restore'), route: ROUTES.BACKUP },
     { icon: <Settings size={22} />, label: t('navigation.settings'), route: ROUTES.SETTINGS },

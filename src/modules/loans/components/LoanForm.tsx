@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useId, useMemo, useState } from 'react';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { DateTimePicker } from '@/shared/components/DateTimePicker';
 import { DropdownList } from '@/shared/components/DropdownList';
+import { useLanguage } from '@/shared/context/LanguageContext';
 import { useWallets } from '@/modules/wallets/hooks/useWallets';
 import type { CreateLoanInput, Loan, LoanType } from '../domain/loan.model';
 
@@ -13,11 +14,6 @@ interface LoanFormProps {
   description?: string;
   submitLabel?: string;
 }
-
-const TYPE_OPTIONS: Array<{ id: LoanType; label: string; activeClass: string }> = [
-  { id: 'lend', label: 'Cho vay', activeClass: 'bg-amber-500 text-white' },
-  { id: 'borrow', label: 'Vay nợ', activeClass: 'bg-blue-500 text-white' },
-];
 
 function startOfLocalDay(timestamp: number): number {
   const date = new Date(timestamp);
@@ -44,6 +40,7 @@ export function LoanForm({
   description,
   submitLabel,
 }: LoanFormProps) {
+  const { t } = useLanguage();
   const { wallets, loading: walletsLoading } = useWallets();
   const skipTransactionId = useId();
   const [type, setType] = useState<LoanType>(initialLoan?.type ?? 'lend');
@@ -58,6 +55,10 @@ export function LoanForm({
   const [note, setNote] = useState(initialLoan?.note ?? '');
   const [skipTransaction, setSkipTransaction] = useState(initialLoan?.skip_transaction ?? false);
   const [error, setError] = useState<string | null>(null);
+  const TYPE_OPTIONS = useMemo(() => [
+    { id: 'lend' as LoanType, label: t('loans.form.typeLabel.lend'), activeClass: 'bg-amber-500 text-white' },
+    { id: 'borrow' as LoanType, label: t('loans.form.typeLabel.borrow'), activeClass: 'bg-blue-500 text-white' },
+  ], [t]);
 
   useEffect(() => {
     if (!skipTransaction && !walletId && wallets[0]) {
@@ -87,7 +88,7 @@ export function LoanForm({
     setError(null);
 
     if (!skipTransaction && !walletId) {
-      setError('Vui lòng chọn ví.');
+      setError(t('loans.form.errorSelectWallet'));
       return;
     }
 
@@ -104,16 +105,16 @@ export function LoanForm({
         note: note.trim() || undefined,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể lưu khoản vay.');
+      setError(err instanceof Error ? err.message : t('loans.form.errorSaveFailed'));
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <h3 className="text-[18px] font-bold text-gray-900">{title ?? 'Thêm khoản'}</h3>
+        <h3 className="text-[18px] font-bold text-gray-900">{title ?? t('loans.form.title')}</h3>
         <p className="mt-1 text-[12px] text-gray-500">
-          {description ?? 'Cho vay hoặc vay nợ cá nhân.'}
+          {description ?? t('loans.form.description')}
         </p>
       </div>
 
@@ -139,7 +140,7 @@ export function LoanForm({
       </div>
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Người liên hệ *</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.form.contactName')} *</p>
         <input
           value={contactName}
           onChange={(event) => setContactName(event.target.value)}
@@ -149,27 +150,27 @@ export function LoanForm({
       </div>
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Thông tin liên hệ</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.form.contactInfo')}</p>
         <input
           value={contactInfo}
           onChange={(event) => setContactInfo(event.target.value)}
-          placeholder="SĐT, địa chỉ..."
+          placeholder={t('loans.form.contactInfoPlaceholder')}
           className="h-[48px] w-full rounded-[12px] border border-gray-200 bg-gray-50 px-4 text-[14px] text-gray-900 outline-none focus:border-indigo-400"
         />
       </div>
 
       {!skipTransaction && (
         <div className="space-y-1.5">
-          <p className="text-[13px] font-semibold text-gray-700">Ví *</p>
+          <p className="text-[13px] font-semibold text-gray-700">{t('loans.form.wallet')} *</p>
           <DropdownList
             value={walletId}
             onChange={setWalletId}
-            ariaLabel="Ví"
-            placeholder={walletsLoading ? 'Đang tải ví...' : 'Chọn ví'}
+            ariaLabel={t('loans.form.wallet')}
+            placeholder={walletsLoading ? t('loans.form.walletLoading') : t('loans.form.walletPlaceholder')}
             disabled={walletsLoading || walletOptions.length === 0}
             openOnInputBlurPointerDown
             options={[
-              { value: '', label: 'Chọn ví', disabled: true },
+              { value: '', label: t('loans.form.walletPlaceholder'), disabled: true },
               ...walletOptions,
             ]}
           />
@@ -177,7 +178,7 @@ export function LoanForm({
       )}
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Số tiền *</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.form.amount')} *</p>
         <CurrencyAmountInput
           currency="VND"
           value={principal}
@@ -190,17 +191,17 @@ export function LoanForm({
       <DateTimePicker
         value={loanDate}
         onChange={setLoanDate}
-        label={type === 'lend' ? 'Ngày cho vay' : 'Ngày vay'}
+        label={type === 'lend' ? t('loans.form.dateLend') : t('loans.form.dateBorrow')}
       />
 
       <DateTimePicker
         value={dueDate}
         onChange={setDueDate}
-        label="Hạn trả"
+        label={t('loans.form.dueDate')}
       />
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Ghi chú</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.form.note')}</p>
         <textarea
           value={note}
           onChange={(event) => setNote(event.target.value)}
@@ -217,23 +218,23 @@ export function LoanForm({
           <input
             id={skipTransactionId}
             type="checkbox"
-            aria-label="Không tạo giao dịch"
+            aria-label={t('loans.form.skipTransactionAria')}
             checked={skipTransaction}
             onChange={(event) => handleSkipTransactionChange(event.target.checked)}
             className="mt-0.5 h-5 w-5 cursor-pointer rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />
           <span className="min-w-0 flex-1">
             <span className="block text-[13px] font-bold text-gray-800">
-              Không trừ/cộng tiền vào ví
+              {t('loans.form.skipTransaction')}
             </span>
             <span className="mt-0.5 block text-[12px] font-medium text-gray-500">
-              Dùng khi khoản này đã xảy ra trước đó
+              {t('loans.form.skipTransactionSub')}
             </span>
           </span>
         </label>
         {skipTransaction && (
           <p className="rounded-[12px] bg-indigo-50 px-4 py-3 text-[12px] font-semibold text-indigo-600">
-            Khoản này chỉ được theo dõi, không ảnh hưởng số dư ví
+            {t('loans.form.skipTransactionHint')}
           </p>
         )}
       </div>
@@ -247,7 +248,7 @@ export function LoanForm({
             : 'bg-blue-500 shadow-lg shadow-blue-300/40'
         } ${loading ? 'opacity-50' : ''}`}
       >
-        {loading ? 'Đang lưu...' : (submitLabel ?? 'Lưu khoản')}
+        {loading ? t('loans.form.saving') : (submitLabel ?? t('loans.form.save'))}
       </button>
     </form>
   );

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoanListPage } from '@/modules/loans/pages/LoanListPage';
+import { LanguageProvider } from '@/shared/context/LanguageContext';
 
 const mocks = vi.hoisted(() => ({
   createLoan: vi.fn(),
@@ -13,6 +14,13 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('@/shared/components/BackButton', () => ({
   BackButton: () => null,
+}));
+
+vi.mock('@capacitor/preferences', () => ({
+  Preferences: {
+    get: vi.fn(async () => ({ value: 'vi' })),
+    set: vi.fn(async () => undefined),
+  },
 }));
 
 vi.mock('@/shared/components/BottomSheet', () => ({
@@ -80,11 +88,13 @@ describe('LoanListPage', () => {
   it('shows a success toast after creating a loan', async () => {
     render(
       <MemoryRouter initialEntries={['/loans/new']}>
-        <LoanListPage />
+        <LanguageProvider>
+          <LoanListPage />
+        </LanguageProvider>
       </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Submit loan' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Submit loan' }));
 
     await waitFor(() => expect(mocks.toastSuccess).toHaveBeenCalledWith('Đã thêm khoản vay.'));
     expect(mocks.createLoan).toHaveBeenCalledTimes(1);

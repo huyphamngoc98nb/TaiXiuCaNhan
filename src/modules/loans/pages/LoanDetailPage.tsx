@@ -7,7 +7,8 @@ import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { loanRepository } from '@/core/di/loans.di';
 import { ROUTES } from '@/shared/constants/routes';
-import type { CreateLoanPaymentInput, LoanPayment, LoanStatus, LoanType, LoanWithSummary, UpdateLoanInput } from '../domain/loan.model';
+import { useLanguage } from '@/shared/context/LanguageContext';
+import type { CreateLoanPaymentInput, LoanPayment, LoanWithSummary, UpdateLoanInput } from '../domain/loan.model';
 import { PaymentForm } from '../components/PaymentForm';
 import { LoanForm } from '../components/LoanForm';
 import { useLoanMutations } from '../hooks/useLoanMutations';
@@ -17,17 +18,6 @@ interface LoanDetailPageProps {
   loanId?: string;
 }
 
-const TYPE_LABELS: Record<LoanType, string> = {
-  lend: 'Cho vay',
-  borrow: 'Vay nợ',
-};
-
-const STATUS_LABELS: Record<LoanStatus, string> = {
-  active: 'Còn nợ',
-  settled: 'Đã tất toán',
-  cancelled: 'Đã hủy',
-};
-
 function formatVnd(value: number): string {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -36,24 +26,8 @@ function formatVnd(value: number): string {
   }).format(value);
 }
 
-function formatIsoDate(value: string | null): string {
-  if (!value) return 'Chưa đặt hạn';
-  return new Date(`${value}T00:00:00`).toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
-function formatMsDate(value: number): string {
-  return new Date(value).toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
 export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {}) {
+  const { t, language } = useLanguage();
   const params = useParams<{ id: string }>();
   const loanId = loanIdProp ?? params.id;
   const navigate = useNavigate();
@@ -67,10 +41,38 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+
+  function typeLabel(type: LoanWithSummary['type']): string {
+    return type === 'lend' ? t('loans.card.typeLend') : t('loans.card.typeBorrow');
+  }
+
+  function statusLabel(status: LoanWithSummary['status']): string {
+    if (status === 'active') return t('loans.card.statusActive');
+    if (status === 'settled') return t('loans.card.statusSettled');
+    return t('loans.card.statusCancelled');
+  }
+
+  function formatIsoDate(value: string | null): string {
+    if (!value) return t('loans.pages.detail.noDueDate');
+    return new Date(`${value}T00:00:00`).toLocaleDateString(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
+  function formatMsDate(value: number): string {
+    return new Date(value).toLocaleDateString(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
 
   const load = useCallback(async () => {
     if (!loanId) {
-      setError(new Error('Loan not found'));
+      setError(new Error(t('loans.pages.detail.notFound')));
       setLoading(false);
       return;
     }
@@ -84,7 +86,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
         loanRepository.listPayments(loanId),
       ]);
       const currentLoan = loanRows.find((item) => item.id === loanId) ?? null;
-      if (!currentLoan) throw new Error('Loan not found');
+      if (!currentLoan) throw new Error(t('loans.pages.detail.notFound'));
       setLoan(currentLoan);
       setPayments(paymentRows);
     } catch (err) {
@@ -92,7 +94,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
     } finally {
       setLoading(false);
     }
-  }, [loanId]);
+  }, [loanId, t]);
 
   useEffect(() => {
     void load();
@@ -108,7 +110,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
     if (!loan) return;
 
     await updateLoan(loan.id, input);
-    toast.success('Đã cập nhật khoản vay.');
+    toast.success(t('loans.pages.detail.updatedSuccess'));
     setEditOpen(false);
     await load();
   }
@@ -117,19 +119,19 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
     if (!loan) return;
 
     const ok = await confirm.confirm({
-      title: 'Hủy khoản',
-      message: `Hủy khoản với ${loan.contact_name}?`,
-      confirmText: 'Hủy khoản',
-      cancelText: 'Đóng',
+      title: t('loans.pages.detail.cancelTitle'),
+      message: `${t('loans.pages.detail.cancelMessage')} ${loan.contact_name}?`,
+      confirmText: t('loans.pages.detail.cancelConfirm'),
+      cancelText: t('loans.pages.detail.close'),
     });
     if (!ok) return;
 
     try {
       await cancelLoan(loan.id);
-      toast.success('Đã hủy khoản.');
+      toast.success(t('loans.pages.detail.cancelledSuccess'));
       await load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Không thể hủy khoản.');
+      toast.error(err instanceof Error ? err.message : t('loans.pages.detail.cancelFailed'));
     }
   }
 
@@ -138,24 +140,24 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
 
     try {
       await deleteLoan(loan.id, mode, force);
-      toast.success(mode === 'soft' ? 'Đã ẩn khoản.' : 'Đã xoá vĩnh viễn khoản.');
+      toast.success(mode === 'soft' ? t('loans.pages.common.hiddenSuccess') : t('loans.pages.common.deletedSuccess'));
       setDeleteOpen(false);
       navigate(ROUTES.LOANS);
     } catch (err) {
       if (mode === 'hard' && err instanceof LoanHasPaymentsError) {
         setDeleteOpen(false);
         const ok = await confirm.confirm({
-          title: 'Xoá vĩnh viễn?',
+          title: t('loans.pages.common.hardDeleteTitle'),
           message: err.message,
-          confirmText: 'Xác nhận xoá vĩnh viễn',
-          cancelText: 'Huỷ',
+          confirmText: t('loans.pages.common.hardDeleteConfirm'),
+          cancelText: t('loans.pages.common.cancel'),
         });
         if (!ok) return;
         await performDelete('hard', true);
         return;
       }
 
-      toast.error(err instanceof Error ? err.message : 'Không thể xoá khoản.');
+      toast.error(err instanceof Error ? err.message : t('loans.pages.common.deleteFailed'));
     }
   }
 
@@ -171,10 +173,10 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
     return (
       <div className="min-h-full bg-bg px-4 py-4">
         <div className="mb-4">
-          <BackButton onClick={() => navigate(-1)} ariaLabel="Quay lại" />
+          <BackButton onClick={() => navigate(-1)} ariaLabel={t('loans.pages.common.back')} />
         </div>
         <div className="rounded-[14px] border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-600">
-          {error?.message ?? 'Loan not found'}
+          {error?.message ?? t('loans.pages.detail.notFound')}
         </div>
       </div>
     );
@@ -184,13 +186,13 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
     <div className="min-h-full bg-bg pb-24">
       <div className="sticky top-0 z-20 bg-bg px-4 pb-3 pt-4 shadow-sm shadow-gray-200/60">
         <div className="flex items-center gap-3">
-          <BackButton onClick={() => navigate(-1)} ariaLabel="Quay lại" />
+          <BackButton onClick={() => navigate(-1)} ariaLabel={t('loans.pages.common.back')} />
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-[20px] font-extrabold text-text">
               {loan.contact_name}
             </h1>
             <p className="text-[12px] font-medium text-gray-500">
-              {TYPE_LABELS[loan.type]} · {STATUS_LABELS[loan.status]}
+              {typeLabel(loan.type)} · {statusLabel(loan.status)}
             </p>
           </div>
         </div>
@@ -201,7 +203,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           <div className="mb-4 flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-[12px] font-semibold uppercase tracking-wide text-gray-400">
-                Người liên hệ
+                {t('loans.pages.detail.contact')}
               </p>
               <p className="mt-1 truncate text-[18px] font-extrabold text-text">
                 {loan.contact_name}
@@ -220,19 +222,19 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
                   ? 'bg-gray-100 text-gray-600'
                   : 'bg-rose-100 text-rose-700'
             }`}>
-              {STATUS_LABELS[loan.status]}
+              {statusLabel(loan.status)}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-[12px] bg-bg-subtle p-3">
-              <p className="text-[12px] font-semibold text-gray-400">Gốc</p>
+              <p className="text-[12px] font-semibold text-gray-400">{t('loans.pages.detail.principal')}</p>
               <p className="mt-1 text-[15px] font-extrabold text-text">
                 {formatVnd(loan.principal)}
               </p>
             </div>
             <div className="rounded-[12px] bg-bg-subtle p-3">
-              <p className="text-[12px] font-semibold text-gray-400">Còn lại</p>
+              <p className="text-[12px] font-semibold text-gray-400">{t('loans.card.remaining')}</p>
               <p className="mt-1 text-[15px] font-extrabold text-rose-600">
                 {formatVnd(loan.remaining)}
               </p>
@@ -243,7 +245,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-400">
                 <CalendarDays size={14} />
-                Hạn trả
+                {t('loans.card.dueDate')}
               </p>
               <p className="mt-1 text-[14px] font-bold text-gray-700">
                 {formatIsoDate(loan.due_date)}
@@ -252,7 +254,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             <div className="rounded-[12px] bg-bg-subtle p-3">
               <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-400">
                 <CircleDollarSign size={14} />
-                Đã trả
+                {t('loans.card.paid')}
               </p>
               <p className="mt-1 text-[14px] font-bold text-emerald-600">
                 {formatVnd(loan.paid_amount)}
@@ -274,7 +276,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           className="flex h-[48px] w-full items-center justify-center gap-2 rounded-[14px] border border-indigo-200 bg-white text-[14px] font-bold text-indigo-600 active:scale-[0.98] disabled:opacity-50"
         >
           <Pencil size={17} />
-          Sửa thông tin
+          {t('loans.pages.detail.editInfo')}
         </button>
 
         {loan.status === 'active' && (
@@ -285,7 +287,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
               className="flex h-[48px] items-center justify-center gap-2 rounded-[14px] bg-emerald-500 text-[14px] font-bold text-white shadow-lg shadow-emerald-300/40 active:scale-[0.98]"
             >
               <Plus size={17} />
-              Ghi nhận
+              {t('loans.pages.detail.recordPayment')}
             </button>
             <button
               type="button"
@@ -293,7 +295,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
               disabled={mutationLoading}
               className="h-[48px] rounded-[14px] border border-rose-200 bg-white text-[14px] font-bold text-rose-600 active:scale-[0.98] disabled:opacity-50"
             >
-              Hủy khoản
+              {t('loans.pages.detail.cancelTitle')}
             </button>
           </div>
         )}
@@ -305,14 +307,14 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
           className="flex h-[48px] w-full items-center justify-center gap-2 rounded-[14px] border border-rose-200 bg-white text-[14px] font-bold text-rose-600 active:scale-[0.98] disabled:opacity-50"
         >
           <Trash2 size={17} />
-          Xoá khoản này
+          {t('loans.pages.detail.deleteLoan')}
         </button>
 
         <section>
-          <h2 className="mb-3 text-[16px] font-extrabold text-text">Thanh toán</h2>
+          <h2 className="mb-3 text-[16px] font-extrabold text-text">{t('loans.pages.detail.payments')}</h2>
           {payments.length === 0 ? (
             <div className="rounded-[14px] border border-dashed border-border bg-surface px-4 py-8 text-center text-[13px] font-medium text-subtle">
-              Chưa có thanh toán nào.
+              {t('loans.pages.detail.noPayments')}
             </div>
           ) : (
             <div className="space-y-3">
@@ -345,9 +347,9 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             initialLoan={loan}
             onSubmit={handleUpdateLoan}
             loading={mutationLoading}
-            title="Sửa khoản"
-            description="Cập nhật thông tin khoản cho vay hoặc vay nợ."
-            submitLabel="Lưu thay đổi"
+            title={t('loans.pages.detail.editTitle')}
+            description={t('loans.pages.detail.editDescription')}
+            submitLabel={t('loans.pages.detail.saveChanges')}
           />
         </div>
       </BottomSheet>
@@ -359,9 +361,9 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
       <BottomSheet isOpen={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <div className="space-y-4">
           <div>
-            <h3 className="text-[18px] font-bold text-text">Xoá khoản này</h3>
+            <h3 className="text-[18px] font-bold text-text">{t('loans.pages.detail.deleteLoan')}</h3>
             <p className="mt-1 text-[12px] font-medium text-muted">
-              Giao dịch trong ví vẫn được giữ lại như lịch sử thực tế.
+              {t('loans.pages.detail.deleteDescription')}
             </p>
           </div>
 
@@ -371,7 +373,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             disabled={mutationLoading || loan.deleted_at != null}
             className="h-[48px] w-full rounded-[14px] bg-surface-muted text-[14px] font-bold text-muted active:scale-[0.98] disabled:opacity-50"
           >
-            Ẩn khỏi danh sách
+            {t('loans.pages.detail.hideFromList')}
           </button>
           <button
             type="button"
@@ -379,7 +381,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             disabled={mutationLoading}
             className="h-[48px] w-full rounded-[14px] bg-rose-500 text-[14px] font-bold text-white shadow-lg shadow-rose-300/40 active:scale-[0.98] disabled:opacity-50"
           >
-            Xoá vĩnh viễn
+            {t('loans.pages.detail.deletePermanently')}
           </button>
         </div>
       </BottomSheet>

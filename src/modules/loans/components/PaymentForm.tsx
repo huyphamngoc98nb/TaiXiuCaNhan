@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { DateTimePicker } from '@/shared/components/DateTimePicker';
 import { DropdownList } from '@/shared/components/DropdownList';
+import { useLanguage } from '@/shared/context/LanguageContext';
 import { useWallets } from '@/modules/wallets/hooks/useWallets';
 import type { CreateLoanPaymentInput, LoanWithSummary } from '../domain/loan.model';
 
@@ -25,6 +26,7 @@ function formatVnd(value: number): string {
 }
 
 export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
+  const { t } = useLanguage();
   const { wallets, loading: walletsLoading } = useWallets();
   const [walletId, setWalletId] = useState(loan.wallet_id ?? '');
   const [amount, setAmount] = useState('');
@@ -49,7 +51,7 @@ export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
 
     const numericAmount = Number(amount);
     if (numericAmount > loan.remaining) {
-      setError('Số tiền thanh toán vượt quá số tiền còn lại.');
+      setError(t('loans.payment.errorExceed'));
       return;
     }
 
@@ -62,18 +64,18 @@ export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
         note: note.trim() || undefined,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể ghi nhận thanh toán.');
+      setError(err instanceof Error ? err.message : t('loans.payment.errorSaveFailed'));
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <h3 className="text-[18px] font-bold text-gray-900">Ghi nhận thanh toán</h3>
+        <h3 className="text-[18px] font-bold text-gray-900">{t('loans.payment.title')}</h3>
         <div className="mt-3 rounded-[12px] bg-gray-50 px-4 py-3">
           <p className="truncate text-[15px] font-bold text-gray-900">{loan.contact_name}</p>
           <p className="mt-1 text-[13px] font-semibold text-rose-600">
-            Còn lại: {formatVnd(loan.remaining)}
+            {t('loans.payment.remaining')}: {formatVnd(loan.remaining)}
           </p>
         </div>
       </div>
@@ -85,23 +87,23 @@ export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
       )}
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Ví *</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.payment.wallet')} *</p>
         <DropdownList
           value={walletId}
           onChange={setWalletId}
-          ariaLabel="Ví"
-          placeholder={walletsLoading ? 'Đang tải ví...' : 'Chọn ví'}
+          ariaLabel={t('loans.payment.wallet')}
+          placeholder={walletsLoading ? t('loans.payment.walletLoading') : t('loans.payment.walletPlaceholder')}
           disabled={walletsLoading || walletOptions.length === 0}
           openOnInputBlurPointerDown
           options={[
-            { value: '', label: 'Chọn ví', disabled: true },
+            { value: '', label: t('loans.payment.walletPlaceholder'), disabled: true },
             ...walletOptions,
           ]}
         />
       </div>
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Số tiền *</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.payment.amount')} *</p>
         <CurrencyAmountInput
           currency="VND"
           value={amount}
@@ -109,17 +111,17 @@ export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
           required
           className="border-emerald-200"
         />
-        <p className="text-[11px] font-medium text-gray-400">Tối đa {formatVnd(loan.remaining)}</p>
+        <p className="text-[11px] font-medium text-gray-400">{t('loans.payment.maxAmount')} {formatVnd(loan.remaining)}</p>
       </div>
 
       <DateTimePicker
         value={paymentDate}
         onChange={setPaymentDate}
-        label="Ngày thanh toán"
+        label={t('loans.payment.date')}
       />
 
       <div className="space-y-1.5">
-        <p className="text-[13px] font-semibold text-gray-700">Ghi chú</p>
+        <p className="text-[13px] font-semibold text-gray-700">{t('loans.payment.note')}</p>
         <input
           value={note}
           onChange={(event) => setNote(event.target.value)}
@@ -134,7 +136,7 @@ export function PaymentForm({ loan, onSubmit, loading }: PaymentFormProps) {
           loading ? 'opacity-50' : ''
         }`}
       >
-        {loading ? 'Đang lưu...' : 'Ghi nhận'}
+        {loading ? t('loans.payment.saving') : t('loans.payment.save')}
       </button>
     </form>
   );
