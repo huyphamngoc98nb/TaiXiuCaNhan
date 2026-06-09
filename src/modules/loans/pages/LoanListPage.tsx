@@ -129,6 +129,7 @@ export function LoanListPage() {
 
   async function handleCreateLoan(input: CreateLoanInput) {
     await createLoan(input);
+    toast.success('Đã thêm khoản vay.');
     await reload();
     closeForm();
   }

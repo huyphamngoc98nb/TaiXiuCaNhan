@@ -72,6 +72,10 @@ export function LoanForm({
     if (checked) {
       setWalletId('');
       setError(null);
+    } else if (!walletId && wallets[0]) {
+      // Select a wallet immediately so saving right after unchecking can
+      // create the linked transaction and apply its balance delta.
+      setWalletId(wallets[0].id);
     }
   }
 

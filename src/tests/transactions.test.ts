@@ -101,14 +101,31 @@ describe('Transaction Module QA Tests', () => {
     });
 
     it('list() builds correct WHERE clause for filters', async () => {
-      await repository.list({ type: 'income', wallet_id: 'w-1' });
+      await repository.list({
+        type: 'income',
+        wallet_id: 'w-1',
+        startDate: 1000,
+        endDate: 2000,
+        note: '  cà phê  ',
+      });
       
       const [sql, values] = mockDb.query.mock.calls[0];
       expect(sql).toContain('AND t.type = ?');
       expect(sql).toContain('AND t.wallet_id = ?');
+      expect(sql).toContain('AND t.transaction_date >= ?');
+      expect(sql).toContain('AND t.transaction_date <= ?');
+      expect(sql).toContain('AND t.note LIKE ?');
       expect(sql).toContain('AND t.deleted_at IS NULL'); // Default behavior
-      expect(values).toContain('income');
-      expect(values).toContain('w-1');
+      expect(values).toEqual(['w-1', 'income', 1000, 2000, '%cà phê%']);
+      expect(sql).not.toContain('cà phê');
+    });
+
+    it('list() ignores an empty note filter', async () => {
+      await repository.list({ note: '   ' });
+
+      const [sql, values] = mockDb.query.mock.calls[0];
+      expect(sql).not.toContain('AND t.note LIKE ?');
+      expect(values).toEqual([]);
     });
 
     it('softDelete() updates deleted_at column', async () => {

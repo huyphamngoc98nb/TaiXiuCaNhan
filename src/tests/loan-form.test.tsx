@@ -89,4 +89,71 @@ describe('LoanForm', () => {
       principal: 500_000,
     }));
   });
+
+  it('selects a wallet immediately when enabling transactions in edit mode', async () => {
+    const existingLoan: Loan = {
+      id: 'loan-1',
+      wallet_id: null,
+      skip_transaction: true,
+      type: 'lend',
+      contact_name: 'Nguyen Van A',
+      contact_info: null,
+      principal: 1_000_000,
+      due_date: null,
+      note: null,
+      status: 'active',
+      created_at: 0,
+      updated_at: 0,
+      deleted_at: null,
+    };
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const { container } = renderLoanForm(
+      <LoanForm initialLoan={existingLoan} onSubmit={onSubmit} loading={false} />
+    );
+
+    const skipTransaction = await screen.findByRole('checkbox', { name: 'Không tạo giao dịch' });
+    fireEvent.click(skipTransaction);
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+      skip_transaction: false,
+      wallet_id: 'wallet-1',
+      type: 'lend',
+      principal: 1_000_000,
+    }));
+  });
+
+  it('submits borrow details when enabling transactions in edit mode', async () => {
+    const existingLoan: Loan = {
+      id: 'loan-1',
+      wallet_id: null,
+      skip_transaction: true,
+      type: 'borrow',
+      contact_name: 'Nguyen Van A',
+      contact_info: null,
+      principal: 1_000_000,
+      due_date: null,
+      note: null,
+      status: 'active',
+      created_at: 0,
+      updated_at: 0,
+      deleted_at: null,
+    };
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const { container } = renderLoanForm(
+      <LoanForm initialLoan={existingLoan} onSubmit={onSubmit} loading={false} />
+    );
+
+    fireEvent.click(await screen.findByRole('checkbox', { name: 'Không tạo giao dịch' }));
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+      skip_transaction: false,
+      wallet_id: 'wallet-1',
+      type: 'borrow',
+      principal: 1_000_000,
+    }));
+  });
 });

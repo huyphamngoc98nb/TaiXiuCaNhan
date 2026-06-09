@@ -127,6 +127,10 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       sql += ` AND t.transaction_date <= ?`;
       values.push(filter.endDate);
     }
+    if (filter.note && filter.note.trim() !== '') {
+      sql += ` AND t.note LIKE ?`;
+      values.push(`%${filter.note.trim()}%`);
+    }
 
     sql += ` ORDER BY t.transaction_date DESC, t.created_at DESC`;
 

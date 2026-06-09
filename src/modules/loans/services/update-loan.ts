@@ -1,6 +1,7 @@
 import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transaction-runner';
 import { generateUUID } from '@/shared/utils/generate-uuid';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
+import { getSourceDelta } from '@/modules/transactions/services/transaction-wallet-rules';
 import type { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
 import type { Loan, UpdateLoanInput } from '../domain/loan.model';
 import { validateUpdateLoan } from '../domain/loan.schema';
@@ -56,7 +57,16 @@ export async function updateLoan(
 
     if (!wasSkipping && willSkip) {
       if (existingLoan.linked_transaction_id) {
-        await deps.transactionRepo.softDelete(existingLoan.linked_transaction_id, now);
+        const linkedTransaction = await deps.transactionRepo.getById(existingLoan.linked_transaction_id);
+        const wasDeleted = await deps.transactionRepo.softDelete(existingLoan.linked_transaction_id, now);
+
+        if (wasDeleted && linkedTransaction) {
+          await deps.walletRepo.updateBalanceDelta(
+            linkedTransaction.wallet_id,
+            -getSourceDelta(linkedTransaction.type, linkedTransaction.amount),
+            now
+          );
+        }
       }
       linkedTransactionId = null;
     } else if (wasSkipping && !willSkip) {
@@ -84,6 +94,11 @@ export async function updateLoan(
         created_at: now,
         updated_at: now,
       });
+      await deps.walletRepo.updateBalanceDelta(
+        walletId as string,
+        getSourceDelta(transactionType, input.principal),
+        now
+      );
       linkedTransactionId = transactionId;
     }
 

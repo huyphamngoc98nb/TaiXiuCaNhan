@@ -6,7 +6,6 @@ import { useBudgets } from '../hooks/useBudgets';
 import { useBudgetAddForm } from '../hooks/useBudgetAddForm';
 import { useBudgetForm } from '../hooks/useBudgetForm';
 import { BudgetSummaryStats } from '../components/BudgetSummaryStats';
-import { BudgetAlertsPanel } from '../components/BudgetAlertsPanel';
 import { BudgetCategoryList } from '../components/BudgetCategoryList';
 import { BudgetAddSheet } from '../components/BudgetAddSheet';
 import { BudgetEditForm } from '../components/BudgetEditForm';
@@ -27,7 +26,6 @@ export function BudgetSettingsPage() {
     categories,
     allProgress,
     summaryStats,
-    alerts,
     progressByScope,
     isLoading,
     error,
@@ -120,9 +118,6 @@ export function BudgetSettingsPage() {
       </div>
 
       <div className="space-y-6 pb-20 pt-4">
-        {/* Alerts Panel */}
-        <BudgetAlertsPanel alerts={alerts} />
-
         {/* Tab: chỉ hiện khi có budget theo loại TK */}
         {progressByScope.byAccountType.length > 0 && (
           <div className="flex gap-2">

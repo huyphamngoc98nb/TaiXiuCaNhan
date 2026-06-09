@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Category } from '@/modules/categories/domain/category.model';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
-import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
+import type { IWalletRepository, Wallet } from '@/modules/wallets/repositories/wallet.repository';
+import { InMemoryWalletRepository } from '@/tests/fakes/in-memory-wallet.repository';
 import type { CreateLoanInput, Loan } from '../domain/loan.model';
 import { LoanValidationError } from '../domain/loan.schema';
 import type { ILoanRepository } from '../repositories/loan.repository';
@@ -51,7 +52,7 @@ function category(id: string, slug: string, type: Category['type']): Category {
   };
 }
 
-function makeDeps() {
+function makeDeps(walletRepoOverride?: IWalletRepository) {
   const categories: Record<string, Category> = {
     cho_vay: category('cat-cho-vay', 'cho_vay', 'expense'),
     vay_no: category('cat-vay-no', 'vay_no', 'income'),
@@ -133,7 +134,7 @@ function makeDeps() {
       getByIdIncludeDeleted: vi.fn(),
       list: vi.fn(),
     },
-    walletRepo: {
+    walletRepo: walletRepoOverride ?? {
       getById: vi.fn(async () => wallet),
       getAllActive: vi.fn(),
       getActiveCreditCards: vi.fn(),
@@ -194,6 +195,35 @@ describe('createLoan', () => {
     );
   });
 
+  it("reduces the wallet balance when type='lend'", async () => {
+    const walletRepo = new InMemoryWalletRepository([{ ...wallet, balance: 0 }]);
+    const { deps } = makeDeps(walletRepo);
+
+    await createLoan(baseInput('lend'), deps);
+
+    await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({
+      balance: -1_000_000,
+    });
+  });
+
+  it('should debit wallet when creating a lend loan', async () => {
+    const { deps } = makeDeps();
+
+    await createLoan({
+      type: 'lend',
+      principal: 200_000,
+      wallet_id: wallet.id,
+      skip_transaction: false,
+      contact_name: 'A',
+    }, deps);
+
+    expect(deps.walletRepo.updateBalanceDelta).toHaveBeenCalledWith(
+      wallet.id,
+      -200_000,
+      expect.any(Number),
+    );
+  });
+
   it("creates an income transaction when type='borrow'", async () => {
     const { deps, transactionCreate } = makeDeps();
 
@@ -207,6 +237,35 @@ describe('createLoan', () => {
         type: 'income',
         amount: 1_000_000,
       }),
+    );
+  });
+
+  it("increases the wallet balance when type='borrow'", async () => {
+    const walletRepo = new InMemoryWalletRepository([{ ...wallet, balance: 0 }]);
+    const { deps } = makeDeps(walletRepo);
+
+    await createLoan(baseInput('borrow'), deps);
+
+    await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({
+      balance: 1_000_000,
+    });
+  });
+
+  it('should credit wallet when creating a borrow loan', async () => {
+    const { deps } = makeDeps();
+
+    await createLoan({
+      type: 'borrow',
+      principal: 150_000,
+      wallet_id: wallet.id,
+      skip_transaction: false,
+      contact_name: 'B',
+    }, deps);
+
+    expect(deps.walletRepo.updateBalanceDelta).toHaveBeenCalledWith(
+      wallet.id,
+      150_000,
+      expect.any(Number),
     );
   });
 
@@ -256,6 +315,19 @@ describe('createLoan', () => {
     }));
     expect(transactionCreate).not.toHaveBeenCalled();
     expect(loanUpdateLoan).not.toHaveBeenCalled();
+  });
+
+  it('should NOT update wallet balance when skip_transaction is true', async () => {
+    const { deps } = makeDeps();
+
+    await createLoan({
+      type: 'lend',
+      principal: 100_000,
+      skip_transaction: true,
+      contact_name: 'C',
+    }, deps);
+
+    expect(deps.walletRepo.updateBalanceDelta).not.toHaveBeenCalled();
   });
 
   it('defaults skip_transaction to false and creates a transaction when omitted', async () => {

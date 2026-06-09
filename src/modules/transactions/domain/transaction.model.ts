@@ -49,6 +49,7 @@ export interface TransactionFilter {
   type?: TransactionType;
   startDate?: number;
   endDate?: number;
+  note?: string;
   limit?: number;
   offset?: number;
   includeDeleted?: boolean;

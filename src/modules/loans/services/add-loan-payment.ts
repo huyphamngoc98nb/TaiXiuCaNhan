@@ -2,6 +2,8 @@ import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transacti
 import { generateUUID } from '@/shared/utils/generate-uuid';
 import type { CategoryType } from '@/modules/categories/domain/category.model';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
+import { getSourceDelta } from '@/modules/transactions/services/transaction-wallet-rules';
+import type { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
 import type { CreateLoanPaymentInput, LoanPayment, LoanType } from '../domain/loan.model';
 import { validateCreateLoanPayment } from '../domain/loan.schema';
 import type { ILoanRepository } from '../repositories/loan.repository';
@@ -18,6 +20,7 @@ export class LoanPaymentExceedError extends Error {
 export interface AddLoanPaymentDeps {
   loanRepo: ILoanRepository;
   transactionRepo: ITransactionRepository;
+  walletRepo: IWalletRepository;
   categoryRepo: LoanCategoryRepository;
 }
 
@@ -81,6 +84,14 @@ export async function addLoanPayment(
       created_at: now,
       updated_at: now,
     });
+
+    // Payment transactions also bypass CreateTransactionUseCase, so apply the
+    // same cached-balance delta in the surrounding database transaction.
+    await deps.walletRepo.updateBalanceDelta(
+      input.wallet_id,
+      getSourceDelta(transactionType, input.amount),
+      now
+    );
 
     if (newTotalPaid >= loan.principal) {
       await deps.loanRepo.updateLoanStatus(loan.id, 'settled', now);

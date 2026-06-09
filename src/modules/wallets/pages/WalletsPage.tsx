@@ -80,7 +80,7 @@ export function WalletsPage() {
         onWalletClick={openEdit}
       />
 
-      <BottomSheet isOpen={sheetOpen} onClose={closeSheet}>
+      <BottomSheet isOpen={sheetOpen} onClose={closeSheet} fullScreenOnAndroid>
         <WalletForm
           existing={editTarget}
           onSave={handleSave}

@@ -1,6 +1,8 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WalletList } from '@/modules/wallets/components/WalletList';
+import { WalletForm } from '@/modules/wallets/components/WalletForm';
+import { BottomSheet } from '@/shared/components/BottomSheet';
 import { CurrencyProvider } from '@/shared/context/CurrencyContext';
 import { LanguageProvider } from '@/shared/context/LanguageContext';
 import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
@@ -50,6 +52,10 @@ function renderWalletList(wallets: Wallet[]) {
 }
 
 describe('WalletList', () => {
+  beforeEach(() => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+  });
+
   it('shows active wallets even when their balance is zero', async () => {
     renderWalletList([
       wallet({ id: 'cash', name: 'Cash', balance: 100000 }),
@@ -62,5 +68,22 @@ describe('WalletList', () => {
     expect(await screen.findByText('Zero balance')).toBeTruthy();
     expect(await screen.findByText('String zero balance')).toBeTruthy();
     expect(screen.queryByText('Inactive wallet')).toBeNull();
+  });
+
+  it('uses the bottom sheet as the only scroll container for the wallet form', async () => {
+    const { container } = render(
+      <LanguageProvider>
+        <BottomSheet isOpen onClose={vi.fn()}>
+          <WalletForm onSave={vi.fn()} onClose={vi.fn()} />
+        </BottomSheet>
+      </LanguageProvider>,
+    );
+
+    await waitFor(() => expect(container.querySelector('form')).not.toBeNull());
+
+    const form = container.querySelector('form') as HTMLFormElement;
+    expect(form.classList.contains('form-scroll-container')).toBe(false);
+    expect(form.hasAttribute('data-modal-scroll-container')).toBe(false);
+    expect(container.querySelectorAll('.form-scroll-container')).toHaveLength(1);
   });
 });

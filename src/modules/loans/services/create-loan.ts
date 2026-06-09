@@ -2,6 +2,7 @@ import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transacti
 import { generateUUID } from '@/shared/utils/generate-uuid';
 import type { Category, CategoryType } from '@/modules/categories/domain/category.model';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
+import { getSourceDelta } from '@/modules/transactions/services/transaction-wallet-rules';
 import type { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
 import type { CreateLoanInput, Loan, LoanType } from '../domain/loan.model';
 import { validateCreateLoan } from '../domain/loan.schema';
@@ -95,7 +96,7 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
   const skipTransaction = input.skip_transaction ?? false;
 
   let categoryId: string | null = null;
-  let walletId: string | null = input.wallet_id ?? null;
+  const walletId: string | null = input.wallet_id ?? null;
 
   if (!skipTransaction) {
     if (!walletId) throw new Error('wallet_id is required');
@@ -144,6 +145,14 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
         created_at: now,
         updated_at: now,
       });
+
+      // Loan services write directly to the repository, bypassing
+      // CreateTransactionUseCase, so update the cached wallet balance here.
+      await deps.walletRepo.updateBalanceDelta(
+        walletId as string,
+        getSourceDelta(transactionType, input.principal),
+        now
+      );
 
       const updatedLoan = await deps.loanRepo.updateLoan(loanId, {
         wallet_id: walletId,

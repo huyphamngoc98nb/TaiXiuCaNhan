@@ -126,7 +126,7 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div>
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[18px] font-bold text-gray-900">
           {isEdit ? t('wallets.edit_account') : t('wallets.add_account')}
@@ -142,8 +142,7 @@ export function WalletForm({ existing, onSave, onClose, onDelete }: Props) {
 
       <form
         onSubmit={handleSubmit}
-        data-modal-scroll-container="true"
-        className="form-scroll-container min-h-0 max-h-full flex-1 space-y-5"
+        className="space-y-5"
       >
         {error && (
           <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-[12px] text-[13px] text-red-600 font-medium">

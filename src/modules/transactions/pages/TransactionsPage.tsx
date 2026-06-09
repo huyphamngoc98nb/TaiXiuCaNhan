@@ -127,7 +127,7 @@ export function TransactionsPage() {
   };
 
   const hasAdvancedFilter = Boolean(
-    hasCustomDateRange || filter.wallet_id || filter.type || filter.category_id,
+    hasCustomDateRange || filter.wallet_id || filter.type || filter.category_id || filter.note,
   );
   const title =
     drilldownSnapshot?.title ??

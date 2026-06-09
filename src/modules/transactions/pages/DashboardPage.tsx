@@ -46,8 +46,6 @@ function DashboardPage() {
     loading: summaryLoading,
   } = useTransactionSummary();
   const {
-    alerts,
-    hasAlerts,
     topBudgets,
     loading: budgetLoading,
   } = useBudgetAnalysis();
@@ -73,7 +71,6 @@ function DashboardPage() {
     !walletLoading &&
     wallets.length === 0 &&
     topBudgets.length === 0 &&
-    !hasAlerts &&
     creditCardAlerts.length === 0;
   const primaryCreditCardAlert = creditCardAlerts[0];
   const overdueCreditCardCount = creditCardAlerts.filter(
@@ -288,49 +285,6 @@ function DashboardPage() {
                 <p className="text-[10px] text-gray-500 mt-1.5 truncate">
                   {t('dashboard.remaining')} {displayAmount(Math.max(p.remaining_amount, 0))}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── Budget Alerts ────────────────────────────────────────────────── */}
-      {hasAlerts && (
-        <div className="mx-4 mt-5">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[15px] font-bold text-gray-900">{t('dashboard.budget_alerts')}</h3>
-            <span className="text-[11px] bg-red-100 text-red-500 font-bold px-2 py-0.5 rounded-full">
-              {alerts.length}
-            </span>
-          </div>
-          <div className="space-y-2">
-            {alerts.slice(0, 3).map(alert => (
-              <div
-                key={alert.budget.category_id}
-                className="flex items-center gap-3 bg-white rounded-[14px] px-4 py-3"
-                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-                onClick={() => navigate(ROUTES.BUDGETS)}
-              >
-                <span className="text-[22px]">{alert.budget.icon || '💰'}</span>
-                <div className="flex-1">
-                  <p className="text-[13px] font-semibold text-gray-900">{alert.budget.category_name}</p>
-                  <div className="h-1 bg-gray-100 rounded-full mt-1 overflow-hidden w-24">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${Math.min(alert.percentage * 100, 100)}%`,
-                        background: alert.status === 'exceeded' ? '#ef4444' : '#f59e0b',
-                      }}
-                    />
-                  </div>
-                </div>
-                <span
-                  className={`text-[12px] font-bold ${
-                    alert.status === 'exceeded' ? 'text-red-500' : 'text-amber-500'
-                  }`}
-                >
-                  {Math.round(alert.percentage * 100)}%
-                </span>
               </div>
             ))}
           </div>

@@ -13,6 +13,7 @@ export const loanServiceDeps = {
 export const loanMutationDeps = {
   loanRepo: loanRepository,
   transactionRepo: appRepositories.transaction,
+  walletRepo: appRepositories.wallet,
   categoryRepo: loanCategoryRepository,
 };
 

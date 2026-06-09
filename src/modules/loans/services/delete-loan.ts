@@ -1,3 +1,7 @@
+import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transaction-runner';
+import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
+import { getSourceDelta } from '@/modules/transactions/services/transaction-wallet-rules';
+import type { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
 import type { Loan } from '../domain/loan.model';
 import type { ILoanRepository } from '../repositories/loan.repository';
 
@@ -12,6 +16,8 @@ export class LoanHasPaymentsError extends Error {
 
 export interface DeleteLoanDeps {
   loanRepo: ILoanRepository;
+  transactionRepo: ITransactionRepository;
+  walletRepo: IWalletRepository;
 }
 
 async function getLoanForDelete(loanId: string, loanRepo: ILoanRepository): Promise<Loan | null> {
@@ -37,13 +43,37 @@ export async function deleteLoan(
   }
 
   const totalPaid = await deps.loanRepo.getTotalPaid(loanId);
+  const isSettled = loan.status === 'settled' || totalPaid >= loan.principal;
   if (!options.force && totalPaid > 0) {
     throw new LoanHasPaymentsError(
       `Khoản này đã có ${totalPaid.toLocaleString('vi-VN')}đ thanh toán. Xoá vĩnh viễn sẽ mất toàn bộ lịch sử.`
     );
   }
 
-  // Hard delete only removes the loan and loan_payments via FK cascade.
-  // Wallet transactions are historical records and must be deleted manually from Transactions if needed.
-  await deps.loanRepo.hardDeleteLoan(loanId);
+  const now = Date.now();
+
+  await runInTransaction(async () => {
+    // An unsettled loan still represents an outstanding principal movement.
+    // Remove its generated transaction and reverse that cached wallet balance
+    // delta before deleting the loan. Settled loans keep their completed history.
+    if (!isSettled && loan.linked_transaction_id) {
+      const linkedTransaction = await deps.transactionRepo.getByIdIncludeDeleted(
+        loan.linked_transaction_id
+      );
+
+      if (linkedTransaction?.deleted_at === null) {
+        const wasDeleted = await deps.transactionRepo.softDelete(linkedTransaction.id, now);
+
+        if (wasDeleted) {
+          await deps.walletRepo.updateBalanceDelta(
+            linkedTransaction.wallet_id,
+            -getSourceDelta(linkedTransaction.type, linkedTransaction.amount),
+            now
+          );
+        }
+      }
+    }
+
+    await deps.loanRepo.hardDeleteLoan(loanId);
+  });
 }

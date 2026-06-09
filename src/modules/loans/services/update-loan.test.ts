@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Category } from '@/modules/categories/domain/category.model';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
 import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
+import { InMemoryTransactionRepository } from '@/tests/fakes/in-memory-transaction.repository';
+import { InMemoryWalletRepository } from '@/tests/fakes/in-memory-wallet.repository';
 import type { Loan, UpdateLoanInput } from '../domain/loan.model';
 import { LoanValidationError } from '../domain/loan.schema';
 import type { ILoanRepository } from '../repositories/loan.repository';
@@ -132,10 +134,24 @@ function makeDeps(
   );
   const loanGetLoanById = vi.fn(async () => existingLoan);
   const walletGetById = vi.fn(async () => walletOverride);
+  const walletUpdateBalanceDelta = vi.fn();
   const transactionCreate = vi.fn(async (data: Parameters<ITransactionRepository['create']>[0]) =>
     makeTransaction(data)
   );
   const transactionSoftDelete = vi.fn(async () => true);
+  const linkedTransaction = existingLoan?.linked_transaction_id && existingLoan.wallet_id
+    ? makeTransaction({
+        id: existingLoan.linked_transaction_id,
+        wallet_id: existingLoan.wallet_id,
+        category_id: existingLoan.type === 'lend' ? 'cat-cho-vay' : 'cat-vay-no',
+        type: existingLoan.type === 'lend' ? 'expense' : 'income',
+        amount: existingLoan.principal,
+        transaction_date: existingLoan.created_at,
+        created_at: existingLoan.created_at,
+        updated_at: existingLoan.updated_at,
+      })
+    : null;
+  const transactionGetById = vi.fn(async () => linkedTransaction);
 
   const deps: UpdateLoanDeps = {
     loanRepo: {
@@ -152,12 +168,13 @@ function makeDeps(
     },
     walletRepo: {
       getById: walletGetById,
+      updateBalanceDelta: walletUpdateBalanceDelta,
     } as unknown as UpdateLoanDeps['walletRepo'],
     transactionRepo: {
       create: transactionCreate,
       update: vi.fn(),
       softDelete: transactionSoftDelete,
-      getById: vi.fn(),
+      getById: transactionGetById,
       getByIdIncludeDeleted: vi.fn(),
       list: vi.fn(),
     },
@@ -174,6 +191,7 @@ function makeDeps(
     walletGetById,
     transactionCreate,
     transactionSoftDelete,
+    walletUpdateBalanceDelta,
   };
 }
 
@@ -210,7 +228,13 @@ describe('updateLoan', () => {
 
   it('soft-deletes the linked transaction when skip_transaction changes from false to true', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(456);
-    const { deps, loanUpdateLoan, transactionCreate, transactionSoftDelete } = makeDeps(
+    const {
+      deps,
+      loanUpdateLoan,
+      transactionCreate,
+      transactionSoftDelete,
+      walletUpdateBalanceDelta,
+    } = makeDeps(
       wallet,
       makeExistingLoan({
         skip_transaction: false,
@@ -224,6 +248,7 @@ describe('updateLoan', () => {
     }), deps);
 
     expect(transactionSoftDelete).toHaveBeenCalledWith('tx-123', 456);
+    expect(walletUpdateBalanceDelta).toHaveBeenCalledWith(wallet.id, 1_000_000, 456);
     expect(transactionCreate).not.toHaveBeenCalled();
     expect(loanUpdateLoan).toHaveBeenCalledWith('loan-1', expect.objectContaining({
       wallet_id: null,
@@ -234,10 +259,16 @@ describe('updateLoan', () => {
     expect(loan.linked_transaction_id).toBeNull();
   });
 
-  it('creates a linked transaction when skip_transaction changes from true to false', async () => {
+  it('creates an expense transaction and reduces the wallet when enabling transactions for lend', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(789);
     generateUUIDMock.mockReturnValueOnce('tx-new');
-    const { deps, loanUpdateLoan, transactionCreate, transactionSoftDelete } = makeDeps(
+    const {
+      deps,
+      loanUpdateLoan,
+      transactionCreate,
+      transactionSoftDelete,
+      walletUpdateBalanceDelta,
+    } = makeDeps(
       wallet,
       makeExistingLoan({
         wallet_id: null,
@@ -262,6 +293,7 @@ describe('updateLoan', () => {
       amount: 1_000_000,
       transaction_date: new Date('2026-01-02T00:00:00').getTime(),
     }));
+    expect(walletUpdateBalanceDelta).toHaveBeenCalledWith(wallet.id, -1_000_000, 789);
     expect(loanUpdateLoan).toHaveBeenCalledWith('loan-1', expect.objectContaining({
       wallet_id: wallet.id,
       skip_transaction: false,
@@ -270,6 +302,82 @@ describe('updateLoan', () => {
     }));
     expect(loan.linked_transaction_id).toBe('tx-new');
   });
+
+  it('creates an income transaction and increases the wallet when enabling transactions for borrow', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(890);
+    generateUUIDMock.mockReturnValueOnce('tx-new');
+    const {
+      deps,
+      transactionCreate,
+      walletUpdateBalanceDelta,
+    } = makeDeps(
+      wallet,
+      makeExistingLoan({
+        wallet_id: null,
+        skip_transaction: true,
+        linked_transaction_id: null,
+        type: 'borrow',
+      })
+    );
+
+    const loan = await updateLoan('loan-1', input({
+      wallet_id: wallet.id,
+      skip_transaction: false,
+      type: 'borrow',
+    }), deps);
+
+    expect(transactionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      id: 'tx-new',
+      wallet_id: wallet.id,
+      category_id: 'cat-vay-no',
+      type: 'income',
+      amount: 1_000_000,
+    }));
+    expect(walletUpdateBalanceDelta).toHaveBeenCalledWith(wallet.id, 1_000_000, 890);
+    expect(loan).toEqual(expect.objectContaining({
+      skip_transaction: false,
+      linked_transaction_id: 'tx-new',
+      type: 'borrow',
+    }));
+  });
+
+  it.each([
+    { type: 'lend' as const, transactionType: 'expense' as const, expectedBalance: -1_000_000 },
+    { type: 'borrow' as const, transactionType: 'income' as const, expectedBalance: 1_000_000 },
+  ])(
+    'persists transaction history and wallet balance when enabling transactions for $type',
+    async ({ type, transactionType, expectedBalance }) => {
+      generateUUIDMock.mockReturnValueOnce('tx-stateful');
+      const walletRepo = new InMemoryWalletRepository([{ ...wallet, balance: 0 }]);
+      const transactionRepo = new InMemoryTransactionRepository();
+      const existingLoan = makeExistingLoan({
+        wallet_id: null,
+        skip_transaction: true,
+        linked_transaction_id: null,
+        type,
+      });
+      const deps = makeDeps(wallet, existingLoan).deps;
+      deps.walletRepo = walletRepo;
+      deps.transactionRepo = transactionRepo;
+
+      await updateLoan('loan-1', input({
+        wallet_id: wallet.id,
+        skip_transaction: false,
+        type,
+      }), deps);
+
+      await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({
+        balance: expectedBalance,
+      });
+      await expect(transactionRepo.list({ wallet_id: wallet.id })).resolves.toEqual([
+        expect.objectContaining({
+          id: 'tx-stateful',
+          type: transactionType,
+          amount: 1_000_000,
+        }),
+      ]);
+    },
+  );
 
   it('does not touch transactions when skip_transaction does not change', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(321);

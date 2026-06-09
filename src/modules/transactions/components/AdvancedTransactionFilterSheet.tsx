@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { CSSProperties } from 'react';
-import { Calendar, X } from 'lucide-react';
+import { Calendar, Search, X } from 'lucide-react';
 import { BottomSheet } from '@/shared/components/BottomSheet';
 import { DropdownList } from '@/shared/components/DropdownList';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -197,6 +197,22 @@ export function AdvancedTransactionFilterSheet({
             <X size={18} />
           </button>
         </div>
+
+        <label style={labelStyle}>
+          Tìm theo ghi chú
+          <div style={{ position: 'relative' }}>
+            <span style={dateIconStyle}>
+              <Search size={15} />
+            </span>
+            <input
+              type="text"
+              value={filter.note ?? ''}
+              onChange={event => onChange({ ...filter, note: event.target.value || undefined })}
+              placeholder="Tìm theo ghi chú..."
+              style={{ ...inputStyle, paddingLeft: '34px' }}
+            />
+          </div>
+        </label>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
           <label style={labelStyle}>
