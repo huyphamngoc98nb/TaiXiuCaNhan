@@ -47,6 +47,10 @@ export async function addLoanPayment(
     throw new LoanPaymentExceedError();
   }
 
+  const paymentWallet = await deps.walletRepo.getById(input.wallet_id);
+  if (!paymentWallet) throw new Error('Wallet not found');
+  if (paymentWallet.is_active !== 1) throw new Error('Wallet is inactive');
+
   const categoryConfig = PAYMENT_CATEGORY[loan.type];
   const categoryId = await resolveLoanCategoryId(
     deps.categoryRepo,
@@ -88,7 +92,7 @@ export async function addLoanPayment(
     // Payment transactions also bypass CreateTransactionUseCase, so apply the
     // same cached-balance delta in the surrounding database transaction.
     await deps.walletRepo.updateBalanceDelta(
-      input.wallet_id,
+      paymentWallet.id,
       getSourceDelta(transactionType, input.amount),
       now
     );

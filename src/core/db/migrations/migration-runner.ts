@@ -28,6 +28,7 @@ import loansSql from './023_loans.sql?raw';
 import loanCategoriesSql from './024_loan_categories.sql?raw';
 import loanSkipTransactionSql from './025_loan_skip_transaction.sql?raw';
 import loanLinkedTransactionSql from './026_loan_linked_transaction.sql?raw';
+import loanDateSql from './027_loan_date.sql?raw';
 
 type DbConnection = Awaited<ReturnType<typeof getDbConnection>>;
 
@@ -74,6 +75,7 @@ export const MIGRATIONS: Migration[] = [
   { version: 24, name: '024_loan_categories',                  sql: loanCategoriesSql },
   { version: 25, name: LOAN_SKIP_TRANSACTION_NAME,             sql: loanSkipTransactionSql },
   { version: 26, name: LOAN_LINKED_TRANSACTION_NAME,           sql: loanLinkedTransactionSql },
+  { version: 27, name: '027_loan_date',                        sql: loanDateSql },
 ];
 
 async function markMigrationDone(

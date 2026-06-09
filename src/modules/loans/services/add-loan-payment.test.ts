@@ -40,6 +40,12 @@ const wallet: Wallet = {
   updated_at: 0,
 };
 
+const settlementWallet: Wallet = {
+  ...wallet,
+  id: 'wallet-2',
+  name: 'Bank',
+};
+
 function makeLoan(type: LoanType, principal = 1_000_000): Loan {
   return {
     id: 'loan-1',
@@ -242,6 +248,33 @@ describe('addLoanPayment', () => {
       100_000,
       expect.any(Number),
     );
+  });
+
+  it('settles into the selected wallet even when it differs from the original loan wallet', async () => {
+    const { deps, transactionCreate, updateLoanStatus } = makeDeps('lend', 400_000, 500_000);
+    const walletRepo = new InMemoryWalletRepository([wallet, settlementWallet]);
+    const updateBalanceDelta = vi.spyOn(walletRepo, 'updateBalanceDelta');
+    deps.walletRepo = walletRepo;
+
+    await addLoanPayment({
+      loan_id: 'loan-1',
+      wallet_id: settlementWallet.id,
+      amount: 100_000,
+      payment_date: Date.now(),
+    }, deps);
+
+    expect(transactionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      wallet_id: settlementWallet.id,
+      amount: 100_000,
+    }));
+    expect(updateBalanceDelta).toHaveBeenCalledWith(
+      settlementWallet.id,
+      100_000,
+      expect.any(Number),
+    );
+    await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({ balance: 0 });
+    await expect(walletRepo.getById(settlementWallet.id)).resolves.toMatchObject({ balance: 100_000 });
+    expect(updateLoanStatus).toHaveBeenCalledWith('loan-1', 'settled', expect.any(Number));
   });
 
   it('should throw LoanPaymentExceedError when amount exceeds remaining', async () => {

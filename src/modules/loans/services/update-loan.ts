@@ -9,6 +9,7 @@ import type { ILoanRepository } from '../repositories/loan.repository';
 import {
   dateToMs,
   LOAN_CREATE_CATEGORY,
+  msToLocalDate,
   resolveLoanCategoryId,
   type LoanCategoryRepository,
 } from './create-loan';
@@ -51,6 +52,7 @@ export async function updateLoan(
   }
 
   const now = Date.now();
+  const loanDate = input.loan_date ?? existingLoan.loan_date ?? msToLocalDate(existingLoan.created_at);
 
   return runInTransaction(async () => {
     let linkedTransactionId = existingLoan.linked_transaction_id ?? null;
@@ -81,7 +83,7 @@ export async function updateLoan(
       const transactionNote = input.type === 'lend'
         ? `Cho vay: ${input.contact_name}`
         : `Vay nợ: ${input.contact_name}`;
-      const transactionDate = input.due_date ? dateToMs(input.due_date) : now;
+      const transactionDate = dateToMs(loanDate);
 
       await deps.transactionRepo.create({
         id: transactionId,
@@ -104,6 +106,7 @@ export async function updateLoan(
 
     const loan = await deps.loanRepo.updateLoan(id, {
       ...input,
+      loan_date: loanDate,
       wallet_id: walletId,
       skip_transaction: willSkip,
       linked_transaction_id: linkedTransactionId,

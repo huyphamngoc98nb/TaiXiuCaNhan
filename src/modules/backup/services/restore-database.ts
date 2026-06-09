@@ -145,9 +145,9 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
       insertStatements.push({
         statement: `INSERT INTO loans (
           id, wallet_id, type, contact_name, contact_info, principal,
-          due_date, note, status, created_at, updated_at, deleted_at, skip_transaction,
+          loan_date, due_date, note, status, created_at, updated_at, deleted_at, skip_transaction,
           linked_transaction_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         values: [
           row.id,
           value(row, 'wallet_id'),
@@ -155,6 +155,7 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
           row.contact_name,
           value(row, 'contact_info'),
           row.principal,
+          value(row, 'loan_date'),
           value(row, 'due_date'),
           value(row, 'note'),
           value(row, 'status', 'active'),

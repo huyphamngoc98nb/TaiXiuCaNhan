@@ -51,6 +51,25 @@ describe('LoanForm', () => {
     expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
       skip_transaction: true,
       wallet_id: null,
+      loan_date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+    }));
+  });
+
+  it('shows the corresponding loan date label and submits the selected date', async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const { container } = renderLoanForm(<LoanForm onSubmit={onSubmit} loading={false} />);
+
+    expect(await screen.findByText('Ngày cho vay')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Vay nợ' }));
+    expect(screen.getByText('Ngày vay')).toBeTruthy();
+
+    await fillRequiredFields();
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'borrow',
+      loan_date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
     }));
   });
 

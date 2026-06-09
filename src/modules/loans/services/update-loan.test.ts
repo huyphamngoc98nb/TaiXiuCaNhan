@@ -280,6 +280,7 @@ describe('updateLoan', () => {
     const loan = await updateLoan('loan-1', input({
       wallet_id: wallet.id,
       skip_transaction: false,
+      loan_date: '2026-01-02',
       due_date: '2026-01-02',
     }), deps);
 

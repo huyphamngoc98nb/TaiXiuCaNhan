@@ -195,6 +195,16 @@ describe('createLoan', () => {
     );
   });
 
+  it('uses loan_date for the linked transaction date', async () => {
+    const { deps, transactionCreate } = makeDeps();
+
+    await createLoan({ ...baseInput('lend'), loan_date: '2026-06-01', due_date: '2026-07-01' }, deps);
+
+    expect(transactionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      transaction_date: new Date('2026-06-01T00:00:00').getTime(),
+    }));
+  });
+
   it("reduces the wallet balance when type='lend'", async () => {
     const walletRepo = new InMemoryWalletRepository([{ ...wallet, balance: 0 }]);
     const { deps } = makeDeps(walletRepo);

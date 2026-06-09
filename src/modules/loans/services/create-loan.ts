@@ -86,9 +86,16 @@ export async function resolveLoanCategoryId(
 export function dateToMs(date: string): number {
   const timestamp = new Date(`${date}T00:00:00`).getTime();
   if (!Number.isFinite(timestamp)) {
-    throw new Error('Invalid due_date');
+    throw new Error('Invalid date');
   }
   return timestamp;
+}
+
+export function msToLocalDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): Promise<Loan> {
@@ -114,17 +121,19 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
   }
 
   const now = Date.now();
+  const loanDate = input.loan_date ?? msToLocalDate(now);
   const loanId = generateUUID();
   const transactionId = skipTransaction ? null : generateUUID();
   const transactionType = input.type === 'lend' ? 'expense' : 'income';
   const transactionNote = input.type === 'lend'
     ? `Cho vay: ${input.contact_name}`
     : `Vay nợ: ${input.contact_name}`;
-  const transactionDate = input.due_date ? dateToMs(input.due_date) : now;
+  const transactionDate = dateToMs(loanDate);
 
   return runInTransaction(async () => {
     const loan = await deps.loanRepo.createLoan({
       ...input,
+      loan_date: loanDate,
       wallet_id: walletId,
       skip_transaction: skipTransaction,
       linked_transaction_id: null,
@@ -162,6 +171,7 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
         contact_name: input.contact_name,
         contact_info: input.contact_info,
         principal: input.principal,
+        loan_date: loanDate,
         due_date: input.due_date,
         note: input.note,
         updated_at: now,

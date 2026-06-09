@@ -51,6 +51,9 @@ export function LoanForm({
   const [contactInfo, setContactInfo] = useState(initialLoan?.contact_info ?? '');
   const [walletId, setWalletId] = useState(initialLoan?.wallet_id ?? '');
   const [principal, setPrincipal] = useState(initialLoan ? String(initialLoan.principal) : '');
+  const [loanDate, setLoanDate] = useState(() =>
+    dateStringToTimestamp(initialLoan?.loan_date ?? timestampToDateString(initialLoan?.created_at ?? Date.now()))
+  );
   const [dueDate, setDueDate] = useState(() => dateStringToTimestamp(initialLoan?.due_date));
   const [note, setNote] = useState(initialLoan?.note ?? '');
   const [skipTransaction, setSkipTransaction] = useState(initialLoan?.skip_transaction ?? false);
@@ -96,6 +99,7 @@ export function LoanForm({
         contact_name: contactName.trim(),
         contact_info: contactInfo.trim() || undefined,
         principal: Number(principal),
+        loan_date: timestampToDateString(loanDate),
         due_date: timestampToDateString(dueDate),
         note: note.trim() || undefined,
       });
@@ -182,6 +186,12 @@ export function LoanForm({
           className={type === 'lend' ? 'border-amber-200' : 'border-blue-200'}
         />
       </div>
+
+      <DateTimePicker
+        value={loanDate}
+        onChange={setLoanDate}
+        label={type === 'lend' ? 'Ngày cho vay' : 'Ngày vay'}
+      />
 
       <DateTimePicker
         value={dueDate}

@@ -11,6 +11,7 @@ export interface Loan {
   contact_name: string;
   contact_info: string | null;
   principal: number;
+  loan_date?: string | null;
   due_date: string | null;
   note: string | null;
   status: LoanStatus;
@@ -43,6 +44,7 @@ export interface CreateLoanInput {
   contact_name: string;
   contact_info?: string;
   principal: number;
+  loan_date?: string;
   due_date?: string;
   note?: string;
 }
