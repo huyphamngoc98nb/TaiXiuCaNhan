@@ -1,9 +1,10 @@
 import { ITransactionRepository } from '../repositories/transaction.repository';
 import { appRepositories } from '@/core/repositories/app-repositories';
-import { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
+import { IWalletRepository, Wallet } from '@/modules/wallets/repositories/wallet.repository';
 import { DB_NAME } from '@/core/db/sqlite/connection';
 import { sqliteTransactionRunner, TransactionRunner } from '@/core/db/transaction-runner';
 import { Capacitor } from '@capacitor/core';
+import { SyncCreditCardStatementUseCase } from '@/modules/wallets/services/sync-credit-card-statement';
 
 export class DeleteTransactionUseCase {
   constructor(
@@ -14,6 +15,7 @@ export class DeleteTransactionUseCase {
 
   async execute(id: string) {
     let didMutate = false;
+    const creditCardSyncTargets = new Map<string, { wallet: Wallet; asOf: number }>();
 
     await this.runTransaction(async () => {
       // Read include-deleted inside serialized work so repeated delete calls
@@ -43,11 +45,29 @@ export class DeleteTransactionUseCase {
       // Atomic delta update: no race condition.
       await this.walletRepository.updateBalanceDelta(transaction.wallet_id, sourceDelta, now);
 
-      // If the destination wallet was physically removed, there is no balance
-      // row left to reconcile. Soft-delete still removes the active ledger
-      // entry, and the source wallet revert is the only valid remaining delta.
-      if (transaction.type === 'transfer' && transaction.to_wallet_id && shouldRevertDestinationWallet) {
-        await this.walletRepository.updateBalanceDelta(transaction.to_wallet_id, -transaction.amount, now);
+      if (transaction.type === 'transfer' && transaction.to_wallet_id) {
+        if (shouldRevertDestinationWallet) {
+          await this.walletRepository.updateBalanceDelta(transaction.to_wallet_id, -transaction.amount, now);
+        } else {
+          // The ledger was already inconsistent when a referenced destination wallet was deleted.
+          // Revert the source best-effort and keep deletion available, but leave an audit trail.
+          console.warn(
+            `Cannot revert deleted transfer ${transaction.id}: destination wallet ${transaction.to_wallet_id} no longer exists`
+          );
+        }
+      }
+
+      if (wallet.account_type === 'credit_card') {
+        creditCardSyncTargets.set(wallet.id, {
+          wallet,
+          asOf: transaction.transaction_date,
+        });
+      }
+      if (destinationWallet?.account_type === 'credit_card') {
+        creditCardSyncTargets.set(destinationWallet.id, {
+          wallet: destinationWallet,
+          asOf: transaction.transaction_date,
+        });
       }
 
       didMutate = true;
@@ -58,6 +78,16 @@ export class DeleteTransactionUseCase {
     if (didMutate && Capacitor.getPlatform() === 'web') {
       const { sqlite } = await import('@/core/db/sqlite/pragmas');
       await sqlite.saveToStore(DB_NAME);
+    }
+
+    for (const { wallet, asOf } of creditCardSyncTargets.values()) {
+      try {
+        await new SyncCreditCardStatementUseCase(this.walletRepository).execute(wallet, asOf);
+      } catch (error) {
+        // Sync failure is non-fatal: the payment is committed.
+        // Statement will be corrected on next successful sync.
+        console.warn(`Failed to sync credit card statement for wallet ${wallet.id}`, error);
+      }
     }
 
     return true;

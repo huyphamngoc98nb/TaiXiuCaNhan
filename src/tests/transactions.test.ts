@@ -12,6 +12,9 @@ import { immediateTransactionRunner } from '@/core/db/transaction-runner';
 import { InMemoryTransactionRepository } from './fakes/in-memory-transaction.repository';
 import { InMemoryWalletRepository } from './fakes/in-memory-wallet.repository';
 import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
+import { logger } from '@/core/telemetry/logger';
+import { SyncCreditCardStatementUseCase } from '@/modules/wallets/services/sync-credit-card-statement';
+import { sqlite } from '@/core/db/sqlite/pragmas';
 
 // Mock dependencies
 vi.mock('../core/db/sqlite/connection', () => ({
@@ -38,6 +41,7 @@ vi.mock('@/core/telemetry/logger', () => ({
   logger: {
     info: vi.fn(),
     error: vi.fn(),
+    warn: vi.fn(),
   }
 }));
 
@@ -76,7 +80,7 @@ describe('Transaction Module QA Tests', () => {
   } satisfies Wallet;
 
   describe('Repository Layer', () => {
-    it('create() inserts correct values and maps note/receipt to null if empty', async () => {
+    it('create() inserts correct values and returns them without a DB read-back', async () => {
       const input = {
         id: 'tx-1',
         wallet_id: 'w-1',
@@ -88,16 +92,21 @@ describe('Transaction Module QA Tests', () => {
         updated_at: 2000
       };
 
-      // Mock getById which is called after create
-      mockDb.query.mockResolvedValueOnce({ values: [{ ...input, note: null, receipt_path: null, deleted_at: null }] });
-
-      await repository.create(input);
+      const transaction = await repository.create(input);
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO transactions'),
         ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 2000, 2000],
         true
       );
+      expect(transaction).toEqual({
+        ...input,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        deleted_at: null,
+      });
+      expect(mockDb.query).not.toHaveBeenCalled();
     });
 
     it('list() builds correct WHERE clause for filters', async () => {
@@ -233,6 +242,29 @@ describe('Transaction Module QA Tests', () => {
       expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledWith('path/to/receipt.jpg');
     });
 
+    it('CreateTransactionUseCase does not mutate the DB when receipt save fails', async () => {
+      const transactionRepository = new InMemoryTransactionRepository();
+      const createSpy = vi.spyOn(transactionRepository, 'create');
+      const walletRepository = new InMemoryWalletRepository([walletRow]);
+      const createUseCase = new CreateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      vi.mocked(ReceiptStorageService.saveReceipt).mockRejectedValue(
+        new Error('Could not save receipt image')
+      );
+
+      await expect(createUseCase.execute(validCreateInput, 'base64data')).rejects.toThrow(
+        'Could not save receipt image'
+      );
+
+      expect(createSpy).not.toHaveBeenCalled();
+      expect(ReceiptStorageService.deleteReceipt).not.toHaveBeenCalled();
+      await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+    });
+
     it('UpdateTransactionUseCase deletes old receipt if new one is successfully saved', async () => {
       const oldTx = {
         ...validCreateInput,
@@ -257,6 +289,136 @@ describe('Transaction Module QA Tests', () => {
       await updateUseCase.execute('tx-1', { amount: 60 }, 'newBase64');
 
       expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledWith('old.jpg');
+    });
+
+    it('UpdateTransactionUseCase logs old receipt cleanup failure without rejecting', async () => {
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-1',
+        note: null,
+        receipt_path: 'old.jpg',
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([walletRow]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+
+      vi.mocked(ReceiptStorageService.saveReceipt).mockResolvedValue('new.jpg');
+      vi.mocked(ReceiptStorageService.deleteReceipt).mockRejectedValueOnce(
+        new Error('cleanup failed')
+      );
+
+      await expect(updateUseCase.execute('tx-1', { amount: 60 }, 'newBase64')).resolves.toMatchObject({
+        receipt_path: 'new.jpg',
+      });
+
+      expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledTimes(1);
+      expect(ReceiptStorageService.deleteReceipt).toHaveBeenCalledWith('old.jpg');
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Failed to clean up previous receipt at old.jpg',
+        expect.any(Error)
+      );
+    });
+
+    it('UpdateTransactionUseCase syncs a credit card with the final transaction date after web persistence', async () => {
+      const transactionDate = Date.now();
+      const finalTransactionDate = transactionDate + 1_000;
+      const oldTx = {
+        ...validCreateInput,
+        id: 'tx-credit-card',
+        wallet_id: 'cc-1',
+        amount: 100,
+        transaction_date: transactionDate,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const transactionRepository = new InMemoryTransactionRepository([oldTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...creditCardWallet, balance: -100 },
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const callOrder: string[] = [];
+      vi.mocked(sqlite.saveToStore).mockImplementationOnce(async () => {
+        callOrder.push('saveToStore');
+      });
+      const syncSpy = vi
+        .spyOn(SyncCreditCardStatementUseCase.prototype, 'execute')
+        .mockImplementationOnce(async () => {
+          callOrder.push('sync');
+        });
+
+      await expect(updateUseCase.execute('tx-credit-card', {
+        amount: 150,
+        transaction_date: finalTransactionDate,
+      })).resolves.toMatchObject({ amount: 150, transaction_date: finalTransactionDate });
+
+      expect(syncSpy).toHaveBeenCalledOnce();
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'cc-1', account_type: 'credit_card' }),
+        finalTransactionDate
+      );
+      expect(callOrder).toEqual(['saveToStore', 'sync']);
+      syncSpy.mockRestore();
+    });
+
+    it('UpdateTransactionUseCase ignores statement sync failure and skips non-credit-card wallets', async () => {
+      const creditCardTx = {
+        ...validCreateInput,
+        id: 'tx-credit-card',
+        wallet_id: 'cc-1',
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      };
+      const cashTx = { ...creditCardTx, id: 'tx-cash', wallet_id: 'w-1' };
+      const transactionRepository = new InMemoryTransactionRepository([creditCardTx, cashTx]);
+      const walletRepository = new InMemoryWalletRepository([
+        walletRow,
+        { ...creditCardWallet, balance: -50 },
+      ]);
+      const updateUseCase = new UpdateTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const syncSpy = vi
+        .spyOn(SyncCreditCardStatementUseCase.prototype, 'execute')
+        .mockRejectedValue(new Error('sync failed'));
+
+      await expect(updateUseCase.execute('tx-credit-card', { amount: 60 })).resolves.toMatchObject({
+        amount: 60,
+      });
+      expect(warnSpy).toHaveBeenCalledWith(
+        'Failed to sync credit card statement for wallet cc-1',
+        expect.any(Error)
+      );
+
+      syncSpy.mockClear();
+      await expect(updateUseCase.execute('tx-cash', { amount: 60 })).resolves.toMatchObject({
+        amount: 60,
+      });
+      expect(syncSpy).not.toHaveBeenCalled();
+      syncSpy.mockRestore();
+      warnSpy.mockRestore();
     });
 
     it('UpdateTransactionUseCase validates expense edits against the new wallet when wallet changes', async () => {
@@ -637,6 +799,49 @@ describe('Transaction Module QA Tests', () => {
 
       await expect(deleteUseCase.execute('tx-transfer-missing-destination')).resolves.toBe(true);
       await expect(walletRepository.getById('w-1')).resolves.toMatchObject({ balance: 10_000 });
+    });
+
+    it('DeleteTransactionUseCase syncs a credit card after commit and ignores sync failure', async () => {
+      const transactionDate = Date.now();
+      const transactionRepository = new InMemoryTransactionRepository([{
+        ...validCreateInput,
+        id: 'tx-credit-card-expense',
+        wallet_id: 'cc-1',
+        amount: 50,
+        transaction_date: transactionDate,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      }]);
+      const walletRepository = new InMemoryWalletRepository([
+        { ...creditCardWallet, balance: -50 },
+      ]);
+      const deleteUseCase = new DeleteTransactionUseCase(
+        transactionRepository,
+        walletRepository,
+        immediateTransactionRunner
+      );
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const syncSpy = vi
+        .spyOn(SyncCreditCardStatementUseCase.prototype, 'execute')
+        .mockRejectedValue(new Error('sync failed'));
+
+      await expect(deleteUseCase.execute('tx-credit-card-expense')).resolves.toBe(true);
+
+      expect(syncSpy).toHaveBeenCalledOnce();
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'cc-1', account_type: 'credit_card' }),
+        transactionDate
+      );
+      expect(warnSpy).toHaveBeenCalledWith(
+        'Failed to sync credit card statement for wallet cc-1',
+        expect.any(Error)
+      );
+      syncSpy.mockRestore();
+      warnSpy.mockRestore();
     });
 
     it('WalletService calculates balance adjustment from the wallet state inside the transaction', async () => {

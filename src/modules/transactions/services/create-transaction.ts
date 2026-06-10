@@ -25,10 +25,6 @@ export class CreateTransactionUseCase {
     validateCreateTransaction(input);
 
     let savedReceiptPath: string | undefined;
-    if (receiptBase64) {
-      savedReceiptPath = await ReceiptStorageService.saveReceipt(receiptBase64);
-    }
-
     const now = Date.now();
     const id = crypto.randomUUID();
     const sourceDelta = getSourceDelta(input.type, input.amount);
@@ -49,6 +45,15 @@ export class CreateTransactionUseCase {
         }
 
         assertCreateTransactionFunding(wallet, input.type, input.amount);
+
+        if (receiptBase64) {
+          // NOTE: file-system and SQLite cannot be made truly atomic.
+          // File is saved inside the transaction window to minimize orphan risk.
+          // If the app crashes after saveReceipt but before DB commit, the file
+          // becomes an orphan. Periodic cleanup (not yet implemented) should scan
+          // receipts/ for files with no corresponding DB record.
+          savedReceiptPath = await ReceiptStorageService.saveReceipt(receiptBase64);
+        }
 
         const tx = await this.repository.create({
           ...input,

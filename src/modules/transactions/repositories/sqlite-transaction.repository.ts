@@ -16,7 +16,20 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       data.transaction_date, data.created_at, data.updated_at
     ];
     await db.run(sql, values, !isManagedTransactionActive());
-    return this.getById(data.id) as Promise<Transaction>;
+    return {
+      id: data.id,
+      wallet_id: data.wallet_id,
+      category_id: data.category_id,
+      type: data.type,
+      amount: data.amount,
+      note: data.note || null,
+      receipt_path: data.receipt_path || null,
+      to_wallet_id: data.to_wallet_id || null,
+      transaction_date: data.transaction_date,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+      deleted_at: null,
+    };
   }
 
   // MINOR-1 fix: thay any[] bằng unknown[] — an toàn hơn về type

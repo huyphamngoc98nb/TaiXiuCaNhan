@@ -310,8 +310,7 @@ export class SQLiteWalletRepository implements IWalletRepository {
     const transactions = await db.query(
       `SELECT COUNT(*) AS count
        FROM transactions
-       WHERE deleted_at IS NULL
-         AND (wallet_id = ? OR to_wallet_id = ?)`,
+       WHERE wallet_id = ? OR to_wallet_id = ?`,
       [id, id]
     );
     const recurringBills = await db.query(

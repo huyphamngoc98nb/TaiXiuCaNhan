@@ -7,6 +7,8 @@ import { DB_NAME } from '@/core/db/sqlite/connection';
 import { sqliteTransactionRunner, TransactionRunner } from '@/core/db/transaction-runner';
 import { ReceiptStorageService } from '@/core/files/receipt-storage';
 import { Capacitor } from '@capacitor/core';
+import { logger } from '@/core/telemetry/logger';
+import { SyncCreditCardStatementUseCase } from '@/modules/wallets/services/sync-credit-card-statement';
 import {
   assertActiveWallet,
   assertNoCreditCardToCreditCardTransfer,
@@ -28,16 +30,14 @@ export class UpdateTransactionUseCase {
     if (!await this.repository.getById(id)) throw new Error('Transaction not found');
 
     let newSavedReceiptPath: string | undefined;
-    if (newReceiptBase64) {
-      newSavedReceiptPath = await ReceiptStorageService.saveReceipt(newReceiptBase64);
-    }
-
     const now = Date.now();
-    const finalReceiptPath = newSavedReceiptPath ?? input.receipt_path;
+    let finalReceiptPath = input.receipt_path;
     let previousReceiptPath: string | null = null;
+    let updated: Awaited<ReturnType<ITransactionRepository['update']>>;
+    const creditCardSyncTargets = new Map<string, { wallet: Wallet; asOf: number }>();
 
     try {
-      const updated = await this.runTransaction(async () => {
+      updated = await this.runTransaction(async () => {
         const oldTransaction = await this.repository.getById(id);
         if (!oldTransaction) throw new Error('Transaction not found');
         previousReceiptPath = oldTransaction.receipt_path;
@@ -48,12 +48,20 @@ export class UpdateTransactionUseCase {
         const finalToWalletId = finalType === 'transfer'
           ? input.to_wallet_id ?? oldTransaction.to_wallet_id
           : null;
+        const finalTransactionDate = input.transaction_date ?? oldTransaction.transaction_date;
 
         const finalWallet = await this.walletRepository.getById(finalWalletId);
         if (!finalWallet) throw new Error('Wallet not found');
         assertActiveWallet(finalWallet, 'Wallet is inactive');
 
         const walletsById = new Map<string, Wallet>([[finalWallet.id, finalWallet]]);
+        const oldWallet = oldTransaction.wallet_id === finalWallet.id
+          ? finalWallet
+          : await this.walletRepository.getById(oldTransaction.wallet_id);
+        const oldToWallet = oldTransaction.to_wallet_id
+          ? await this.walletRepository.getById(oldTransaction.to_wallet_id)
+          : null;
+        let finalToWallet: Wallet | null = null;
         if (finalType === 'transfer') {
           if (!finalToWalletId) {
             throw new TransactionValidationError(['to_wallet_id is required for transfer transactions']);
@@ -61,7 +69,9 @@ export class UpdateTransactionUseCase {
           if (finalToWalletId === finalWalletId) {
             throw new TransactionValidationError(['to_wallet_id must be different from wallet_id']);
           }
-          const finalToWallet = await this.walletRepository.getById(finalToWalletId);
+          finalToWallet = oldToWallet?.id === finalToWalletId
+            ? oldToWallet
+            : await this.walletRepository.getById(finalToWalletId);
           if (!finalToWallet) throw new Error('Destination wallet not found');
           assertActiveWallet(finalToWallet, 'Destination wallet is inactive');
           assertNoCreditCardToCreditCardTransfer(finalWallet, finalToWallet);
@@ -88,6 +98,16 @@ export class UpdateTransactionUseCase {
           assertProjectedWalletDelta(wallet, walletDelta);
         }
 
+        if (newReceiptBase64) {
+          // NOTE: file-system and SQLite cannot be made truly atomic.
+          // File is saved inside the transaction window to minimize orphan risk.
+          // If the app crashes after saveReceipt but before DB commit, the file
+          // becomes an orphan. Periodic cleanup (not yet implemented) should scan
+          // receipts/ for files with no corresponding DB record.
+          newSavedReceiptPath = await ReceiptStorageService.saveReceipt(newReceiptBase64);
+          finalReceiptPath = newSavedReceiptPath;
+        }
+
         const result = await this.repository.update(id, {
           ...input,
           to_wallet_id: finalToWalletId,
@@ -101,6 +121,34 @@ export class UpdateTransactionUseCase {
               await this.walletRepository.updateBalanceDelta(walletId, walletDelta, now);
             }
           }
+
+          if (oldWallet?.account_type === 'credit_card' && oldWallet.id !== finalWallet.id) {
+            creditCardSyncTargets.set(oldWallet.id, {
+              wallet: oldWallet,
+              asOf: oldTransaction.transaction_date,
+            });
+          }
+          if (
+            oldToWallet?.account_type === 'credit_card' &&
+            oldToWallet.id !== finalToWallet?.id
+          ) {
+            creditCardSyncTargets.set(oldToWallet.id, {
+              wallet: oldToWallet,
+              asOf: oldTransaction.transaction_date,
+            });
+          }
+          if (finalWallet.account_type === 'credit_card') {
+            creditCardSyncTargets.set(finalWallet.id, {
+              wallet: finalWallet,
+              asOf: finalTransactionDate,
+            });
+          }
+          if (finalToWallet?.account_type === 'credit_card') {
+            creditCardSyncTargets.set(finalToWallet.id, {
+              wallet: finalToWallet,
+              asOf: finalTransactionDate,
+            });
+          }
         }
 
         return result;
@@ -112,21 +160,38 @@ export class UpdateTransactionUseCase {
         await sqlite.saveToStore(DB_NAME);
       }
 
-      if (
-        updated &&
-        finalReceiptPath &&
-        previousReceiptPath &&
-        finalReceiptPath !== previousReceiptPath
-      ) {
-        await ReceiptStorageService.deleteReceipt(previousReceiptPath);
-      }
-
-      return updated;
     } catch (error) {
       if (newSavedReceiptPath) {
         await ReceiptStorageService.deleteReceipt(newSavedReceiptPath);
       }
       throw error;
     }
+
+    for (const { wallet, asOf } of creditCardSyncTargets.values()) {
+      try {
+        await new SyncCreditCardStatementUseCase(this.walletRepository).execute(wallet, asOf);
+      } catch (error) {
+        // Sync failure is non-fatal: the payment is committed.
+        // Statement will be corrected on next successful sync.
+        console.warn(`Failed to sync credit card statement for wallet ${wallet.id}`, error);
+      }
+    }
+
+    // Best-effort: DB is already committed. A cleanup failure here only leaks
+    // storage; it does not affect data integrity.
+    if (
+      updated &&
+      finalReceiptPath &&
+      previousReceiptPath &&
+      finalReceiptPath !== previousReceiptPath
+    ) {
+      try {
+        await ReceiptStorageService.deleteReceipt(previousReceiptPath);
+      } catch (error) {
+        logger.warn(`Failed to clean up previous receipt at ${previousReceiptPath}`, error);
+      }
+    }
+
+    return updated;
   }
 }
