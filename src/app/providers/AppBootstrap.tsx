@@ -9,6 +9,8 @@ import { runMigrations } from '@/core/db/migrations/migration-runner';
 import { seedDefaultData } from '@/core/db/seed/default-categories';
 import { authService } from '@/core/auth/auth.service';
 import { runAutoBackupIfDue } from '@/modules/backup/services/auto-backup.service';
+import { useWebPersistWarning } from '@/core/db/sqlite/use-web-persist-warning';
+import { useToast } from '@/shared/components/Toast/ToastContext';
 import { AppUnlock } from './AppUnlock';
 import {
   APP_LOCK_FORCE_UNLOCK_EVENT,
@@ -32,6 +34,15 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
   const idleTimerRef = useRef<number | null>(null);
   const isUnlockedRef = useRef(isUnlocked);
   const appLockSuspendedRef = useRef(false);
+
+  const { showToast } = useToast();
+  const handlePersistFail = useCallback(() => {
+    // Only warn on Web - native platforms use real SQLite, no saveToStore needed.
+    if (Capacitor.getPlatform() !== 'web') return;
+    showToast('Dữ liệu chưa được lưu vĩnh viễn. Vui lòng không tắt ứng dụng.', 'error');
+  }, [showToast]);
+
+  useWebPersistWarning(handlePersistFail);
 
   useEffect(() => {
     isUnlockedRef.current = isUnlocked;
