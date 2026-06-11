@@ -1,122 +1,206 @@
-# Expense Tracker App
+# Expense Tracker
 
-A local-first, offline-ready expense tracker packaged for Android using Capacitor.
+Ứng dụng quản lý tài chính cá nhân theo hướng **local-first**, chạy trên Web và được đóng gói cho Android bằng Capacitor. Dữ liệu nghiệp vụ được lưu trong SQLite trên thiết bị; ứng dụng không cần backend để sử dụng các chức năng chính.
 
-## Project Structure
+## Tính năng hiện có
 
-This project follows a domain-driven architecture:
-- `src/app/`: Application shell, providers, layouts, and routing.
-- `src/shared/`: Shared UI components, global constants, and utility functions.
-- `src/core/`: Infrastructure code (e.g., telemetry logger, DB configurations).
-- `src/modules/`: Business domains (e.g., transactions, settings, categories). Each module encapsulates its own UI, state, and domain logic.
-- `src/tests/`: Global test configuration.
+- Dashboard tổng hợp thu, chi, số dư, ngân sách và hóa đơn sắp đến hạn.
+- Quản lý giao dịch thu, chi, chuyển khoản; lọc nâng cao và đính kèm ảnh hóa đơn.
+- Quản lý nhiều loại ví: tiền mặt, ngân hàng, thẻ tín dụng, ví điện tử, đầu tư và loại khác.
+- Theo dõi sao kê, dư nợ và thanh toán thẻ tín dụng.
+- Quản lý danh mục thu/chi và mô tả danh mục.
+- Ngân sách theo tuần/tháng, theo danh mục, ví hoặc loại tài khoản.
+- Hóa đơn định kỳ và nhắc hạn trong ứng dụng.
+- Theo dõi khoản vay/cho vay, lịch sử thanh toán và số tiền còn lại.
+- Báo cáo dòng tiền, xu hướng và phân bổ chi tiêu theo danh mục.
+- Xuất báo cáo PDF, CSV và error log JSON.
+- Backup/restore JSON thủ công và tự động theo ngày, tuần hoặc tháng.
+- Giao diện tiếng Việt/tiếng Anh, nhiều đơn vị tiền tệ, theme sáng/tối/hệ thống.
+- Khóa ứng dụng bằng PIN; hỗ trợ mở khóa sinh trắc học trên thiết bị native.
 
-## Current Implemented Scope
-- **Phase 1 Bootstrap & Refinement**
-  - React + Vite + TypeScript initialized.
-  - Prettier and ESLint configured.
-  - Capacitor initialized with Android platform.
-  - App folder structure scaffolded.
-  - Basic minimal bottom navigation layout (`MainLayout`).
-  - App bootstrap mock sequence with Loading and Error states.
-  - Basic shared UI components (`LoadingScreen`, `ErrorScreen`, `EmptyState`).
-  - Telemetry logger and environment configuration boilerplate.
+## Công nghệ
 
-## Local Development & Run Commands
+| Thành phần | Công nghệ |
+| --- | --- |
+| UI | React 18, TypeScript, Vite, Tailwind CSS |
+| Điều hướng | React Router |
+| Biểu đồ | Recharts |
+| Dữ liệu | SQLite, `@capacitor-community/sqlite`, `jeep-sqlite`/IndexedDB trên Web |
+| Mobile | Capacitor, Android |
+| Export | jsPDF, jsPDF AutoTable, html2canvas |
+| Kiểm thử | Vitest, Testing Library |
 
-**1. Install dependencies:**
+## Kiến trúc
+
+```text
+src/
+  app/          # App shell, bootstrap, providers, layouts, router
+  core/         # SQLite, migrations, auth, DI, file storage, telemetry
+  modules/      # Các domain: transactions, wallets, budgets, loans, ...
+  shared/       # Components, context, constants, hooks và utilities dùng chung
+  tests/        # Integration/unit tests dùng chung
+android/        # Android project và native plugins
+server/         # Express health-check stub tùy chọn
+docs/           # Tài liệu kiến trúc, security và state management
+scripts/        # Script tạo icon và quản lý Android version
+```
+
+SQLite là source of truth cho dữ liệu nghiệp vụ. Mỗi module giữ domain model, repository, service/use case, hook và UI liên quan. React Context chỉ dùng cho các concern dạng provider như ngôn ngữ, tiền tệ, theme, toast và confirm dialog.
+
+Luồng khởi động chính:
+
+```text
+AppUnlock -> SQLite connection -> migrations -> seed data -> auto backup -> router
+```
+
+## Yêu cầu
+
+- Node.js và npm.
+- Android Studio, Android SDK và JDK 17 nếu build Android.
+- Thiết bị/emulator Android nếu cần kiểm tra chức năng native.
+
+## Chạy Web
+
 ```bash
 npm install
-```
-
-**2. Setup SQLite for Web Development (Required for local dev):**
-Because `@capacitor-community/sqlite` uses `jeep-sqlite` on the web, you must copy the WebAssembly file into your public directory so the browser can load it.
-```bash
-# On Windows PowerShell:
-New-Item -ItemType Directory -Force -Path "public/assets"
-Copy-Item "node_modules/sql.js/dist/sql-wasm.wasm" -Destination "public/assets/sql-wasm.wasm"
-```
-
-**3. Run Development Server:**
-```bash
 npm run dev
 ```
 
-## Android Sync & Build
+`npm install` tự copy `sql-wasm.wasm` vào `public/assets` thông qua script `postinstall`.
 
-To package your app for Android, build the web assets first, then sync Capacitor:
+Trên Web, SQLite chạy qua `jeep-sqlite` và lưu vào IndexedDB. Web không có mức mã hóa SQLCipher tương đương bản native và một số chức năng camera, sinh trắc học, lưu/chia sẻ file cần được kiểm tra trên thiết bị thật.
 
-**1. Build Web Bundle:**
+## Kiểm tra chất lượng
+
 ```bash
+npm run typecheck
+npm run lint
+npm test
 npm run build
 ```
 
-**2. Sync with Capacitor:**
+Các test bao phủ migrations/database, giao dịch, ví, thẻ tín dụng, ngân sách, hóa đơn định kỳ, khoản vay, backup/restore, export, báo cáo, auth và các UI flow chính.
+
+## Build Android
+
+Build web bundle và đồng bộ vào Android project:
+
 ```bash
+npm run build
 npx cap sync android
 ```
 
-**3. Open Android Studio:**
+Build APK debug trên Windows:
+
+```powershell
+cd android
+.\gradlew.bat assembleDebug
+```
+
+APK debug được tạo tại:
+
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Để mở project native:
+
 ```bash
 npx cap open android
 ```
 
-## How to Verify SQLite is Working
+Android dùng `minSdkVersion 22`, `compileSdkVersion 34`, `targetSdkVersion 34` và Java 17.
 
-1. Start the app locally using `npm run dev` (ensure you copied the `.wasm` file first).
-2. The app should display "Loading..." briefly, then navigate to the Home screen.
-3. Open the **Settings** tab.
-4. You will see a **Developer Diagnostics** card at the bottom.
-5. It should display **DB Initialized: ✅ Yes**, show the current Schema Version (e.g. 2), show the seeded category count (6), and indicate that all required tables were **✅ Found**.
-6. If it fails, check your browser console for Jeep SQLite WebAssembly errors.
+### Release Android
 
-## Data Portability (Phase 6)
+Release build cần cấu hình signing trong `android/keystore.properties`. File này không được commit.
 
-The application provides robust tools to ensure your data is never locked in.
+```properties
+storeFile=path/to/release.keystore
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
 
-### 1. Local Backup & Restore
-- **Format**: `.json` (Portable JSON)
-- **Scope**: Entire database (wallets, categories, transactions, recurring bills, app settings).
-- **Location**: Settings -> Backup & Restore.
-- **Policy**: Transactional "Wipe-and-Reload". Restoring overwrites current local data.
+Sau đó build:
 
-### 2. Human-Readable Exports
-- **PDF Report**: A formatted financial summary including cashflow totals, category distribution, and a detailed transaction log.
-- **Excel (CSV)**: A flat-file spreadsheet of raw transactions for custom analysis in Excel, Google Sheets, or Numbers.
-- **Location**: Reports -> Export.
+```powershell
+cd android
+.\gradlew.bat assembleRelease
+```
 
-### 3. Portability Limitations
-- **Receipt Images**: Backup files include **metadata only** (file paths). Physical receipt image files are stored in the device's private storage and are **not** bundled in the JSON backup. 
-- **Migration**: If moving to a new device, you must manually transfer the images from the app's internal folder if you wish to maintain link integrity.
+`assembleRelease` tự chạy script bump version trước khi build. Nguồn version native là `version.config.json`; không sửa trực tiếp `versionCode` hoặc `versionName` trong Gradle.
 
----
+## Dữ liệu và migrations
 
-## Final Quality Assurance (Phase 6 Hardening)
+- Database: `taixiu_db`.
+- Migration runner nằm tại `src/core/db/migrations/migration-runner.ts`.
+- Project hiện có migrations từ `001` đến `030`.
+- Default categories được seed khi khởi tạo database.
+- Native SQLite dùng SQLCipher; Web dùng SQLite không mã hóa qua IndexedDB.
 
-Before releasing a production build, verify the following:
+Khi thay đổi schema:
 
-- [ ] **Initialization**: Diagnostics in Settings show ✅ for all tables and schema v6.
-- [ ] **Transactions**: Add/Edit/Delete works with toast feedback and confirm dialogs.
-- [ ] **Budgets**: Threshold alerts trigger correctly on the Dashboard.
-- [ ] **Bills**: Recurring bill reminders appear at the top of the Dashboard; "Paid" advances the date.
-- [ ] **Language**: UI switches instantly between English and Vietnamese.
-- [ ] **Backup**: Exported JSON contains valid data; Import restores it exactly.
-- [ ] **Export**: PDF and CSV files are generated and shareable on the device.
+1. Thêm migration SQL mới trong `src/core/db/migrations/`.
+2. Đăng ký migration trong `migration-runner.ts`.
+3. Cập nhật repository/model/backup schema liên quan.
+4. Thêm test migration và restore tương ứng.
 
----
+## Backup, restore và export
 
-> [!WARNING]
-> Database restore is a destructive operation. Always export a fresh backup before performing a restore.
+Backup JSON hiện bao gồm:
+
+- wallets
+- categories
+- transactions
+- recurring bills
+- app settings
+- budgets
+- error logs
+- loans và loan payments
+
+Restore là thao tác ghi đè dữ liệu hiện tại và được thực hiện theo transaction. Luôn tạo backup mới trước khi restore.
+
+Lưu ý:
+
+- Backup JSON là plaintext, không được SQLCipher bảo vệ.
+- Backup chỉ chứa đường dẫn ảnh hóa đơn, không đóng gói file ảnh vật lý.
+- Export PDF/CSV được tạo theo khoảng ngày đã chọn.
 
 ## Security
 
-Native SQLite is configured for SQLCipher encryption and is gated by PIN/biometric verification
-before database initialization. See `docs/security.md` for the security model and remaining release
-hardening work.
+- Trên native, database được mở với SQLCipher sau khi người dùng xác thực PIN.
+- PIN không được lưu trực tiếp trong app hoặc local storage.
+- Sinh trắc học có thể được bật để mở khóa trên thiết bị hỗ trợ.
+- Web không cung cấp mức bảo vệ tương đương native.
 
-## Shared State
+Xem chi tiết và các hạng mục hardening còn lại tại [docs/security.md](docs/security.md).
 
-The app uses SQLite as the domain source of truth, feature hooks for async view state, and React
-Context only for provider-shaped UI concerns. Zustand is the preferred next step for cross-route
-client state when the app needs it, but should not duplicate SQLite rows in memory. See
-`docs/state-management.md`.
+## Server tùy chọn
+
+Thư mục `server/` hiện là Express health-check stub độc lập, không phải dependency của app local-first.
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+Endpoint:
+
+```text
+GET http://localhost:3001/api/health
+```
+
+## Tài liệu liên quan
+
+- [Code graph](docs/codegraph.md)
+- [Security notes](docs/security.md)
+- [State management strategy](docs/state-management.md)
+
+## Ghi chú phát triển
+
+- Dùng repository/use case để đọc ghi dữ liệu, không truy cập SQLite trực tiếp từ UI.
+- Không sao chép toàn bộ domain data vào global state; SQLite vẫn là source of truth.
+- Khi thêm translation, cập nhật đồng thời cả `en` và `vi`.
+- Database diagnostics chỉ hiển thị trong development mode.
