@@ -2,6 +2,19 @@ import { DB_NAME, getDbConnection } from './connection';
 import { Capacitor } from '@capacitor/core';
 import { sqlite } from './pragmas';
 
+// Emitted when saveToStore fails so UI layers can warn the user
+export const WEB_PERSIST_FAIL_EVENT = 'db:web-persist-fail';
+
+function emitPersistFail(err: unknown) {
+  try {
+    window.dispatchEvent(
+      new CustomEvent(WEB_PERSIST_FAIL_EVENT, { detail: { error: err } })
+    );
+  } catch {
+    // Non-browser environment (tests) - ignore
+  }
+}
+
 let transactionQueue: Promise<void> = Promise.resolve();
 let managedTransactionDepth = 0;
 let transactionCallbackDepth = 0;
@@ -89,6 +102,7 @@ export async function runInTransaction<T>(
             await sqlite.saveToStore(DB_NAME);
           } catch (saveErr) {
             console.warn('[transaction] saveToStore failed after successful work:', saveErr);
+            emitPersistFail(saveErr);
           }
           return result;
         } catch (err) {

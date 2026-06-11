@@ -371,23 +371,50 @@ export function splitSqlStatements(sql: string): string[] {
       let found = false;
       while (i < remaining.length) {
         const ch = remaining[i];
-        if (inStr) {
-          if (ch === strChar) inStr = false;
-        } else {
-          if (ch === "'" || ch === '"') { inStr = true; strChar = ch; }
-          else if (/^BEGIN\b/i.test(remaining.slice(i))) { depth++; }
-          else if (/^END\b/i.test(remaining.slice(i))) {
-            depth--;
-            if (depth === 0) {
-              const semiIdx = remaining.indexOf(';', i);
-              const end = semiIdx === -1 ? remaining.length : semiIdx + 1;
-              statements.push(remaining.slice(0, end).trim());
-              remaining = remaining.slice(end);
-              found = true;
-              break;
-            }
-          }
+
+        // Skip line comments: -- ...
+        if (!inStr && ch === '-' && remaining[i + 1] === '-') {
+          const nl = remaining.indexOf('\n', i);
+          i = nl === -1 ? remaining.length : nl + 1;
+          continue;
         }
+
+        if (inStr) {
+          if (ch === strChar && remaining[i - 1] !== '\\') inStr = false;
+          i++;
+          continue;
+        }
+
+        if (ch === "'" || ch === '"') {
+          inStr = true;
+          strChar = ch;
+          i++;
+          continue;
+        }
+
+        // True word-boundary guard: char before i must not be \w
+        const prevIsWord = i > 0 && /\w/.test(remaining[i - 1]);
+
+        if (!prevIsWord && /^BEGIN\b/i.test(remaining.slice(i))) {
+          depth++;
+          i += 5;
+          continue;
+        }
+
+        if (!prevIsWord && /^END\b/i.test(remaining.slice(i))) {
+          depth--;
+          if (depth === 0) {
+            const semiIdx = remaining.indexOf(';', i);
+            const end = semiIdx === -1 ? remaining.length : semiIdx + 1;
+            statements.push(remaining.slice(0, end).trim());
+            remaining = remaining.slice(end);
+            found = true;
+            break;
+          }
+          i += 3;
+          continue;
+        }
+
         i++;
       }
       if (!found) {
@@ -451,8 +478,8 @@ export async function runMigrations() {
     try {
       await runMigrationWithFkRestore(db, isWeb, migration.name, migrationSql, async () => {
         await executeMigrationSql(db, migrationSql);
-        await markMigrationDone(db, migration.version, migration.name);
       });
+      await markMigrationDone(db, migration.version, migration.name);
       logger.info(`Migration ${migration.name} completed (${stmts.length} stmts).`);
     } catch (err: any) {
       const msg = err.message || '';
