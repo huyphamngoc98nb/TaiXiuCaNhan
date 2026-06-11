@@ -10,6 +10,7 @@ export function mapToTransaction(row: any): Transaction {
     note: row.note ?? null,
     receipt_path: row.receipt_path ?? null,
     to_wallet_id: row.to_wallet_id ?? null,
+    exclude_from_total: Boolean(row.exclude_from_total),
     transaction_date: row.transaction_date,
     created_at: row.created_at,
     updated_at: row.updated_at,

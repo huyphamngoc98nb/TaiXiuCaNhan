@@ -1,7 +1,7 @@
 # Graph Report - TaiXiuCaNhan  (2026-06-11)
 
 ## Corpus Check
-- 320 files · ~118,476 words
+- 321 files · ~118,595 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d86770d4`
+- Built from commit: `0509c1b4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -104,11 +104,11 @@
 - [[_COMMUNITY_Community 117|Community 117]]
 - [[_COMMUNITY_Community 118|Community 118]]
 - [[_COMMUNITY_Community 119|Community 119]]
+- [[_COMMUNITY_Community 120|Community 120]]
 - [[_COMMUNITY_Community 121|Community 121]]
 - [[_COMMUNITY_Community 122|Community 122]]
 - [[_COMMUNITY_Community 123|Community 123]]
 - [[_COMMUNITY_Community 124|Community 124]]
-- [[_COMMUNITY_Community 125|Community 125]]
 - [[_COMMUNITY_Community 126|Community 126]]
 - [[_COMMUNITY_Community 127|Community 127]]
 - [[_COMMUNITY_Community 128|Community 128]]
@@ -381,16 +381,16 @@ Cohesion: 0.67
 Nodes (3): code:bash ($(cat graphify-out/.graphify_python) -c "), code:block4 (Corpus: X files · ~Y words), Step 2 - Detect files
 
 ### Community 84 - "Community 84"
-Cohesion: 0.20
-Nodes (14): addDays(), addMonths(), buildDueDate(), clampedDate(), CreditCardService, CreditCardStatementPeriod, CreditCardSummary, daysInMonth() (+6 more)
+Cohesion: 0.19
+Nodes (15): computeCreditCardAlerts(), addDays(), addMonths(), buildDueDate(), clampedDate(), CreditCardService, CreditCardStatementPeriod, CreditCardSummary (+7 more)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.20
 Nodes (8): getStoredThemePreference(), isThemePreference(), ResolvedTheme, THEME_COLOR, ThemeContext, ThemeContextType, ThemePreference, ThemeProvider()
 
 ### Community 86 - "Community 86"
-Cohesion: 0.27
-Nodes (9): CreditCardAlertBanner(), CreditCardAlertBannerProps, fmtDayMonth(), getAlertTitle(), CreditCardAlertsPanel(), CreditCardAlertsPanelProps, CreditCardAlert, CreditCardAlertType (+1 more)
+Cohesion: 0.15
+Nodes (21): CreditCardAlertsPanel(), CurrencySettings(), ACCOUNT_TYPE_LABELS, formatDayMonth(), Props, WalletCard(), ACCOUNT_TYPE_ORDER, Props (+13 more)
 
 ### Community 87 - "Community 87"
 Cohesion: 0.15
@@ -480,6 +480,10 @@ Nodes (36): AuthResult, AuthService, BIOMETRIC_UNLOCK_SUPPORTED_PLATFORMS, Biome
 Cohesion: 0.42
 Nodes (8): formatDate(), formatVnd(), isOverdue(), LoanCard(), LoanCardProps, STATUS_LABELS, TYPE_LABELS, LoanType
 
+### Community 120 - "Community 120"
+Cohesion: 0.38
+Nodes (7): CreditCardAlertBanner(), CreditCardAlertBannerProps, fmtDayMonth(), getAlertTitle(), CreditCardAlertsPanelProps, CreditCardAlert, CreditCardAlertType
+
 ### Community 121 - "Community 121"
 Cohesion: 0.22
 Nodes (7): Props, ReceiptCapture(), blurActiveEditableElement(), HIDDEN_MANUAL_TRANSACTION_CATEGORY_KEYS, HIDDEN_MANUAL_TRANSACTION_CATEGORY_SLUGS, Props, TransactionFormCategoryOption
@@ -495,10 +499,6 @@ Nodes (20): Props, BodyScrollLockSnapshot, lockBodyScroll(), shouldUseFixedBodyL
 ### Community 124 - "Community 124"
 Cohesion: 0.60
 Nodes (3): base64ToBlob(), parseBase64DataUri(), shareFile()
-
-### Community 125 - "Community 125"
-Cohesion: 0.16
-Nodes (20): CurrencySettings(), ACCOUNT_TYPE_LABELS, formatDayMonth(), Props, WalletCard(), ACCOUNT_TYPE_ORDER, Props, WalletList() (+12 more)
 
 ### Community 126 - "Community 126"
 Cohesion: 0.15
@@ -548,11 +548,11 @@ Nodes (14): BudgetCategoryItem(), Props, BudgetCategoryList(), EditableCategoryB
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useLanguage()` connect `Community 34` to `Community 1`, `Community 130`, `Community 4`, `Community 10`, `Community 138`, `Community 13`, `Community 29`, `Community 79`, `Community 88`, `Community 99`, `Community 108`, `Community 109`, `Community 111`, `Community 113`, `Community 114`, `Community 115`, `Community 116`, `Community 117`, `Community 118`, `Community 119`, `Community 121`, `Community 123`, `Community 125`, `Community 127`?**
+- **Why does `useLanguage()` connect `Community 34` to `Community 1`, `Community 130`, `Community 4`, `Community 10`, `Community 138`, `Community 13`, `Community 29`, `Community 79`, `Community 86`, `Community 88`, `Community 99`, `Community 108`, `Community 109`, `Community 111`, `Community 113`, `Community 114`, `Community 115`, `Community 116`, `Community 117`, `Community 118`, `Community 119`, `Community 121`, `Community 123`, `Community 127`?**
   _High betweenness centrality (0.097) - this node is a cross-community bridge._
 - **Why does `getDbConnection()` connect `Community 5` to `Community 96`, `Community 1`, `Community 98`, `Community 130`, `Community 4`, `Community 135`, `Community 9`, `Community 110`, `Community 111`, `Community 23`, `Community 21`, `Community 118`, `Community 87`, `Community 122`, `Community 28`, `Community 127`?**
   _High betweenness centrality (0.065) - this node is a cross-community bridge._
-- **Why does `Wallet` connect `Community 23` to `Community 33`, `Community 129`, `Community 5`, `Community 73`, `Community 106`, `Community 107`, `Community 76`, `Community 11`, `Community 13`, `Community 79`, `Community 48`, `Community 114`, `Community 115`, `Community 84`, `Community 86`, `Community 89`, `Community 125`, `Community 126`?**
+- **Why does `Wallet` connect `Community 23` to `Community 33`, `Community 129`, `Community 5`, `Community 73`, `Community 106`, `Community 107`, `Community 76`, `Community 11`, `Community 13`, `Community 79`, `Community 48`, `Community 114`, `Community 115`, `Community 84`, `Community 86`, `Community 89`, `Community 126`?**
   _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **What connects `config`, `dev`, `build` to the rest of the system?**
   _528 weakly-connected nodes found - possible documentation gaps or missing edges._

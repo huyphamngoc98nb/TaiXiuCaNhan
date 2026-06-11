@@ -9,6 +9,7 @@ export interface Transaction {
   note: string | null;
   receipt_path: string | null;
   to_wallet_id: string | null; // required when type = 'transfer'
+  exclude_from_total: boolean;
   transaction_date: number;
   created_at: number;
   updated_at: number;
@@ -29,6 +30,7 @@ export interface CreateTransactionInput {
   note?: string;
   receipt_path?: string;
   to_wallet_id?: string; // required when type = 'transfer'
+  exclude_from_total?: boolean;
   transaction_date: number;
 }
 
@@ -40,6 +42,7 @@ export interface UpdateTransactionInput {
   note?: string;
   receipt_path?: string;
   to_wallet_id?: string | null;
+  exclude_from_total?: boolean;
   transaction_date?: number;
 }
 

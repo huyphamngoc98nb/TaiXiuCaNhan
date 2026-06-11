@@ -32,6 +32,7 @@ import loanDateSql from './027_loan_date.sql?raw';
 import creditStatementRemainingTriggerSql from './028_credit_statement_remaining_trigger.sql?raw';
 import loansAmountRealSql from './029_loans_amount_real.sql?raw';
 import fixCreditStatementTriggerSql from './030_fix_credit_statement_trigger.sql?raw';
+import transactionsExcludeFromTotalSql from './031_transactions_exclude_from_total.sql?raw';
 
 type DbConnection = Awaited<ReturnType<typeof getDbConnection>>;
 
@@ -82,6 +83,7 @@ export const MIGRATIONS: Migration[] = [
   { version: 28, name: '028_credit_statement_remaining_trigger', sql: creditStatementRemainingTriggerSql },
   { version: 29, name: '029_loans_amount_real',                    sql: loansAmountRealSql },
   { version: 30, name: '030_fix_credit_statement_trigger',         sql: fixCreditStatementTriggerSql },
+  { version: 31, name: '031_transactions_exclude_from_total',      sql: transactionsExcludeFromTotalSql },
 ];
 
 async function markMigrationDone(

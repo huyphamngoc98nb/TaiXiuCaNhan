@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\db\\migrations\\migration-runner.ts": {
-    "mtime": 1781161927.4814434,
-    "ast_hash": "859440ef9bbd791d65847c998ba1da98",
+    "mtime": 1781172599.0860865,
+    "ast_hash": "fa4e897087b5eeb7ee159060d54b69e8",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\db\\seed\\default-categories.ts": {
@@ -570,8 +570,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\repositories\\sqlite-budget.repository.ts": {
-    "mtime": 1779868200.5013547,
-    "ast_hash": "6b58ac6ffe1ec814cddc778210f03bee",
+    "mtime": 1781173250.5233324,
+    "ast_hash": "8963995fcd11ca8927ed9cef668a1a36",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\services\\calculate-budget-progress.ts": {
@@ -900,8 +900,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\repositories\\sqlite-report.repository.ts": {
-    "mtime": 1779763988.7953496,
-    "ast_hash": "c4e14a253144e559f88065d402d218af",
+    "mtime": 1781173403.330437,
+    "ast_hash": "6b303dbf6722beb8b90e13b57884b0c9",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\services\\build-date-range.ts": {
@@ -970,8 +970,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionList.tsx": {
-    "mtime": 1780545618.7474694,
-    "ast_hash": "41afc23045aada7a63491bad40f16902",
+    "mtime": 1781173662.3604324,
+    "ast_hash": "22790046c4173f7292ea7ad40dcd56db",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\dev\\sample-data-helper.ts": {
@@ -980,18 +980,18 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\domain\\transaction.mapper.ts": {
-    "mtime": 1779176557.6690693,
-    "ast_hash": "ae4026794c9ee7d65e5fb2eec66a2f8a",
+    "mtime": 1781172790.1834075,
+    "ast_hash": "fbdd7d518f26fbc9778810bf7e6067b4",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\domain\\transaction.model.ts": {
-    "mtime": 1780975908.2266634,
-    "ast_hash": "d232dd3acd54569dbdec8235d6aad050",
+    "mtime": 1781172789.9059582,
+    "ast_hash": "cc36e25de421299b1fc762630ab3b11e",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\domain\\transaction.schema.ts": {
-    "mtime": 1779263320.8559954,
-    "ast_hash": "78799580c9786f7112acfe3a46869228",
+    "mtime": 1781172790.6788514,
+    "ast_hash": "26662fa4fe4aab3b5aba79ee37849bbf",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useBudgetAnalysis.ts": {
@@ -1045,8 +1045,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\repositories\\sqlite-transaction.repository.ts": {
-    "mtime": 1781144866.372383,
-    "ast_hash": "1d55cd7db3053302310655c8e71bb9a4",
+    "mtime": 1781172986.6847298,
+    "ast_hash": "eea5c3f0243830296ac04c028ea8fde8",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\repositories\\transaction.repository.ts": {
@@ -1762,6 +1762,11 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\services\\create-credit-card-payment.test.ts": {
     "mtime": 1781148752.7296956,
     "ast_hash": "31e990079d3fe3f45206d2dd719626e5",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\db\\migrations\\031_transactions_exclude_from_total.sql": {
+    "mtime": 1781172598.8967576,
+    "ast_hash": "9a38537dc65af4ded971d5019ecff784",
     "semantic_hash": ""
   }
 }

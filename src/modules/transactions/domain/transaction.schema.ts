@@ -42,6 +42,9 @@ export function validateCreateTransaction(input: CreateTransactionInput) {
   if (input.receipt_path && input.receipt_path.length > 1000) {
     errors.push('receipt_path is too long');
   }
+  if (input.exclude_from_total !== undefined && typeof input.exclude_from_total !== 'boolean') {
+    errors.push('exclude_from_total must be a boolean');
+  }
 
   if (errors.length > 0) throw new TransactionValidationError(errors);
 }
@@ -77,6 +80,9 @@ export function validateUpdateTransaction(input: UpdateTransactionInput) {
   }
   if (input.receipt_path && input.receipt_path.length > 1000) {
     errors.push('receipt_path is too long');
+  }
+  if (input.exclude_from_total !== undefined && typeof input.exclude_from_total !== 'boolean') {
+    errors.push('exclude_from_total must be a boolean');
   }
 
   if (errors.length > 0) throw new TransactionValidationError(errors);

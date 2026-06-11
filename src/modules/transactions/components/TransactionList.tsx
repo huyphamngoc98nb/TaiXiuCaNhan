@@ -115,6 +115,7 @@ export function TransactionList({
 
   function addTransactionAmount(row: SummaryRow, tx: Transaction) {
     row.count += 1;
+    if (tx.exclude_from_total) return;
     if (tx.type === 'income') row.income += tx.amount;
     else if (tx.type === 'expense') row.expense += tx.amount;
   }

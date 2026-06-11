@@ -7,13 +7,13 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async create(data: CreateTransactionInput & { id: string, created_at: number, updated_at: number }): Promise<Transaction> {
     const db = await getDbConnectionForTransaction();
     const sql = `
-      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, exclude_from_total, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       data.id, data.wallet_id, data.category_id, data.type, data.amount,
       data.note || null, data.receipt_path || null, data.to_wallet_id || null,
-      data.transaction_date, data.created_at, data.updated_at
+      data.transaction_date, data.exclude_from_total ? 1 : 0, data.created_at, data.updated_at
     ];
     await db.run(sql, values, !isManagedTransactionActive());
     return {
@@ -25,6 +25,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       note: data.note || null,
       receipt_path: data.receipt_path || null,
       to_wallet_id: data.to_wallet_id || null,
+      exclude_from_total: data.exclude_from_total ?? false,
       transaction_date: data.transaction_date,
       created_at: data.created_at,
       updated_at: data.updated_at,
@@ -47,6 +48,10 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     if (data.receipt_path !== undefined) { sets.push('receipt_path = ?'); values.push(data.receipt_path); }
     if (data.to_wallet_id !== undefined) { sets.push('to_wallet_id = ?'); values.push(data.to_wallet_id); }
     if (data.transaction_date !== undefined) { sets.push('transaction_date = ?'); values.push(data.transaction_date); }
+    if (data.exclude_from_total !== undefined) {
+      sets.push('exclude_from_total = ?');
+      values.push(data.exclude_from_total ? 1 : 0);
+    }
 
     sets.push('updated_at = ?'); values.push(data.updated_at);
     values.push(id);
@@ -72,7 +77,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     const db = await getDbConnectionForTransaction();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
-             transaction_date, created_at, updated_at, deleted_at
+             transaction_date, exclude_from_total, created_at, updated_at, deleted_at
       FROM transactions
       WHERE id = ? AND deleted_at IS NULL
     `;
@@ -89,7 +94,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     const db = await getDbConnectionForTransaction();
     const sql = `
       SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
-             transaction_date, created_at, updated_at, deleted_at
+             transaction_date, exclude_from_total, created_at, updated_at, deleted_at
       FROM transactions
       WHERE id = ?
     `;
@@ -113,7 +118,8 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
     let sql = `
       SELECT
         t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note,
-        t.receipt_path, t.to_wallet_id, t.transaction_date, t.created_at, t.updated_at, t.deleted_at,
+        t.receipt_path, t.to_wallet_id, t.transaction_date, t.exclude_from_total,
+        t.created_at, t.updated_at, t.deleted_at,
         c.name AS category_name,
         c.icon AS category_icon,
         c.color AS category_color,
@@ -187,6 +193,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       FROM transactions t
       JOIN wallets w ON t.wallet_id = w.id
       WHERE t.deleted_at IS NULL
+        AND t.exclude_from_total = 0
       GROUP BY w.account_type
       ORDER BY w.account_type
     `;

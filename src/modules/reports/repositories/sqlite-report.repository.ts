@@ -15,6 +15,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND t.transaction_date >= ? 
         AND t.transaction_date <= ?
         AND t.deleted_at IS NULL
+        AND t.exclude_from_total = 0
       GROUP BY category_id
       ORDER BY amount DESC
     `;
@@ -53,6 +54,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND transaction_date <= ?
         AND type IN ('income', 'expense')
         AND deleted_at IS NULL
+        AND exclude_from_total = 0
       GROUP BY period
       ORDER BY period ASC
     `;
@@ -79,6 +81,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND transaction_date <= ?
         AND type IN ('income', 'expense')
         AND deleted_at IS NULL
+        AND exclude_from_total = 0
     `;
     const { values } = await db.query(sql, [range.startDate, range.endDate]);
     const row = values && values.length > 0 ? values[0] : null;
@@ -103,6 +106,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND t.transaction_date >= ?
         AND t.transaction_date <= ?
         AND t.deleted_at IS NULL
+        AND t.exclude_from_total = 0
       GROUP BY t.wallet_id
       ORDER BY amount DESC
     `;

@@ -174,6 +174,7 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
         AND transaction_date <= ?
         AND type             = 'expense'
         AND deleted_at       IS NULL
+        AND exclude_from_total = 0
         ${walletFilter}
     `;
 
@@ -197,6 +198,7 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
         AND t.transaction_date <= ?
         AND t.type             = 'expense'
         AND t.deleted_at       IS NULL
+        AND t.exclude_from_total = 0
         AND w.account_type     = ?
     `;
     const { values } = await db.query(sql, [categoryId, startDate, endDate, accountType]);
