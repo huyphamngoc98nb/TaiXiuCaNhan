@@ -170,6 +170,7 @@ export class WalletService {
           type: transactionType,
           amount: Math.abs(delta),
           note: BALANCE_ADJUSTMENT_NOTE,
+          exclude_from_total: true,
           transaction_date: now,
         });
       }

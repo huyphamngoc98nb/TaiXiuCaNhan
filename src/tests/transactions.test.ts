@@ -864,6 +864,7 @@ describe('Transaction Module QA Tests', () => {
       expect(transactions[0]).toMatchObject({
         type: 'expense',
         amount: 4_500,
+        exclude_from_total: true,
         note: 'Cân bằng số dư',
       });
     });
@@ -888,6 +889,7 @@ describe('Transaction Module QA Tests', () => {
         category_id: 'cat-balance-adjustment-expense',
         type: 'expense',
         amount: 2_500,
+        exclude_from_total: true,
         note: 'Cân bằng số dư',
       });
     });

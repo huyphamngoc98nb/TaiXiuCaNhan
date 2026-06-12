@@ -1,11 +1,29 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listTransactionsUseCase } from '@/core/di/transactions.di';
 import { buildDateRange } from '@/modules/reports/services/build-date-range';
+import type { Transaction } from '../domain/transaction.model';
 
 export interface TransactionSummary {
   totalIncome: number;
   totalExpense: number;
   netAmount: number;
+}
+
+export function summarizeTransactions(transactions: Transaction[]): TransactionSummary {
+  const totals = transactions.reduce(
+    (summary, transaction) => {
+      if (transaction.exclude_from_total) return summary;
+      if (transaction.type === 'income') summary.totalIncome += transaction.amount;
+      else if (transaction.type === 'expense') summary.totalExpense += transaction.amount;
+      return summary;
+    },
+    { totalIncome: 0, totalExpense: 0 },
+  );
+
+  return {
+    ...totals,
+    netAmount: totals.totalIncome - totals.totalExpense,
+  };
 }
 
 export function useTransactionSummary() {
@@ -28,19 +46,7 @@ export function useTransactionSummary() {
         endDate: range.endDate,
       });
 
-      const nextSummary = transactions.reduce<TransactionSummary>(
-        (acc, transaction) => {
-          if (transaction.exclude_from_total) return acc;
-          if (transaction.type === 'income') {
-            acc.totalIncome += transaction.amount;
-          } else if (transaction.type === 'expense') {
-            acc.totalExpense += transaction.amount;
-          }
-          acc.netAmount = acc.totalIncome - acc.totalExpense;
-          return acc;
-        },
-        { totalIncome: 0, totalExpense: 0, netAmount: 0 }
-      );
+      const nextSummary = summarizeTransactions(transactions);
 
       setSummary(nextSummary);
     } catch (err) {

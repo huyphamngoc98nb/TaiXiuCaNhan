@@ -4,6 +4,7 @@ import type { TransactionRunner } from '@/core/db/transaction-runner';
 import { InMemoryTransactionRepository } from '@/tests/fakes/in-memory-transaction.repository';
 import { InMemoryWalletRepository } from '@/tests/fakes/in-memory-wallet.repository';
 import type { Wallet } from '../repositories/wallet.repository';
+import { summarizeTransactions } from '@/modules/transactions/hooks/useTransactionSummary';
 import { WalletService } from './wallet.service';
 
 vi.mock('@capacitor/core', () => ({
@@ -91,8 +92,39 @@ describe('WalletService.updateWallet balance adjustment', () => {
         category_id: 'cat-balance-adjustment-expense',
         type: 'expense',
         amount: 2_500,
+        exclude_from_total: true,
       }),
     ]);
+  });
+
+  it('excludes the adjustment from income and expense totals without excluding normal transactions', async () => {
+    const transactionRepository = new InMemoryTransactionRepository();
+    const walletRepository = new InMemoryWalletRepository([wallet]);
+    const service = new WalletService(
+      walletRepository,
+      transactionRepository,
+      async (work) => work(),
+    );
+
+    await transactionRepository.create({
+      id: 'normal-expense',
+      wallet_id: wallet.id,
+      category_id: 'cat-food',
+      type: 'expense',
+      amount: 1_000,
+      exclude_from_total: false,
+      transaction_date: 1,
+      created_at: 1,
+      updated_at: 1,
+    });
+    await service.updateWallet(wallet.id, { balance: 7_500 });
+
+    const transactions = await transactionRepository.list({ wallet_id: wallet.id });
+    expect(summarizeTransactions(transactions)).toEqual({
+      totalIncome: 0,
+      totalExpense: 1_000,
+      netAmount: -1_000,
+    });
   });
 });
 
