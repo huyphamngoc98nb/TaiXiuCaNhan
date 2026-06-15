@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useNavigationType } from 'react-router-dom';
 
 const scrollPositions = new Map<string, number>();
 
@@ -21,9 +22,10 @@ function cancelRestoreFrame(frameId: number) {
 
 export function useScrollRestoration<T extends HTMLElement>(scrollKey: string) {
   const containerRef = useRef<T>(null);
+  const navigationType = useNavigationType();
 
   useLayoutEffect(() => {
-    const savedScrollTop = scrollPositions.get(scrollKey) ?? 0;
+    const savedScrollTop = navigationType === 'POP' ? (scrollPositions.get(scrollKey) ?? 0) : 0;
     let firstFrame: number | null = null;
     let secondFrame: number | null = null;
 
@@ -53,7 +55,7 @@ export function useScrollRestoration<T extends HTMLElement>(scrollKey: string) {
         scrollPositions.set(scrollKey, container.scrollTop);
       }
     };
-  }, [scrollKey]);
+  }, [navigationType, scrollKey]);
 
   return containerRef;
 }

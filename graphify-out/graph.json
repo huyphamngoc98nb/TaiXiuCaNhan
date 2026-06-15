@@ -2988,7 +2988,7 @@
       "source_file": "src/core/db/sqlite/connection.ts",
       "source_location": "L118",
       "id": "sqlite_connection_isdatabaseready",
-      "community": 84,
+      "community": 98,
       "norm_label": "isdatabaseready()"
     },
     {
@@ -3249,7 +3249,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L1",
       "id": "src_core_di_loans_di_ts",
-      "community": 86,
+      "community": 29,
       "norm_label": "loans.di.ts"
     },
     {
@@ -3258,7 +3258,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L6",
       "id": "di_loans_di_loanservicedeps",
-      "community": 86,
+      "community": 29,
       "norm_label": "loanservicedeps"
     },
     {
@@ -3267,7 +3267,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L13",
       "id": "di_loans_di_loanmutationdeps",
-      "community": 86,
+      "community": 29,
       "norm_label": "loanmutationdeps"
     },
     {
@@ -3276,7 +3276,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L20",
       "id": "di_loans_di_loanlistdeps",
-      "community": 86,
+      "community": 29,
       "norm_label": "loanlistdeps"
     },
     {
@@ -3681,7 +3681,7 @@
       "source_file": "src/core/telemetry/logger.ts",
       "source_location": "L4",
       "id": "telemetry_logger_loglevel",
-      "community": 98,
+      "community": 112,
       "norm_label": "loglevel"
     },
     {
@@ -6660,7 +6660,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L1",
       "id": "src_modules_loans_hooks_useloanmutations_ts",
-      "community": 86,
+      "community": 29,
       "norm_label": "useloanmutations.ts"
     },
     {
@@ -6669,7 +6669,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L13",
       "id": "hooks_useloanmutations_toerror",
-      "community": 86,
+      "community": 29,
       "norm_label": "toerror()"
     },
     {
@@ -6678,7 +6678,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L17",
       "id": "hooks_useloanmutations_emitloanevent",
-      "community": 86,
+      "community": 29,
       "norm_label": "emitloanevent()"
     },
     {
@@ -7155,7 +7155,7 @@
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L1",
       "id": "src_modules_loans_services_cancel_loan_ts",
-      "community": 86,
+      "community": 29,
       "norm_label": "cancel-loan.ts"
     },
     {
@@ -7173,7 +7173,7 @@
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L8",
       "id": "services_cancel_loan_cancelloan",
-      "community": 86,
+      "community": 29,
       "norm_label": "cancelloan()"
     },
     {
@@ -9342,7 +9342,7 @@
       "source_file": "src/modules/transactions/dev/sample-data-helper.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_dev_sample_data_helper_ts",
-      "community": 152,
+      "community": 23,
       "norm_label": "sample-data-helper.ts"
     },
     {
@@ -9351,7 +9351,7 @@
       "source_file": "src/modules/transactions/dev/sample-data-helper.ts",
       "source_location": "L7",
       "id": "dev_sample_data_helper_createsampletransactions",
-      "community": 152,
+      "community": 23,
       "norm_label": "createsampletransactions()"
     },
     {
@@ -10116,7 +10116,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_delete_transaction_test_ts",
-      "community": 23,
+      "community": 86,
       "norm_label": "delete-transaction.test.ts"
     },
     {
@@ -10125,7 +10125,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L22",
       "id": "services_delete_transaction_test_sourcewallet",
-      "community": 23,
+      "community": 86,
       "norm_label": "sourcewallet"
     },
     {
@@ -10134,7 +10134,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L41",
       "id": "services_delete_transaction_test_destinationwallet",
-      "community": 23,
+      "community": 86,
       "norm_label": "destinationwallet"
     },
     {
@@ -10143,7 +10143,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L49",
       "id": "services_delete_transaction_test_transfer",
-      "community": 23,
+      "community": 86,
       "norm_label": "transfer"
     },
     {
@@ -10152,7 +10152,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L71",
       "id": "services_delete_transaction_test_transactionrepository",
-      "community": 23,
+      "community": 86,
       "norm_label": "transactionrepository"
     },
     {
@@ -10161,7 +10161,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L72",
       "id": "services_delete_transaction_test_walletrepository",
-      "community": 23,
+      "community": 86,
       "norm_label": "walletrepository"
     },
     {
@@ -10170,7 +10170,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L73",
       "id": "services_delete_transaction_test_usecase",
-      "community": 23,
+      "community": 86,
       "norm_label": "usecase"
     },
     {
@@ -10179,7 +10179,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L92",
       "id": "services_delete_transaction_test_readstoredwallet",
-      "community": 23,
+      "community": 86,
       "norm_label": "readstoredwallet"
     },
     {
@@ -10188,7 +10188,7 @@
       "source_file": "src/modules/transactions/services/delete-transaction.test.ts",
       "source_location": "L97",
       "id": "services_delete_transaction_test_includedeletedspy",
-      "community": 23,
+      "community": 86,
       "norm_label": "includedeletedspy"
     },
     {
@@ -12553,7 +12553,7 @@
       "label": "scrollPositions",
       "file_type": "code",
       "source_file": "src/shared/hooks/useScrollRestoration.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "id": "hooks_usescrollrestoration_scrollpositions",
       "community": 150,
       "norm_label": "scrollpositions"
@@ -12562,7 +12562,7 @@
       "label": "requestRestoreFrame()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useScrollRestoration.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "id": "hooks_usescrollrestoration_requestrestoreframe",
       "community": 150,
       "norm_label": "requestrestoreframe()"
@@ -12571,7 +12571,7 @@
       "label": "cancelRestoreFrame()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useScrollRestoration.ts",
-      "source_location": "L13",
+      "source_location": "L14",
       "id": "hooks_usescrollrestoration_cancelrestoreframe",
       "community": 150,
       "norm_label": "cancelrestoreframe()"
@@ -12580,7 +12580,7 @@
       "label": "useScrollRestoration()",
       "file_type": "code",
       "source_file": "src/shared/hooks/useScrollRestoration.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "id": "hooks_usescrollrestoration_usescrollrestoration",
       "community": 150,
       "norm_label": "usescrollrestoration()"
@@ -16569,7 +16569,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L192",
       "id": "docs_user_guide_5_qu\u1ea3n_l\u00fd_danh_m\u1ee5c",
-      "community": 143,
+      "community": 121,
       "norm_label": "5. quan ly danh muc"
     },
     {
@@ -16578,7 +16578,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L196",
       "id": "docs_user_guide_t\u1ea1o_danh_m\u1ee5c",
-      "community": 143,
+      "community": 121,
       "norm_label": "tao danh muc"
     },
     {
@@ -16587,7 +16587,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L204",
       "id": "docs_user_guide_s\u1eeda_ho\u1eb7c_x\u00f3a_danh_m\u1ee5c",
-      "community": 143,
+      "community": 121,
       "norm_label": "sua hoac xoa danh muc"
     },
     {
@@ -16596,7 +16596,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L209",
       "id": "docs_user_guide_ph\u00e2n_bi\u1ec7t_danh_m\u1ee5c_thu_v\u00e0_chi",
-      "community": 143,
+      "community": 121,
       "norm_label": "phan biet danh muc thu va chi"
     },
     {
@@ -16605,7 +16605,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L216",
       "id": "docs_user_guide_6_ng\u00e2n_s\u00e1ch",
-      "community": 121,
+      "community": 143,
       "norm_label": "6. ngan sach"
     },
     {
@@ -16614,7 +16614,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L220",
       "id": "docs_user_guide_t\u1ea1o_ng\u00e2n_s\u00e1ch",
-      "community": 121,
+      "community": 143,
       "norm_label": "tao ngan sach"
     },
     {
@@ -16623,7 +16623,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L234",
       "id": "docs_user_guide_theo_d\u00f5i_v\u00e0_ch\u1ec9nh_s\u1eeda_ng\u00e2n_s\u00e1ch",
-      "community": 121,
+      "community": 143,
       "norm_label": "theo doi va chinh sua ngan sach"
     },
     {
@@ -16632,7 +16632,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L244",
       "id": "docs_user_guide_7_h\u00f3a_\u0111\u01a1n_\u0111\u1ecbnh_k\u1ef3",
-      "community": 121,
+      "community": 152,
       "norm_label": "7. hoa \u0111on \u0111inh ky"
     },
     {
@@ -16641,7 +16641,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L248",
       "id": "docs_user_guide_t\u1ea1o_h\u00f3a_\u0111\u01a1n_\u0111\u1ecbnh_k\u1ef3",
-      "community": 121,
+      "community": 152,
       "norm_label": "tao hoa \u0111on \u0111inh ky"
     },
     {
@@ -16650,7 +16650,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L259",
       "id": "docs_user_guide_theo_d\u00f5i_v\u00e0_qu\u1ea3n_l\u00fd_h\u00f3a_\u0111\u01a1n",
-      "community": 121,
+      "community": 152,
       "norm_label": "theo doi va quan ly hoa \u0111on"
     },
     {
@@ -16695,7 +16695,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L304",
       "id": "docs_user_guide_9_b\u00e1o_c\u00e1o",
-      "community": 153,
+      "community": 121,
       "norm_label": "9. bao cao"
     },
     {
@@ -16704,7 +16704,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L308",
       "id": "docs_user_guide_ch\u1ecdn_kho\u1ea3ng_th\u1eddi_gian",
-      "community": 153,
+      "community": 121,
       "norm_label": "chon khoang thoi gian"
     },
     {
@@ -16713,7 +16713,7 @@
       "source_file": "docs/user-guide.md",
       "source_location": "L316",
       "id": "docs_user_guide_n\u1ed9i_dung_b\u00e1o_c\u00e1o",
-      "community": 153,
+      "community": 121,
       "norm_label": "noi dung bao cao"
     },
     {
@@ -18260,7 +18260,7 @@
       "file_type": "code",
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L1",
-      "community": 86,
+      "community": 29,
       "norm_label": "loans.di.ts",
       "id": "di_loans_di"
     },
@@ -18863,7 +18863,7 @@
       "file_type": "code",
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L1",
-      "community": 86,
+      "community": 29,
       "norm_label": "useloanmutations.ts",
       "id": "hooks_useloanmutations"
     },
@@ -19340,7 +19340,7 @@
       "file_type": "code",
       "source_file": "src/modules/transactions/dev/sample-data-helper.ts",
       "source_location": "L1",
-      "community": 152,
+      "community": 23,
       "norm_label": "sample-data-helper.ts",
       "id": "dev_sample_data_helper"
     },
@@ -61170,9 +61170,9 @@
       "source_file": "src/modules/reports/components/CashflowBarChart.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_components_cashflowbarchart_tsx",
-      "target": "components_cashflowbarchart_cashflowxaxistickprops",
-      "confidence_score": 1.0
+      "target": "components_cashflowbarchart_cashflowxaxistickprops"
     },
     {
       "relation": "contains",
@@ -61180,9 +61180,9 @@
       "source_file": "src/modules/reports/components/CashflowBarChart.tsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_components_cashflowbarchart_tsx",
-      "target": "components_cashflowbarchart_cashflowxaxistick",
-      "confidence_score": 1.0
+      "target": "components_cashflowbarchart_cashflowxaxistick"
     },
     {
       "relation": "contains",
@@ -98630,5 +98630,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8589c008b2476e934e87e33de279262dfec25211"
+  "built_at_commit": "019d8ff99c14631ed04dad914f818b91a547a22f"
 }

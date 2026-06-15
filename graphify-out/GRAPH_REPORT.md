@@ -1,16 +1,16 @@
 # Graph Report - TaiXiuCaNhan  (2026-06-15)
 
 ## Corpus Check
-- 333 files · ~127,302 words
+- 333 files · ~127,319 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2331 nodes · 7289 edges · 155 communities (143 shown, 12 thin omitted)
+- 2331 nodes · 7289 edges · 154 communities (143 shown, 11 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 11 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8589c008`
+- Built from commit: `019d8ff9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -137,7 +137,6 @@
 - [[_COMMUNITY_Community 150|Community 150]]
 - [[_COMMUNITY_Community 151|Community 151]]
 - [[_COMMUNITY_Community 152|Community 152]]
-- [[_COMMUNITY_Community 153|Community 153]]
 - [[_COMMUNITY_Community 155|Community 155]]
 
 ## God Nodes (most connected - your core abstractions)
@@ -164,7 +163,7 @@
 - `buildImageReportPages()` --calls--> `formatDate()`  [INFERRED]
   src/modules/export/services/export-pdf.ts → src/modules/loans/components/LoanCard.tsx
 
-## Communities (155 total, 12 thin omitted)
+## Communities (154 total, 11 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.18
@@ -259,8 +258,8 @@ Cohesion: 0.18
 Nodes (18): BackButton(), BackButtonProps, RecurringBillForm(), TransactionForm(), WalletForm(), useConfirm(), ROUTES, AddRecurringBillPage() (+10 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.09
-Nodes (28): immediateTransactionRunner(), sqliteTransactionRunner(), TransactionRunner, createCreditCardPaymentUseCase, deleteTransactionUseCase, listTransactionsUseCase, AppRepositories, CreateCreditCardPaymentInput (+20 more)
+Cohesion: 0.10
+Nodes (21): immediateTransactionRunner(), sqliteTransactionRunner(), TransactionRunner, createSampleTransactions(), createCreditCardPaymentUseCase, deleteTransactionUseCase, listTransactionsUseCase, AppRepositories (+13 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.25
@@ -283,8 +282,8 @@ Cohesion: 0.27
 Nodes (20): AppliedMigration, buildLoanSkipTransactionSql(), columnExists(), DbConnection, executeMigrationSql(), executeMigrationStatement(), getAppliedMigrations(), markMigrationDone() (+12 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.24
-Nodes (15): dateInputToMs(), formatVnd(), PaymentForm(), PaymentFormProps, startOfLocalDay(), todayInputValue(), CreateLoanPaymentInput, useLoanMutations() (+7 more)
+Cohesion: 0.16
+Nodes (21): dateInputToMs(), formatVnd(), PaymentForm(), PaymentFormProps, startOfLocalDay(), todayInputValue(), loanListDeps, loanMutationDeps (+13 more)
 
 ### Community 30 - "Community 30"
 Cohesion: 0.29
@@ -402,15 +401,15 @@ Nodes (3): code:bash ($(cat graphify-out/.graphify_python) -c "), code:block4 (C
 
 ### Community 84 - "Community 84"
 Cohesion: 0.17
-Nodes (14): persistWeb(), ensureWebStoreInitialized(), initDatabaseConnection(), _initDatabaseConnectionImpl(), isDatabaseReady(), getSQLiteEncryptionConfig(), SQLITE_ENCRYPTION_CONFIG, SQLiteEncryptionConfig (+6 more)
+Nodes (13): persistWeb(), ensureWebStoreInitialized(), initDatabaseConnection(), _initDatabaseConnectionImpl(), getSQLiteEncryptionConfig(), SQLITE_ENCRYPTION_CONFIG, SQLiteEncryptionConfig, SQLiteEncryptionMode (+5 more)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.17
 Nodes (11): THEME_OPTIONS, ThemeSelector(), getStoredThemePreference(), isThemePreference(), ResolvedTheme, THEME_COLOR, ThemeContext, ThemeContextType (+3 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.36
-Nodes (6): loanListDeps, loanMutationDeps, loanServiceDeps, emitLoanEvent(), toError(), cancelLoan()
+Cohesion: 0.22
+Nodes (8): destinationWallet, includeDeletedSpy, readStoredWallet, sourceWallet, transactionRepository, transfer, useCase, walletRepository
 
 ### Community 87 - "Community 87"
 Cohesion: 0.16
@@ -430,7 +429,7 @@ Nodes (8): createUseCase, existingNoReceipt, existingWithReceipt, input, makeBas
 
 ### Community 98 - "Community 98"
 Cohesion: 0.21
-Nodes (13): buildErrorLogExportPayload(), ErrorLogExportItem, ErrorLogExportPayload, exportErrorLogsToJson(), parseMetadata(), canUseLocalStorage(), ErrorLogRecord, ErrorLogRepository (+5 more)
+Nodes (13): buildErrorLogExportPayload(), ErrorLogExportItem, ErrorLogExportPayload, exportErrorLogsToJson(), parseMetadata(), isDatabaseReady(), canUseLocalStorage(), ErrorLogRecord (+5 more)
 
 ### Community 99 - "Community 99"
 Cohesion: 0.20
@@ -465,8 +464,8 @@ Cohesion: 0.20
 Nodes (9): mapToTransaction(), CreateTransactionInput, Transaction, TransactionFilter, UpdateTransactionInput, InMemoryTransactionRepository, matchesFilter(), ITransactionRepository (+1 more)
 
 ### Community 112 - "Community 112"
-Cohesion: 0.18
-Nodes (9): ENV, installGlobalErrorLogging(), toMetadataValue(), isLogOptions(), Logger, LogOptions, normalizeError(), normalizeMetadata() (+1 more)
+Cohesion: 0.17
+Nodes (10): ENV, installGlobalErrorLogging(), toMetadataValue(), isLogOptions(), Logger, LogLevel, LogOptions, normalizeError() (+2 more)
 
 ### Community 113 - "Community 113"
 Cohesion: 0.20
@@ -501,8 +500,8 @@ Cohesion: 0.38
 Nodes (7): CreditCardAlertBanner(), CreditCardAlertBannerProps, fmtDayMonth(), getAlertTitle(), CreditCardAlertsPanelProps, CreditCardAlert, CreditCardAlertType
 
 ### Community 121 - "Community 121"
-Cohesion: 0.18
-Nodes (10): 13. Lưu ý bảo mật và dữ liệu, 1. Giới thiệu, 6. Ngân sách, 7. Hóa đơn định kỳ, Hướng dẫn sử dụng Expense Tracker, Theo dõi và chỉnh sửa ngân sách, Theo dõi và quản lý hóa đơn, Tạo hóa đơn định kỳ (+2 more)
+Cohesion: 0.17
+Nodes (11): 13. Lưu ý bảo mật và dữ liệu, 1. Giới thiệu, 5. Quản lý danh mục, 9. Báo cáo, Chọn khoảng thời gian, Hướng dẫn sử dụng Expense Tracker, Nội dung báo cáo, Phân biệt danh mục thu và chi (+3 more)
 
 ### Community 122 - "Community 122"
 Cohesion: 0.42
@@ -585,8 +584,8 @@ Cohesion: 0.15
 Nodes (17): BudgetAddSheet(), BudgetAlertsPanel(), Props, ACCOUNT_TYPE_ICONS, BudgetByAccountTypeSummary(), Props, STATUS_COLORS, Props (+9 more)
 
 ### Community 143 - "Community 143"
-Cohesion: 0.50
-Nodes (4): 5. Quản lý danh mục, Phân biệt danh mục thu và chi, Sửa hoặc xóa danh mục, Tạo danh mục
+Cohesion: 0.67
+Nodes (3): 6. Ngân sách, Theo dõi và chỉnh sửa ngân sách, Tạo ngân sách
 
 ### Community 144 - "Community 144"
 Cohesion: 0.36
@@ -616,9 +615,9 @@ Nodes (14): scrollPositions, useScrollRestoration(), CONTEXTUAL_ADD_ROUTES, Cont
 Cohesion: 0.50
 Nodes (4): 8. Khoản vay và cho vay, Ghi nhận thanh toán, Phân biệt với giao dịch thông thường, Tạo khoản vay/cho vay
 
-### Community 153 - "Community 153"
+### Community 152 - "Community 152"
 Cohesion: 0.67
-Nodes (3): 9. Báo cáo, Chọn khoảng thời gian, Nội dung báo cáo
+Nodes (3): 7. Hóa đơn định kỳ, Theo dõi và quản lý hóa đơn, Tạo hóa đơn định kỳ
 
 ### Community 155 - "Community 155"
 Cohesion: 0.67
@@ -627,14 +626,14 @@ Nodes (3): 10. Xuất dữ liệu, Xuất nhật ký lỗi, Xuất PDF hoặc CS
 ## Knowledge Gaps
 - **597 isolated node(s):** `config`, `dev`, `build`, `typecheck`, `lint` (+592 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `useLanguage()` connect `Community 89` to `Community 0`, `Community 1`, `Community 128`, `Community 4`, `Community 140`, `Community 13`, `Community 142`, `Community 150`, `Community 22`, `Community 23`, `Community 29`, `Community 34`, `Community 48`, `Community 76`, `Community 85`, `Community 87`, `Community 99`, `Community 107`, `Community 108`, `Community 109`, `Community 113`, `Community 114`, `Community 115`, `Community 116`, `Community 124`, `Community 127`?**
   _High betweenness centrality (0.110) - this node is a cross-community bridge._
-- **Why does `Wallet` connect `Community 108` to `Community 33`, `Community 130`, `Community 1`, `Community 5`, `Community 134`, `Community 136`, `Community 137`, `Community 73`, `Community 107`, `Community 11`, `Community 79`, `Community 114`, `Community 22`, `Community 23`, `Community 88`, `Community 126`?**
+- **Why does `Wallet` connect `Community 108` to `Community 33`, `Community 130`, `Community 1`, `Community 5`, `Community 134`, `Community 136`, `Community 137`, `Community 73`, `Community 107`, `Community 11`, `Community 79`, `Community 114`, `Community 86`, `Community 23`, `Community 22`, `Community 88`, `Community 126`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
 - **Why does `getDbConnection()` connect `Community 5` to `Community 96`, `Community 129`, `Community 98`, `Community 0`, `Community 4`, `Community 134`, `Community 8`, `Community 9`, `Community 10`, `Community 107`, `Community 110`, `Community 111`, `Community 144`, `Community 84`, `Community 28`, `Community 127`?**
   _High betweenness centrality (0.045) - this node is a cross-community bridge._
