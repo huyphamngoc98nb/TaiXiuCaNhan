@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { GetCashflowSummaryUseCase } from '../services/get-cashflow-summary';
 import { GetCategorySummaryUseCase } from '../services/get-category-summary';
 import { GetPeriodSummaryUseCase } from '../services/get-period-summary';
@@ -9,8 +9,6 @@ import { ReportSummaryCards } from '../components/ReportSummaryCards';
 import { DateRangePicker } from '../components/DateRangePicker';
 import { CashflowBarChart } from '../components/CashflowBarChart';
 import { ReportDonutCard } from '../components/ReportDonutCard';
-import { CategorySpendingReport } from '../components/CategorySpendingReport';
-import { calculateSpendingByCategory, type CategorySpendingMetric } from '../services/financial-calculations';
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/constants/routes';
@@ -195,21 +193,6 @@ export const ReportsPage = () => {
       periodData.some(item => item.income > 0 || item.expense > 0)
     )
   );
-  const activeRange = useMemo(() => buildDateRange(preset, customRange), [preset, customRange]);
-  const categorySpending = useMemo(() => calculateSpendingByCategory(expenses), [expenses]);
-  const handleSelectExpenseCategory = (item: CategorySpendingMetric) => {
-    navigate(ROUTES.TRANSACTIONS, {
-      state: {
-        filter: {
-          category_id: item.category_id,
-          type: 'expense',
-          startDate: activeRange.startDate,
-          endDate: activeRange.endDate,
-        },
-        title: item.category_name,
-      },
-    });
-  };
 
   return (
     <div className="mx-auto min-h-full max-w-4xl bg-bg p-4 pb-24 text-text">
@@ -293,14 +276,6 @@ export const ReportsPage = () => {
         )}
 
         {!loading && !error && hasReportData && <CashflowBarChart data={periodData} />}
-
-        {(loading || hasReportData) && (
-          <CategorySpendingReport
-            items={categorySpending}
-            loading={loading}
-            onSelectCategory={handleSelectExpenseCategory}
-          />
-        )}
 
         {(loading || hasReportData) && (
           <ReportDonutCard

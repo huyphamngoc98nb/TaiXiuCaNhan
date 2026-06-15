@@ -2763,7 +2763,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L1",
       "id": "src_core_db_transaction_runner_ts",
-      "community": 11,
+      "community": 23,
       "norm_label": "transaction-runner.ts"
     },
     {
@@ -2772,7 +2772,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L3",
       "id": "db_transaction_runner_transactionrunner",
-      "community": 11,
+      "community": 23,
       "norm_label": "transactionrunner"
     },
     {
@@ -2781,7 +2781,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L5",
       "id": "db_transaction_runner_sqlitetransactionrunner",
-      "community": 11,
+      "community": 23,
       "norm_label": "sqlitetransactionrunner()"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L9",
       "id": "db_transaction_runner_immediatetransactionrunner",
-      "community": 11,
+      "community": 23,
       "norm_label": "immediatetransactionrunner()"
     },
     {
@@ -3375,7 +3375,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L1",
       "id": "src_core_di_loans_di_ts",
-      "community": 90,
+      "community": 130,
       "norm_label": "loans.di.ts"
     },
     {
@@ -3384,7 +3384,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L6",
       "id": "di_loans_di_loanservicedeps",
-      "community": 90,
+      "community": 130,
       "norm_label": "loanservicedeps"
     },
     {
@@ -3393,7 +3393,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L13",
       "id": "di_loans_di_loanmutationdeps",
-      "community": 90,
+      "community": 130,
       "norm_label": "loanmutationdeps"
     },
     {
@@ -3402,7 +3402,7 @@
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L20",
       "id": "di_loans_di_loanlistdeps",
-      "community": 90,
+      "community": 130,
       "norm_label": "loanlistdeps"
     },
     {
@@ -6786,7 +6786,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L1",
       "id": "src_modules_loans_hooks_useloanmutations_ts",
-      "community": 90,
+      "community": 130,
       "norm_label": "useloanmutations.ts"
     },
     {
@@ -6795,7 +6795,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L13",
       "id": "hooks_useloanmutations_toerror",
-      "community": 90,
+      "community": 130,
       "norm_label": "toerror()"
     },
     {
@@ -6804,7 +6804,7 @@
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L17",
       "id": "hooks_useloanmutations_emitloanevent",
-      "community": 90,
+      "community": 130,
       "norm_label": "emitloanevent()"
     },
     {
@@ -7281,7 +7281,7 @@
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L1",
       "id": "src_modules_loans_services_cancel_loan_ts",
-      "community": 90,
+      "community": 130,
       "norm_label": "cancel-loan.ts"
     },
     {
@@ -7290,7 +7290,7 @@
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L4",
       "id": "services_cancel_loan_cancelloandeps",
-      "community": 90,
+      "community": 130,
       "norm_label": "cancelloandeps"
     },
     {
@@ -7299,7 +7299,7 @@
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L8",
       "id": "services_cancel_loan_cancelloan",
-      "community": 90,
+      "community": 130,
       "norm_label": "cancelloan()"
     },
     {
@@ -8374,33 +8374,6 @@
       "norm_label": "cashflowbarchart()"
     },
     {
-      "label": "CategorySpendingReport.tsx",
-      "file_type": "code",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L1",
-      "id": "src_modules_reports_components_categoryspendingreport_tsx",
-      "community": 125,
-      "norm_label": "categoryspendingreport.tsx"
-    },
-    {
-      "label": "Props",
-      "file_type": "code",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L8",
-      "id": "components_categoryspendingreport_props",
-      "community": 125,
-      "norm_label": "props"
-    },
-    {
-      "label": "CategorySpendingReport()",
-      "file_type": "code",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L14",
-      "id": "components_categoryspendingreport_categoryspendingreport",
-      "community": 125,
-      "norm_label": "categoryspendingreport()"
-    },
-    {
       "label": "DateRangePicker.tsx",
       "file_type": "code",
       "source_file": "src/modules/reports/components/DateRangePicker.tsx",
@@ -8728,7 +8701,7 @@
       "label": "EXPENSE_DONUT_COLORS",
       "file_type": "code",
       "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L25",
+      "source_location": "L23",
       "id": "pages_reportspage_expense_donut_colors",
       "community": 4,
       "norm_label": "expense_donut_colors"
@@ -8737,7 +8710,7 @@
       "label": "INCOME_DONUT_COLORS",
       "file_type": "code",
       "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L30",
+      "source_location": "L28",
       "id": "pages_reportspage_income_donut_colors",
       "community": 4,
       "norm_label": "income_donut_colors"
@@ -8746,7 +8719,7 @@
       "label": "ReportsPage()",
       "file_type": "code",
       "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L36",
+      "source_location": "L34",
       "id": "pages_reportspage_reportspage",
       "community": 125,
       "norm_label": "reportspage()"
@@ -9261,7 +9234,7 @@
       "source_file": "src/modules/transactions/components/AdvancedTransactionFilterSheet.tsx",
       "source_location": "L11",
       "id": "components_advancedtransactionfiltersheet_props",
-      "community": 111,
+      "community": 79,
       "norm_label": "props"
     },
     {
@@ -9684,7 +9657,7 @@
       "source_file": "src/modules/transactions/domain/transaction.model.ts",
       "source_location": "L1",
       "id": "domain_transaction_model_transactiontype",
-      "community": 111,
+      "community": 11,
       "norm_label": "transactiontype"
     },
     {
@@ -9927,7 +9900,7 @@
       "source_file": "src/modules/transactions/hooks/useTransactionSummary.ts",
       "source_location": "L12",
       "id": "hooks_usetransactionsummary_summarizetransactions",
-      "community": 130,
+      "community": 23,
       "norm_label": "summarizetransactions()"
     },
     {
@@ -10332,7 +10305,7 @@
       "source_file": "src/modules/transactions/services/create-credit-card-payment.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_create_credit_card_payment_ts",
-      "community": 11,
+      "community": 23,
       "norm_label": "create-credit-card-payment.ts"
     },
     {
@@ -10341,7 +10314,7 @@
       "source_file": "src/modules/transactions/services/create-credit-card-payment.ts",
       "source_location": "L16",
       "id": "services_create_credit_card_payment_createcreditcardpaymentinput",
-      "community": 11,
+      "community": 23,
       "norm_label": "createcreditcardpaymentinput"
     },
     {
@@ -10377,7 +10350,7 @@
       "source_file": "src/modules/transactions/services/create-transaction.exclude.test.ts",
       "source_location": "L1",
       "id": "src_modules_transactions_services_create_transaction_exclude_test_ts",
-      "community": 118,
+      "community": 23,
       "norm_label": "create-transaction.exclude.test.ts"
     },
     {
@@ -10386,7 +10359,7 @@
       "source_file": "src/modules/transactions/services/create-transaction.exclude.test.ts",
       "source_location": "L19",
       "id": "services_create_transaction_exclude_test_wallet",
-      "community": 118,
+      "community": 23,
       "norm_label": "wallet"
     },
     {
@@ -10782,7 +10755,7 @@
       "source_file": "src/modules/transactions/services/update-transaction.ts",
       "source_location": "L21",
       "id": "services_update_transaction_updatetransactionusecase_constructor",
-      "community": 11,
+      "community": 23,
       "norm_label": ".constructor()"
     },
     {
@@ -11385,7 +11358,7 @@
       "source_file": "src/modules/wallets/repositories/wallet.repository.ts",
       "source_location": "L3",
       "id": "repositories_wallet_repository_wallet",
-      "community": 23,
+      "community": 79,
       "norm_label": "wallet"
     },
     {
@@ -11574,7 +11547,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L1",
       "id": "src_modules_wallets_services_sync_credit_card_statement_ts",
-      "community": 23,
+      "community": 79,
       "norm_label": "sync-credit-card-statement.ts"
     },
     {
@@ -11583,7 +11556,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L9",
       "id": "services_sync_credit_card_statement_syncqueue",
-      "community": 23,
+      "community": 79,
       "norm_label": "syncqueue"
     },
     {
@@ -11592,7 +11565,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L11",
       "id": "services_sync_credit_card_statement_derivestatus",
-      "community": 23,
+      "community": 79,
       "norm_label": "derivestatus()"
     },
     {
@@ -11601,7 +11574,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L27",
       "id": "services_sync_credit_card_statement_getstatementperiodforlifecycle",
-      "community": 23,
+      "community": 79,
       "norm_label": "getstatementperiodforlifecycle()"
     },
     {
@@ -11628,7 +11601,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L59",
       "id": "services_sync_credit_card_statement_synccreditcardstatementusecase_execute",
-      "community": 23,
+      "community": 79,
       "norm_label": ".execute()"
     },
     {
@@ -11637,7 +11610,7 @@
       "source_file": "src/modules/wallets/services/sync-credit-card-statement.ts",
       "source_location": "L81",
       "id": "services_sync_credit_card_statement_synccreditcardstatementusecase_dosync",
-      "community": 23,
+      "community": 79,
       "norm_label": "._dosync()"
     },
     {
@@ -11691,7 +11664,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L1",
       "id": "src_modules_wallets_services_wallet_service_test_ts",
-      "community": 130,
+      "community": 23,
       "norm_label": "wallet.service.test.ts"
     },
     {
@@ -11700,7 +11673,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L22",
       "id": "services_wallet_service_test_wallet",
-      "community": 130,
+      "community": 23,
       "norm_label": "wallet"
     },
     {
@@ -11709,7 +11682,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L56",
       "id": "services_wallet_service_test_transactionrepository",
-      "community": 130,
+      "community": 23,
       "norm_label": "transactionrepository"
     },
     {
@@ -11718,7 +11691,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L57",
       "id": "services_wallet_service_test_walletrepository",
-      "community": 130,
+      "community": 23,
       "norm_label": "walletrepository"
     },
     {
@@ -11727,7 +11700,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L58",
       "id": "services_wallet_service_test_updatespy",
-      "community": 130,
+      "community": 23,
       "norm_label": "updatespy"
     },
     {
@@ -11736,7 +11709,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L60",
       "id": "services_wallet_service_test_runtransaction",
-      "community": 130,
+      "community": 23,
       "norm_label": "runtransaction()"
     },
     {
@@ -11745,7 +11718,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L70",
       "id": "services_wallet_service_test_service",
-      "community": 130,
+      "community": 23,
       "norm_label": "service"
     },
     {
@@ -11754,7 +11727,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L136",
       "id": "services_wallet_service_test_getreferencecounts",
-      "community": 130,
+      "community": 23,
       "norm_label": "getreferencecounts"
     },
     {
@@ -11763,7 +11736,7 @@
       "source_file": "src/modules/wallets/services/wallet.service.test.ts",
       "source_location": "L145",
       "id": "services_wallet_service_test_deletespy",
-      "community": 130,
+      "community": 23,
       "norm_label": "deletespy"
     },
     {
@@ -17356,6 +17329,33 @@
       "norm_label": "nhan \u201c\u0111a thanh toan\u201d hoa \u0111on co tru tien khoi vi khong?"
     },
     {
+      "label": "CategorySpendingReport.tsx",
+      "file_type": "code",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L1",
+      "community": 125,
+      "norm_label": "categoryspendingreport.tsx",
+      "id": "src_modules_reports_components_categoryspendingreport_tsx"
+    },
+    {
+      "label": "Props",
+      "file_type": "code",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L8",
+      "community": 125,
+      "norm_label": "props",
+      "id": "components_categoryspendingreport_props"
+    },
+    {
+      "label": "CategorySpendingReport()",
+      "file_type": "code",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L14",
+      "community": 125,
+      "norm_label": "categoryspendingreport()",
+      "id": "components_categoryspendingreport_categoryspendingreport"
+    },
+    {
       "label": "BUDGET_STATUS_ORDER",
       "file_type": "code",
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
@@ -18674,7 +18674,7 @@
       "file_type": "code",
       "source_file": "src/core/db/transaction-runner.ts",
       "source_location": "L1",
-      "community": 11,
+      "community": 23,
       "norm_label": "transaction-runner.ts",
       "id": "db_transaction_runner"
     },
@@ -18692,7 +18692,7 @@
       "file_type": "code",
       "source_file": "src/core/di/loans.di.ts",
       "source_location": "L1",
-      "community": 90,
+      "community": 130,
       "norm_label": "loans.di.ts",
       "id": "di_loans_di"
     },
@@ -18710,7 +18710,7 @@
       "file_type": "code",
       "source_file": "src/core/di/transactions.di.ts",
       "source_location": "L1",
-      "community": 111,
+      "community": 23,
       "norm_label": "transactions.di.ts",
       "id": "di_transactions_di"
     },
@@ -18728,7 +18728,7 @@
       "file_type": "code",
       "source_file": "src/core/files/receipt-storage.ts",
       "source_location": "L1",
-      "community": 48,
+      "community": 11,
       "norm_label": "receipt-storage.ts",
       "id": "files_receipt_storage"
     },
@@ -19295,7 +19295,7 @@
       "file_type": "code",
       "source_file": "src/modules/loans/hooks/useLoanMutations.ts",
       "source_location": "L1",
-      "community": 90,
+      "community": 130,
       "norm_label": "useloanmutations.ts",
       "id": "hooks_useloanmutations"
     },
@@ -19358,7 +19358,7 @@
       "file_type": "code",
       "source_file": "src/modules/loans/services/cancel-loan.ts",
       "source_location": "L1",
-      "community": 90,
+      "community": 130,
       "norm_label": "cancel-loan.ts",
       "id": "services_cancel_loan"
     },
@@ -35443,9 +35443,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "src_core_repositories_app_repositories_ts",
-      "confidence_score": 1.0
+      "target": "src_core_repositories_app_repositories_ts"
     },
     {
       "relation": "imports_from",
@@ -35608,9 +35608,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "repositories_app_repositories_apprepositories",
-      "confidence_score": 1.0
+      "target": "repositories_app_repositories_apprepositories"
     },
     {
       "relation": "imports",
@@ -41721,9 +41721,9 @@
       "source_file": "src/modules/budgets/components/BudgetCategoryList.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_components_budgetcategorylist_tsx",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports",
@@ -41732,9 +41732,9 @@
       "source_file": "src/modules/budgets/components/BudgetCategoryList.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_components_budgetcategorylist_tsx",
-      "target": "services_financial_calculations_sortbudgetprogressbyattention",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_sortbudgetprogressbyattention"
     },
     {
       "relation": "contains",
@@ -43557,9 +43557,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "src_modules_budgets_domain_budget_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_domain_budget_model_ts"
     },
     {
       "relation": "imports_from",
@@ -43645,9 +43645,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "src_modules_budgets_domain_budget_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_domain_budget_model_ts"
     },
     {
       "relation": "imports_from",
@@ -43656,9 +43656,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "src_modules_budgets_domain_budget_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_domain_budget_model_ts"
     },
     {
       "relation": "imports_from",
@@ -43667,9 +43667,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "src_modules_budgets_domain_budget_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_domain_budget_model_ts"
     },
     {
       "relation": "imports_from",
@@ -43711,9 +43711,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "src_modules_budgets_domain_budget_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_domain_budget_model_ts"
     },
     {
       "relation": "imports_from",
@@ -43974,9 +43974,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_budget_model_budgetstatus",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetstatus"
     },
     {
       "relation": "references",
@@ -43985,9 +43985,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_budgetusagemetric",
-      "target": "domain_budget_model_budgetstatus",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetstatus"
     },
     {
       "relation": "imports",
@@ -44486,9 +44486,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_budget_model_budgetwithcategory",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetwithcategory"
     },
     {
       "relation": "imports",
@@ -44508,9 +44508,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "domain_budget_model_budgetwithcategory",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetwithcategory"
     },
     {
       "relation": "references",
@@ -44803,9 +44803,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "domain_budget_model_budgetprogress",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetprogress"
     },
     {
       "relation": "imports",
@@ -44836,9 +44836,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_budget_model_budgetprogress",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetprogress"
     },
     {
       "relation": "imports",
@@ -44847,9 +44847,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "domain_budget_model_budgetprogress",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetprogress"
     },
     {
       "relation": "imports",
@@ -44858,9 +44858,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "domain_budget_model_budgetprogress",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_budgetprogress"
     },
     {
       "relation": "imports",
@@ -45120,9 +45120,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_budget_model_resolvebudgetscope",
-      "confidence_score": 1.0
+      "target": "domain_budget_model_resolvebudgetscope"
     },
     {
       "relation": "calls",
@@ -46114,9 +46114,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "src_modules_reports_services_build_date_range_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_build_date_range_ts"
     },
     {
       "relation": "imports",
@@ -46125,9 +46125,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "services_build_date_range_builddaterange",
-      "confidence_score": 1.0
+      "target": "services_build_date_range_builddaterange"
     },
     {
       "relation": "imports_from",
@@ -46136,9 +46136,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports",
@@ -46147,9 +46147,9 @@
       "source_file": "src/modules/budgets/pages/BudgetSettingsPage.tsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_pages_budgetsettingspage_tsx",
-      "target": "services_financial_calculations_resolvebudgettransactionfilter",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_resolvebudgettransactionfilter"
     },
     {
       "relation": "contains",
@@ -46765,9 +46765,9 @@
       "source_file": "src/modules/budgets/services/calculate-budget-progress.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_services_calculate_budget_progress_ts",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports",
@@ -46776,9 +46776,9 @@
       "source_file": "src/modules/budgets/services/calculate-budget-progress.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_services_calculate_budget_progress_ts",
-      "target": "services_financial_calculations_calculatebudgetusage",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatebudgetusage"
     },
     {
       "relation": "imports",
@@ -46787,9 +46787,9 @@
       "source_file": "src/modules/budgets/services/calculate-budget-progress.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_services_calculate_budget_progress_ts",
-      "target": "services_financial_calculations_enrichbudgetprogress",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_enrichbudgetprogress"
     },
     {
       "relation": "contains",
@@ -46990,9 +46990,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "src_modules_budgets_services_classify_budget_status_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_budgets_services_classify_budget_status_ts"
     },
     {
       "relation": "imports_from",
@@ -47022,9 +47022,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_classify_budget_status_classifybudgetstatus",
-      "confidence_score": 1.0
+      "target": "services_classify_budget_status_classifybudgetstatus"
     },
     {
       "relation": "imports",
@@ -47160,9 +47160,9 @@
       "source_file": "src/modules/budgets/services/list-budget-alerts.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_services_list_budget_alerts_ts",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports",
@@ -47171,9 +47171,9 @@
       "source_file": "src/modules/budgets/services/list-budget-alerts.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_budgets_services_list_budget_alerts_ts",
-      "target": "services_financial_calculations_sortbudgetprogressbyattention",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_sortbudgetprogressbyattention"
     },
     {
       "relation": "contains",
@@ -62692,213 +62692,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "src_shared_context_currencycontext_tsx",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "context_currencycontext_usecurrency",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "src_shared_context_languagecontext_tsx",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "context_languagecontext_uselanguage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "src_shared_hooks_useamountvisibility_ts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "hooks_useamountvisibility_useamountvisibility",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "src_shared_utils_locale_ts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "utils_locale_getapplocale",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "services_financial_calculations_categoryspendingmetric",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "components_categoryspendingreport_props",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "source": "src_modules_reports_components_categoryspendingreport_tsx",
-      "target": "components_categoryspendingreport_categoryspendingreport",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "src_modules_reports_pages_reportspage_tsx",
-      "target": "src_modules_reports_components_categoryspendingreport_tsx",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "components_categoryspendingreport_props",
-      "target": "services_financial_calculations_categoryspendingmetric",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "src_modules_reports_pages_reportspage_tsx",
-      "target": "components_categoryspendingreport_categoryspendingreport",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "source": "components_categoryspendingreport_categoryspendingreport",
-      "target": "context_languagecontext_uselanguage"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "components_categoryspendingreport_categoryspendingreport",
-      "target": "context_currencycontext_usecurrency"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "components_categoryspendingreport_categoryspendingreport",
-      "target": "hooks_useamountvisibility_useamountvisibility"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
-      "source_location": "L18",
-      "weight": 1.0,
-      "source": "components_categoryspendingreport_categoryspendingreport",
-      "target": "utils_locale_getapplocale"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/modules/reports/components/DateRangePicker.tsx",
       "source_location": "L2",
       "weight": 1,
@@ -64215,9 +64008,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "src_modules_reports_domain_report_model_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_domain_report_model_ts"
     },
     {
       "relation": "imports_from",
@@ -64314,9 +64107,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_report_model_daterange",
-      "confidence_score": 1.0
+      "target": "domain_report_model_daterange"
     },
     {
       "relation": "imports",
@@ -64719,9 +64512,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_report_model_categorysummary",
-      "confidence_score": 1.0
+      "target": "domain_report_model_categorysummary"
     },
     {
       "relation": "references",
@@ -65024,9 +64817,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "domain_report_model_cashflowsummary",
-      "confidence_score": 1.0
+      "target": "domain_report_model_cashflowsummary"
     },
     {
       "relation": "references",
@@ -65208,39 +65001,6 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "src_modules_reports_pages_reportspage_tsx",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "src_modules_reports_pages_reportspage_tsx",
-      "target": "services_financial_calculations_calculatespendingbycategory",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "src_modules_reports_pages_reportspage_tsx",
-      "target": "services_financial_calculations_categoryspendingmetric",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
       "source_location": "L14",
       "weight": 1,
       "confidence_score": 1,
@@ -65397,6 +65157,61 @@
       "confidence_score": 1,
       "source": "src_modules_reports_pages_reportspage_tsx",
       "target": "pages_reportspage_reportspage"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_pages_reportspage_tsx",
+      "target": "src_modules_reports_components_categoryspendingreport_tsx"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_pages_reportspage_tsx",
+      "target": "components_categoryspendingreport_categoryspendingreport"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_pages_reportspage_tsx",
+      "target": "src_modules_reports_services_financial_calculations_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_pages_reportspage_tsx",
+      "target": "services_financial_calculations_calculatespendingbycategory"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/pages/ReportsPage.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_pages_reportspage_tsx",
+      "target": "services_financial_calculations_categoryspendingmetric"
     },
     {
       "relation": "contains",
@@ -65843,9 +65658,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "src_modules_reports_services_build_date_range_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_build_date_range_ts"
     },
     {
       "relation": "imports_from",
@@ -65865,9 +65680,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "src_modules_reports_services_build_date_range_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_build_date_range_ts"
     },
     {
       "relation": "imports_from",
@@ -65941,9 +65756,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "services_build_date_range_builddaterange",
-      "confidence_score": 1.0
+      "target": "services_build_date_range_builddaterange"
     },
     {
       "relation": "imports",
@@ -65963,9 +65778,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "services_build_date_range_builddaterange",
-      "confidence_score": 1.0
+      "target": "services_build_date_range_builddaterange"
     },
     {
       "relation": "imports",
@@ -66049,9 +65864,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_forecaststatus",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_forecaststatus"
     },
     {
       "relation": "contains",
@@ -66059,9 +65874,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_financialmonthmetrics",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_financialmonthmetrics"
     },
     {
       "relation": "contains",
@@ -66069,9 +65884,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_categoryspendingmetric",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_categoryspendingmetric"
     },
     {
       "relation": "contains",
@@ -66079,9 +65894,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_budgetusagemetric",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_budgetusagemetric"
     },
     {
       "relation": "contains",
@@ -66089,9 +65904,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_countinclusivedays",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_countinclusivedays"
     },
     {
       "relation": "contains",
@@ -66099,9 +65914,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_getelapseddaysinrange",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_getelapseddaysinrange"
     },
     {
       "relation": "contains",
@@ -66109,9 +65924,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_percentchange",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_percentchange"
     },
     {
       "relation": "contains",
@@ -66119,9 +65934,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_classifyforecaststatus",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_classifyforecaststatus"
     },
     {
       "relation": "contains",
@@ -66129,9 +65944,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L70",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_calculatemonthmetrics",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatemonthmetrics"
     },
     {
       "relation": "contains",
@@ -66139,9 +65954,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L113",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_calculatespendingbycategory",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatespendingbycategory"
     },
     {
       "relation": "contains",
@@ -66149,9 +65964,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L121",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_calculatebudgetusage",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatebudgetusage"
     },
     {
       "relation": "contains",
@@ -66159,9 +65974,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L149",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_budget_status_order",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_budget_status_order"
     },
     {
       "relation": "contains",
@@ -66169,9 +65984,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_enrichbudgetprogress",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_enrichbudgetprogress"
     },
     {
       "relation": "contains",
@@ -66179,9 +65994,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_sortbudgetprogressbyattention",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_sortbudgetprogressbyattention"
     },
     {
       "relation": "contains",
@@ -66189,9 +66004,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L182",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_reports_services_financial_calculations_ts",
-      "target": "services_financial_calculations_resolvebudgettransactionfilter",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_resolvebudgettransactionfilter"
     },
     {
       "relation": "imports_from",
@@ -66200,9 +66015,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports_from",
@@ -66211,9 +66026,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports_from",
@@ -66222,9 +66037,9 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_services_build_dashboard_view_model_ts",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports_from",
@@ -66233,9 +66048,20 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "src_modules_reports_services_financial_calculations_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_reports_services_financial_calculations_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "src_modules_reports_services_financial_calculations_ts"
     },
     {
       "relation": "imports",
@@ -66244,9 +66070,31 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "services_financial_calculations_financialmonthmetrics",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_financialmonthmetrics"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "services_financial_calculations_categoryspendingmetric"
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "components_categoryspendingreport_props",
+      "target": "services_financial_calculations_categoryspendingmetric"
     },
     {
       "relation": "calls",
@@ -66255,9 +66103,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_getelapseddaysinrange",
-      "target": "services_financial_calculations_countinclusivedays",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_countinclusivedays"
     },
     {
       "relation": "calls",
@@ -66266,9 +66114,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatemonthmetrics",
-      "target": "services_financial_calculations_countinclusivedays",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_countinclusivedays"
     },
     {
       "relation": "calls",
@@ -66277,9 +66125,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L130",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatebudgetusage",
-      "target": "services_financial_calculations_countinclusivedays",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_countinclusivedays"
     },
     {
       "relation": "calls",
@@ -66288,9 +66136,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatemonthmetrics",
-      "target": "services_financial_calculations_getelapseddaysinrange",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_getelapseddaysinrange"
     },
     {
       "relation": "calls",
@@ -66299,9 +66147,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L129",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatebudgetusage",
-      "target": "services_financial_calculations_getelapseddaysinrange",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_getelapseddaysinrange"
     },
     {
       "relation": "calls",
@@ -66310,9 +66158,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatemonthmetrics",
-      "target": "services_financial_calculations_percentchange",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_percentchange"
     },
     {
       "relation": "calls",
@@ -66321,9 +66169,9 @@
       "source_file": "src/modules/reports/services/financial-calculations.ts",
       "source_location": "L105",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_financial_calculations_calculatemonthmetrics",
-      "target": "services_financial_calculations_classifyforecaststatus",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_classifyforecaststatus"
     },
     {
       "relation": "imports",
@@ -66332,9 +66180,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "services_financial_calculations_calculatemonthmetrics",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatemonthmetrics"
     },
     {
       "relation": "imports",
@@ -66343,9 +66191,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "services_financial_calculations_calculatemonthmetrics",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatemonthmetrics"
     },
     {
       "relation": "imports",
@@ -66354,9 +66202,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "services_financial_calculations_calculatespendingbycategory",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatespendingbycategory"
     },
     {
       "relation": "imports",
@@ -66365,9 +66213,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "services_financial_calculations_calculatebudgetusage",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_calculatebudgetusage"
     },
     {
       "relation": "imports",
@@ -66376,9 +66224,9 @@
       "source_file": "src/modules/transactions/services/build-dashboard-view-model.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_services_build_dashboard_view_model_ts",
-      "target": "services_financial_calculations_sortbudgetprogressbyattention",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_sortbudgetprogressbyattention"
     },
     {
       "relation": "calls",
@@ -66398,9 +66246,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "services_financial_calculations_resolvebudgettransactionfilter",
-      "confidence_score": 1.0
+      "target": "services_financial_calculations_resolvebudgettransactionfilter"
     },
     {
       "relation": "contains",
@@ -70216,9 +70064,9 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_transactionspage_transactionnavigationstate",
-      "target": "domain_transaction_model_transactionfilter",
-      "confidence_score": 1.0
+      "target": "domain_transaction_model_transactionfilter"
     },
     {
       "relation": "references",
@@ -70832,9 +70680,9 @@
       "source_file": "src/modules/transactions/hooks/useMonthEndForecast.ts",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "target": "hooks_usemonthendforecast_usemonthendforecast",
-      "confidence_score": 1.0
+      "target": "hooks_usemonthendforecast_usemonthendforecast"
     },
     {
       "relation": "imports_from",
@@ -70843,9 +70691,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "src_modules_transactions_hooks_usemonthendforecast_ts",
-      "confidence_score": 1.0
+      "target": "src_modules_transactions_hooks_usemonthendforecast_ts"
     },
     {
       "relation": "imports",
@@ -70854,9 +70702,9 @@
       "source_file": "src/modules/transactions/pages/DashboardPage.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_dashboardpage_tsx",
-      "target": "hooks_usemonthendforecast_usemonthendforecast",
-      "confidence_score": 1.0
+      "target": "hooks_usemonthendforecast_usemonthendforecast"
     },
     {
       "relation": "calls",
@@ -72423,9 +72271,9 @@
       "source_file": "src/modules/transactions/pages/TransactionsPage.tsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_modules_transactions_pages_transactionspage_tsx",
-      "target": "pages_transactionspage_transactionnavigationstate",
-      "confidence_score": 1.0
+      "target": "pages_transactionspage_transactionnavigationstate"
     },
     {
       "relation": "contains",
@@ -83643,6 +83491,17 @@
       "target": "src_shared_context_currencycontext_tsx"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "src_shared_context_currencycontext_tsx"
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -83811,6 +83670,28 @@
       "confidence_score": 1,
       "source": "tests_wallets_ui_test",
       "target": "context_currencycontext_currencyprovider"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "context_currencycontext_usecurrency"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "components_categoryspendingreport_categoryspendingreport",
+      "target": "context_currencycontext_usecurrency"
     },
     {
       "relation": "imports",
@@ -84086,6 +83967,17 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "src_shared_context_languagecontext_tsx"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/modules/budgets/components/BudgetAlertsPanel.tsx",
       "source_location": "L2",
       "weight": 1,
@@ -84275,6 +84167,28 @@
       "source_location": "L21",
       "weight": 1,
       "source": "tests_language_context_test_probe",
+      "target": "context_languagecontext_uselanguage"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "context_languagecontext_uselanguage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "components_categoryspendingreport_categoryspendingreport",
       "target": "context_languagecontext_uselanguage"
     },
     {
@@ -85064,6 +84978,39 @@
       "confidence_score": 1.0,
       "source": "src_shared_hooks_useamountvisibility_ts",
       "target": "hooks_useamountvisibility_maskamount"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "src_shared_hooks_useamountvisibility_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "hooks_useamountvisibility_useamountvisibility"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "components_categoryspendingreport_categoryspendingreport",
+      "target": "hooks_useamountvisibility_useamountvisibility"
     },
     {
       "relation": "contains",
@@ -86055,6 +86002,39 @@
       "weight": 1,
       "confidence_score": 1,
       "source": "src_shared_utils_locale_ts",
+      "target": "utils_locale_getapplocale"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "src_shared_utils_locale_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "utils_locale_getapplocale"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "components_categoryspendingreport_categoryspendingreport",
       "target": "utils_locale_getapplocale"
     },
     {
@@ -87516,9 +87496,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "tests_financial_calculations_test_monthlyrange",
-      "confidence_score": 1.0
+      "target": "tests_financial_calculations_test_monthlyrange"
     },
     {
       "relation": "contains",
@@ -87526,9 +87506,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "tests_financial_calculations_test_makebudget",
-      "confidence_score": 1.0
+      "target": "tests_financial_calculations_test_makebudget"
     },
     {
       "relation": "contains",
@@ -87536,9 +87516,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "tests_financial_calculations_test_metrics",
-      "confidence_score": 1.0
+      "target": "tests_financial_calculations_test_metrics"
     },
     {
       "relation": "contains",
@@ -87546,9 +87526,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "tests_financial_calculations_test_items",
-      "confidence_score": 1.0
+      "target": "tests_financial_calculations_test_items"
     },
     {
       "relation": "contains",
@@ -87556,9 +87536,9 @@
       "source_file": "src/tests/financial-calculations.test.ts",
       "source_location": "L59",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_tests_financial_calculations_test_ts",
-      "target": "tests_financial_calculations_test_usage",
-      "confidence_score": 1.0
+      "target": "tests_financial_calculations_test_usage"
     },
     {
       "relation": "contains",
@@ -91251,6 +91231,26 @@
       "confidence_score": 1.0,
       "source": "docs_user_guide_14_c\u00e2u_h\u1ecfi_th\u01b0\u1eddng_g\u1eb7p",
       "target": "docs_user_guide_nh\u1ea5n_\u0111\u00e3_thanh_to\u00e1n_h\u00f3a_\u0111\u01a1n_c\u00f3_tr\u1eeb_ti\u1ec1n_kh\u1ecfi_v\u00ed_kh\u00f4ng"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "components_categoryspendingreport_props"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/modules/reports/components/CategorySpendingReport.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_modules_reports_components_categoryspendingreport_tsx",
+      "target": "components_categoryspendingreport_categoryspendingreport"
     },
     {
       "relation": "contains",
@@ -101142,5 +101142,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9f76e084e1dd8d21f2f391aad11b05fef31afdb1"
+  "built_at_commit": "c5a3f09217dd445873d22cd43d2d7f3568455f68"
 }

@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1781510494.4967556,
+    "mtime": 1781510784.8023152,
     "ast_hash": "7d20bbb6ddd9b895546d6342e84c45a4",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1781510494.4976523,
+    "mtime": 1781510784.8023152,
     "ast_hash": "3deacd894fa096455ce58f3b2df33e10",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1781510494.3424513,
+    "mtime": 1781510784.6695025,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1781510494.4362335,
+    "mtime": 1781510784.7473042,
     "ast_hash": "f63e79d46b1f8b3fe5f4af0d8fcd322a",
     "semantic_hash": ""
   },
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1781510494.5003743,
+    "mtime": 1781510784.813004,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1781510494.5013838,
+    "mtime": 1781510784.8141253,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -890,8 +890,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\pages\\ReportsPage.tsx": {
-    "mtime": 1781510028.2546675,
-    "ast_hash": "57829705a382bbd861389e0dabab4861",
+    "mtime": 1781511037.4064054,
+    "ast_hash": "03dea63a614c1094a3c963954e732bf4",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\repositories\\report.repository.ts": {
@@ -1832,11 +1832,6 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useAmountVisibility.ts": {
     "mtime": 1781497091.8482268,
     "ast_hash": "289db276cbb2c2dbd143cceee90281d4",
-    "semantic_hash": ""
-  },
-  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\components\\CategorySpendingReport.tsx": {
-    "mtime": 1781510010.8692913,
-    "ast_hash": "364ea5354697f17395ba710d0e0f1ac1",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\services\\financial-calculations.ts": {

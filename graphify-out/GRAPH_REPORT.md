@@ -1,7 +1,7 @@
 # Graph Report - TaiXiuCaNhan  (2026-06-15)
 
 ## Corpus Check
-- 338 files · ~130,814 words
+- 337 files · ~130,465 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9f76e084`
+- Built from commit: `c5a3f092`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -209,8 +209,8 @@ Cohesion: 0.29
 Nodes (8): DEFAULT_CATEGORIES, DefaultCategory, DefaultCategoryType, insertDefaultCategories(), seedDefaultData(), expectExecuteContaining(), expectMigrationMarked(), expectNoExecuteContaining()
 
 ### Community 11 - "Community 11"
-Cohesion: 0.11
-Nodes (28): immediateTransactionRunner(), sqliteTransactionRunner(), TransactionRunner, TransactionValidationError, validateCreateTransaction(), validateUpdateTransaction(), CreateCreditCardPaymentInput, getSourceDelta() (+20 more)
+Cohesion: 0.12
+Nodes (25): TransactionType, TransactionValidationError, validateCreateTransaction(), validateUpdateTransaction(), getSourceDelta(), validateActiveWallet(), assertActiveWallet(), assertCreateTransactionFunding() (+17 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.14
@@ -257,8 +257,8 @@ Cohesion: 0.18
 Nodes (20): BackButton(), BackButtonProps, CategoryList(), RecurringBillForm(), TransactionForm(), useConfirm(), ROUTES, useCategories() (+12 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.13
-Nodes (22): Props, StoredStatement, UseWalletsReturn, AppRepositories, createSQLiteRepositories(), CreateWalletInput, CreditCardStatementStatus, IWalletRepository (+14 more)
+Cohesion: 0.09
+Nodes (31): Props, immediateTransactionRunner(), sqliteTransactionRunner(), TransactionRunner, StoredStatement, summarizeTransactions(), UseWalletsReturn, AppRepositories (+23 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.25
@@ -367,7 +367,7 @@ Cohesion: 0.25
 Nodes (6): Current State, Local SQLite Encryption, PIN Recovery And Local Reset, Remaining Security Work, Secret Handling, Security Notes
 
 ### Community 48 - "Community 48"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (10): Props, ReceiptCapture(), OrphanReceiptCleanupService, runReceiptOrphanCleanup(), ReceiptStorageService, cleanupSpy, db, deleteSpy (+2 more)
 
 ### Community 49 - "Community 49"
@@ -388,7 +388,7 @@ Nodes (3): code:bash (python3 -m graphify.serve graphify-out/graph.json), code:j
 
 ### Community 79 - "Community 79"
 Cohesion: 0.08
-Nodes (33): computeCreditCardAlerts(), addDays(), addMonths(), buildDueDate(), clampedDate(), CreditCardService, CreditCardStatementPeriod, CreditCardSummary (+25 more)
+Nodes (38): Props, Wallet, computeCreditCardAlerts(), addDays(), addMonths(), buildDueDate(), clampedDate(), CreditCardService (+30 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.67
@@ -423,8 +423,8 @@ Cohesion: 0.22
 Nodes (16): createTransactionUseCase, updateTransactionUseCase, clearStoredCreateTransactionState(), CreateTransactionFormValues, getCreateTransactionInitialValues(), getDefaultCreateTransactionValues(), getEditTransactionInitialValues(), getNextCreateTransactionValues() (+8 more)
 
 ### Community 90 - "Community 90"
-Cohesion: 0.14
-Nodes (16): loanListDeps, loanMutationDeps, loanServiceDeps, emitLoanEvent(), toError(), ILoanRepository, cancelLoan(), CancelLoanDeps (+8 more)
+Cohesion: 0.23
+Nodes (9): ILoanRepository, deleteLoan(), DeleteLoanDeps, getLoanForDelete(), LoanHasPaymentsError, deps, loan(), makeRepo() (+1 more)
 
 ### Community 96 - "Community 96"
 Cohesion: 0.09
@@ -463,8 +463,8 @@ Cohesion: 0.10
 Nodes (23): Props, ACCOUNT_TYPE_LABELS, AccountType, Budget, BudgetPeriod, BudgetWithCategory, CreateBudgetDto, Wallet (+15 more)
 
 ### Community 111 - "Community 111"
-Cohesion: 0.15
-Nodes (14): Props, createCreditCardPaymentUseCase, deleteTransactionUseCase, listTransactionsUseCase, mapToTransaction(), CreateTransactionInput, Transaction, TransactionFilter (+6 more)
+Cohesion: 0.17
+Nodes (12): createCreditCardPaymentUseCase, deleteTransactionUseCase, listTransactionsUseCase, mapToTransaction(), CreateTransactionInput, Transaction, TransactionFilter, UpdateTransactionInput (+4 more)
 
 ### Community 112 - "Community 112"
 Cohesion: 0.22
@@ -491,8 +491,8 @@ Cohesion: 0.18
 Nodes (17): BackupPasswordDialog(), BackupPasswordDialogProps, BackupPage(), formatLastRunAt(), forceAppUnlock(), resumeAppLock(), suspendAppLock(), appListeners (+9 more)
 
 ### Community 118 - "Community 118"
-Cohesion: 0.16
-Nodes (11): createSampleTransactions(), CreateTransactionUseCase, wallet, createUseCase, existingNoReceipt, existingWithReceipt, input, makeBaseInput() (+3 more)
+Cohesion: 0.19
+Nodes (10): createSampleTransactions(), CreateTransactionUseCase, createUseCase, existingNoReceipt, existingWithReceipt, input, makeBaseInput(), mockDb (+2 more)
 
 ### Community 119 - "Community 119"
 Cohesion: 0.17
@@ -535,8 +535,8 @@ Cohesion: 0.22
 Nodes (8): createTransaction, creditCardWallet, runTransaction(), runTransactionSpy, sourceWallet, transaction, useCase, walletRepository
 
 ### Community 130 - "Community 130"
-Cohesion: 0.20
-Nodes (8): summarizeTransactions(), deleteSpy, getReferenceCounts, service, transactionRepository, updateSpy, wallet, walletRepository
+Cohesion: 0.31
+Nodes (7): loanListDeps, loanMutationDeps, loanServiceDeps, emitLoanEvent(), toError(), cancelLoan(), CancelLoanDeps
 
 ### Community 131 - "Community 131"
 Cohesion: 0.22
@@ -627,11 +627,11 @@ Nodes (3): 10. Xuất dữ liệu, Xuất nhật ký lỗi, Xuất PDF hoặc CS
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `useLanguage()` connect `Community 142` to `Community 131`, `Community 4`, `Community 5`, `Community 135`, `Community 140`, `Community 150`, `Community 22`, `Community 29`, `Community 76`, `Community 87`, `Community 89`, `Community 96`, `Community 99`, `Community 105`, `Community 107`, `Community 110`, `Community 111`, `Community 113`, `Community 115`, `Community 116`, `Community 117`, `Community 120`, `Community 122`, `Community 125`?**
-  _High betweenness centrality (0.091) - this node is a cross-community bridge._
-- **Why does `Wallet` connect `Community 23` to `Community 0`, `Community 33`, `Community 129`, `Community 1`, `Community 130`, `Community 96`, `Community 73`, `Community 106`, `Community 11`, `Community 79`, `Community 111`, `Community 115`, `Community 118`, `Community 22`, `Community 88`, `Community 120`, `Community 125`, `Community 126`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
 - **Why does `getDbConnection()` connect `Community 0` to `Community 128`, `Community 98`, `Community 4`, `Community 134`, `Community 8`, `Community 9`, `Community 10`, `Community 76`, `Community 110`, `Community 111`, `Community 114`, `Community 84`, `Community 23`, `Community 86`, `Community 118`, `Community 89`, `Community 28`, `Community 127`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+- **Why does `Wallet` connect `Community 79` to `Community 0`, `Community 33`, `Community 129`, `Community 1`, `Community 96`, `Community 73`, `Community 106`, `Community 11`, `Community 115`, `Community 22`, `Community 23`, `Community 88`, `Community 120`, `Community 125`, `Community 126`?**
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **What connects `config`, `dev`, `build` to the rest of the system?**
   _606 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
