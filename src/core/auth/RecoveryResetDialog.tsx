@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { recoveryService } from './recovery.service';
+import { ResetLocalDataError } from '@/core/db/reset-local-data';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
 
@@ -24,9 +25,13 @@ export function RecoveryResetDialog({ onCancel, onReset }: RecoveryResetDialogPr
     setError(null);
     try {
       await recoveryService.resetLocalData();
+      recoveryService.completeResetNavigationState();
       onReset();
-    } catch {
-      setError(t('security.reset_failed'));
+    } catch (resetError) {
+      const stepMessage = resetError instanceof ResetLocalDataError
+        ? ` (${resetError.step})`
+        : '';
+      setError(`${t('security.reset_failed')}${stepMessage}`);
       setResetting(false);
     }
   }

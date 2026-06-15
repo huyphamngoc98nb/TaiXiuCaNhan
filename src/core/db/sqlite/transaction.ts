@@ -20,6 +20,7 @@ let managedTransactionDepth = 0;
 let transactionCallbackDepth = 0;
 let currentManagedDb: any = null;
 let currentWebCompensations: Array<() => Promise<void>> | null = null;
+let webPersistenceSuspended = false;
 
 /** Registers rollback work for the active root Web transaction. No-op elsewhere. */
 export function registerCompensation(compensation: () => Promise<void>): void {
@@ -28,6 +29,18 @@ export function registerCompensation(compensation: () => Promise<void>): void {
 
 export function isManagedTransactionActive(): boolean {
   return managedTransactionDepth > 0;
+}
+
+export async function waitForPendingDatabaseWork(): Promise<void> {
+  await transactionQueue.catch(() => undefined);
+}
+
+export function suspendWebPersistenceForReset(): void {
+  webPersistenceSuspended = true;
+}
+
+export function resumeWebPersistenceAfterReset(): void {
+  webPersistenceSuspended = false;
 }
 
 export async function getDbConnectionForTransaction(): Promise<any> {
@@ -107,11 +120,13 @@ export async function runInTransaction<T>(
 
         try {
           const result = await work(db);
-          try {
-            await sqlite.saveToStore(DB_NAME);
-          } catch (saveErr) {
-            console.warn('[transaction] saveToStore failed after successful work:', saveErr);
-            emitPersistFail(saveErr);
+          if (!webPersistenceSuspended) {
+            try {
+              await sqlite.saveToStore(DB_NAME);
+            } catch (saveErr) {
+              console.warn('[transaction] saveToStore failed after successful work:', saveErr);
+              emitPersistFail(saveErr);
+            }
           }
           return result;
         } catch (err) {
