@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import type { XAxisTickContentProps } from 'recharts';
 import { PeriodSummary } from '../domain/report.model';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
@@ -8,6 +9,27 @@ import { getAppLocale } from '@/shared/utils/locale';
 interface Props {
   data: PeriodSummary[];
 }
+
+interface CashflowXAxisTickProps extends XAxisTickContentProps {
+  formatPeriod: (period: unknown) => string;
+}
+
+const CashflowXAxisTick: React.FC<CashflowXAxisTickProps> = ({ x, y, payload, formatPeriod }) => (
+  <text
+    x={x}
+    y={y}
+    dy={16}
+    textAnchor="middle"
+    fill="var(--text-subtle)"
+    fontSize={11}
+    tabIndex={-1}
+    focusable="false"
+    aria-hidden="true"
+    style={{ outline: 'none', pointerEvents: 'none' }}
+  >
+    {formatPeriod(payload.value)}
+  </text>
+);
 
 export const CashflowBarChart: React.FC<Props> = ({ data }) => {
   const { t, language } = useLanguage();
@@ -57,10 +79,11 @@ export const CashflowBarChart: React.FC<Props> = ({ data }) => {
         </div>
       </div>
 
-      <div className="h-[220px] min-w-0">
+      <div className="cashflow-chart-frame h-[220px] min-w-0" onMouseDown={(event) => event.preventDefault()}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             accessibilityLayer={false}
+            tabIndex={-1}
             data={data}
             margin={{ top: 8, right: 4, left: 4, bottom: 0 }}
             barGap={2}
@@ -72,7 +95,7 @@ export const CashflowBarChart: React.FC<Props> = ({ data }) => {
               tickLine={false}
               interval="preserveStartEnd"
               minTickGap={14}
-              tick={{ fontSize: 11, fill: 'var(--text-subtle)' }}
+              tick={(tickProps) => <CashflowXAxisTick {...tickProps} formatPeriod={formatPeriod} />}
               tickFormatter={formatPeriod}
               tickMargin={8}
             />

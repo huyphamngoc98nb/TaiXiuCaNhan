@@ -169,6 +169,24 @@ body.body-scroll-locked .main-content {
   border-color: var(--border);
 }
 
+.cashflow-chart-frame,
+.cashflow-chart-frame *,
+.cashflow-chart-frame *:focus,
+.cashflow-chart-frame *:focus-visible,
+.cashflow-chart-frame svg:focus,
+.cashflow-chart-frame svg:focus-visible,
+.cashflow-chart-frame .recharts-wrapper:focus,
+.cashflow-chart-frame .recharts-wrapper:focus-visible,
+.cashflow-chart-frame .recharts-surface:focus,
+.cashflow-chart-frame .recharts-surface:focus-visible,
+.cashflow-chart-frame .recharts-cartesian-axis-tick:focus,
+.cashflow-chart-frame .recharts-cartesian-axis-tick:focus-visible,
+.cashflow-chart-frame .recharts-cartesian-axis-tick text:focus,
+.cashflow-chart-frame .recharts-cartesian-axis-tick text:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Legacy Tailwind gray utility bridge for dark mode. */
 .dark .bg-white {
   background-color: var(--surface) !important;
