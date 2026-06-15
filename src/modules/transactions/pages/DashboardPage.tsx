@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Bell, Eye, EyeOff, WalletCards } from 'lucide-react';
+import { ChevronRight, Bell, Eye, EyeOff, WalletCards, AlertTriangle, ShieldCheck, TrendingDown } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useBudgetAnalysis } from '../hooks/useBudgetAnalysis';
 import { useRecurringReminders } from '../hooks/useRecurringReminders';
@@ -12,6 +12,10 @@ import { filterWalletsWithValue } from '@/modules/wallets/services/wallet-select
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
+import { useMonthEndForecast } from '../hooks/useMonthEndForecast';
+import { buildDateRange } from '@/modules/reports/services/build-date-range';
+import { resolveBudgetTransactionFilter } from '@/modules/reports/services/financial-calculations';
+import type { BudgetProgress } from '@/modules/budgets/domain/budget.model';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const ACCOUNT_TYPE_ICON: Record<AccountType, string> = {
@@ -45,6 +49,7 @@ function DashboardPage() {
   } = useTransactionSummary();
   const {
     topBudgets,
+    allProgress,
     loading: budgetLoading,
   } = useBudgetAnalysis();
   const {
@@ -59,6 +64,10 @@ function DashboardPage() {
     wallets,
     loading: walletLoading,
   } = useWalletBalances();
+  const {
+    forecast,
+    loading: forecastLoading,
+  } = useMonthEndForecast(totalBalance, allProgress);
   const { alerts: creditCardAlerts } = useCreditCardAlerts(wallets);
   const navigate = useNavigate();
   const { showAmounts, setShowAmounts } = useAmountVisibility();
@@ -101,6 +110,48 @@ function DashboardPage() {
   function displayAmount(value: number, prefix = '') {
     return showAmounts ? `${prefix}₫${formatVND(value)}` : HIDDEN_AMOUNT;
   }
+
+  function openBudgetTransactions(progress: BudgetProgress) {
+    const range = buildDateRange(progress.budget.period === 'weekly' ? 'this_week' : 'this_month');
+    navigate(ROUTES.TRANSACTIONS, {
+      state: {
+        filter: {
+          ...resolveBudgetTransactionFilter(progress.budget),
+          startDate: range.startDate,
+          endDate: range.endDate,
+        },
+        title: progress.budget.category_name,
+      },
+    });
+  }
+
+  const forecastStyle = forecast?.status === 'danger'
+    ? {
+        bg: 'bg-red-50',
+        border: 'border-red-200',
+        icon: 'text-red-500',
+        pill: 'bg-red-100 text-red-700',
+        Icon: AlertTriangle,
+        label: 'Nguy cơ',
+      }
+    : forecast?.status === 'warning'
+      ? {
+          bg: 'bg-amber-50',
+          border: 'border-amber-200',
+          icon: 'text-amber-500',
+          pill: 'bg-amber-100 text-amber-700',
+          Icon: TrendingDown,
+          label: 'Cảnh báo',
+        }
+      : {
+          bg: 'bg-emerald-50',
+          border: 'border-emerald-200',
+          icon: 'text-emerald-500',
+          pill: 'bg-emerald-100 text-emerald-700',
+          Icon: ShieldCheck,
+          label: 'Tốt',
+        };
+  const ForecastIcon = forecastStyle.Icon;
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] pb-24">
@@ -185,6 +236,58 @@ function DashboardPage() {
       </div>
 
       {/* ── Bill Reminders banner ────────────────────────────────────────── */}
+      <div className={`mx-4 mt-4 rounded-[18px] border p-4 shadow-sm ${forecastStyle.bg} ${forecastStyle.border}`}>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <ForecastIcon size={18} className={`${forecastStyle.icon} shrink-0`} />
+            <h3 className="truncate text-[15px] font-bold text-gray-900">Dự báo cuối tháng</h3>
+          </div>
+          {!forecastLoading && forecast && forecast.hasCurrentData && (
+            <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${forecastStyle.pill}`}>
+              {forecastStyle.label}
+            </span>
+          )}
+        </div>
+
+        {forecastLoading || walletLoading ? (
+          <div className="space-y-3">
+            <div className="h-7 w-44 rounded-lg bg-white/70 animate-pulse" />
+            <div className="h-4 w-full rounded bg-white/70 animate-pulse" />
+          </div>
+        ) : forecast && forecast.hasCurrentData ? (
+          <>
+            <p className="text-[12px] font-semibold text-gray-500">Số dư dự kiến</p>
+            <p className="mt-1 break-words text-[26px] font-bold leading-tight text-gray-900 tabular-nums">
+              {displayAmount(forecast.projectedMonthEndBalance)}
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="rounded-[12px] bg-white/70 px-3 py-2">
+                <p className="text-[10px] font-semibold uppercase text-gray-400">Chi TB/ngày</p>
+                <p className="mt-1 text-[13px] font-bold text-gray-800 tabular-nums">
+                  {displayAmount(forecast.dailyAverageExpense)}
+                </p>
+              </div>
+              <div className="rounded-[12px] bg-white/70 px-3 py-2">
+                <p className="text-[10px] font-semibold uppercase text-gray-400">Dự kiến chi</p>
+                <p className="mt-1 text-[13px] font-bold text-gray-800 tabular-nums">
+                  {displayAmount(forecast.projectedMonthlyExpense)}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-[12px] leading-5 text-gray-600">
+              Tính theo {forecast.elapsedDays}/{forecast.daysInMonth} ngày đã qua của tháng này.
+            </p>
+          </>
+        ) : (
+          <div className="rounded-[14px] bg-white/70 px-4 py-5 text-center">
+            <p className="text-[14px] font-semibold text-gray-800">Chưa đủ dữ liệu dự báo</p>
+            <p className="mt-1 text-[12px] leading-5 text-gray-500">
+              Thêm một vài giao dịch thu hoặc chi trong tháng này để ước tính số dư cuối tháng.
+            </p>
+          </div>
+        )}
+      </div>
+
       {hasBills && (
         <div
           className="mx-4 mt-4 flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-[16px] px-4 py-3 cursor-pointer active:scale-[0.98] transition-transform"
@@ -244,7 +347,7 @@ function DashboardPage() {
             {topBudgets.map(p => (
               <div
                 key={p.budget.category_id}
-                onClick={() => navigate(ROUTES.BUDGETS)}
+                onClick={() => openBudgetTransactions(p)}
                 className={`rounded-[18px] p-4 cursor-pointer active:scale-95 transition-transform ${STATUS_BG[p.status]}`}
               >
                 <div className="flex items-center justify-between mb-3">

@@ -1,12 +1,7 @@
-import type { BudgetProgress, BudgetStatus } from '@/modules/budgets/domain/budget.model';
+import type { BudgetProgress } from '@/modules/budgets/domain/budget.model';
 import type { RecurringBillReminder } from '@/modules/recurring-bills/domain/recurring-bill.model';
 import type { Wallet } from '@/modules/wallets/repositories/wallet.repository';
-
-const BUDGET_STATUS_ORDER: Record<BudgetStatus, number> = {
-  exceeded: 0,
-  warning: 1,
-  safe: 2,
-};
+import { sortBudgetProgressByAttention } from '@/modules/reports/services/financial-calculations';
 
 export interface DashboardViewModelInput {
   alerts: BudgetProgress[];
@@ -45,9 +40,7 @@ export function formatVND(value: number): string {
 }
 
 export function getTopBudgets(progress: BudgetProgress[]): BudgetProgress[] {
-  return [...progress]
-    .sort((a, b) => BUDGET_STATUS_ORDER[a.status] - BUDGET_STATUS_ORDER[b.status])
-    .slice(0, 5);
+  return sortBudgetProgressByAttention(progress).slice(0, 5);
 }
 
 export function buildDashboardViewModel(input: DashboardViewModelInput): DashboardViewModel {

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
@@ -16,11 +16,23 @@ import { addMonths, getMonthDateRange, isCurrentMonth, toMonthKey } from '@/shar
 
 export type ViewType = 'day' | 'month' | 'year';
 
+interface TransactionNavigationState {
+  filter?: TransactionFilter;
+  title?: string;
+}
+
 export function TransactionsPage() {
   const navigate = useNavigate();
-  const [selectedMonth, setSelectedMonth] = useState(() => toMonthKey());
-  const [hasCustomDateRange, setHasCustomDateRange] = useState(false);
-  const initialFilter = useMemo(() => getMonthDateRange(toMonthKey()), []);
+  const location = useLocation();
+  const navigationState = location.state as TransactionNavigationState | null;
+  const initialFilter = useMemo(
+    () => navigationState?.filter ?? getMonthDateRange(toMonthKey()),
+    [navigationState?.filter],
+  );
+  const [selectedMonth, setSelectedMonth] = useState(() => (
+    initialFilter.startDate ? toMonthKey(new Date(initialFilter.startDate)) : toMonthKey()
+  ));
+  const [hasCustomDateRange, setHasCustomDateRange] = useState(Boolean(navigationState?.filter));
   const { transactions, loading, filter, setFilter } = useTransactions(initialFilter);
   const { t, language } = useLanguage();
   const { wallets } = useWallets();
@@ -130,6 +142,7 @@ export function TransactionsPage() {
     hasCustomDateRange || filter.wallet_id || filter.type || filter.category_id || filter.note,
   );
   const title =
+    navigationState?.title ??
     drilldownSnapshot?.title ??
     (isDayDetail && filter.startDate
       ? new Date(filter.startDate).toLocaleDateString(locale, {

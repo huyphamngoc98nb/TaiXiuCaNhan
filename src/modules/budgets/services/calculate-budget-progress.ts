@@ -1,6 +1,6 @@
 import { BudgetWithCategory, BudgetProgress, resolveBudgetScope } from '../domain/budget.model';
 import { IBudgetRepository } from '../repositories/budget.repository';
-import { classifyBudgetStatus } from './classify-budget-status';
+import { calculateBudgetUsage, enrichBudgetProgress } from '@/modules/reports/services/financial-calculations';
 
 export class CalculateBudgetProgressUseCase {
   constructor(private repository: IBudgetRepository) {}
@@ -26,15 +26,12 @@ export class CalculateBudgetProgressUseCase {
       );
     }
 
-    const percentage = budget.amount > 0 ? spent_amount / budget.amount : 0;
-    const status = classifyBudgetStatus(percentage);
-
-    return {
+    const usage = calculateBudgetUsage({
       budget,
-      spent_amount,
-      remaining_amount: budget.amount - spent_amount,
-      percentage,
-      status,
-    };
+      spentAmount: spent_amount,
+      range: { startDate, endDate },
+    });
+
+    return enrichBudgetProgress(budget, usage);
   }
 }

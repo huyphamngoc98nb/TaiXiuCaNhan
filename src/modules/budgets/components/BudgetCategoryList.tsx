@@ -3,6 +3,7 @@ import { Plus, Target } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { AccountType, BudgetProgress, CategoryBudget, resolveBudgetScope } from '../domain/budget.model';
 import { BudgetCategoryItem } from './BudgetCategoryItem';
+import { sortBudgetProgressByAttention } from '@/modules/reports/services/financial-calculations';
 
 type EditableCategoryBudget = CategoryBudget & {
   budget_account_type_scope?: AccountType | null;
@@ -11,14 +12,15 @@ type EditableCategoryBudget = CategoryBudget & {
 interface Props {
   allProgress: BudgetProgress[];
   onItemClick: (category: EditableCategoryBudget) => void;
+  onViewTransactions?: (progress: BudgetProgress) => void;
   onCreateBudget?: () => void;
 }
 
-export function BudgetCategoryList({ allProgress, onItemClick, onCreateBudget }: Props) {
+export function BudgetCategoryList({ allProgress, onItemClick, onViewTransactions, onCreateBudget }: Props) {
   const { t } = useLanguage();
 
   const activeBudgetProgresses = useMemo(
-    () => [...allProgress].sort((a, b) => a.budget.category_name.localeCompare(b.budget.category_name)),
+    () => sortBudgetProgressByAttention(allProgress),
     [allProgress]
   );
 
@@ -59,6 +61,7 @@ export function BudgetCategoryList({ allProgress, onItemClick, onCreateBudget }:
               category={toEditableCategory(progress)}
               progress={progress}
               onClick={() => onItemClick(toEditableCategory(progress))}
+              onViewTransactions={onViewTransactions ? () => onViewTransactions(progress) : undefined}
             />
           ))}
         </div>

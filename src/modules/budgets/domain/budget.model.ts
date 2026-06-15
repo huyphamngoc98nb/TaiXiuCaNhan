@@ -66,6 +66,10 @@ export interface BudgetProgress {
   remaining_amount: number;
   percentage: number;
   status: BudgetStatus;
+  projected_spent_amount?: number;
+  projected_percentage?: number;
+  projected_status?: BudgetStatus;
+  is_projected_exceeded?: boolean;
 }
 
 /** Budget scope: xác định phạm vi áp dụng của budget */

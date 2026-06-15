@@ -96,6 +96,11 @@ export function BudgetByAccountTypeSummary({ progresses }: Props) {
                       / {displayAmount(p.budget.amount)}
                     </span>
                   </div>
+                  {p.is_projected_exceeded && (
+                    <div className="mt-1 text-[11px] font-semibold text-red-500">
+                      Dự kiến vượt cuối kỳ
+                    </div>
+                  )}
                 </div>
               );
             })}

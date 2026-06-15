@@ -16,9 +16,10 @@ interface Props {
   category: CategoryBudget;
   progress?: BudgetProgress;
   onClick: () => void;
+  onViewTransactions?: () => void;
 }
 
-export function BudgetCategoryItem({ category, progress, onClick }: Props) {
+export function BudgetCategoryItem({ category, progress, onClick, onViewTransactions }: Props) {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
   const { showAmounts } = useAmountVisibility();
@@ -110,6 +111,16 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
             percentage={progress.percentage * 100}
             status={progress.status === 'exceeded' ? 'danger' : progress.status}
           />
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[12px]">
+            <span className="font-semibold text-gray-500">
+              {Math.round(progress.percentage * 100)}% đã dùng
+            </span>
+            {progress.is_projected_exceeded && (
+              <span className="rounded-full bg-red-50 px-2 py-1 font-semibold text-red-600">
+                Dự kiến vượt cuối kỳ
+              </span>
+            )}
+          </div>
         </div>
       )}
 
@@ -120,7 +131,19 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
             {t('budgets.no_limit_set')}
           </span>
         ) : (
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between gap-3">
+            {onViewTransactions && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onViewTransactions();
+                }}
+                className="h-11 rounded-[10px] bg-gray-50 px-3 text-[13px] font-semibold text-gray-600 active:bg-gray-100"
+              >
+                Xem giao dịch
+              </button>
+            )}
             <span className="text-[13px] text-gray-500 h-11 flex items-center">
               {t('budgets.edit')}
             </span>

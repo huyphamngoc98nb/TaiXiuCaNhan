@@ -69,7 +69,11 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
 
   return (
     <>
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 pb-10"
+      style={{ paddingBottom: 'calc(40px + env(safe-area-inset-bottom))' }}
+    >
       <div>
         <h3 className="text-[18px] font-bold text-gray-900">
           {existing ? t('categories.edit') : t('categories.add')}

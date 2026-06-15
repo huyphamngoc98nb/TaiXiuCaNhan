@@ -28,13 +28,13 @@ beforeEach(() => {
 });
 
 describe('Budget Threshold Classification', () => {
-  it('should return safe for < 80%', () => {
-    expect(classifyBudgetStatus(0.79)).toBe('safe');
+  it('should return safe for < 70%', () => {
+    expect(classifyBudgetStatus(0.69)).toBe('safe');
     expect(classifyBudgetStatus(0)).toBe('safe');
   });
 
-  it('should return warning for >= 80% and < 100%', () => {
-    expect(classifyBudgetStatus(0.80)).toBe('warning');
+  it('should return warning for >= 70% and < 100%', () => {
+    expect(classifyBudgetStatus(0.70)).toBe('warning');
     expect(classifyBudgetStatus(0.99)).toBe('warning');
   });
 

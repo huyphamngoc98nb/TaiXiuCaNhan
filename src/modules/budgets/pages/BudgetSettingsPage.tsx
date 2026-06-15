@@ -15,6 +15,9 @@ import { BackButton } from '@/shared/components/BackButton';
 import { SkeletonCard } from '@/shared/components/SkeletonCard/SkeletonCard';
 import { ErrorScreen } from '@/shared/components/ErrorScreen';
 import { ROUTES } from '@/shared/constants/routes';
+import { buildDateRange } from '@/modules/reports/services/build-date-range';
+import { resolveBudgetTransactionFilter } from '@/modules/reports/services/financial-calculations';
+import type { BudgetProgress } from '../domain/budget.model';
 
 type ScopeTab = 'all' | 'account_type';
 
@@ -44,6 +47,20 @@ export function BudgetSettingsPage() {
   const editForm = useBudgetForm(refresh);
 
   const [activeTab, setActiveTab] = useState<ScopeTab>('all');
+
+  const handleViewTransactions = useCallback((progress: BudgetProgress) => {
+    const range = buildDateRange(progress.budget.period === 'weekly' ? 'this_week' : 'this_month');
+    navigate(ROUTES.TRANSACTIONS, {
+      state: {
+        filter: {
+          ...resolveBudgetTransactionFilter(progress.budget),
+          startDate: range.startDate,
+          endDate: range.endDate,
+        },
+        title: progress.budget.category_name,
+      },
+    });
+  }, [navigate]);
 
   useEffect(() => {
     if (isCreateRoute && !addForm.isOpen) {
@@ -152,6 +169,7 @@ export function BudgetSettingsPage() {
           <BudgetCategoryList
             allProgress={allProgress}
             onItemClick={editForm.open}
+            onViewTransactions={handleViewTransactions}
             onCreateBudget={() => navigate(ROUTES.BUDGETS_NEW)}
           />
         ) : (

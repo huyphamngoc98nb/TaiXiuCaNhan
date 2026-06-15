@@ -1,7 +1,7 @@
 import { BudgetStatus } from '../domain/budget.model';
 
 export const BUDGET_THRESHOLDS = {
-  WARNING: 0.8, // 80%
+  WARNING: 0.7, // 70%
   EXCEEDED: 1.0, // 100%
 };
 

@@ -2,6 +2,7 @@ import { BudgetProgress, BudgetPeriod } from '../domain/budget.model';
 import { IBudgetRepository } from '../repositories/budget.repository';
 import { CalculateBudgetProgressUseCase } from './calculate-budget-progress';
 import { buildDateRange } from '@/modules/reports/services/build-date-range';
+import { sortBudgetProgressByAttention } from '@/modules/reports/services/financial-calculations';
 
 export class ListBudgetAlertsUseCase {
   private calculateProgress: CalculateBudgetProgressUseCase;
@@ -35,6 +36,6 @@ export class ListBudgetAlertsUseCase {
       })
     )).filter((p): p is BudgetProgress => p !== null);
 
-    return progressList.sort((a, b) => b.percentage - a.percentage);
+    return sortBudgetProgressByAttention(progressList);
   }
 }
