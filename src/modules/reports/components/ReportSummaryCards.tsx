@@ -3,6 +3,7 @@ import { CashflowSummary } from '../domain/report.model';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { ArrowDownCircle, ArrowUpCircle, PiggyBank } from 'lucide-react';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   data: CashflowSummary | null;
@@ -18,7 +19,9 @@ const percentChange = (current: number, previous: number) => {
 export const ReportSummaryCards: React.FC<Props> = ({ data, previousData, loading }) => {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
 
   if (loading) {
     return <div className="mb-5 rounded-[14px] bg-white p-4 text-sm text-gray-500 shadow-sm">{t('reports.loading_summaries')}</div>;
@@ -74,7 +77,7 @@ export const ReportSummaryCards: React.FC<Props> = ({ data, previousData, loadin
               <div
                 className={`break-words text-[15px] font-bold leading-tight tabular-nums sm:text-[16px] ${card.amountClassName}`}
               >
-                {formatAmount(card.value, locale)}
+                {displayAmount(card.value)}
               </div>
               <div className={`mt-1 text-[11px] font-semibold ${change >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                 {change >= 0 ? '+' : ''}{change.toFixed(0)}%

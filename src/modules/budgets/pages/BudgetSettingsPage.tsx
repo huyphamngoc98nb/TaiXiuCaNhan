@@ -102,7 +102,7 @@ export function BudgetSettingsPage() {
     <div className="min-h-screen bg-bg" style={{ padding: '0 16px' }}>
       <div className="sticky top-0 z-20 -mx-4 bg-bg px-4 pb-4 shadow-[0_1px_0_var(--border)]">
         {/* Header */}
-        <header className="pt-4 pb-4">
+        <header className="pb-4" style={{ paddingTop: 'calc(16px + env(safe-area-inset-top))' }}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <BackButton onClick={() => navigate(ROUTES.HOME)} ariaLabel={t('common.back')} />
@@ -117,7 +117,7 @@ export function BudgetSettingsPage() {
         <BudgetSummaryStats stats={summaryStats} />
       </div>
 
-      <div className="space-y-6 pb-20 pt-4">
+      <div className="space-y-6 pb-20 pt-5" style={{ scrollMarginTop: '132px' }}>
         {/* Tab: chỉ hiện khi có budget theo loại TK */}
         {progressByScope.byAccountType.length > 0 && (
           <div className="flex gap-2">
@@ -152,6 +152,7 @@ export function BudgetSettingsPage() {
           <BudgetCategoryList
             allProgress={allProgress}
             onItemClick={editForm.open}
+            onCreateBudget={() => navigate(ROUTES.BUDGETS_NEW)}
           />
         ) : (
           <BudgetByAccountTypeSummary progresses={progressByScope.byAccountType} />

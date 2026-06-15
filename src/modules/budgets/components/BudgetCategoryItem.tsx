@@ -8,6 +8,9 @@ import { BudgetStatusBadge } from './BudgetStatusBadge';
 import { BudgetScopeBadge } from './BudgetScopeBadge';
 import { ProgressBar } from '@/shared/components/ProgressBar/ProgressBar';
 import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
+import { useCurrency } from '@/shared/context/CurrencyContext';
+import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   category: CategoryBudget;
@@ -16,8 +19,12 @@ interface Props {
 }
 
 export function BudgetCategoryItem({ category, progress, onClick }: Props) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
+  const locale = getAppLocale(language);
   const isSet = category.budget_amount !== null;
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
 
   const periodLabel = isSet
     ? category.budget_period === 'monthly'
@@ -72,13 +79,13 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
             <div className="flex-1 text-left">
               <p className="text-[12px] text-gray-500">{t('budgets.spent')}</p>
               <p className="text-[14px] font-semibold text-gray-900 tabular-nums">
-                ₫{progress.spent_amount.toLocaleString()}
+                {displayAmount(progress.spent_amount)}
               </p>
             </div>
             <div className="flex-1 text-left">
               <p className="text-[12px] text-gray-500">{t('budgets.budget_label')}</p>
               <p className="text-[14px] font-semibold text-gray-900 tabular-nums">
-                ₫{category.budget_amount?.toLocaleString()}
+                {displayAmount(category.budget_amount ?? 0)}
               </p>
             </div>
             <div className="flex-1 text-left">
@@ -86,14 +93,14 @@ export function BudgetCategoryItem({ category, progress, onClick }: Props) {
                 <>
                   <p className="text-[12px] text-gray-500">{t('budgets.over')}</p>
                   <p className="text-[14px] font-semibold text-red-500 tabular-nums">
-                    ₫{Math.abs(progress.remaining_amount).toLocaleString()}
+                    {displayAmount(Math.abs(progress.remaining_amount))}
                   </p>
                 </>
               ) : (
                 <>
                   <p className="text-[12px] text-gray-500">{t('budgets.left')}</p>
                   <p className="text-[14px] font-semibold text-green-500 tabular-nums">
-                    ₫{progress.remaining_amount.toLocaleString()}
+                    {displayAmount(progress.remaining_amount)}
                   </p>
                 </>
               )}

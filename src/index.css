@@ -170,7 +170,11 @@ body.body-scroll-locked .main-content {
 }
 
 .cashflow-chart-frame,
-.cashflow-chart-frame *,
+.cashflow-chart-frame * {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
 .cashflow-chart-frame *:focus,
 .cashflow-chart-frame *:focus-visible,
 .cashflow-chart-frame svg:focus,
@@ -185,6 +189,11 @@ body.body-scroll-locked .main-content {
 .cashflow-chart-frame .recharts-cartesian-axis-tick text:focus-visible {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.cashflow-chart-frame .recharts-active-bar,
+.cashflow-chart-frame .recharts-active-shape {
+  outline: none !important;
 }
 
 /* Legacy Tailwind gray utility bridge for dark mode. */

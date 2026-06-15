@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useScrollRestoration } from '@/shared/hooks/useScrollRestoration';
 
@@ -28,16 +29,28 @@ describe('useScrollRestoration', () => {
   });
 
   it('stores independent scroll positions per route key', () => {
-    const { rerender } = render(<ScrollRestorationHarness scrollKey="form-a" />);
+    const { rerender } = render(
+      <MemoryRouter>
+        <ScrollRestorationHarness scrollKey="form-a" />
+      </MemoryRouter>,
+    );
     const scrollContainer = screen.getByTestId('route-scroll');
 
     scrollContainer.scrollTop = 300;
-    rerender(<ScrollRestorationHarness scrollKey="form-b" />);
+    rerender(
+      <MemoryRouter>
+        <ScrollRestorationHarness scrollKey="form-b" />
+      </MemoryRouter>,
+    );
 
     expect(scrollContainer.scrollTop).toBe(0);
 
     scrollContainer.scrollTop = 500;
-    rerender(<ScrollRestorationHarness scrollKey="form-a" />);
+    rerender(
+      <MemoryRouter>
+        <ScrollRestorationHarness scrollKey="form-a" />
+      </MemoryRouter>,
+    );
 
     expect(scrollContainer.scrollTop).toBe(300);
   });

@@ -3,6 +3,7 @@ import { useCurrency } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCreditCardSummary } from '../hooks/useCreditCardSummary';
 import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   wallet: Wallet;
@@ -37,6 +38,7 @@ function formatDayMonth(value: number, locale: string): string {
 export function WalletCard({ wallet, onClick }: Props) {
   const { formatAmount } = useCurrency();
   const { t, language } = useLanguage();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
   const { summary, loading: summaryLoading } = useCreditCardSummary(wallet);
   const accountTypeLabels: Record<AccountType, string> = {
@@ -64,6 +66,7 @@ export function WalletCard({ wallet, onClick }: Props) {
       : 0;
   const usageColor =
     usagePercent > 80 ? '#ef4444' : usagePercent >= 50 ? '#f59e0b' : '#10b981';
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
 
   return (
     <div
@@ -111,7 +114,7 @@ export function WalletCard({ wallet, onClick }: Props) {
           className="text-[20px] font-bold tabular-nums"
           style={{ color: wallet.balance < 0 ? 'var(--danger)' : 'var(--text)' }}
         >
-          {formatAmount(outstandingBalance ?? wallet.balance)}
+          {displayAmount(outstandingBalance ?? wallet.balance)}
         </p>
       </div>
 
@@ -123,7 +126,7 @@ export function WalletCard({ wallet, onClick }: Props) {
               <div>
                 <p className="text-[11px] text-gray-400">{t('wallets.credit_limit')}</p>
                 <p className="text-[13px] font-semibold text-gray-700 tabular-nums">
-                  {formatAmount(wallet.credit_limit)}
+                  {displayAmount(wallet.credit_limit)}
                 </p>
               </div>
             )}
@@ -134,7 +137,7 @@ export function WalletCard({ wallet, onClick }: Props) {
                   className="text-[13px] font-semibold tabular-nums"
                   style={{ color: availableCredit < 0 ? '#ef4444' : '#10b981' }}
                 >
-                  {formatAmount(availableCredit)}
+                  {displayAmount(availableCredit)}
                 </p>
               </div>
             )}

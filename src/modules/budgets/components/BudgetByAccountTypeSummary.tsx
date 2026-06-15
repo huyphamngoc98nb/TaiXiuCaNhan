@@ -1,5 +1,8 @@
 import { BudgetProgress, AccountType, resolveBudgetScope } from '../domain/budget.model';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { useCurrency } from '@/shared/context/CurrencyContext';
+import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 // Icon đơn giản theo account_type (emoji fallback, dễ thay bằng Lucide sau)
 const ACCOUNT_TYPE_ICONS: Record<AccountType, string> = {
@@ -22,7 +25,11 @@ interface Props {
 }
 
 export function BudgetByAccountTypeSummary({ progresses }: Props) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
+  const locale = getAppLocale(language);
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
   const accountTypeLabels: Record<AccountType, string> = {
     cash: t('wallets.account_cash'),
     bank: t('wallets.account_bank'),
@@ -83,10 +90,10 @@ export function BudgetByAccountTypeSummary({ progresses }: Props) {
                   </div>
                   <div className="flex justify-between mt-0.5">
                     <span className="text-[11px] text-gray-400">
-                      {t('budgets.spent_amount')}: {p.spent_amount.toLocaleString('vi-VN')}đ
+                      {t('budgets.spent_amount')}: {displayAmount(p.spent_amount)}
                     </span>
                     <span className="text-[11px] text-gray-400">
-                      / {p.budget.amount.toLocaleString('vi-VN')}đ
+                      / {displayAmount(p.budget.amount)}
                     </span>
                   </div>
                 </div>

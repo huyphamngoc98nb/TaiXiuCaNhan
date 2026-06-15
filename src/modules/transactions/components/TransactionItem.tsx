@@ -4,6 +4,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   transaction: Transaction;
@@ -14,11 +15,13 @@ interface Props {
 export function TransactionItem({ transaction, onSelect, showDate = false }: Props) {
   const { language, t } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
   const isExpense = transaction.type === 'expense';
   const isTransfer = transaction.type === 'transfer';
   const amountColor = isTransfer ? '#4f46e5' : isExpense ? '#e11d48' : '#059669';
   const amountPrefix = isTransfer ? '' : isExpense ? '-' : '+';
+  const amountText = showAmounts ? `${amountPrefix}${formatAmount(transaction.amount, locale)}` : HIDDEN_AMOUNT;
   const categoryColor = transaction.category_color ?? (isExpense ? '#e11d48' : '#059669');
   const title = isTransfer
     ? `${transaction.wallet_name ?? transaction.wallet_id} -> ${transaction.to_wallet_name ?? transaction.to_wallet_id ?? ''}`
@@ -125,7 +128,7 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
           color: amountColor,
           whiteSpace: 'nowrap',
         }}>
-          {amountPrefix}{formatAmount(transaction.amount, locale)}
+          {amountText}
         </div>
       </div>
     </button>

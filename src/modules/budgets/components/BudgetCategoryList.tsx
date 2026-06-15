@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Plus, Target } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { AccountType, BudgetProgress, CategoryBudget, resolveBudgetScope } from '../domain/budget.model';
 import { BudgetCategoryItem } from './BudgetCategoryItem';
@@ -10,9 +11,10 @@ type EditableCategoryBudget = CategoryBudget & {
 interface Props {
   allProgress: BudgetProgress[];
   onItemClick: (category: EditableCategoryBudget) => void;
+  onCreateBudget?: () => void;
 }
 
-export function BudgetCategoryList({ allProgress, onItemClick }: Props) {
+export function BudgetCategoryList({ allProgress, onItemClick, onCreateBudget }: Props) {
   const { t } = useLanguage();
 
   const activeBudgetProgresses = useMemo(
@@ -61,8 +63,22 @@ export function BudgetCategoryList({ allProgress, onItemClick }: Props) {
           ))}
         </div>
       ) : (
-        <div className="rounded-[8px] border border-dashed border-gray-300 bg-white px-4 py-5 text-center text-[13px] text-gray-500">
-          {t('budgets.no_budgets_configured')}
+        <div className="flex flex-col items-center rounded-[14px] border border-dashed border-gray-200 bg-white px-5 py-8 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+            <Target size={27} />
+          </div>
+          <h4 className="text-[17px] font-bold text-gray-900">Chưa có ngân sách nào</h4>
+          <p className="mt-2 max-w-[300px] text-[13px] leading-5 text-gray-500">
+            Đặt hạn mức cho các danh mục như ăn uống, di chuyển hoặc học tập để kiểm soát chi tiêu trong tháng.
+          </p>
+          <button
+            type="button"
+            onClick={onCreateBudget}
+            className="mt-5 inline-flex h-11 items-center gap-2 rounded-[12px] bg-indigo-500 px-5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/20 active:scale-95"
+          >
+            <Plus size={17} />
+            Tạo ngân sách
+          </button>
         </div>
       )}
     </div>

@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
+import { PlusCircle, SearchX } from 'lucide-react';
 import { Transaction } from '../domain/transaction.model';
 import { TransactionItem } from './TransactionItem';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   transactions: Transaction[];
@@ -12,6 +15,9 @@ interface Props {
   onSelectSummaryRange?: (range: { startDate: number; endDate: number; title?: string }) => void;
   viewType?: 'day' | 'month' | 'year';
   emptyMessage?: string;
+  emptyDescription?: string;
+  emptyAction?: ReactNode;
+  emptyVariant?: 'default' | 'filtered';
 }
 
 interface SummaryRow {
@@ -47,10 +53,15 @@ export function TransactionList({
   onSelectSummaryRange,
   viewType = 'day',
   emptyMessage,
+  emptyDescription,
+  emptyAction,
+  emptyVariant = 'default',
 }: Props) {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
   const [expandedQuarterKey, setExpandedQuarterKey] = useState<string | null>(() => {
     const now = new Date();
     const quarter = Math.floor(now.getMonth() / 3) + 1;
@@ -62,16 +73,31 @@ export function TransactionList({
 
   if (loading) {
     return (
-      <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>
-        {t('transactions.loading')}
+      <div className="space-y-3">
+        {[1, 2, 3].map((item) => (
+          <div key={item} className="h-16 animate-pulse rounded-[10px] bg-gray-100" />
+        ))}
       </div>
     );
   }
 
   if (transactions.length === 0) {
+    const EmptyIcon = emptyVariant === 'filtered' ? SearchX : PlusCircle;
+
     return (
-      <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
-        {emptyMessage ?? t('transactions.empty')}
+      <div className="flex flex-col items-center px-5 py-10 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+          <EmptyIcon size={27} />
+        </div>
+        <h3 className="text-[17px] font-bold text-gray-900">
+          {emptyMessage ?? t('transactions.empty')}
+        </h3>
+        {emptyDescription && (
+          <p className="mt-2 max-w-[300px] text-[13px] leading-5 text-gray-500">
+            {emptyDescription}
+          </p>
+        )}
+        {emptyAction && <div className="mt-5">{emptyAction}</div>}
       </div>
     );
   }
@@ -316,14 +342,14 @@ export function TransactionList({
 
             <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', fontWeight: '500' }}>
               <div style={{ color: '#059669' }}>
-                {t('transactions.label_income')}: {formatAmount(group.income, locale)}
+                {t('transactions.label_income')}: {displayAmount(group.income)}
               </div>
               <div style={{ color: '#e11d48' }}>
-                {t('transactions.label_expense')}: {formatAmount(group.expense, locale)}
+                {t('transactions.label_expense')}: {displayAmount(group.expense)}
               </div>
               <div style={{ marginLeft: 'auto', color: 'var(--text-muted)' }}>
                 {t('transactions.label_balance')}:{' '}
-                {formatAmount(group.income - group.expense, locale)}
+                {displayAmount(group.income - group.expense)}
               </div>
             </div>
           </div>
@@ -395,7 +421,7 @@ export function TransactionList({
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {t('transactions.label_income')}: {formatAmount(weekRow.income, locale)}
+                          {t('transactions.label_income')}: {displayAmount(weekRow.income)}
                         </div>
                         <div
                           style={{
@@ -405,7 +431,7 @@ export function TransactionList({
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {t('transactions.label_expense')}: {formatAmount(weekRow.expense, locale)}
+                          {t('transactions.label_expense')}: {displayAmount(weekRow.expense)}
                         </div>
                       </div>
                     </button>
@@ -481,10 +507,10 @@ export function TransactionList({
                               }}
                             >
                               <div style={{ color: '#059669', whiteSpace: 'nowrap' }}>
-                                {formatAmount(dayRow.income, locale)}
+                                {displayAmount(dayRow.income)}
                               </div>
                               <div style={{ color: '#e11d48', whiteSpace: 'nowrap' }}>
-                                {formatAmount(dayRow.expense, locale)}
+                                {displayAmount(dayRow.expense)}
                               </div>
                             </div>
                           </button>
@@ -562,7 +588,7 @@ export function TransactionList({
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {t('transactions.label_income')}: {formatAmount(quarterRow.income, locale)}
+                          {t('transactions.label_income')}: {displayAmount(quarterRow.income)}
                         </div>
                         <div
                           style={{
@@ -573,7 +599,7 @@ export function TransactionList({
                           }}
                         >
                           {t('transactions.label_expense')}:{' '}
-                          {formatAmount(quarterRow.expense, locale)}
+                          {displayAmount(quarterRow.expense)}
                         </div>
                       </div>
                     </button>
@@ -649,10 +675,10 @@ export function TransactionList({
                               }}
                             >
                               <div style={{ color: '#059669', whiteSpace: 'nowrap' }}>
-                                {formatAmount(monthRow.income, locale)}
+                                {displayAmount(monthRow.income)}
                               </div>
                               <div style={{ color: '#e11d48', whiteSpace: 'nowrap' }}>
-                                {formatAmount(monthRow.expense, locale)}
+                                {displayAmount(monthRow.expense)}
                               </div>
                             </div>
                           </button>

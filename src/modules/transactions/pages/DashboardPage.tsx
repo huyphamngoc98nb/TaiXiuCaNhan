@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { ChevronRight, Bell, Eye, EyeOff } from 'lucide-react';
+import { ChevronRight, Bell, Eye, EyeOff, WalletCards } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
 import { useBudgetAnalysis } from '../hooks/useBudgetAnalysis';
 import { useRecurringReminders } from '../hooks/useRecurringReminders';
@@ -12,6 +11,7 @@ import type { AccountType } from '@/modules/wallets/repositories/wallet.reposito
 import { filterWalletsWithValue } from '@/modules/wallets/services/wallet-selectors';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const ACCOUNT_TYPE_ICON: Record<AccountType, string> = {
@@ -34,8 +34,6 @@ const STATUS_BG: Record<'safe' | 'warning' | 'exceeded', string> = {
   warning:  'bg-amber-50',
   exceeded: 'bg-red-50',
 };
-
-const HIDDEN_AMOUNT = '••••••';
 
 // ── component ────────────────────────────────────────────────────────────
 function DashboardPage() {
@@ -63,9 +61,7 @@ function DashboardPage() {
   } = useWalletBalances();
   const { alerts: creditCardAlerts } = useCreditCardAlerts(wallets);
   const navigate = useNavigate();
-  const [showAmounts, setShowAmounts] = useState(() => {
-    return localStorage.getItem('dashboard_show_amounts') !== 'false';
-  });
+  const { showAmounts, setShowAmounts } = useAmountVisibility();
   const valuedWallets = filterWalletsWithValue(wallets);
   const showEmptyState =
     !walletLoading &&
@@ -99,11 +95,7 @@ function DashboardPage() {
           };
 
   function toggleShowAmounts() {
-    setShowAmounts(current => {
-      const next = !current;
-      localStorage.setItem('dashboard_show_amounts', String(next));
-      return next;
-    });
+    setShowAmounts(!showAmounts);
   }
 
   function displayAmount(value: number, prefix = '') {
@@ -293,12 +285,21 @@ function DashboardPage() {
 
       {/* ── Empty state ──────────────────────────────────────────────────────── */}
       {showEmptyState && (
-        <div className="flex flex-col items-center justify-center mt-20 px-8 text-center space-y-4">
-          <div className="text-6xl">👋</div>
-          <h3 className="text-[18px] font-bold text-gray-900">{t('dashboard.empty_title')}</h3>
+        <div className="flex flex-col items-center justify-center mt-16 px-8 text-center space-y-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+            <WalletCards size={28} />
+          </div>
+          <h3 className="text-[18px] font-bold text-gray-900">Bạn chưa có ví nào</h3>
           <p className="text-[13px] text-gray-500 leading-relaxed">
-            {t('dashboard.empty_hint')}
+            Tạo ví đầu tiên để bắt đầu theo dõi tiền mặt, tài khoản ngân hàng hoặc thẻ của bạn.
           </p>
+          <button
+            type="button"
+            onClick={() => navigate(ROUTES.WALLETS_NEW)}
+            className="h-11 rounded-[12px] bg-indigo-500 px-5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/20 active:scale-95"
+          >
+            Tạo ví
+          </button>
         </div>
       )}
     </div>

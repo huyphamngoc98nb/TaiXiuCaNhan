@@ -78,6 +78,7 @@ export function WalletsPage() {
         loading={loading}
         error={error}
         onWalletClick={openEdit}
+        onCreateWallet={() => navigate(ROUTES.WALLETS_NEW)}
       />
 
       <BottomSheet isOpen={sheetOpen} onClose={closeSheet} fullScreenOnAndroid>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Plus, WalletCards } from 'lucide-react';
 import { Wallet, AccountType } from '../repositories/sqlite-wallet.repository';
 import { WalletCard } from './WalletCard';
 import { CreditCardAlertsPanel } from './CreditCardAlertsPanel';
@@ -7,6 +8,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { getAppLocale } from '@/shared/utils/locale';
 import { useCreditCardAlerts } from '../hooks/useCreditCardAlerts';
 import { filterActiveWallets } from '../services/wallet-selectors';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   wallets: Wallet[];
@@ -14,6 +16,7 @@ interface Props {
   loading: boolean;
   error: string | null;
   onWalletClick?: (wallet: Wallet) => void;
+  onCreateWallet?: () => void;
 }
 
 const ACCOUNT_TYPE_ORDER: AccountType[] = [
@@ -26,9 +29,11 @@ export function WalletList({
   loading,
   error,
   onWalletClick,
+  onCreateWallet,
 }: Props) {
   const { formatAmount } = useCurrency();
   const { t, language } = useLanguage();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
   const { alerts, loading: alertsLoading } = useCreditCardAlerts(wallets);
   const accountTypeLabels: Record<AccountType, string> = {
@@ -44,6 +49,7 @@ export function WalletList({
     () => filterActiveWallets(wallets),
     [wallets]
   );
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
 
   const grouped = useMemo(() => {
     const map = new Map<AccountType, Wallet[]>();
@@ -91,7 +97,7 @@ export function WalletList({
       >
         <p className="text-[13px] text-indigo-100 mb-1">{t('wallets.total_assets')}</p>
         <p className="text-[28px] font-bold text-white tabular-nums">
-          {formatAmount(totalBalance)}
+          {displayAmount(totalBalance)}
         </p>
         <p className="text-[11px] text-indigo-200 mt-1">
           {t('wallets.excluded_hint')}
@@ -106,18 +112,28 @@ export function WalletList({
           const wallet = wallets.find((w) => w.id === walletId);
           if (wallet) onWalletClick?.(wallet);
         }}
-        formatAmount={formatAmount}
+        formatAmount={displayAmount}
         locale={locale}
       />
 
       {/* Grouped wallet cards */}
       {visibleWallets.length === 0 ? (
-        <div className="text-center text-gray-400 mt-10">
-          <p className="text-4xl mb-3">💼</p>
-          <p className="text-[15px]">{t('wallets.no_accounts')}</p>
-          <p className="text-[13px] text-gray-300 mt-1">
-            {t('wallets.no_accounts_hint')}
+        <div className="mt-10 flex flex-col items-center px-6 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+            <WalletCards size={28} />
+          </div>
+          <p className="text-[17px] font-bold text-gray-900">Bạn chưa có ví nào</p>
+          <p className="mt-2 max-w-[280px] text-[13px] leading-5 text-gray-500">
+            Tạo ví đầu tiên để bắt đầu theo dõi tiền mặt, tài khoản ngân hàng hoặc thẻ của bạn.
           </p>
+          <button
+            type="button"
+            onClick={onCreateWallet}
+            className="mt-5 inline-flex h-11 items-center gap-2 rounded-[12px] bg-indigo-500 px-5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/20 active:scale-95"
+          >
+            <Plus size={17} />
+            Tạo ví
+          </button>
         </div>
       ) : (
         ACCOUNT_TYPE_ORDER.map((type) => {

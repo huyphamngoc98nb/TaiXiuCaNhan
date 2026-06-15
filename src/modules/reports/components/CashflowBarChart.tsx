@@ -5,6 +5,7 @@ import { PeriodSummary } from '../domain/report.model';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface Props {
   data: PeriodSummary[];
@@ -34,9 +35,10 @@ const CashflowXAxisTick: React.FC<CashflowXAxisTickProps> = ({ x, y, payload, fo
 export const CashflowBarChart: React.FC<Props> = ({ data }) => {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
 
-  const fmtTooltip = (value: any) => formatAmount(Number(value || 0), locale);
+  const fmtTooltip = (value: any) => showAmounts ? formatAmount(Number(value || 0), locale) : HIDDEN_AMOUNT;
   const formatPeriod = (period: unknown) => {
     const value = String(period ?? '');
     const parts = value.split('-');
@@ -79,7 +81,13 @@ export const CashflowBarChart: React.FC<Props> = ({ data }) => {
         </div>
       </div>
 
-      <div className="cashflow-chart-frame h-[220px] min-w-0" onMouseDown={(event) => event.preventDefault()}>
+      <div
+        className="cashflow-chart-frame h-[220px] min-w-0"
+        onMouseDown={(event) => event.preventDefault()}
+        onFocus={(event) => {
+          if (event.target instanceof HTMLElement) event.target.blur();
+        }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             accessibilityLayer={false}
@@ -102,7 +110,7 @@ export const CashflowBarChart: React.FC<Props> = ({ data }) => {
             <Tooltip
               formatter={fmtTooltip}
               labelFormatter={formatPeriod}
-              cursor={{ fill: 'var(--bg-subtle)' }}
+              cursor={false}
               contentStyle={{
                 borderRadius: 12,
                 border: '1px solid var(--border)',

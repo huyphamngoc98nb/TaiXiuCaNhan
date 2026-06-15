@@ -13,11 +13,12 @@ import { ReportDonutCard } from '../components/ReportDonutCard';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/constants/routes';
 import { BackButton } from '@/shared/components/BackButton';
-import { AlertTriangle, CalendarDays, FileText, TrendingDown, TrendingUp, WalletCards } from 'lucide-react';
+import { AlertTriangle, BarChart3, CalendarDays, FileText, PlusCircle, TrendingDown, TrendingUp, WalletCards } from 'lucide-react';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { appRepositories } from '@/core/repositories/app-repositories';
 import { getAppLocale } from '@/shared/utils/locale';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 const EXPENSE_DONUT_COLORS = [
   '#E11D48', '#F97316', '#F59E0B', '#A855F7',
@@ -34,7 +35,9 @@ export const ReportsPage = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = getAppLocale(language);
+  const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
 
   const [preset, setPreset] = useState<DateRangePreset>('this_month');
   const [granularity, setGranularity] = useState<ReportGranularity>('day');
@@ -164,13 +167,13 @@ export const ReportsPage = () => {
     {
       label: t('reports.insight_highest_day'),
       value: highestDay ? formatPeriodLabel(highestDay.period) : t('reports.no_data'),
-      detail: highestDay ? formatAmount(highestDay.expense, locale) : '',
+      detail: highestDay ? displayAmount(highestDay.expense) : '',
       icon: CalendarDays,
     },
     {
       label: t('reports.insight_top_wallet'),
       value: topWallet ? topWallet.wallet_name : t('reports.no_data'),
-      detail: topWallet ? formatAmount(topWallet.amount, locale) : '',
+      detail: topWallet ? displayAmount(topWallet.amount) : '',
       icon: WalletCards,
     },
     {
@@ -180,6 +183,16 @@ export const ReportsPage = () => {
       icon: AlertTriangle,
     },
   ];
+  const hasReportData = Boolean(
+    cashflow &&
+    (
+      cashflow.totalIncome > 0 ||
+      cashflow.totalExpense > 0 ||
+      expenses.length > 0 ||
+      incomes.length > 0 ||
+      periodData.some(item => item.income > 0 || item.expense > 0)
+    )
+  );
 
   return (
     <div className="mx-auto min-h-full max-w-4xl bg-bg p-4 pb-24 text-text">
@@ -227,7 +240,7 @@ export const ReportsPage = () => {
             </div>
           </div>
           <div className="break-words text-3xl font-bold leading-tight tabular-nums">
-            {formatAmount(cashflow ? net : 0, locale)}
+            {displayAmount(cashflow ? net : 0)}
           </div>
           <div className="mt-3 text-sm leading-5 text-gray-200">{mainInsight}</div>
         </div>
@@ -236,31 +249,61 @@ export const ReportsPage = () => {
       <ReportSummaryCards data={cashflow} previousData={previousCashflow} loading={loading} />
 
       <div className="space-y-6">
-        {!loading && !error && <CashflowBarChart data={periodData} />}
+        {!loading && !error && !hasReportData && (
+          <div className="flex flex-col items-center rounded-[16px] border border-dashed border-gray-200 bg-white px-5 py-9 text-center shadow-sm">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+              <BarChart3 size={28} />
+            </div>
+            <h3 className="text-[17px] font-bold text-gray-900">
+              {preset === 'custom'
+                ? 'Không có dữ liệu trong khoảng thời gian này'
+                : 'Chưa đủ dữ liệu để tạo báo cáo'}
+            </h3>
+            <p className="mt-2 max-w-[330px] text-[13px] leading-5 text-gray-500">
+              {preset === 'custom'
+                ? 'Hãy chọn khoảng thời gian khác để xem báo cáo.'
+                : 'Thêm một vài giao dịch thu/chi để xem dòng tiền, danh mục chi tiêu và xu hướng theo thời gian.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(ROUTES.TRANSACTIONS_NEW)}
+              className="mt-5 inline-flex h-11 items-center gap-2 rounded-[12px] bg-indigo-500 px-5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/20 active:scale-95"
+            >
+              <PlusCircle size={17} />
+              Thêm giao dịch
+            </button>
+          </div>
+        )}
 
-        <ReportDonutCard
-          title={t('reports.expense_by_category')}
-          totalLabel={t('reports.total_expense')}
-          emptyMessage={t('reports.no_expense_data')}
-          items={expenses.map(item => ({ label: item.category_name, amount: item.amount }))}
-          palette={EXPENSE_DONUT_COLORS}
-          loading={loading}
-          error={error}
-          ariaLabel={t('reports.expense_by_category')}
-        />
+        {!loading && !error && hasReportData && <CashflowBarChart data={periodData} />}
 
-        <ReportDonutCard
-          title={t('reports.income_by_source')}
-          totalLabel={t('reports.total_income')}
-          emptyMessage={t('reports.no_income_data')}
-          items={incomes.map(item => ({ label: item.category_name, amount: item.amount }))}
-          palette={INCOME_DONUT_COLORS}
-          loading={loading}
-          error={error}
-          ariaLabel={t('reports.income_by_source')}
-        />
+        {(loading || hasReportData) && (
+          <ReportDonutCard
+            title={t('reports.expense_by_category')}
+            totalLabel={t('reports.total_expense')}
+            emptyMessage={t('reports.no_expense_data')}
+            items={expenses.map(item => ({ label: item.category_name, amount: item.amount }))}
+            palette={EXPENSE_DONUT_COLORS}
+            loading={loading}
+            error={error}
+            ariaLabel={t('reports.expense_by_category')}
+          />
+        )}
 
-        {!loading && !error && (
+        {(loading || hasReportData) && (
+          <ReportDonutCard
+            title={t('reports.income_by_source')}
+            totalLabel={t('reports.total_income')}
+            emptyMessage={t('reports.no_income_data')}
+            items={incomes.map(item => ({ label: item.category_name, amount: item.amount }))}
+            palette={INCOME_DONUT_COLORS}
+            loading={loading}
+            error={error}
+            ariaLabel={t('reports.income_by_source')}
+          />
+        )}
+
+        {!loading && !error && hasReportData && (
           <div className="space-y-2">
             {insightItems.map(item => {
               const Icon = item.icon;

@@ -3,6 +3,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { DonutItem, normalizeDonutData, RawDonutItem } from './normalize-donut-data';
+import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 
 interface ReportDonutCardProps {
   title: string;
@@ -87,6 +88,7 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
+  const { showAmounts } = useAmountVisibility();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAllLegend, setShowAllLegend] = useState(false);
@@ -97,7 +99,7 @@ export const ReportDonutCard: React.FC<ReportDonutCardProps> = ({
   );
   const total = useMemo(() => chartData.reduce((sum, item) => sum + item.amount, 0), [chartData]);
 
-  const formatMoney = (value: number) => formatAmount(value, locale);
+  const formatMoney = (value: number) => showAmounts ? formatAmount(value, locale) : HIDDEN_AMOUNT;
   const totalAmount = formatMoney(total);
   const legendInitialCount = 5;
   const legendItems = showAllLegend ? chartData : chartData.slice(0, legendInitialCount);
