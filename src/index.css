@@ -120,6 +120,51 @@ body.body-scroll-locked .main-content {
   overflow-y: hidden;
 }
 
+.form-transition {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    opacity 220ms ease,
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.form-transition[data-state='entering'] {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.995);
+}
+
+.form-transition[data-state='exiting'] {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0) scale(0.995);
+  pointer-events: none;
+}
+
+.bottom-sheet-overlay {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+.bottom-sheet-overlay[data-state='entering'],
+.bottom-sheet-overlay[data-state='exiting'] {
+  opacity: 0;
+}
+
+.bottom-sheet-panel {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    opacity 220ms ease,
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.bottom-sheet-overlay[data-state='entering'] .bottom-sheet-panel,
+.bottom-sheet-overlay[data-state='exiting'] .bottom-sheet-panel {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(0.99);
+}
+
 .form-scroll-container {
   overflow-x: hidden;
   overflow-y: auto;
@@ -303,4 +348,24 @@ body.body-scroll-locked .main-content {
 
 .transaction-form-content {
   padding: 20px 16px 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  .form-transition,
+  .form-transition[data-state='entering'],
+  .form-transition[data-state='exiting'],
+  .bottom-sheet-panel,
+  .bottom-sheet-overlay[data-state='entering'] .bottom-sheet-panel,
+  .bottom-sheet-overlay[data-state='exiting'] .bottom-sheet-panel {
+    transform: none;
+  }
 }

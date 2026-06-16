@@ -81,7 +81,12 @@ export function WalletsPage() {
         onCreateWallet={() => navigate(ROUTES.WALLETS_NEW)}
       />
 
-      <BottomSheet isOpen={sheetOpen} onClose={closeSheet} fullScreenOnAndroid>
+      <BottomSheet
+        isOpen={sheetOpen}
+        onClose={closeSheet}
+        fullScreenOnAndroid
+        transitionKey={editTarget?.id ?? 'new-wallet'}
+      >
         <WalletForm
           existing={editTarget}
           onSave={handleSave}

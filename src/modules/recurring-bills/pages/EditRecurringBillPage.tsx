@@ -7,6 +7,7 @@ import { recurringBillRepository } from '@/core/di/recurring-bills.di';
 import { ROUTES } from '@/shared/constants/routes';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
+import { FormTransition } from '@/shared/components/FormTransition';
 
 export function EditRecurringBillPage() {
   const { id } = useParams<{ id: string }>();
@@ -64,13 +65,13 @@ export function EditRecurringBillPage() {
       </div>
 
       <div className="px-4 pb-24">
-        <div className="rounded-[16px] border border-border bg-surface p-5 shadow-sm">
+        <FormTransition className="rounded-[16px] border border-border bg-surface p-5 shadow-sm" transitionKey={bill.id}>
           <RecurringBillForm
             existing={bill}
             onSave={handleSave}
             onCancel={() => navigate(ROUTES.RECURRING_BILLS)}
           />
-        </div>
+        </FormTransition>
       </div>
     </div>
   );

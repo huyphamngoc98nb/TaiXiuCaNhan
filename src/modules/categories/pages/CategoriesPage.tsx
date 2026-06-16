@@ -131,7 +131,11 @@ export function CategoriesPage() {
         )}
       </div>
 
-      <BottomSheet isOpen={sheetOpen} onClose={closeSheet}>
+      <BottomSheet
+        isOpen={sheetOpen}
+        onClose={closeSheet}
+        transitionKey={editTarget?.id ?? `new-${activeType}`}
+      >
         <CategoryForm
           existing={editTarget}
           defaultType={activeType}

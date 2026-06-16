@@ -228,7 +228,12 @@ export function LoanListPage() {
         )}
       </div>
 
-      <BottomSheet isOpen={formOpen} onClose={closeForm} fullScreenOnAndroid>
+      <BottomSheet
+        isOpen={formOpen}
+        onClose={closeForm}
+        fullScreenOnAndroid
+        transitionKey="new-loan"
+      >
         <div className="pb-[calc(32px+env(safe-area-inset-bottom))]">
           <LoanForm onSubmit={handleCreateLoan} loading={mutationLoading} />
         </div>

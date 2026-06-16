@@ -172,7 +172,7 @@ export function AdvancedTransactionFilterSheet({
     : categories;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
+    <BottomSheet isOpen={isOpen} onClose={onClose} transitionKey={filter.type ?? 'all-transactions'}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)' }}>

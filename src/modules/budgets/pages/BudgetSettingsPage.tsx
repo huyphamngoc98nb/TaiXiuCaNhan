@@ -12,6 +12,7 @@ import { BudgetEditForm } from '../components/BudgetEditForm';
 import { BudgetByAccountTypeSummary } from '../components/BudgetByAccountTypeSummary';
 import { BottomSheet } from '@/shared/components/BottomSheet';
 import { BackButton } from '@/shared/components/BackButton';
+import { FormTransition } from '@/shared/components/FormTransition';
 import { SkeletonCard } from '@/shared/components/SkeletonCard/SkeletonCard';
 import { ErrorScreen } from '@/shared/components/ErrorScreen';
 import { ROUTES } from '@/shared/constants/routes';
@@ -165,20 +166,26 @@ export function BudgetSettingsPage() {
         )}
 
         {/* Content */}
-        {activeTab === 'all' ? (
-          <BudgetCategoryList
-            allProgress={allProgress}
-            onItemClick={editForm.open}
-            onViewTransactions={handleViewTransactions}
-            onCreateBudget={() => navigate(ROUTES.BUDGETS_NEW)}
-          />
-        ) : (
-          <BudgetByAccountTypeSummary progresses={progressByScope.byAccountType} />
-        )}
+        <FormTransition transitionKey={activeTab}>
+          {activeTab === 'all' ? (
+            <BudgetCategoryList
+              allProgress={allProgress}
+              onItemClick={editForm.open}
+              onViewTransactions={handleViewTransactions}
+              onCreateBudget={() => navigate(ROUTES.BUDGETS_NEW)}
+            />
+          ) : (
+            <BudgetByAccountTypeSummary progresses={progressByScope.byAccountType} />
+          )}
+        </FormTransition>
       </div>
 
       {/* Edit Sheet */}
-      <BottomSheet isOpen={editForm.isOpen} onClose={editForm.close}>
+      <BottomSheet
+        isOpen={editForm.isOpen}
+        onClose={editForm.close}
+        transitionKey={editForm.selectedCategory?.category_id ?? 'edit-budget'}
+      >
         {editForm.selectedCategory && (
           <BudgetEditForm
             category={editForm.selectedCategory}
@@ -200,7 +207,12 @@ export function BudgetSettingsPage() {
       </BottomSheet>
 
       {/* Add Sheet */}
-      <BottomSheet isOpen={addForm.isOpen} onClose={closeAddForm} fullScreenOnAndroid>
+      <BottomSheet
+        isOpen={addForm.isOpen}
+        onClose={closeAddForm}
+        fullScreenOnAndroid
+        transitionKey={addForm.selectedCategory?.category_id ?? 'new-budget'}
+      >
         <BudgetAddSheet
           categories={categories}
           selectedCategory={addForm.selectedCategory}

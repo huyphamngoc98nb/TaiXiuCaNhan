@@ -49,7 +49,11 @@ export function BudgetEditSheet({
   const { currency } = useCurrency();
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      transitionKey={category?.category_id ?? 'edit-budget'}
+    >
       {category && (
         <div className="flex flex-col h-full">
           {/* Header */}

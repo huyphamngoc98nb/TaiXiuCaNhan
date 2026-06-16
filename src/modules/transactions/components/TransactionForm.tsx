@@ -7,6 +7,7 @@ import { DateTimePicker } from '@/shared/components/DateTimePicker';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { DropdownList } from '@/shared/components/DropdownList';
 import { useCurrency } from '@/shared/context/CurrencyContext';
+import { FormTransition } from '@/shared/components/FormTransition';
 
 interface Props {
   existing?: Transaction;
@@ -376,20 +377,25 @@ export function TransactionForm({
           </div>
         </div>
 
-        <div className="transaction-form-content space-y-5">
+        <FormTransition
+          className="transaction-form-content space-y-5"
+          transitionKey={existing?.id ?? 'new-transaction'}
+        >
           {fields}
-        </div>
+        </FormTransition>
       </form>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="shrink-0">
-        {typeSelector}
-      </div>
+    <form onSubmit={handleSubmit}>
+      <FormTransition className="space-y-5" transitionKey={existing?.id ?? 'inline-transaction'}>
+        <div className="shrink-0">
+          {typeSelector}
+        </div>
 
-      {fields}
+        {fields}
+      </FormTransition>
     </form>
   );
 }

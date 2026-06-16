@@ -43,7 +43,7 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
   }
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
+    <BottomSheet isOpen={isOpen} onClose={onClose} transitionKey={`icons-${type}`}>
       <div className="space-y-4">
         <div>
           <h3 className="text-[18px] font-bold text-gray-900">{t('categories.icon_picker_title')}</h3>

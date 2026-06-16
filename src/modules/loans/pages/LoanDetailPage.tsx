@@ -359,7 +359,12 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
         </section>
       </div>
 
-      <BottomSheet isOpen={editOpen} onClose={() => setEditOpen(false)} fullScreenOnAndroid>
+      <BottomSheet
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        fullScreenOnAndroid
+        transitionKey={`edit-${loan.id}`}
+      >
         <div className="pb-[calc(32px+env(safe-area-inset-bottom))]">
           <LoanForm
             initialLoan={loan}
@@ -372,11 +377,20 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
         </div>
       </BottomSheet>
 
-      <BottomSheet isOpen={paymentOpen} onClose={() => setPaymentOpen(false)} fullScreenOnAndroid>
+      <BottomSheet
+        isOpen={paymentOpen}
+        onClose={() => setPaymentOpen(false)}
+        fullScreenOnAndroid
+        transitionKey={`payment-${loan.id}`}
+      >
         <PaymentForm loan={loan} onSubmit={handleAddPayment} loading={mutationLoading} />
       </BottomSheet>
 
-      <BottomSheet isOpen={deleteOpen} onClose={() => setDeleteOpen(false)}>
+      <BottomSheet
+        isOpen={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        transitionKey={`delete-${loan.id}`}
+      >
         <div className="space-y-4">
           <div>
             <h3 className="text-[18px] font-bold text-text">{t('loans.pages.detail.deleteLoan')}</h3>
