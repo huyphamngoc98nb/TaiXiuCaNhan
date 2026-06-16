@@ -3,7 +3,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { CategoryBudget, BudgetPeriod, AccountType } from '../domain/budget.model';
 import type { BudgetScopeType } from '../hooks/useBudgetEditForm';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { BudgetScopePicker } from './BudgetScopePicker';
 import { CurrencyAmountInput } from '@/shared/components/CurrencyAmountInput';
 import { useCurrency } from '@/shared/context/CurrencyContext';
@@ -49,10 +49,12 @@ export function BudgetEditSheet({
   const { currency } = useCurrency();
 
   return (
-    <BottomSheet
+    <FormSheet
       isOpen={isOpen}
       onClose={onClose}
       transitionKey={category?.category_id ?? 'edit-budget'}
+      title={t('budgets.edit_budget')}
+      logContext="BudgetEditSheet"
     >
       {category && (
         <div className="flex flex-col h-full">
@@ -180,6 +182,6 @@ export function BudgetEditSheet({
           </div>
         </div>
       )}
-    </BottomSheet>
+    </FormSheet>
   );
 }

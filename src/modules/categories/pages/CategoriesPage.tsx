@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Tags } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
 import { ROUTES } from '@/shared/constants/routes';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import type { Category, CategoryInput, CategoryType } from '../domain/category.model';
@@ -41,6 +41,10 @@ export function CategoriesPage() {
     }
     setSheetOpen(false);
   }, [isCreateRoute, navigate]);
+
+  const resetSheet = useCallback(() => {
+    setEditTarget(undefined);
+  }, []);
 
   useEffect(() => {
     if (isCreateRoute && !sheetOpen) {
@@ -131,10 +135,13 @@ export function CategoriesPage() {
         )}
       </div>
 
-      <BottomSheet
+      <FormSheet
         isOpen={sheetOpen}
         onClose={closeSheet}
+        onExited={resetSheet}
         transitionKey={editTarget?.id ?? `new-${activeType}`}
+        title={t('categories.title')}
+        logContext="CategoryForm"
       >
         <CategoryForm
           existing={editTarget}
@@ -142,7 +149,7 @@ export function CategoriesPage() {
           onSave={handleSave}
           onCancel={closeSheet}
         />
-      </BottomSheet>
+      </FormSheet>
     </div>
   );
 }

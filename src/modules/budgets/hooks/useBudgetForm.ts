@@ -16,9 +16,13 @@ type EditableCategoryBudget = CategoryBudget & {
   budget_account_type_scope?: AccountType | null;
 };
 
+type BudgetFormState =
+  | { mode: 'closed'; category: null }
+  | { mode: 'edit'; category: EditableCategoryBudget };
+
 export function useBudgetForm(onSuccess?: () => void) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<EditableCategoryBudget | null>(null);
+  const [formState, setFormState] = useState<BudgetFormState>({ mode: 'closed', category: null });
   const [amount, setAmount] = useState<string>('');
   const [period, setPeriod] = useState<BudgetPeriod>('monthly');
   const [scopeType, setScopeType] = useState<BudgetScopeType>('global');
@@ -34,7 +38,7 @@ export function useBudgetForm(onSuccess?: () => void) {
   );
 
   const open = useCallback((category: EditableCategoryBudget) => {
-    setSelectedCategory(category);
+    setFormState({ mode: 'edit', category });
     setAmount(category.budget_amount ? category.budget_amount.toString() : '');
     setPeriod(category.budget_period || 'monthly');
     setScopeType(category.budget_account_type_scope ? 'account_type' : 'global');
@@ -45,8 +49,19 @@ export function useBudgetForm(onSuccess?: () => void) {
 
   const close = useCallback(() => {
     setIsOpen(false);
-    setSelectedCategory(null);
   }, []);
+
+  const resetAfterClose = useCallback(() => {
+    setFormState({ mode: 'closed', category: null });
+    setAmount('');
+    setPeriod('monthly');
+    setScopeType('global');
+    setAccountTypeScope('credit_card');
+    setValidationError(null);
+    setIsSaving(false);
+  }, []);
+
+  const selectedCategory = formState.mode === 'edit' ? formState.category : null;
 
   const handleSave = async () => {
     if (!selectedCategory) return;
@@ -100,8 +115,10 @@ export function useBudgetForm(onSuccess?: () => void) {
   return {
     isOpen,
     selectedCategory,
+    mode: formState.mode,
     open,
     close,
+    resetAfterClose,
     amount,
     setAmount,
     period,

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BackButton } from '@/shared/components/BackButton';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { ROUTES } from '@/shared/constants/routes';
@@ -228,16 +228,18 @@ export function LoanListPage() {
         )}
       </div>
 
-      <BottomSheet
+      <FormSheet
         isOpen={formOpen}
         onClose={closeForm}
         fullScreenOnAndroid
         transitionKey="new-loan"
+        title={t('loans.pages.list.title')}
+        logContext="LoanForm"
       >
         <div className="pb-[calc(32px+env(safe-area-inset-bottom))]">
           <LoanForm onSubmit={handleCreateLoan} loading={mutationLoading} />
         </div>
-      </BottomSheet>
+      </FormSheet>
     </div>
   );
 }

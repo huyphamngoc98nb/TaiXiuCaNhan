@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useWallets } from '../hooks/useWallets';
 import { WalletList } from '../components/WalletList';
 import { WalletForm } from '../components/WalletForm';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { Wallet, CreateWalletInput, UpdateWalletInput } from '../repositories/sqlite-wallet.repository';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
@@ -34,6 +34,10 @@ export function WalletsPage() {
     }
     setSheetOpen(false);
   }, [isCreateRoute, navigate]);
+
+  const resetSheet = useCallback(() => {
+    setEditTarget(undefined);
+  }, []);
 
   useEffect(() => {
     if (isCreateRoute && !sheetOpen) {
@@ -81,11 +85,14 @@ export function WalletsPage() {
         onCreateWallet={() => navigate(ROUTES.WALLETS_NEW)}
       />
 
-      <BottomSheet
+      <FormSheet
         isOpen={sheetOpen}
         onClose={closeSheet}
+        onExited={resetSheet}
         fullScreenOnAndroid
         transitionKey={editTarget?.id ?? 'new-wallet'}
+        title={t('wallets.title')}
+        logContext="WalletForm"
       >
         <WalletForm
           existing={editTarget}
@@ -93,7 +100,7 @@ export function WalletsPage() {
           onClose={closeSheet}
           onDelete={editTarget ? handleDelete : undefined}
         />
-      </BottomSheet>
+      </FormSheet>
     </>
   );
 }

@@ -39,7 +39,15 @@ export function useBudgetAddForm(onSuccess?: () => void) {
 
   const close = useCallback(() => {
     setIsOpen(false);
+  }, []);
+
+  const resetAfterClose = useCallback(() => {
     setSelectedCategoryState(null);
+    setAmount('');
+    setPeriod('monthly');
+    setScopeType('global');
+    setAccountTypeScope('credit_card');
+    setIsSaving(false);
   }, []);
 
   const setSelectedCategory = useCallback((category: CategoryBudget) => {
@@ -87,6 +95,7 @@ export function useBudgetAddForm(onSuccess?: () => void) {
     setSelectedCategory,
     open,
     close,
+    resetAfterClose,
     amount,
     setAmount,
     period,

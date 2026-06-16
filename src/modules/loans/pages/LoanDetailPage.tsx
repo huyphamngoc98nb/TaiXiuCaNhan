@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CalendarDays, CircleDollarSign, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
 import { BackButton } from '@/shared/components/BackButton';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { loanRepository } from '@/core/di/loans.di';
@@ -359,11 +359,13 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
         </section>
       </div>
 
-      <BottomSheet
+      <FormSheet
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         fullScreenOnAndroid
         transitionKey={`edit-${loan.id}`}
+        title={t('loans.pages.detail.editTitle')}
+        logContext="LoanForm"
       >
         <div className="pb-[calc(32px+env(safe-area-inset-bottom))]">
           <LoanForm
@@ -375,21 +377,25 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             submitLabel={t('loans.pages.detail.saveChanges')}
           />
         </div>
-      </BottomSheet>
+      </FormSheet>
 
-      <BottomSheet
+      <FormSheet
         isOpen={paymentOpen}
         onClose={() => setPaymentOpen(false)}
         fullScreenOnAndroid
         transitionKey={`payment-${loan.id}`}
+        title={t('loans.pages.detail.recordPayment')}
+        logContext="PaymentForm"
       >
         <PaymentForm loan={loan} onSubmit={handleAddPayment} loading={mutationLoading} />
-      </BottomSheet>
+      </FormSheet>
 
-      <BottomSheet
+      <FormSheet
         isOpen={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         transitionKey={`delete-${loan.id}`}
+        title={t('loans.pages.detail.deleteLoan')}
+        logContext="LoanDeleteSheet"
       >
         <div className="space-y-4">
           <div>
@@ -416,7 +422,7 @@ export function LoanDetailPage({ loanId: loanIdProp }: LoanDetailPageProps = {})
             {t('loans.pages.detail.deletePermanently')}
           </button>
         </div>
-      </BottomSheet>
+      </FormSheet>
     </div>
   );
 }

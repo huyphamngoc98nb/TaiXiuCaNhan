@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
 import { registerAppBackHandler } from '@/shared/utils/app-back-stack';
+import { logAppError } from '@/core/telemetry/error.service';
 
 const SHEET_TRANSITION_MS = 220;
 
@@ -11,6 +12,8 @@ interface Props {
   children: React.ReactNode;
   fullScreenOnAndroid?: boolean;
   transitionKey?: string | number;
+  onExited?: () => void;
+  logContext?: string;
 }
 
 type SheetTransitionState = 'entering' | 'entered' | 'exiting';
@@ -46,6 +49,8 @@ export function BottomSheet({
   children,
   fullScreenOnAndroid = false,
   transitionKey,
+  onExited,
+  logContext = 'BottomSheet',
 }: Props) {
   const isFullScreen = fullScreenOnAndroid && Capacitor.getPlatform() === 'android';
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -57,11 +62,32 @@ export function BottomSheet({
   const activeKeyRef = useRef(transitionKey);
   const timeoutRef = useRef<number>();
   const rafRef = useRef<number>();
+  const isClosingRef = useRef(false);
+  const onExitedRef = useRef(onExited);
+
+  useEffect(() => {
+    onExitedRef.current = onExited;
+  }, [onExited]);
 
   const requestClose = useCallback(() => {
-    if (!isOpen || transitionState === 'exiting') return;
+    if (!isOpen || transitionState === 'exiting' || isClosingRef.current) {
+      if (isOpen && Capacitor.getPlatform() === 'android') {
+        void logAppError(new Error('sheet_state_desync'), {
+          component: logContext,
+          action: 'sheet_state_desync',
+          extra: {
+            isOpen,
+            transitionState,
+            transitionKey,
+            isClosing: isClosingRef.current,
+          },
+        });
+      }
+      return;
+    }
+    isClosingRef.current = true;
     onClose();
-  }, [isOpen, onClose, transitionState]);
+  }, [isOpen, logContext, onClose, transitionKey, transitionState]);
 
   useBodyScrollLock(isMounted);
 
@@ -91,19 +117,31 @@ export function BottomSheet({
     const duration = prefersReducedMotion() ? 1 : SHEET_TRANSITION_MS;
 
     if (isOpen) {
+      isClosingRef.current = false;
       setIsMounted(true);
       setTransitionState('entering');
       rafRef.current = scheduleNextFrame(() => setTransitionState('entered'));
       return;
     }
 
+    if (!isMounted) {
+      setTransitionState('exiting');
+      return;
+    }
+
     setTransitionState('exiting');
     timeoutRef.current = window.setTimeout(() => {
       setIsMounted(false);
+      isClosingRef.current = false;
+      onExitedRef.current?.();
     }, duration);
-  }, [isOpen]);
+  }, [isMounted, isOpen]);
 
   useEffect(() => {
+    if (isMounted && (!isOpen || transitionState === 'exiting')) {
+      return;
+    }
+
     if (!isMounted || activeKeyRef.current === transitionKey) {
       setRenderedChildren(children);
       activeKeyRef.current = transitionKey;
@@ -121,16 +159,27 @@ export function BottomSheet({
       setTransitionState('entering');
       rafRef.current = scheduleNextFrame(() => setTransitionState('entered'));
     }, duration);
-  }, [children, isMounted, transitionKey]);
+  }, [children, isMounted, isOpen, transitionKey, transitionState]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
 
     return registerAppBackHandler(() => {
+      if (Capacitor.getPlatform() === 'android') {
+        void logAppError(new Error('android_back_during_form_transition'), {
+          component: logContext,
+          action: 'android_back_during_form_transition',
+          extra: {
+            transitionState,
+            transitionKey,
+            isClosing: isClosingRef.current,
+          },
+        });
+      }
       requestClose();
       return true;
     });
-  }, [isOpen, requestClose]);
+  }, [isOpen, logContext, requestClose, transitionKey, transitionState]);
 
   if (!isMounted) return null;
 

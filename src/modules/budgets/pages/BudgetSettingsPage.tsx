@@ -10,7 +10,7 @@ import { BudgetCategoryList } from '../components/BudgetCategoryList';
 import { BudgetAddSheet } from '../components/BudgetAddSheet';
 import { BudgetEditForm } from '../components/BudgetEditForm';
 import { BudgetByAccountTypeSummary } from '../components/BudgetByAccountTypeSummary';
-import { BottomSheet } from '@/shared/components/BottomSheet';
+import { FormSheet } from '@/shared/components/FormSheet';
 import { BackButton } from '@/shared/components/BackButton';
 import { FormTransition } from '@/shared/components/FormTransition';
 import { SkeletonCard } from '@/shared/components/SkeletonCard/SkeletonCard';
@@ -18,6 +18,7 @@ import { ErrorScreen } from '@/shared/components/ErrorScreen';
 import { ROUTES } from '@/shared/constants/routes';
 import { buildDateRange } from '@/modules/reports/services/build-date-range';
 import { resolveBudgetTransactionFilter } from '@/modules/reports/services/financial-calculations';
+import { logAppError } from '@/core/telemetry/error.service';
 import type { BudgetProgress } from '../domain/budget.model';
 
 type ScopeTab = 'all' | 'account_type';
@@ -68,6 +69,27 @@ export function BudgetSettingsPage() {
       addForm.open();
     }
   }, [addForm.isOpen, addForm.open, isCreateRoute]);
+
+  useEffect(() => {
+    if (!editForm.isOpen || !editForm.selectedCategory) return;
+
+    const categoryId = editForm.selectedCategory.category_id;
+    const stillExists = categories.some((category) => category.category_id === categoryId)
+      || allProgress.some((progress) => progress.budget.category_id === categoryId);
+
+    if (stillExists) return;
+
+    void logAppError(new Error('budget_edit_missing_budget'), {
+      screen: 'BudgetSettingsPage',
+      component: 'BudgetEditForm',
+      action: 'budget_edit_missing_budget',
+      extra: {
+        categoryId,
+        mode: editForm.mode,
+      },
+    });
+    editForm.close();
+  }, [allProgress, categories, editForm.close, editForm.isOpen, editForm.mode, editForm.selectedCategory]);
 
   const closeAddForm = useCallback(() => {
     if (isCreateRoute) {
@@ -181,10 +203,13 @@ export function BudgetSettingsPage() {
       </div>
 
       {/* Edit Sheet */}
-      <BottomSheet
+      <FormSheet
         isOpen={editForm.isOpen}
         onClose={editForm.close}
+        onExited={editForm.resetAfterClose}
         transitionKey={editForm.selectedCategory?.category_id ?? 'edit-budget'}
+        title={t('budgets.save_budget')}
+        logContext="BudgetEditForm"
       >
         {editForm.selectedCategory && (
           <BudgetEditForm
@@ -204,14 +229,17 @@ export function BudgetSettingsPage() {
             error={editForm.validationError}
           />
         )}
-      </BottomSheet>
+      </FormSheet>
 
       {/* Add Sheet */}
-      <BottomSheet
+      <FormSheet
         isOpen={addForm.isOpen}
         onClose={closeAddForm}
+        onExited={addForm.resetAfterClose}
         fullScreenOnAndroid
         transitionKey={addForm.selectedCategory?.category_id ?? 'new-budget'}
+        title={t('budgets.title')}
+        logContext="BudgetAddForm"
       >
         <BudgetAddSheet
           categories={categories}
@@ -229,7 +257,7 @@ export function BudgetSettingsPage() {
           onClose={closeAddForm}
           isSaving={addForm.isSaving}
         />
-      </BottomSheet>
+      </FormSheet>
     </div>
   );
 }
