@@ -1440,8 +1440,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\index.html": {
-    "mtime": 1780556787.408944,
-    "ast_hash": "2d949f70ebd7edf315f5a412a7ff3291",
+    "mtime": 1781680534.891345,
+    "ast_hash": "940a13cc9c178d063934cce5d443fddf",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\README.md": {
@@ -1525,78 +1525,78 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png": {
-    "mtime": 1780566758.4440854,
-    "ast_hash": "7412c4c2008c01d12865f1f1a4dfac0f",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "843a302da5a24dc738d7c64b0d743d4f",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_foreground.png": {
-    "mtime": 1780566758.4561746,
-    "ast_hash": "8e90c71ee743a952d017abcb0d9fb293",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "843a302da5a24dc738d7c64b0d743d4f",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.png": {
-    "mtime": 1780566758.4528956,
-    "ast_hash": "945107a760155d8477a2c0b1e2952363",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "27dc4d8e84ebb03ace80d5ae3dad07a8",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.png": {
-    "mtime": 1780566758.425163,
-    "ast_hash": "1f67b0912f17c67ac74be8a0223ea3c4",
+    "mtime": 1781680546.3121693,
+    "ast_hash": "c3213f894022993e17333cff8f8307ff",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_foreground.png": {
-    "mtime": 1780566758.4305956,
-    "ast_hash": "ec25d1b9bcafa9c91240be22126ccd1b",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "c3213f894022993e17333cff8f8307ff",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.png": {
-    "mtime": 1780566758.4305956,
-    "ast_hash": "de76218655e2d43a90f7c714b780024c",
+    "mtime": 1781680546.3152044,
+    "ast_hash": "96b9181bac8bf0f324fe6703ed4d800d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png": {
-    "mtime": 1780566758.463976,
-    "ast_hash": "bdde6092c754d22632e5528f733a6c37",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "e436d590c9327256cdeba19f07a8e857",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_foreground.png": {
-    "mtime": 1780566758.4902332,
-    "ast_hash": "15d6cfc06388392bdced6beb12cb89f6",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "e436d590c9327256cdeba19f07a8e857",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.png": {
-    "mtime": 1780566758.4809208,
-    "ast_hash": "8215c6a9e21f38f36b885a4049925d59",
+    "mtime": 1781680546.3161678,
+    "ast_hash": "1da2ca3216e7b8d643518138b07535c0",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png": {
-    "mtime": 1780566758.5076787,
-    "ast_hash": "f2434a16dc6eb8de488fe92d3d90cbf1",
+    "mtime": 1781680546.3320436,
+    "ast_hash": "ebec8758aacbcc71df488185a2aeffb9",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_foreground.png": {
-    "mtime": 1780566758.5591133,
-    "ast_hash": "157fd92df9f354e992caa0e413c26ee1",
+    "mtime": 1781680546.3320436,
+    "ast_hash": "ebec8758aacbcc71df488185a2aeffb9",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.png": {
-    "mtime": 1780566758.5411546,
-    "ast_hash": "e7c75eec3f5639de5ea89ab055721424",
+    "mtime": 1781680546.3320436,
+    "ast_hash": "7180d877d9f25cdc3c737f016de4825d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png": {
-    "mtime": 1780566758.5865903,
-    "ast_hash": "ddb81599ef9e8aee51951b23c9c0d792",
+    "mtime": 1781680546.3444161,
+    "ast_hash": "a5f10e4eccea0d94c5480732045229c4",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_foreground.png": {
-    "mtime": 1780566758.6714602,
-    "ast_hash": "ca1674de50b0926c024dbb2af26c5022",
+    "mtime": 1781680546.3478978,
+    "ast_hash": "a5f10e4eccea0d94c5480732045229c4",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.png": {
-    "mtime": 1780566758.645791,
-    "ast_hash": "9ed701905f04022f8c4d9cad27570eee",
+    "mtime": 1781680546.3478978,
+    "ast_hash": "96446c9609af5d41b5bef8cc6c4e8772",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\services\\credit-card-alerts.ts": {
@@ -1645,33 +1645,33 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon-background.png": {
-    "mtime": 1780566758.4107714,
-    "ast_hash": "88aca97ed28f93e0f9b53924ff76f18f",
+    "mtime": 1781680546.3072019,
+    "ast_hash": "657100e150a4dd5f1128080281ac471e",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon-background.svg": {
-    "mtime": 1780566757.7805943,
-    "ast_hash": "c2985e666a20de6c965c19e824d48d5e",
+    "mtime": 1781680546.1129143,
+    "ast_hash": "3d6f3921471307843e896138de1d1a08",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon-foreground.png": {
-    "mtime": 1780566758.3715315,
-    "ast_hash": "3bc052fed2b02084d9223d9069697d00",
+    "mtime": 1781680546.2712293,
+    "ast_hash": "139c1cda46db77d4eefed41679fc93b6",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon-foreground.svg": {
-    "mtime": 1780566757.7805943,
-    "ast_hash": "527be32341422f16f6d70ce20b91053d",
+    "mtime": 1781680236.098969,
+    "ast_hash": "bb3f9a69590872349ada299fc1181224",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon.png": {
-    "mtime": 1780566758.0977669,
-    "ast_hash": "edd6daaf9cfb6b118f1421dbbbe6b757",
+    "mtime": 1781680236.1293845,
+    "ast_hash": "09104ac3fd5ff0d562ddacd44e3ae252",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\assets\\icon\\icon.svg": {
-    "mtime": 1780566757.7805943,
-    "ast_hash": "e50f0345f7e280c3e1474f6b3817398c",
+    "mtime": 1781680236.098969,
+    "ast_hash": "bb3f9a69590872349ada299fc1181224",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useScrollRestoration.ts": {
@@ -1907,6 +1907,16 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\db\\migrations\\033_transactions_budget_offset.sql": {
     "mtime": 1781664187.1487513,
     "ast_hash": "87fc47ce2bf9e36cb5cca2448c153af6",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\public\\icon.png": {
+    "mtime": 1781680236.1293845,
+    "ast_hash": "09104ac3fd5ff0d562ddacd44e3ae252",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\public\\icon.svg": {
+    "mtime": 1781680236.098969,
+    "ast_hash": "bb3f9a69590872349ada299fc1181224",
     "semantic_hash": ""
   }
 }
