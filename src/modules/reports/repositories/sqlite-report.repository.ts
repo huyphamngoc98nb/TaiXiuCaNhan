@@ -16,6 +16,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND t.transaction_date <= ?
         AND t.deleted_at IS NULL
         AND t.exclude_from_total = 0
+        AND (t.type <> 'income' OR t.is_budget_offset = 0)
       GROUP BY category_id
       ORDER BY amount DESC
     `;
@@ -47,7 +48,7 @@ export class SQLiteReportRepository implements IReportRepository {
     const sql = `
       SELECT 
         strftime(?, transaction_date / 1000, 'unixepoch') as period,
-        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+        SUM(CASE WHEN type = 'income' AND is_budget_offset = 0 THEN amount ELSE 0 END) as income,
         SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
       FROM transactions
       WHERE transaction_date >= ? 
@@ -55,6 +56,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND type IN ('income', 'expense')
         AND deleted_at IS NULL
         AND exclude_from_total = 0
+        AND (type <> 'income' OR is_budget_offset = 0)
       GROUP BY period
       ORDER BY period ASC
     `;
@@ -74,7 +76,7 @@ export class SQLiteReportRepository implements IReportRepository {
     // Index-friendly: idx_transactions_date efficiently narrows down to the requested range.
     const sql = `
       SELECT 
-        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as totalIncome,
+        SUM(CASE WHEN type = 'income' AND is_budget_offset = 0 THEN amount ELSE 0 END) as totalIncome,
         SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as totalExpense
       FROM transactions
       WHERE transaction_date >= ? 
@@ -82,6 +84,7 @@ export class SQLiteReportRepository implements IReportRepository {
         AND type IN ('income', 'expense')
         AND deleted_at IS NULL
         AND exclude_from_total = 0
+        AND (type <> 'income' OR is_budget_offset = 0)
     `;
     const { values } = await db.query(sql, [range.startDate, range.endDate]);
     const row = values && values.length > 0 ? values[0] : null;

@@ -10,6 +10,8 @@ export interface Transaction {
   receipt_path: string | null;
   to_wallet_id: string | null; // required when type = 'transfer'
   exclude_from_total: boolean;
+  is_budget_offset?: boolean;
+  offset_budget_id?: string | null;
   transaction_date: number;
   created_at: number;
   updated_at: number;
@@ -21,6 +23,7 @@ export interface Transaction {
   wallet_name?: string;
   wallet_currency?: string;
   to_wallet_name?: string;
+  offset_budget_name?: string;
 }
 
 export interface CreateTransactionInput {
@@ -32,6 +35,8 @@ export interface CreateTransactionInput {
   receipt_path?: string;
   to_wallet_id?: string; // required when type = 'transfer'
   exclude_from_total?: boolean;
+  is_budget_offset?: boolean;
+  offset_budget_id?: string | null;
   transaction_date: number;
 }
 
@@ -44,6 +49,8 @@ export interface UpdateTransactionInput {
   receipt_path?: string;
   to_wallet_id?: string | null;
   exclude_from_total?: boolean;
+  is_budget_offset?: boolean;
+  offset_budget_id?: string | null;
   transaction_date?: number;
 }
 

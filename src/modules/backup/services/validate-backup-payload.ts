@@ -79,6 +79,8 @@ const BACKUP_SCHEMAS: Record<string, Record<string, SectionSchema>> = {
         updated_at: { type: 'number', required: true },
         deleted_at: { type: 'number', required: true, nullable: true },
         exclude_from_total: { type: 'number', enum: ACTIVE_FLAGS },
+        is_budget_offset: { type: 'number', enum: ACTIVE_FLAGS },
+        offset_budget_id: { type: 'string', nullable: true },
       },
     },
     recurring_bills: {
@@ -562,6 +564,8 @@ function normalizeLegacyV1(payload: BackupRow): BackupPayload {
       to_wallet_id: row.to_wallet_id ?? null,
       deleted_at: row.deleted_at ?? null,
       exclude_from_total: row.exclude_from_total ?? 0,
+      is_budget_offset: row.is_budget_offset ?? 0,
+      offset_budget_id: row.offset_budget_id ?? null,
     })),
     recurring_bills: rows(payload.recurring_bills).map((row) => ({
       ...row,
@@ -646,6 +650,8 @@ export function normalizeBackupPayload(payload: unknown): BackupPayload {
     transactions: rows(backup.transactions).map((row) => ({
       ...row,
       exclude_from_total: row.exclude_from_total ?? 0,
+      is_budget_offset: row.is_budget_offset ?? 0,
+      offset_budget_id: row.offset_budget_id ?? null,
     })),
   };
 }

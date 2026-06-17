@@ -288,7 +288,7 @@ describe('Database SQLite Tests', () => {
   it('runs foreign-key-off table rebuild migrations outside native transactions', async () => {
     mockDb.query.mockResolvedValueOnce({
       values: MIGRATIONS
-        .filter((migration) => migration.version < 32)
+        .filter((migration) => migration.version < 32 || migration.version === 33)
         .map((migration) => ({ version: migration.version, name: migration.name })),
     });
 

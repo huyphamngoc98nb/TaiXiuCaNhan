@@ -38,6 +38,8 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
       receipt_path: data.receipt_path ?? null,
       to_wallet_id: data.to_wallet_id ?? null,
       exclude_from_total: data.exclude_from_total ?? false,
+      is_budget_offset: data.is_budget_offset ?? false,
+      offset_budget_id: data.offset_budget_id ?? null,
       transaction_date: data.transaction_date,
       created_at: data.created_at,
       updated_at: data.updated_at,

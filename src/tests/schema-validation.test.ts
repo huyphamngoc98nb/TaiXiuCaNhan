@@ -169,6 +169,34 @@ describe('validateCreateTransaction – required fields', () => {
       expect(err.errors.length).toBeGreaterThanOrEqual(4);
     }
   });
+
+  it('requires an offset budget when income is marked as a budget offset', () => {
+    expect(() =>
+      validateCreateTransaction({
+        wallet_id: 'w1',
+        category_id: 'c-income',
+        type: 'income',
+        amount: 100,
+        transaction_date: Date.now(),
+        is_budget_offset: true,
+        offset_budget_id: null,
+      })
+    ).toThrow(TransactionValidationError);
+  });
+
+  it('rejects budget offset on non-income transactions at schema level', () => {
+    expect(() =>
+      validateCreateTransaction({
+        wallet_id: 'w1',
+        category_id: 'c-expense',
+        type: 'expense',
+        amount: 100,
+        transaction_date: Date.now(),
+        is_budget_offset: true,
+        offset_budget_id: 'budget-food',
+      })
+    ).toThrow(TransactionValidationError);
+  });
 });
 
 // ---------------------------------------------------------------------------

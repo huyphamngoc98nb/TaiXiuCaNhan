@@ -26,9 +26,14 @@ export class CalculateBudgetProgressUseCase {
       );
     }
 
+    const offset_amount = await this.repository.getOffsetAmount(
+      budget.id, startDate, endDate
+    );
+
     const usage = calculateBudgetUsage({
       budget,
       spentAmount: spent_amount,
+      offsetAmount: offset_amount,
       range: { startDate, endDate },
     });
 

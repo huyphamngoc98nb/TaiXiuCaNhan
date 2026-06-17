@@ -115,6 +115,24 @@ export function TransactionItem({ transaction, onSelect, showDate = false }: Pro
                 {t('transactions.excluded_from_total')}
               </span>
             )}
+            {transaction.is_budget_offset && (
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontSize: '0.65rem',
+                  color: '#047857',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  borderRadius: '4px',
+                  padding: '1px 5px',
+                  marginLeft: '6px',
+                  verticalAlign: 'middle',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t('transactions.budget_offset_badge')}
+              </span>
+            )}
             {transaction.receipt_path && <><span style={{ opacity: 0.5 }}>-</span> <Paperclip size={12} style={{ flexShrink: 0 }} /></>}
           </div>
         </div>

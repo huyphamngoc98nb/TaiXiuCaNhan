@@ -29,6 +29,9 @@ export interface CategorySpendingMetric extends CategorySummary {
 
 export interface BudgetUsageMetric {
   spentAmount: number;
+  totalExpense: number;
+  totalOffset: number;
+  netExpense: number;
   limitAmount: number;
   remainingAmount: number;
   usagePercentage: number;
@@ -121,22 +124,28 @@ export function calculateSpendingByCategory(items: CategorySummary[]): CategoryS
 export function calculateBudgetUsage(input: {
   budget: BudgetWithCategory;
   spentAmount: number;
+  offsetAmount?: number;
   range: DateRange;
   now?: Date;
 }): BudgetUsageMetric {
   const limitAmount = input.budget.amount;
-  const usagePercentage = limitAmount > 0 ? input.spentAmount / limitAmount : 0;
+  const totalOffset = input.offsetAmount ?? 0;
+  const netExpense = input.spentAmount - totalOffset;
+  const usagePercentage = limitAmount > 0 ? netExpense / limitAmount : 0;
   const elapsedDays = getElapsedDaysInRange(input.range, input.now);
   const periodDays = countInclusiveDays(input.range.startDate, input.range.endDate);
   const projectedSpentAmount = elapsedDays > 0
-    ? (input.spentAmount / elapsedDays) * periodDays
-    : input.spentAmount;
+    ? (netExpense / elapsedDays) * periodDays
+    : netExpense;
   const projectedUsagePercentage = limitAmount > 0 ? projectedSpentAmount / limitAmount : 0;
 
   return {
-    spentAmount: input.spentAmount,
+    spentAmount: netExpense,
+    totalExpense: input.spentAmount,
+    totalOffset,
+    netExpense,
     limitAmount,
-    remainingAmount: limitAmount - input.spentAmount,
+    remainingAmount: limitAmount - netExpense,
     usagePercentage,
     status: classifyBudgetStatus(usagePercentage),
     projectedSpentAmount,
@@ -159,6 +168,9 @@ export function enrichBudgetProgress(
   return {
     budget,
     spent_amount: usage.spentAmount,
+    total_expense: usage.totalExpense,
+    total_offset: usage.totalOffset,
+    net_expense: usage.netExpense,
     remaining_amount: usage.remainingAmount,
     percentage: usage.usagePercentage,
     status: usage.status,

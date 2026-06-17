@@ -128,6 +128,8 @@ export function TransactionForm({
       type,
       category_id: type === 'transfer' ? TRANSFER_CATEGORY_ID : '',
       to_wallet_id: type === 'transfer' ? formData.to_wallet_id : undefined,
+      is_budget_offset: type === 'income' ? formData.is_budget_offset ?? false : false,
+      offset_budget_id: type === 'income' ? formData.offset_budget_id ?? null : null,
     });
   };
 
@@ -149,6 +151,10 @@ export function TransactionForm({
   );
   const isCreditCardPayment =
     formData.type === 'transfer' && selectedDestinationWallet?.account_type === 'credit_card';
+  const hasSelectedOffsetBudget = Boolean(
+    formData.offset_budget_id &&
+    options.budgets.some((budget: { id: string }) => budget.id === formData.offset_budget_id),
+  );
 
   const amountAccentClass =
     formData.type === 'expense'
@@ -269,6 +275,56 @@ export function TransactionForm({
         required
         error={dateTimeError}
       />
+
+      {formData.type === 'income' && (
+        <div className="space-y-2 rounded-[12px] border border-emerald-100 bg-emerald-50/60 p-3">
+          <label className="flex items-center gap-2 text-[14px] font-semibold text-gray-700">
+            <input
+              type="checkbox"
+              checked={formData.is_budget_offset ?? false}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setFormData({
+                  ...formData,
+                  is_budget_offset: checked,
+                  offset_budget_id: checked ? formData.offset_budget_id ?? null : null,
+                });
+              }}
+              className="h-4 w-4 cursor-pointer"
+            />
+            {t('transactions.budget_offset')}
+          </label>
+
+          {formData.is_budget_offset && (
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-semibold text-gray-700">
+                {t('transactions.offset_budget')}
+              </p>
+              <DropdownList
+                value={formData.offset_budget_id || ''}
+                onChange={value => setFormData({ ...formData, offset_budget_id: value })}
+                ariaLabel={t('transactions.offset_budget')}
+                placeholder={t('transactions.select_offset_budget')}
+                openOnInputBlurPointerDown
+                options={[
+                  { value: '', label: t('transactions.select_offset_budget'), disabled: true },
+                  ...(!hasSelectedOffsetBudget && formData.offset_budget_id
+                    ? [{ value: formData.offset_budget_id, label: t('transactions.deleted_budget') }]
+                    : []),
+                  ...options.budgets.map((budget: {
+                    id: string;
+                    category_name: string;
+                    period: string;
+                  }) => ({
+                    value: budget.id,
+                    label: `${budget.category_name} (${budget.period === 'weekly' ? t('budgets.weekly') : t('budgets.monthly')})`,
+                  })),
+                ]}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <p className="text-[13px] font-semibold text-gray-700">{t('form.label_note')}</p>

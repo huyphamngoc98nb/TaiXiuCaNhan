@@ -11,6 +11,7 @@ import { CategoryIcon } from '@/modules/categories/components/CategoryIcon';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { getAppLocale } from '@/shared/utils/locale';
 import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
+import { Pencil } from 'lucide-react';
 
 interface Props {
   category: CategoryBudget;
@@ -26,6 +27,7 @@ export function BudgetCategoryItem({ category, progress, onClick, onViewTransact
   const locale = getAppLocale(language);
   const isSet = category.budget_amount !== null;
   const displayAmount = (amount: number) => showAmounts ? formatAmount(amount, locale) : HIDDEN_AMOUNT;
+  const hasOffset = (progress?.total_offset ?? 0) > 0;
 
   const periodLabel = isSet
     ? category.budget_period === 'monthly'
@@ -76,13 +78,31 @@ export function BudgetCategoryItem({ category, progress, onClick, onViewTransact
       {/* Row 2 & 3 */}
       {isSet && progress && (
         <div className="mt-2 space-y-2">
-          <div className="flex w-full">
+          <div className={`grid w-full gap-2 ${hasOffset ? 'grid-cols-2 sm:grid-cols-5' : 'grid-cols-3'}`}>
             <div className="flex-1 text-left">
-              <p className="text-[12px] text-gray-500">{t('budgets.spent')}</p>
+              <p className="text-[12px] text-gray-500">
+                {hasOffset ? t('budgets.gross_spent') : t('budgets.spent')}
+              </p>
               <p className="text-[14px] font-semibold text-gray-900 tabular-nums">
-                {displayAmount(progress.spent_amount)}
+                {displayAmount(hasOffset ? progress.total_expense ?? progress.spent_amount : progress.spent_amount)}
               </p>
             </div>
+            {hasOffset && (
+              <>
+                <div className="flex-1 text-left">
+                  <p className="text-[12px] text-gray-500">{t('budgets.offset')}</p>
+                  <p className="text-[14px] font-semibold text-emerald-600 tabular-nums">
+                    {displayAmount(progress.total_offset ?? 0)}
+                  </p>
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[12px] text-gray-500">{t('budgets.net_spent')}</p>
+                  <p className="text-[14px] font-semibold text-gray-900 tabular-nums">
+                    {displayAmount(progress.net_expense ?? progress.spent_amount)}
+                  </p>
+                </div>
+              </>
+            )}
             <div className="flex-1 text-left">
               <p className="text-[12px] text-gray-500">{t('budgets.budget_label')}</p>
               <p className="text-[14px] font-semibold text-gray-900 tabular-nums">
@@ -144,9 +164,17 @@ export function BudgetCategoryItem({ category, progress, onClick, onViewTransact
                 Xem giao dịch
               </button>
             )}
-            <span className="text-[13px] text-gray-500 h-11 flex items-center">
-              {t('budgets.edit')}
-            </span>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onClick();
+              }}
+              className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-gray-500 active:bg-gray-100"
+              aria-label={`${t('common.edit')} ${category.category_name}`}
+            >
+              <Pencil size={16} />
+            </button>
           </div>
         )}
       </div>

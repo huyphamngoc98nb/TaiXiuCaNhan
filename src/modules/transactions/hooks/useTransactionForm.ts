@@ -27,7 +27,9 @@ export function getDefaultCreateTransactionValues(): CreateTransactionFormValues
     wallet_id: '',
     note: '',
     transaction_date: Date.now(),
-    receipt_path: undefined
+    receipt_path: undefined,
+    is_budget_offset: false,
+    offset_budget_id: null
   };
 }
 
@@ -46,7 +48,10 @@ export function getEditTransactionInitialValues(existing: Transaction): CreateTr
     to_wallet_id: existing.to_wallet_id || undefined,
     note: existing.note || '',
     transaction_date: existing.transaction_date,
-    receipt_path: existing.receipt_path || undefined
+    receipt_path: existing.receipt_path || undefined,
+    exclude_from_total: existing.exclude_from_total,
+    is_budget_offset: existing.is_budget_offset ?? false,
+    offset_budget_id: existing.offset_budget_id ?? null,
   };
 }
 
@@ -61,7 +66,7 @@ export function useTransactionForm(existing?: Transaction) {
   
   const [receiptBase64, setReceiptBase64] = useState<string | undefined>();
   const [submitting, setSubmitting] = useState(false);
-  const [options, setOptions] = useState<{ wallets: any[], categories: any[] }>({ wallets: [], categories: [] });
+  const [options, setOptions] = useState<{ wallets: any[], categories: any[], budgets: any[] }>({ wallets: [], categories: [], budgets: [] });
   const toast = useToast();
   const { t } = useLanguage();
 
@@ -78,11 +83,27 @@ export function useTransactionForm(existing?: Transaction) {
            ORDER BY sort_order ASC, name ASC`
         );
         const { values: categories } = await db.query('SELECT id, name, type, slug FROM categories');
+        const { values: budgets } = await db.query(`
+          SELECT
+            b.id,
+            b.category_id,
+            b.period,
+            b.amount,
+            b.wallet_id,
+            b.account_type_scope,
+            c.name AS category_name
+          FROM budgets b
+          JOIN categories c ON c.id = b.category_id
+          WHERE b.is_active = 1
+            AND c.type = 'expense'
+          ORDER BY c.name ASC, b.period ASC
+        `);
         
         const loadedWallets = wallets || [];
         const loadedCategories = categories || [];
+        const loadedBudgets = budgets || [];
         
-        setOptions({ wallets: loadedWallets, categories: loadedCategories });
+        setOptions({ wallets: loadedWallets, categories: loadedCategories, budgets: loadedBudgets });
 
       } catch (err) {
         console.error('Failed to load form options', err);
@@ -98,6 +119,10 @@ export function useTransactionForm(existing?: Transaction) {
         ...formData,
         category_id: formData.type === 'transfer' ? TRANSFER_CATEGORY_ID : formData.category_id,
         to_wallet_id: formData.type === 'transfer' ? formData.to_wallet_id : undefined,
+        is_budget_offset: formData.type === 'income' ? formData.is_budget_offset ?? false : false,
+        offset_budget_id: formData.type === 'income' && formData.is_budget_offset
+          ? formData.offset_budget_id ?? null
+          : null,
       };
 
       if (existing) {

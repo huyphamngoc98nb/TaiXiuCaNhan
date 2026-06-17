@@ -54,6 +54,7 @@ describe('Budget Calculation Rules', () => {
     deactivateBudget: vi.fn(),
     getSpentAmount: vi.fn(),
     getSpentAmountByAccountType: vi.fn(),
+    getOffsetAmount: vi.fn(),
     getAllCategoryBudgets: vi.fn(),
     upsertCategoryBudget: vi.fn(),
     deleteCategoryBudget: vi.fn(),
@@ -87,6 +88,7 @@ describe('Budget Calculation Rules', () => {
 
   it('should handle zero spent correctly (no transactions in period)', async () => {
     vi.mocked(mockRepo.getSpentAmount).mockResolvedValueOnce(0);
+    vi.mocked(mockRepo.getOffsetAmount).mockResolvedValueOnce(0);
     const budget = makeBudget({ amount: 100, period: 'weekly' });
 
     const result = await calculateProgress.execute(budget, 1000, 2000);
@@ -100,6 +102,7 @@ describe('Budget Calculation Rules', () => {
 
   it('should calculate warning status correctly', async () => {
     vi.mocked(mockRepo.getSpentAmount).mockResolvedValueOnce(85);
+    vi.mocked(mockRepo.getOffsetAmount).mockResolvedValueOnce(0);
     const budget = makeBudget({ amount: 100, period: 'monthly' });
 
     const result = await calculateProgress.execute(budget, 1000, 2000);
@@ -113,6 +116,7 @@ describe('Budget Calculation Rules', () => {
 
   it('should calculate exceeded status correctly', async () => {
     vi.mocked(mockRepo.getSpentAmount).mockResolvedValueOnce(120);
+    vi.mocked(mockRepo.getOffsetAmount).mockResolvedValueOnce(0);
     const budget = makeBudget({ amount: 100, period: 'weekly' });
 
     const result = await calculateProgress.execute(budget, 1000, 2000);
@@ -122,6 +126,21 @@ describe('Budget Calculation Rules', () => {
     expect(result?.remaining_amount).toBe(-20); // 100 - 120 = -20 (không có Math.max ở service)
     expect(result?.percentage).toBe(1.2);
     expect(result?.status).toBe('exceeded');
+  });
+
+  it('calculates net expense from gross expense and budget offsets', async () => {
+    vi.mocked(mockRepo.getSpentAmount).mockResolvedValueOnce(1_200_000);
+    vi.mocked(mockRepo.getOffsetAmount).mockResolvedValueOnce(400_000);
+    const budget = makeBudget({ id: 'budget-food', amount: 5_000_000, period: 'monthly' });
+
+    const result = await calculateProgress.execute(budget, 1000, 2000);
+
+    expect(result).not.toBeNull();
+    expect(result?.total_expense).toBe(1_200_000);
+    expect(result?.total_offset).toBe(400_000);
+    expect(result?.net_expense).toBe(800_000);
+    expect(result?.spent_amount).toBe(800_000);
+    expect(result?.remaining_amount).toBe(4_200_000);
   });
 });
 
@@ -134,6 +153,7 @@ describe('Upsert Category Budget Validation', () => {
     deactivateBudget: vi.fn(),
     getSpentAmount: vi.fn(),
     getSpentAmountByAccountType: vi.fn(),
+    getOffsetAmount: vi.fn(),
     getAllCategoryBudgets: vi.fn(),
     upsertCategoryBudget: vi.fn(),
     deleteCategoryBudget: vi.fn(),

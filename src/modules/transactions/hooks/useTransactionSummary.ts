@@ -13,6 +13,7 @@ export function summarizeTransactions(transactions: Transaction[]): TransactionS
   const totals = transactions.reduce(
     (summary, transaction) => {
       if (transaction.exclude_from_total) return summary;
+      if (transaction.is_budget_offset) return summary;
       if (transaction.type === 'income') summary.totalIncome += transaction.amount;
       else if (transaction.type === 'expense') summary.totalExpense += transaction.amount;
       return summary;

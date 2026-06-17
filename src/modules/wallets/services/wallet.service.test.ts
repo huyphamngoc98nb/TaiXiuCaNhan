@@ -126,6 +126,49 @@ describe('WalletService.updateWallet balance adjustment', () => {
       netAmount: -1_000,
     });
   });
+
+  it('does not count budget offset income as real income in summaries', () => {
+    expect(summarizeTransactions([
+      {
+        id: 'tx-income',
+        wallet_id: 'wallet-1',
+        category_id: 'cat-income',
+        type: 'income',
+        amount: 500_000,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        exclude_from_total: false,
+        is_budget_offset: false,
+        offset_budget_id: null,
+        transaction_date: Date.now(),
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      },
+      {
+        id: 'tx-offset',
+        wallet_id: 'wallet-1',
+        category_id: 'cat-income',
+        type: 'income',
+        amount: 200_000,
+        note: null,
+        receipt_path: null,
+        to_wallet_id: null,
+        exclude_from_total: false,
+        is_budget_offset: true,
+        offset_budget_id: 'budget-food',
+        transaction_date: Date.now(),
+        created_at: 0,
+        updated_at: 0,
+        deleted_at: null,
+      },
+    ])).toEqual({
+      totalIncome: 500_000,
+      totalExpense: 0,
+      netAmount: 500_000,
+    });
+  });
 });
 
 describe('WalletService.deleteWallet reference guard', () => {

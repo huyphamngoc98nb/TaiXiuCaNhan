@@ -43,6 +43,12 @@ export interface IBudgetRepository {
     accountType: AccountType
   ): Promise<number>;
 
+  getOffsetAmount(
+    budgetId: string,
+    startDate: number,
+    endDate: number
+  ): Promise<number>;
+
   getAllCategoryBudgets(): Promise<any[]>;
   upsertCategoryBudget(categoryId: string, amount: number | null, period: 'weekly' | 'monthly' | null): Promise<void>;
   deleteCategoryBudget(categoryId: string): Promise<void>;

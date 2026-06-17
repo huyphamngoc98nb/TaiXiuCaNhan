@@ -205,6 +205,26 @@ export class SQLiteBudgetRepository implements IBudgetRepository {
     return (values?.[0]?.total as number) ?? 0;
   }
 
+  async getOffsetAmount(
+    budgetId: string,
+    startDate: number,
+    endDate: number
+  ): Promise<number> {
+    const db = await getDbConnection();
+    const sql = `
+      SELECT COALESCE(SUM(amount), 0) AS total
+      FROM transactions
+      WHERE type              = 'income'
+        AND is_budget_offset  = 1
+        AND offset_budget_id  = ?
+        AND transaction_date >= ?
+        AND transaction_date <= ?
+        AND deleted_at        IS NULL
+    `;
+    const { values } = await db.query(sql, [budgetId, startDate, endDate]);
+    return (values?.[0]?.total as number) ?? 0;
+  }
+
   /**
    * Returns one budget row per category for the global scope only
    * (wallet_id IS NULL AND account_type_scope IS NULL).

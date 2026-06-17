@@ -96,7 +96,7 @@ describe('Transaction Module QA Tests', () => {
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO transactions'),
-        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 0, 2000, 2000],
+        ['tx-1', 'w-1', 'c-1', 'expense', 100, null, null, null, 1000, 0, 0, null, 2000, 2000],
         true
       );
       expect(transaction).toEqual({
@@ -105,6 +105,8 @@ describe('Transaction Module QA Tests', () => {
         receipt_path: null,
         to_wallet_id: null,
         exclude_from_total: false,
+        is_budget_offset: false,
+        offset_budget_id: null,
         deleted_at: null,
       });
       expect(mockDb.query).not.toHaveBeenCalled();

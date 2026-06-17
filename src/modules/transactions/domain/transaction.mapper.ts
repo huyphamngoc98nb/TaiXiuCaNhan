@@ -11,6 +11,8 @@ export function mapToTransaction(row: any): Transaction {
     receipt_path: row.receipt_path ?? null,
     to_wallet_id: row.to_wallet_id ?? null,
     exclude_from_total: Boolean(row.exclude_from_total),
+    is_budget_offset: Boolean(row.is_budget_offset),
+    offset_budget_id: row.offset_budget_id ?? null,
     transaction_date: row.transaction_date,
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -21,5 +23,6 @@ export function mapToTransaction(row: any): Transaction {
     wallet_name: row.wallet_name,
     wallet_currency: row.wallet_currency,
     to_wallet_name: row.to_wallet_name,
+    offset_budget_name: row.offset_budget_name,
   };
 }

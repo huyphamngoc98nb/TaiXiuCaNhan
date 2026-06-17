@@ -45,6 +45,18 @@ export function validateCreateTransaction(input: CreateTransactionInput) {
   if (input.exclude_from_total !== undefined && typeof input.exclude_from_total !== 'boolean') {
     errors.push('exclude_from_total must be a boolean');
   }
+  if (input.is_budget_offset !== undefined && typeof input.is_budget_offset !== 'boolean') {
+    errors.push('is_budget_offset must be a boolean');
+  }
+  if (input.offset_budget_id !== undefined && input.offset_budget_id !== null && typeof input.offset_budget_id !== 'string') {
+    errors.push('offset_budget_id must be a string');
+  }
+  if (input.type === 'income' && input.is_budget_offset && !input.offset_budget_id) {
+    errors.push('offset_budget_id is required for budget offset income transactions');
+  }
+  if (input.type !== 'income' && input.is_budget_offset) {
+    errors.push('is_budget_offset is only allowed for income transactions');
+  }
 
   if (errors.length > 0) throw new TransactionValidationError(errors);
 }
@@ -83,6 +95,18 @@ export function validateUpdateTransaction(input: UpdateTransactionInput) {
   }
   if (input.exclude_from_total !== undefined && typeof input.exclude_from_total !== 'boolean') {
     errors.push('exclude_from_total must be a boolean');
+  }
+  if (input.is_budget_offset !== undefined && typeof input.is_budget_offset !== 'boolean') {
+    errors.push('is_budget_offset must be a boolean');
+  }
+  if (input.offset_budget_id !== undefined && input.offset_budget_id !== null && typeof input.offset_budget_id !== 'string') {
+    errors.push('offset_budget_id must be a string');
+  }
+  if (input.type === 'income' && input.is_budget_offset && !input.offset_budget_id) {
+    errors.push('offset_budget_id is required for budget offset income transactions');
+  }
+  if (input.type !== undefined && input.type !== 'income' && input.is_budget_offset) {
+    errors.push('is_budget_offset is only allowed for income transactions');
   }
 
   if (errors.length > 0) throw new TransactionValidationError(errors);

@@ -49,7 +49,9 @@ describe('transaction create form values', () => {
       query: vi.fn(async (sql: string) => ({
         values: sql.includes('FROM wallets')
           ? [{ id: 'wallet-default', name: 'Cash', account_type: 'cash', balance: 100000 }]
-          : [{ id: 'cat-food', name: 'Food', type: 'expense' }],
+          : sql.includes('FROM budgets')
+            ? []
+            : [{ id: 'cat-food', name: 'Food', type: 'expense' }],
       })),
     });
   });
@@ -69,6 +71,8 @@ describe('transaction create form values', () => {
       note: '',
       transaction_date: Date.now(),
       receipt_path: undefined,
+      is_budget_offset: false,
+      offset_budget_id: null,
     });
   });
 
@@ -104,6 +108,8 @@ describe('transaction create form values', () => {
       note: '',
       transaction_date: Date.now(),
       receipt_path: undefined,
+      is_budget_offset: false,
+      offset_budget_id: null,
     });
     expect(localStorage.getItem('transaction_last_successful_create')).toBeNull();
   });
@@ -127,6 +133,8 @@ describe('transaction create form values', () => {
       note: '',
       transaction_date: Date.now(),
       receipt_path: undefined,
+      is_budget_offset: false,
+      offset_budget_id: null,
     });
     expect(localStorage.getItem('transaction_draft')).toBeNull();
   });
@@ -176,6 +184,8 @@ describe('transaction create form values', () => {
       note: '',
       transaction_date: Date.now(),
       receipt_path: undefined,
+      is_budget_offset: false,
+      offset_budget_id: null,
     });
   });
 
@@ -203,6 +213,9 @@ describe('transaction create form values', () => {
       note: 'Salary',
       transaction_date: 1717200000000,
       receipt_path: 'receipts/salary.jpg',
+      exclude_from_total: false,
+      is_budget_offset: false,
+      offset_budget_id: null,
     });
   });
 });

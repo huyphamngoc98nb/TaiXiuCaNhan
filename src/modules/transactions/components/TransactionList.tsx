@@ -135,14 +135,14 @@ export function TransactionList({
     }
 
     currentGroup.items.push(tx);
-    if (tx.exclude_from_total) return;
+    if (tx.exclude_from_total || tx.is_budget_offset) return;
     if (tx.type === 'income') currentGroup.income += tx.amount;
     else if (tx.type === 'expense') currentGroup.expense += tx.amount;
   });
 
   function addTransactionAmount(row: SummaryRow, tx: Transaction) {
     row.count += 1;
-    if (tx.exclude_from_total) return;
+    if (tx.exclude_from_total || tx.is_budget_offset) return;
     if (tx.type === 'income') row.income += tx.amount;
     else if (tx.type === 'expense') row.expense += tx.amount;
   }

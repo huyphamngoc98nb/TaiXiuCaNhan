@@ -7,13 +7,15 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async create(data: CreateTransactionInput & { id: string, created_at: number, updated_at: number }): Promise<Transaction> {
     const db = await getDbConnectionForTransaction();
     const sql = `
-      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, exclude_from_total, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO transactions (id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id, transaction_date, exclude_from_total, is_budget_offset, offset_budget_id, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       data.id, data.wallet_id, data.category_id, data.type, data.amount,
       data.note || null, data.receipt_path || null, data.to_wallet_id || null,
-      data.transaction_date, data.exclude_from_total ? 1 : 0, data.created_at, data.updated_at
+      data.transaction_date, data.exclude_from_total ? 1 : 0,
+      data.is_budget_offset ? 1 : 0, data.offset_budget_id || null,
+      data.created_at, data.updated_at
     ];
     await db.run(sql, values, !isManagedTransactionActive());
     return {
@@ -26,6 +28,8 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       receipt_path: data.receipt_path || null,
       to_wallet_id: data.to_wallet_id || null,
       exclude_from_total: data.exclude_from_total ?? false,
+      is_budget_offset: data.is_budget_offset ?? false,
+      offset_budget_id: data.offset_budget_id ?? null,
       transaction_date: data.transaction_date,
       created_at: data.created_at,
       updated_at: data.updated_at,
@@ -52,6 +56,11 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       sets.push('exclude_from_total = ?');
       values.push(data.exclude_from_total ? 1 : 0);
     }
+    if (data.is_budget_offset !== undefined) {
+      sets.push('is_budget_offset = ?');
+      values.push(data.is_budget_offset ? 1 : 0);
+    }
+    if (data.offset_budget_id !== undefined) { sets.push('offset_budget_id = ?'); values.push(data.offset_budget_id); }
 
     sets.push('updated_at = ?'); values.push(data.updated_at);
     values.push(id);
@@ -76,10 +85,14 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async getById(id: string): Promise<Transaction | null> {
     const db = await getDbConnectionForTransaction();
     const sql = `
-      SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
-             transaction_date, exclude_from_total, created_at, updated_at, deleted_at
-      FROM transactions
-      WHERE id = ? AND deleted_at IS NULL
+      SELECT t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note, t.receipt_path, t.to_wallet_id,
+             t.transaction_date, t.exclude_from_total, t.is_budget_offset, t.offset_budget_id,
+             t.created_at, t.updated_at, t.deleted_at,
+             bc.name AS offset_budget_name
+      FROM transactions t
+      LEFT JOIN budgets ob ON ob.id = t.offset_budget_id
+      LEFT JOIN categories bc ON bc.id = ob.category_id
+      WHERE t.id = ? AND t.deleted_at IS NULL
     `;
     const { values } = await db.query(sql, [id]);
     if (!values || values.length === 0) return null;
@@ -93,10 +106,14 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
   async getByIdIncludeDeleted(id: string): Promise<Transaction | null> {
     const db = await getDbConnectionForTransaction();
     const sql = `
-      SELECT id, wallet_id, category_id, type, amount, note, receipt_path, to_wallet_id,
-             transaction_date, exclude_from_total, created_at, updated_at, deleted_at
-      FROM transactions
-      WHERE id = ?
+      SELECT t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note, t.receipt_path, t.to_wallet_id,
+             t.transaction_date, t.exclude_from_total, t.is_budget_offset, t.offset_budget_id,
+             t.created_at, t.updated_at, t.deleted_at,
+             bc.name AS offset_budget_name
+      FROM transactions t
+      LEFT JOIN budgets ob ON ob.id = t.offset_budget_id
+      LEFT JOIN categories bc ON bc.id = ob.category_id
+      WHERE t.id = ?
     `;
     const { values } = await db.query(sql, [id]);
     if (!values || values.length === 0) return null;
@@ -119,17 +136,21 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       SELECT
         t.id, t.wallet_id, t.category_id, t.type, t.amount, t.note,
         t.receipt_path, t.to_wallet_id, t.transaction_date, t.exclude_from_total,
+        t.is_budget_offset, t.offset_budget_id,
         t.created_at, t.updated_at, t.deleted_at,
         c.name AS category_name,
         c.icon AS category_icon,
         c.color AS category_color,
         w.name AS wallet_name,
         w.currency AS wallet_currency,
-        tw.name AS to_wallet_name
+        tw.name AS to_wallet_name,
+        bc.name AS offset_budget_name
       FROM transactions t
       LEFT JOIN categories c ON t.category_id = c.id
       LEFT JOIN wallets w ON t.wallet_id = w.id
       LEFT JOIN wallets tw ON t.to_wallet_id = tw.id
+      LEFT JOIN budgets ob ON ob.id = t.offset_budget_id
+      LEFT JOIN categories bc ON bc.id = ob.category_id
       WHERE 1=1
     `;
     const values: unknown[] = [];
@@ -190,7 +211,7 @@ export class SQLiteTransactionRepository implements ITransactionRepository {
       SELECT
         w.account_type,
         COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS total_expense,
-        COALESCE(SUM(CASE WHEN t.type = 'income'  THEN t.amount ELSE 0 END), 0) AS total_income
+        COALESCE(SUM(CASE WHEN t.type = 'income' AND t.is_budget_offset = 0 THEN t.amount ELSE 0 END), 0) AS total_income
       FROM transactions t
       JOIN wallets w ON t.wallet_id = w.id
       WHERE t.deleted_at IS NULL

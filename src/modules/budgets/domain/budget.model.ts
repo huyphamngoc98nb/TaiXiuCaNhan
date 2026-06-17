@@ -64,6 +64,9 @@ export interface CategoryBudget {
 export interface BudgetProgress {
   budget: BudgetWithCategory;
   spent_amount: number;
+  total_expense?: number;
+  total_offset?: number;
+  net_expense?: number;
   remaining_amount: number;
   percentage: number;
   status: BudgetStatus;

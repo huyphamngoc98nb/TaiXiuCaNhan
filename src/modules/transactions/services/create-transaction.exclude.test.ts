@@ -88,6 +88,40 @@ describe('CreateTransactionUseCase - exclude_from_total', () => {
     expect(updatedWallet?.balance).toBe(120_000);
   });
 
+  it('persists a budget offset income and still adds to wallet balance', async () => {
+    await useCase.execute({
+      wallet_id: 'wallet-1',
+      category_id: 'cat-income',
+      type: 'income',
+      amount: 40_000,
+      transaction_date: Date.now(),
+      is_budget_offset: true,
+      offset_budget_id: 'budget-food',
+    });
+
+    const saved = await txRepo.list({ wallet_id: 'wallet-1' });
+    const updatedWallet = await walletRepo.getById('wallet-1');
+    expect(saved[0].is_budget_offset).toBe(true);
+    expect(saved[0].offset_budget_id).toBe('budget-food');
+    expect(updatedWallet?.balance).toBe(140_000);
+  });
+
+  it('clears budget offset fields for non-income transactions before saving', async () => {
+    await useCase.execute({
+      wallet_id: 'wallet-1',
+      category_id: 'cat-1',
+      type: 'expense',
+      amount: 10_000,
+      transaction_date: Date.now(),
+      is_budget_offset: true,
+      offset_budget_id: 'budget-food',
+    });
+
+    const saved = await txRepo.list({ wallet_id: 'wallet-1' });
+    expect(saved[0].is_budget_offset).toBe(false);
+    expect(saved[0].offset_budget_id).toBeNull();
+  });
+
   it('defaults exclude_from_total to false when not provided', async () => {
     await useCase.execute({
       wallet_id: 'wallet-1',

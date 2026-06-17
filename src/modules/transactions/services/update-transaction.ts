@@ -25,7 +25,10 @@ export class UpdateTransactionUseCase {
   ) {}
 
   async execute(id: string, input: UpdateTransactionInput, newReceiptBase64?: string) {
-    validateUpdateTransaction(input);
+    const prevalidatedInput: UpdateTransactionInput = input.type && input.type !== 'income'
+      ? { ...input, is_budget_offset: false, offset_budget_id: null }
+      : input;
+    validateUpdateTransaction(prevalidatedInput);
 
     let newSavedReceiptPath: string | undefined;
     const now = Date.now();
@@ -47,6 +50,19 @@ export class UpdateTransactionUseCase {
           ? input.to_wallet_id ?? oldTransaction.to_wallet_id
           : null;
         const finalTransactionDate = input.transaction_date ?? oldTransaction.transaction_date;
+        const finalIsBudgetOffset = finalType === 'income'
+          ? input.is_budget_offset ?? oldTransaction.is_budget_offset ?? false
+          : false;
+        const finalOffsetBudgetId = finalIsBudgetOffset
+          ? input.offset_budget_id ?? oldTransaction.offset_budget_id
+          : null;
+
+        validateUpdateTransaction({
+          ...input,
+          type: finalType,
+          is_budget_offset: finalIsBudgetOffset,
+          offset_budget_id: finalOffsetBudgetId,
+        });
 
         const finalWallet = await this.walletRepository.getById(finalWalletId);
         if (!finalWallet) throw new Error('Wallet not found');
@@ -109,6 +125,8 @@ export class UpdateTransactionUseCase {
         const result = await this.repository.update(id, {
           ...input,
           to_wallet_id: finalToWalletId,
+          is_budget_offset: finalIsBudgetOffset,
+          offset_budget_id: finalOffsetBudgetId,
           ...(finalReceiptPath !== undefined ? { receipt_path: finalReceiptPath } : {}),
           updated_at: now,
         });
