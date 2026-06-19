@@ -1,0 +1,103 @@
+import { useState } from 'react';
+import { Calculator, Delete } from 'lucide-react';
+import { CurrencyCode } from '@/shared/context/CurrencyContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
+import { MoneyCalculatorPanel } from './MoneyCalculatorPanel';
+import { MoneyKeyboardButton } from './MoneyKeyboardButton';
+
+type MoneyKeyboardMode = 'number' | 'calculator';
+
+export interface MoneyKeyboardProps {
+  value: string;
+  currency: CurrencyCode;
+  onChange: (value: string) => void;
+  onDone: () => void;
+  className?: string;
+}
+
+const numberKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '000', '0', 'backspace'];
+
+function appendNumberKey(value: string, key: string): string {
+  return `${value}${key}`;
+}
+
+function backspaceNumberValue(value: string): string {
+  return value.slice(0, -1);
+}
+
+export function MoneyKeyboard({
+  value,
+  currency,
+  onChange,
+  onDone,
+  className = '',
+}: MoneyKeyboardProps) {
+  const { t } = useLanguage();
+  const [mode, setMode] = useState<MoneyKeyboardMode>('number');
+  const [statusText, setStatusText] = useState('');
+
+  const applyCalculatorValue = (nextValue: string) => {
+    onChange(nextValue);
+    setStatusText(t('money_keyboard.calculation_applied'));
+    setMode('number');
+  };
+
+  return (
+    <div
+      className={`w-full rounded-t-[24px] border-t border-border bg-surface px-4 pb-4 pt-3 shadow-2xl ${className}`}
+      aria-label={t('money_keyboard.title')}
+    >
+      <p className="sr-only">{t('money_keyboard.hint')}</p>
+      <p className="sr-only" role="status" aria-live="polite">{statusText}</p>
+      <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-border" />
+
+      {mode === 'calculator' ? (
+        <MoneyCalculatorPanel
+          value={value}
+          currency={currency}
+          onApply={applyCalculatorValue}
+          onBack={() => setMode('number')}
+        />
+      ) : (
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-2.5">
+            {numberKeys.map(key => (
+              <MoneyKeyboardButton
+                key={key}
+                aria-label={key === 'backspace' ? t('money_keyboard.backspace') : undefined}
+                onClick={() => {
+                  if (key === 'backspace') {
+                    onChange(backspaceNumberValue(value));
+                    return;
+                  }
+
+                  onChange(appendNumberKey(value, key));
+                }}
+              >
+                {key === 'backspace' ? <Delete size={22} strokeWidth={2.4} /> : key}
+              </MoneyKeyboardButton>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            <MoneyKeyboardButton
+              className="h-12 text-[15px]"
+              aria-label={t('money_keyboard.calculator')}
+              title={t('money_keyboard.calculator')}
+              onClick={() => setMode('calculator')}
+            >
+              <Calculator size={22} strokeWidth={2.4} />
+            </MoneyKeyboardButton>
+            <MoneyKeyboardButton
+              className="h-12 text-[15px]"
+              variant="primary"
+              onClick={onDone}
+            >
+              {t('money_keyboard.done')}
+            </MoneyKeyboardButton>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

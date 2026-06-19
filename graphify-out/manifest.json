@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\version.config.json": {
-    "mtime": 1781681198.8399825,
-    "ast_hash": "d55972b1672da2b2458ae459e0b99c86",
+    "mtime": 1781682275.3080516,
+    "ast_hash": "67f00e30c58e50e545b93131c4b09f88",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\vite.config.ts": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1781680700.9875402,
+    "mtime": 1781682252.2965672,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1781680700.9875402,
+    "mtime": 1781682252.2975645,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1781680700.8196867,
+    "mtime": 1781682251.680163,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1781680700.91175,
+    "mtime": 1781682251.7783723,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1781680700.9915562,
+    "mtime": 1781682252.2995646,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1781680700.9915562,
+    "mtime": 1781682252.3005602,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -1170,8 +1170,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\CurrencyAmountInput.tsx": {
-    "mtime": 1781658590.097804,
-    "ast_hash": "991a9922306e50b9a3a15bcec72f2d26",
+    "mtime": 1781841425.5425887,
+    "ast_hash": "ae0629078f5164eb2a75f85fd44f9788",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\DropdownList.tsx": {
@@ -1245,8 +1245,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1781682045.5778282,
-    "ast_hash": "89808eeb6eac13894705153b3baa0abc",
+    "mtime": 1781840980.4638586,
+    "ast_hash": "65d4f7f0716b417d00f38a7cf65bfd2f",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1260,8 +1260,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useKeyboardSafeFocus.ts": {
-    "mtime": 1779957712.3223195,
-    "ast_hash": "9aa99e5d5f7acd43761052d4642827fa",
+    "mtime": 1781841435.5691283,
+    "ast_hash": "77f9b64fcc7af567e962de9320a57d07",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\app-back-stack.ts": {
@@ -1917,6 +1917,56 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\public\\icon.svg": {
     "mtime": 1781680236.098969,
     "ast_hash": "bb3f9a69590872349ada299fc1181224",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\money-input-utils.ts": {
+    "mtime": 1781839713.523571,
+    "ast_hash": "d3e7ad2615dfe87b1d742f35d4148864",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\money-calculator.test.ts": {
+    "mtime": 1781857933.3982685,
+    "ast_hash": "1364b47d778005ad0691530bac6f237a",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\money-calculator.ts": {
+    "mtime": 1781840038.5150838,
+    "ast_hash": "7ffb4d1ceb5d85e4f74d29cae706e579",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyCalculatorPanel.tsx": {
+    "mtime": 1781841014.2958913,
+    "ast_hash": "8c609deea76378e40f2a9b294c100454",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyKeyboard.tsx": {
+    "mtime": 1781858413.6501405,
+    "ast_hash": "babb8eef79114e4289130079842f2128",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyKeyboardButton.tsx": {
+    "mtime": 1781840393.9305232,
+    "ast_hash": "b6d425d0ed9f2aa4bfa8271909b3eb6f",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\docs\\manual-test-money-keyboard-android.md": {
+    "mtime": 1781841481.6601322,
+    "ast_hash": "a743c19884c048021eb016fe62c08a24",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\money-input-utils.test.ts": {
+    "mtime": 1781857819.1855907,
+    "ast_hash": "4fdc12d15352137e5f3c99f2df5fe7e1",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyKeyboard.test.tsx": {
+    "mtime": 1781857868.530832,
+    "ast_hash": "107b9ddcf51639b396b29deb73ce9b5f",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\docs\\money-keyboard-qa.md": {
+    "mtime": 1781858220.8957405,
+    "ast_hash": "66fad6ac238e5f916248a7efe986bd4e",
     "semantic_hash": ""
   }
 }

@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 
 const FOCUSABLE_INPUT_SELECTOR = 'input, textarea, select, [contenteditable="true"]';
 const KEYBOARD_SCROLL_TARGET_SELECTOR = '[data-keyboard-scroll-target="true"]';
+const MONEY_KEYBOARD_INPUT_SELECTOR = '[data-money-keyboard-input="true"]';
 const KEYBOARD_SAFE_GAP = 24;
 const KEYBOARD_SCROLL_PADDING = 96;
 
@@ -21,6 +22,10 @@ function isEditableElement(target: EventTarget | null): target is HTMLElement {
   }
 
   if (target.getAttribute('aria-hidden') === 'true') {
+    return false;
+  }
+
+  if (target.matches(MONEY_KEYBOARD_INPUT_SELECTOR)) {
     return false;
   }
 

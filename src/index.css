@@ -25,6 +25,7 @@
   --warning: #d97706;
   --visual-viewport-height: 100dvh;
   --keyboard-inset-bottom: 0px;
+  --money-keyboard-height: 0px;
 }
 
 .dark {
@@ -74,7 +75,7 @@ input,
 textarea,
 select {
   scroll-margin-top: 24px;
-  scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom));
+  scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom) + var(--keyboard-inset-bottom) + var(--money-keyboard-height));
   color-scheme: inherit;
 }
 
@@ -113,6 +114,10 @@ body.keyboard-open [data-keyboard-hide-on-open="true"] {
 }
 
 body.keyboard-open .bottom-nav {
+  transform: translateY(calc(100% + env(safe-area-inset-bottom)));
+}
+
+body.money-keyboard-open .bottom-nav {
   transform: translateY(calc(100% + env(safe-area-inset-bottom)));
 }
 
