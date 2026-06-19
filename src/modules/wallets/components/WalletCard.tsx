@@ -140,7 +140,7 @@ export function WalletCard({ wallet, onClick }: Props) {
             )}
             {availableCredit != null && (
               <div>
-                <p className="text-[11px] text-gray-400">Hạn mức còn lại</p>
+                <p className="text-[11px] text-gray-400">{t('wallets.credit_available')}</p>
                 <p
                   className="text-[13px] font-semibold tabular-nums"
                   style={{ color: availableCredit < 0 ? '#ef4444' : '#10b981' }}
@@ -151,7 +151,7 @@ export function WalletCard({ wallet, onClick }: Props) {
             )}
             {statementPeriod && (
               <div className="col-span-2">
-                <p className="text-[11px] text-gray-400">Ngày sao kê / đến hạn</p>
+                <p className="text-[11px] text-gray-400">{t('wallets.statement_due_days')}</p>
                 <p className="text-[13px] font-semibold text-gray-700">
                   {formatDayMonth(statementPeriod.closingAt, locale)} / {formatDayMonth(statementPeriod.dueAt, locale)}
                 </p>
@@ -185,7 +185,7 @@ export function WalletCard({ wallet, onClick }: Props) {
           {wallet.credit_limit != null && wallet.credit_limit > 0 && (
             <div>
               <div className="mb-1 flex items-center justify-between">
-                <p className="text-[11px] text-gray-400">Đã dùng hạn mức</p>
+                <p className="text-[11px] text-gray-400">{t('wallets.credit_used')}</p>
                 <p className="text-[11px] font-semibold text-gray-600 tabular-nums">
                   {Math.round(usagePercent)}%
                 </p>
@@ -199,7 +199,7 @@ export function WalletCard({ wallet, onClick }: Props) {
             </div>
           )}
           {summaryLoading && (
-            <p className="text-[11px] text-gray-400">Đang cập nhật...</p>
+            <p className="text-[11px] text-gray-400">{t('wallets.updating')}</p>
           )}
         </div>
       )}

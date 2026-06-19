@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\package.json": {
-    "mtime": 1781600196.4895315,
-    "ast_hash": "932068f674f10360a17694fe67dc629d",
+    "mtime": 1781860221.8855312,
+    "ast_hash": "fe9fdde6e13339829bed112fa7fe1b9f",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\postcss.config.js": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\version.config.json": {
-    "mtime": 1781682275.3080516,
-    "ast_hash": "67f00e30c58e50e545b93131c4b09f88",
+    "mtime": 1781858635.7796564,
+    "ast_hash": "e5bbdb9a7d0f102702a6c2b0de019397",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\vite.config.ts": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1781682252.2965672,
+    "mtime": 1781858544.9368203,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1781682252.2975645,
+    "mtime": 1781858544.9368203,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1781682251.680163,
+    "mtime": 1781858544.257441,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1781682251.7783723,
+    "mtime": 1781858544.3662715,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1781682252.2995646,
+    "mtime": 1781858544.938783,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1781682252.3005602,
+    "mtime": 1781858544.939784,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -160,8 +160,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\layouts\\AppLayout.tsx": {
-    "mtime": 1778125855.4113505,
-    "ast_hash": "52c948925ac9fe330f52db9e58ee2c28",
+    "mtime": 1781860405.9039285,
+    "ast_hash": "a6287e44c2f3865ac87220a8cc4d4852",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\layouts\\MainLayout.tsx": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppBootstrap.tsx": {
-    "mtime": 1781600310.0596502,
-    "ast_hash": "66b1aa7d78f6551ef93166fc8cfa687c",
+    "mtime": 1781860426.4303648,
+    "ast_hash": "ae3f0e95aac0caebed46d4e2f37e1ac6",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppProvider.tsx": {
@@ -190,8 +190,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\GlobalErrorBoundary.tsx": {
-    "mtime": 1781600406.3867846,
-    "ast_hash": "bed8174ca7e8e72d8d5d49533cee527d",
+    "mtime": 1781860434.4420624,
+    "ast_hash": "692b14cdb731680dd482255c30b23e13",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\router\\index.tsx": {
@@ -435,8 +435,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\pages\\BackupPage.tsx": {
-    "mtime": 1781669008.3391135,
-    "ast_hash": "bc47fb8993a372f5676c2523326bd883",
+    "mtime": 1781860444.1882403,
+    "ast_hash": "0235904f62b68bc5e7d03615c606b92d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\auto-backup.service.ts": {
@@ -945,8 +945,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\pages\\SettingsPage.tsx": {
-    "mtime": 1781669002.9643393,
-    "ast_hash": "f04b0060d285631ab542894bc0a8f976",
+    "mtime": 1781860154.6837187,
+    "ast_hash": "52eafaeb549f4eb53ac27490942f347a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\AdvancedTransactionFilterSheet.tsx": {
@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\components\\WalletCard.tsx": {
-    "mtime": 1781516502.3680806,
-    "ast_hash": "881c70a2c084868a45394dcf1329aab7",
+    "mtime": 1781860466.0771136,
+    "ast_hash": "e5e5ad79f35e96b8f3c873aeffa18184",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\components\\WalletForm.tsx": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\LoadingScreen.tsx": {
-    "mtime": 1778061905.0445986,
-    "ast_hash": "ac08773a8a4cb0491c7fdd784dada4bf",
+    "mtime": 1781860472.9961176,
+    "ast_hash": "3c2bfe03e84e1934e67ee5cc945d04e6",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\ConfirmDialog\\ConfirmContext.tsx": {
@@ -1245,8 +1245,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1781840980.4638586,
-    "ast_hash": "65d4f7f0716b417d00f38a7cf65bfd2f",
+    "mtime": 1781860391.7485478,
+    "ast_hash": "981605e7a59da2bccd39239a8d6ba4aa",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1620,8 +1620,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\components\\CreditCardAlertsPanel.tsx": {
-    "mtime": 1780454247.8362784,
-    "ast_hash": "9ae37ebb59e83036d74094de800839c8",
+    "mtime": 1781860452.852656,
+    "ast_hash": "e55bb0abea3d99fc877de23d64b5ddf6",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useBodyScrollLock.ts": {
@@ -1967,6 +1967,16 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\money-keyboard-qa.md": {
     "mtime": 1781858220.8957405,
     "ast_hash": "66fad6ac238e5f916248a7efe986bd4e",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\eslint-rules\\no-hardcoded-labels.js": {
+    "mtime": 1781860262.2938359,
+    "ast_hash": "ce929192f2e8209f13a8bfa99b1d71f4",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\eslint-rules\\package.json": {
+    "mtime": 1781860274.8111973,
+    "ast_hash": "df9ffc6aa3f78a5491736d441c4258a8",
     "semantic_hash": ""
   }
 }

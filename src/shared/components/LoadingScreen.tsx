@@ -1,5 +1,9 @@
 
+import { useLanguage } from '@/shared/context/LanguageContext';
+
 export function LoadingScreen() {
+  const { t } = useLanguage();
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
       <div className="spinner" style={{
@@ -16,7 +20,7 @@ export function LoadingScreen() {
           100% { transform: rotate(360deg); }
         }
       `}</style>
-      <p style={{ marginTop: '16px', color: 'var(--text-muted)' }}>Loading...</p>
+      <p style={{ marginTop: '16px', color: 'var(--text-muted)' }}>{t('common.loading')}</p>
     </div>
   );
 }

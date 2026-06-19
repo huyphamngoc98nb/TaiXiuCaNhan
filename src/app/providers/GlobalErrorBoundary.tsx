@@ -4,6 +4,9 @@ import {
   logAppError,
   notifyAppError,
 } from '@/core/telemetry/error.service';
+import { translations } from '@/shared/constants/translations';
+
+const fallbackText = translations.vi.common;
 
 interface GlobalErrorBoundaryProps {
   children: ReactNode;
@@ -45,14 +48,14 @@ export class GlobalErrorBoundary extends Component<
       return (
         <div className="min-h-screen bg-bg px-6 py-12 text-center text-text">
           <div className="mx-auto max-w-sm rounded-[16px] border border-border bg-surface p-5">
-            <h1 className="text-[18px] font-bold">Ứng dụng gặp sự cố</h1>
+            <h1 className="text-[18px] font-bold">{fallbackText.app_error_title}</h1>
             <p className="mt-2 text-[14px] text-muted">{DEFAULT_APP_ERROR_MESSAGE}</p>
             <button
               type="button"
               className="mt-4 rounded-[12px] bg-primary px-4 py-2 text-[14px] font-semibold text-white"
               onClick={() => window.location.reload()}
             >
-              Thử lại
+              {fallbackText.retry}
             </button>
           </div>
         </div>

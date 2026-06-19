@@ -16,6 +16,7 @@ import { authService } from '@/core/auth/auth.service';
 import { runAutoBackupIfDue } from '@/modules/backup/services/auto-backup.service';
 import { useWebPersistWarning } from '@/core/db/sqlite/use-web-persist-warning';
 import { useToast } from '@/shared/components/Toast/ToastContext';
+import { useLanguage } from '@/shared/context/LanguageContext';
 import { AppUnlock } from './AppUnlock';
 import {
   APP_LOCK_FORCE_UNLOCK_EVENT,
@@ -57,6 +58,7 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
   const appLockSuspendedRef = useRef(false);
 
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const handlePersistFail = useCallback(() => {
     // Only warn on Web - native platforms use real SQLite, no saveToStore needed.
     if (Capacitor.getPlatform() !== 'web') return;
@@ -258,14 +260,14 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg px-6 text-center text-text">
         <div className="w-full max-w-sm rounded-[16px] border border-border bg-surface p-5">
-          <h1 className="text-[18px] font-bold">Ứng dụng gặp sự cố</h1>
+          <h1 className="text-[18px] font-bold">{t('common.app_error_title')}</h1>
           <p className="mt-2 text-[14px] text-muted">{DEFAULT_APP_ERROR_MESSAGE}</p>
           <button
             type="button"
             className="mt-4 rounded-[12px] bg-primary px-4 py-2 text-[14px] font-semibold text-white"
             onClick={() => window.location.reload()}
           >
-            Thử lại
+            {t('common.retry')}
           </button>
         </div>
       </div>

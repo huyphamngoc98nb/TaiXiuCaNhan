@@ -8,7 +8,7 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'eslint-rules'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh', { local: require('./eslint-rules/index.cjs') }],
+  plugins: ['react-refresh'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
     'react-hooks/exhaustive-deps': 'off',
@@ -24,7 +24,7 @@ module.exports = {
     // ❌ Wrong:    <TextInput placeholder="Nhập ghi chú" />
     // ❌ Wrong:    <Text>Save</Text>
     // ─────────────────────────────────────────────────────────────────────────
-    'local/no-hardcoded-labels': [
+    'no-hardcoded-labels': [
       'error',
       {
         // Add extra JSX prop names that carry user-visible text in this project

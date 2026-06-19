@@ -617,10 +617,12 @@ export function BackupPage() {
               <strong style={{ fontSize: '0.95rem' }}>{importPreviewSummary}</strong>
               <div style={{ display: 'grid', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                 <span>Version backup: {pendingImport.preview.metadata.version}</span>
-                <span>Thời điểm export: {importExportedAt}</span>
+                <span>{t('backup.export_time')} {importExportedAt}</span>
                 <span>
-                  Trạng thái bảo mật:{' '}
-                  {pendingImport.preview.encrypted ? 'Đã mã hóa' : 'File backup này không được mã hóa.'}
+                  {t('backup.security_status')}{' '}
+                  {pendingImport.preview.encrypted
+                    ? t('backup.encrypted_status')
+                    : t('backup.unencrypted_status')}
                 </span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>

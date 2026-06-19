@@ -1,5 +1,6 @@
 import type { CreditCardAlert } from '../domain/credit-card-alert.model';
 import { CreditCardAlertBanner } from './CreditCardAlertBanner';
+import { useLanguage } from '@/shared/context/LanguageContext';
 
 export interface CreditCardAlertsPanelProps {
   alerts: CreditCardAlert[];
@@ -16,6 +17,8 @@ export function CreditCardAlertsPanel({
   formatAmount,
   locale,
 }: CreditCardAlertsPanelProps) {
+  const { t } = useLanguage();
+
   if (loading) {
     return (
       <div className="mb-4">
@@ -29,7 +32,7 @@ export function CreditCardAlertsPanel({
   return (
     <div className="mb-4">
       <p className="mb-2 px-1 text-[12px] font-semibold uppercase tracking-wide text-gray-500">
-        ⚠️ Cảnh báo thẻ tín dụng
+        ⚠️ {t('wallets.credit_card_alert_title')}
       </p>
       {alerts.map((alert, index) => (
         <div
