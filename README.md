@@ -194,6 +194,7 @@ GET http://localhost:3001/api/health
 
 ## Tài liệu liên quan
 
+- [Hướng dẫn sử dụng](docs/user-guide.md)
 - [Code graph](docs/codegraph.md)
 - [Security notes](docs/security.md)
 - [State management strategy](docs/state-management.md)
