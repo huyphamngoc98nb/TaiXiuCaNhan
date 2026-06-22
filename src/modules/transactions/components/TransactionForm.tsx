@@ -9,6 +9,12 @@ import { DropdownList } from '@/shared/components/DropdownList';
 import { useCurrency } from '@/shared/context/CurrencyContext';
 import { FormTransition } from '@/shared/components/FormTransition';
 import { ImeTextInput } from '@/shared/components/ImeTextInput';
+import { getTransactionInputSettings } from '@/modules/settings/services/transaction-input-settings.service';
+import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
+import {
+  DuplicateTransactionCheckInput,
+  findDuplicateTransaction,
+} from '../services/duplicate-transaction.service';
 
 interface Props {
   existing?: Transaction;
@@ -60,6 +66,10 @@ function blurActiveEditableElement() {
   }
 }
 
+function isDuplicateCheckTransactionType(value: unknown): value is DuplicateTransactionCheckInput['type'] {
+  return value === 'income' || value === 'expense' || value === 'transfer';
+}
+
 export function TransactionForm({
   existing,
   onSuccess,
@@ -71,6 +81,8 @@ export function TransactionForm({
     useTransactionForm(existing);
   const { t } = useLanguage();
   const { currency } = useCurrency();
+  const { confirm } = useConfirm();
+  const [transactionInputSettings] = useState(() => getTransactionInputSettings());
   const [amountInput, setAmountInput] = useState(() => (
     formData.amount ? String(formData.amount) : ''
   ));
@@ -95,6 +107,31 @@ export function TransactionForm({
       return;
     }
 
+    if (!existing && transactionInputSettings.duplicateWarningEnabled) {
+      const duplicateCheckInput = getDuplicateCheckInput();
+
+      if (duplicateCheckInput) {
+        try {
+          const duplicate = await findDuplicateTransaction(duplicateCheckInput);
+
+          if (duplicate) {
+            const shouldContinue = await confirm({
+              title: t('transactions.duplicate_warning_title'),
+              message: t('transactions.duplicate_warning_message'),
+              cancelText: t('transactions.duplicate_warning_cancel'),
+              confirmText: t('transactions.duplicate_warning_continue'),
+            });
+
+            if (!shouldContinue) {
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Failed to check duplicate transaction', error);
+        }
+      }
+    }
+
     const ok = await save();
     if (ok) {
       if (!existing) {
@@ -103,6 +140,28 @@ export function TransactionForm({
       }
       onSuccess();
     }
+  };
+
+  const getDuplicateCheckInput = (): DuplicateTransactionCheckInput | null => {
+    const type = formData.type;
+    const amount = Number(formData.amount);
+    const walletId = formData.wallet_id;
+    const categoryId = type === 'transfer' ? TRANSFER_CATEGORY_ID : formData.category_id;
+    const transactionDate = formData.transaction_date;
+
+    if (!isDuplicateCheckTransactionType(type)) return null;
+    if (!Number.isFinite(amount) || amount <= 0) return null;
+    if (!walletId) return null;
+    if (!categoryId) return null;
+    if (typeof transactionDate !== 'number' || !Number.isFinite(transactionDate)) return null;
+
+    return {
+      type,
+      amount,
+      walletId,
+      categoryId,
+      transactionDate,
+    };
   };
 
   const handleNoteFocus = (e: FocusEvent<HTMLInputElement>) => {
@@ -183,6 +242,8 @@ export function TransactionForm({
           }}
           required
           className={amountAccentClass}
+          enableMoneyKeyboard={transactionInputSettings.enableMoneyKeyboard}
+          autoFocus={transactionInputSettings.autoFocusAmount && !existing}
         />
       </div>
 

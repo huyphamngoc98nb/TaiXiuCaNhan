@@ -5,6 +5,12 @@ import { createTransactionUseCase, updateTransactionUseCase } from '@/core/di/tr
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { localizeTransactionError } from '../services/transaction-error-messages';
+import {
+  TransactionInputSettings,
+  getLastUsedTransactionDate,
+  getTransactionInputSettings,
+  saveLastUsedTransactionDate,
+} from '@/modules/settings/services/transaction-input-settings.service';
 
 export const TRANSFER_CATEGORY_ID = 'cat-transfer';
 const TRANSACTION_DRAFT_KEY = 'transaction_draft';
@@ -19,14 +25,25 @@ function clearStoredCreateTransactionState() {
   localStorage.removeItem(LEGACY_LAST_SUCCESSFUL_CREATE_KEY);
 }
 
+function getDefaultTransactionDate(settings: TransactionInputSettings): number {
+  if (settings.defaultDateMode === 'last_used') {
+    return getLastUsedTransactionDate() || Date.now();
+  }
+
+  return Date.now();
+}
+
 export function getDefaultCreateTransactionValues(): CreateTransactionFormValues {
+  const settings = getTransactionInputSettings();
+  const defaultTransactionType = settings.defaultTransactionType;
+
   return {
-    type: 'expense',
+    type: defaultTransactionType,
     amount: 0,
-    category_id: '',
+    category_id: defaultTransactionType === 'transfer' ? TRANSFER_CATEGORY_ID : '',
     wallet_id: '',
     note: '',
-    transaction_date: Date.now(),
+    transaction_date: getDefaultTransactionDate(settings),
     receipt_path: undefined,
     is_budget_offset: false,
     offset_budget_id: null
@@ -104,6 +121,30 @@ export function useTransactionForm(existing?: Transaction) {
         const loadedBudgets = budgets || [];
         
         setOptions({ wallets: loadedWallets, categories: loadedCategories, budgets: loadedBudgets });
+        if (!existing) {
+          const settings = getTransactionInputSettings();
+          const requestedDefaultWalletId = settings.defaultWalletId ?? '';
+          const validDefaultWalletId = requestedDefaultWalletId && loadedWallets.some(
+            (wallet: { id: string }) => wallet.id === requestedDefaultWalletId
+          )
+            ? requestedDefaultWalletId
+            : '';
+
+          setFormData((current) => {
+            if (
+              current.wallet_id &&
+              current.wallet_id !== requestedDefaultWalletId
+            ) {
+              return current;
+            }
+
+            if (current.wallet_id === validDefaultWalletId) {
+              return current;
+            }
+
+            return { ...current, wallet_id: validDefaultWalletId };
+          });
+        }
 
       } catch (err) {
         console.error('Failed to load form options', err);
@@ -130,6 +171,9 @@ export function useTransactionForm(existing?: Transaction) {
         toast.success(t('transactions.update_success'));
       } else {
         await createTransactionUseCase.execute(payload as CreateTransactionInput, receiptBase64);
+        if (typeof formData.transaction_date === 'number' && Number.isFinite(formData.transaction_date)) {
+          saveLastUsedTransactionDate(formData.transaction_date);
+        }
         clearStoredCreateTransactionState();
         setFormData(getDefaultCreateTransactionValues());
         setReceiptBase64(undefined);

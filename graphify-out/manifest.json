@@ -945,8 +945,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\pages\\SettingsPage.tsx": {
-    "mtime": 1781860154.6837187,
-    "ast_hash": "52eafaeb549f4eb53ac27490942f347a",
+    "mtime": 1782114032.4314158,
+    "ast_hash": "5dcaf27b7164a1f0a5e7c56f208f9721",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\AdvancedTransactionFilterSheet.tsx": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionForm.tsx": {
-    "mtime": 1781664401.3979578,
-    "ast_hash": "81abbd3ef32602d3e56086612589bdb8",
+    "mtime": 1782116805.5092063,
+    "ast_hash": "52a43b8a7fd12a67fbf8bbf870d82196",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionItem.tsx": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactionForm.ts": {
-    "mtime": 1781664588.9369638,
-    "ast_hash": "625bc58d2d69e45496c9b08bfcb5dcb9",
+    "mtime": 1782116179.1372595,
+    "ast_hash": "07681e3aafc29714d2155468b2552acc",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactions.ts": {
@@ -1245,8 +1245,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1781860391.7485478,
-    "ast_hash": "981605e7a59da2bccd39239a8d6ba4aa",
+    "mtime": 1782117111.9355025,
+    "ast_hash": "41bce002cc09ff3af361802edeedf3d7",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1400,8 +1400,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\transaction-form-values.test.ts": {
-    "mtime": 1781665055.792865,
-    "ast_hash": "b166b28977cf0379376650975082f35a",
+    "mtime": 1782116193.0210547,
+    "ast_hash": "7d4632b2a0acf2dcaedbcc019ad36cd3",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\transactions-ui.test.ts": {
@@ -1977,6 +1977,36 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\eslint-rules\\package.json": {
     "mtime": 1781860274.8111973,
     "ast_hash": "df9ffc6aa3f78a5491736d441c4258a8",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\transaction-input-settings.service.test.ts": {
+    "mtime": 1782116205.35315,
+    "ast_hash": "617fc34caad7add8fcda990508fb71c7",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\transaction-input-settings.service.ts": {
+    "mtime": 1782116125.0682325,
+    "ast_hash": "9e4632563210b2618e8b299149e09bce",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\TransactionInputSettings.tsx": {
+    "mtime": 1782114025.3501,
+    "ast_hash": "f4cb8eca309667a553f533be64854f82",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionForm.input-settings.test.tsx": {
+    "mtime": 1782116868.5237648,
+    "ast_hash": "b669e28113fd14cd64b95048e0c55553",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\services\\duplicate-transaction.service.test.ts": {
+    "mtime": 1782116902.395685,
+    "ast_hash": "0333089bbe4502d1b02b05754c93beee",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\services\\duplicate-transaction.service.ts": {
+    "mtime": 1782116746.7887197,
+    "ast_hash": "bd697bcd3512d3b7fba84bb58fe93a45",
     "semantic_hash": ""
   }
 }

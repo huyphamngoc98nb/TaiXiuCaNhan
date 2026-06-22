@@ -7,6 +7,7 @@ import { clearErrorLogs, exportErrorLogs, logAppError } from '@/core/telemetry/e
 import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { CurrencySettings } from '../components/CurrencySettings';
+import { TransactionInputSettings } from '../components/TransactionInputSettings';
 import { SecuritySettings } from '../components/SecuritySettings';
 import { ThemeSelector } from '../components/ThemeSelector';
 import { useLanguage } from '@/shared/context/LanguageContext';
@@ -82,6 +83,7 @@ export function SettingsPage() {
           <div className="px-4 py-3"><ThemeSelector /></div>
           <div className="px-4 py-3"><LanguageSettings /></div>
           <div className="px-4 py-3"><CurrencySettings /></div>
+          <div className="px-4 py-3"><TransactionInputSettings /></div>
         </div>
 
         <SecuritySettings />
