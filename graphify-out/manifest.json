@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1782182531.826862,
+    "mtime": 1782185945.5443327,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1782182531.826862,
+    "mtime": 1782185945.5443327,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1782182531.184627,
+    "mtime": 1782185945.383598,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1782182531.2962213,
+    "mtime": 1782185945.4755177,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1782182531.8288686,
+    "mtime": 1782185945.5443327,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1782182531.8304632,
+    "mtime": 1782185945.5443327,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\layouts\\MainLayout.tsx": {
-    "mtime": 1781574500.964608,
-    "ast_hash": "31f05174119e7d16074c59d7e717ef35",
+    "mtime": 1782186230.464467,
+    "ast_hash": "9f94281eefd6c36ab3b2abe09a68e927",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\app-lock-events.ts": {
@@ -485,8 +485,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\components\\BudgetCategoryItem.tsx": {
-    "mtime": 1781679515.545924,
-    "ast_hash": "fbd5bdad10d694d4b37e8b87a0991424",
+    "mtime": 1782186331.0639174,
+    "ast_hash": "448212d540df43a4198a42dca71b228d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\budgets\\components\\BudgetCategoryList.tsx": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\loans\\components\\LoanCard.tsx": {
-    "mtime": 1782120175.0526223,
-    "ast_hash": "279c4cc5a359c315c6f7c10a8c10b97f",
+    "mtime": 1782186332.6108255,
+    "ast_hash": "f0c86bf76b191cd4f9c3465da4a214ca",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\loans\\components\\LoanForm.tsx": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactionForm.ts": {
-    "mtime": 1782183438.1079898,
-    "ast_hash": "e0abd127dfae9c4ebc3bc1f037722cb9",
+    "mtime": 1782186233.669347,
+    "ast_hash": "829c473265573ac52d4cf26ed10ac715",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactions.ts": {
@@ -1035,8 +1035,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\EditTransactionPage.tsx": {
-    "mtime": 1782183439.533424,
-    "ast_hash": "3c5f48ff33618a5c3b47cc44e7cf96cd",
+    "mtime": 1782186235.2464535,
+    "ast_hash": "7b3d8f69ae5e55809d2463d9fc6baf74",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\TransactionsPage.tsx": {
@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\components\\WalletCard.tsx": {
-    "mtime": 1781860466.0771136,
-    "ast_hash": "e5e5ad79f35e96b8f3c873aeffa18184",
+    "mtime": 1782186329.4271712,
+    "ast_hash": "fc8bb8c77e5383af00fb2dd7df069028",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\wallets\\components\\WalletForm.tsx": {
@@ -1935,13 +1935,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyCalculatorPanel.tsx": {
-    "mtime": 1781841014.2958913,
-    "ast_hash": "8c609deea76378e40f2a9b294c100454",
+    "mtime": 1782186551.57451,
+    "ast_hash": "fbbc603c88b560751b737110c942703c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyKeyboard.tsx": {
-    "mtime": 1781858413.6501405,
-    "ast_hash": "babb8eef79114e4289130079842f2128",
+    "mtime": 1782186236.7699344,
+    "ast_hash": "e687129f69ea89333e4b10156eb0095b",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\MoneyInput\\MoneyKeyboardButton.tsx": {
@@ -2055,8 +2055,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\UiPersonalizationSettings.tsx": {
-    "mtime": 1782182062.6927392,
-    "ast_hash": "9ce27ebb47fa564501327df1a9639f95",
+    "mtime": 1782186232.1548736,
+    "ast_hash": "5c4e7b979e1fd2f60d7c2afe586a1919",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\ui-personalization-settings.service.test.ts": {
@@ -2102,6 +2102,31 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\native\\haptic-feedback.ts": {
     "mtime": 1782183433.9271674,
     "ast_hash": "8815d9549a84b1413c5128cc7a4624ac",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\StartupScreenRedirector.tsx": {
+    "mtime": 1782186202.909572,
+    "ast_hash": "8c46897c957fa501607c419c84dc917a",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\haptics.test.ts": {
+    "mtime": 1782186208.162248,
+    "ast_hash": "f77c87993da3a282bc1ac16d2752b3e3",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\haptics.ts": {
+    "mtime": 1782186356.6881888,
+    "ast_hash": "02aba71dc6d10336f9e9c13ab872f8fb",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\startup-screen.test.ts": {
+    "mtime": 1782186206.5513225,
+    "ast_hash": "dbe2b05d51023b6ee42ceafcf491b5fd",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\startup-screen.ts": {
+    "mtime": 1782186201.1016164,
+    "ast_hash": "698c5998a8a2e37ebe98112a6ac184cd",
     "semantic_hash": ""
   }
 }

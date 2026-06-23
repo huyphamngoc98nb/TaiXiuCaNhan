@@ -10,7 +10,7 @@ import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useToast } from '@/shared/components/Toast/ToastContext';
 import { ROUTES } from '@/shared/constants/routes';
 import { localizeTransactionError } from '../services/transaction-error-messages';
-import { triggerHapticFeedback } from '@/shared/utils/haptic-feedback';
+import { triggerWarningHaptic } from '@/shared/utils/haptics';
 
 export function EditTransactionPage() {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +45,7 @@ export function EditTransactionPage() {
 
     try {
       await deleteTransactionUseCase.execute(transaction.id);
-      void triggerHapticFeedback('success');
+      void triggerWarningHaptic();
       toast.success(t('transactions.delete_success'));
       navigate(ROUTES.TRANSACTIONS);
     } catch (err) {

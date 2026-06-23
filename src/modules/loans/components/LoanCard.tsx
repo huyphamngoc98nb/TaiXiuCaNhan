@@ -3,6 +3,7 @@ import { useCurrency } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
 import { useDisplayFormatSettings } from '@/shared/hooks/useDisplayFormatSettings';
+import { useUiPersonalizationSettings } from '@/shared/hooks/useUiPersonalizationSettings';
 import { formatAppDate } from '@/shared/utils/display-format';
 import type { LoanWithSummary } from '../domain/loan.model';
 
@@ -15,8 +16,10 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
   const { t, language } = useLanguage();
   const { formatAmount } = useCurrency();
   const { showAmounts } = useAmountVisibility();
+  const { listDensity } = useUiPersonalizationSettings();
   const displayFormatSettings = useDisplayFormatSettings();
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+  const isCompact = listDensity === 'compact';
   const displayAmount = (value: number) => (
     showAmounts ? formatAmount(value, locale) : HIDDEN_AMOUNT
   );
@@ -57,20 +60,26 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
     <button
       type="button"
       onClick={() => onPress(loan.id)}
-      className={`w-full rounded-[14px] border border-border bg-surface p-4 text-left shadow-sm active:scale-[0.99] transition-all ${
+      className={`w-full rounded-[14px] border border-border bg-surface text-left shadow-sm active:scale-[0.99] transition-all ${
+        isCompact ? 'p-3' : 'p-4'
+      } ${
         isDeleted ? 'opacity-60' : ''
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className={`flex items-start justify-between ${isCompact ? 'gap-2' : 'gap-3'}`}>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[16px] font-bold text-gray-900">{loan.contact_name}</p>
           {loan.wallet_name && (
-            <p className="mt-0.5 truncate text-[12px] font-medium text-gray-400">
+            <p className={`mt-0.5 truncate font-medium text-gray-400 ${
+              isCompact ? 'text-[11px]' : 'text-[12px]'
+            }`}>
               {loan.wallet_name}
             </p>
           )}
         </div>
-        <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+        <div className={`flex shrink-0 flex-wrap justify-end ${
+          isCompact ? 'gap-1' : 'gap-1.5'
+        }`}>
           <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${typeClass}`}>
             {loan.type === 'lend' ? t('loans.card.typeLend') : t('loans.card.typeBorrow')}
           </span>
@@ -85,12 +94,14 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
         </div>
       </div>
 
-      <div className="mt-4">
-        <div className="mb-2 flex items-center justify-between gap-3 text-[12px] font-semibold text-gray-500">
+      <div className={isCompact ? 'mt-3' : 'mt-4'}>
+        <div className={`flex items-center justify-between font-semibold text-gray-500 ${
+          isCompact ? 'mb-1.5 gap-2 text-[11px]' : 'mb-2 gap-3 text-[12px]'
+        }`}>
           <span>{displayAmount(loan.paid_amount)} {t('loans.card.paid')}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+        <div className={`${isCompact ? 'h-1.5' : 'h-2'} overflow-hidden rounded-full bg-gray-100`}>
           <div
             className={`h-full rounded-full ${loan.type === 'lend' ? 'bg-amber-500' : 'bg-blue-500'}`}
             style={{ width: `${progress}%` }}
@@ -98,17 +109,23 @@ export function LoanCard({ loan, onPress }: LoanCardProps) {
         </div>
       </div>
 
-      <div className="mt-4 flex items-end justify-between gap-3">
+      <div className={`flex items-end justify-between ${
+        isCompact ? 'mt-3 gap-2' : 'mt-4 gap-3'
+      }`}>
         <div className="min-w-0">
-          <p className="text-[12px] font-medium text-gray-400">{t('loans.card.remaining')}</p>
+          <p className={`${isCompact ? 'text-[11px]' : 'text-[12px]'} font-medium text-gray-400`}>
+            {t('loans.card.remaining')}
+          </p>
           <p className={`mt-0.5 text-[17px] font-extrabold ${isAttention ? 'text-rose-600' : 'text-gray-900'}`}>
             {displayAmount(loan.remaining)}
           </p>
         </div>
         {loan.due_date && (
           <div className="text-right">
-            <p className="text-[12px] font-medium text-gray-400">{t('loans.card.dueDate')}</p>
-            <p className={`mt-0.5 text-[13px] font-bold ${isAttention ? 'text-rose-600' : 'text-gray-600'}`}>
+            <p className={`${isCompact ? 'text-[11px]' : 'text-[12px]'} font-medium text-gray-400`}>
+              {t('loans.card.dueDate')}
+            </p>
+            <p className={`mt-0.5 ${isCompact ? 'text-[12px]' : 'text-[13px]'} font-bold ${isAttention ? 'text-rose-600' : 'text-gray-600'}`}>
               {formatDate(loan.due_date)}
             </p>
           </div>

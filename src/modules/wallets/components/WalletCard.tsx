@@ -4,6 +4,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { useCreditCardSummary } from '../hooks/useCreditCardSummary';
 import { getAppLocale } from '@/shared/utils/locale';
 import { HIDDEN_AMOUNT, useAmountVisibility } from '@/shared/hooks/useAmountVisibility';
+import { useUiPersonalizationSettings } from '@/shared/hooks/useUiPersonalizationSettings';
 import { computeCreditCardDebtStatus } from '@/modules/debts/services/debt-status';
 
 interface Props {
@@ -42,7 +43,9 @@ export function WalletCard({ wallet, onClick }: Props) {
   const { formatAmount } = useCurrency();
   const { t, language } = useLanguage();
   const { showAmounts } = useAmountVisibility();
+  const { listDensity } = useUiPersonalizationSettings();
   const locale = getAppLocale(language);
+  const isCompact = listDensity === 'compact';
   const { summary, loading: summaryLoading } = useCreditCardSummary(wallet);
   const accountTypeLabels: Record<AccountType, string> = {
     cash: t('wallets.account_cash'),
@@ -82,14 +85,18 @@ export function WalletCard({ wallet, onClick }: Props) {
       tabIndex={0}
       onClick={() => onClick?.(wallet)}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.(wallet)}
-      className="bg-surface rounded-2xl border border-border p-4 mb-3 cursor-pointer active:scale-[0.98] transition-transform"
+      className={`bg-surface border border-border cursor-pointer active:scale-[0.98] transition-transform ${
+        isCompact ? 'mb-2 rounded-xl p-3' : 'mb-3 rounded-2xl p-4'
+      }`}
       style={{ boxShadow: '0 2px 8px var(--shadow-color)' }}
     >
       {/* Header row */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
+      <div className={`flex items-center justify-between ${isCompact ? 'mb-2' : 'mb-3'}`}>
+        <div className={`flex items-center ${isCompact ? 'gap-2.5' : 'gap-3'}`}>
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
+            className={`rounded-full flex items-center justify-center ${
+              isCompact ? 'h-9 w-9 text-lg' : 'h-10 w-10 text-xl'
+            }`}
             style={{ backgroundColor: `${bgColor}26` }}
           >
             {displayIcon}
@@ -98,7 +105,7 @@ export function WalletCard({ wallet, onClick }: Props) {
             <p className="text-[15px] font-semibold text-gray-900 leading-tight">
               {wallet.name}
             </p>
-            <p className="text-[12px] text-gray-500">
+            <p className={`${isCompact ? 'text-[11px]' : 'text-[12px]'} text-gray-500`}>
               {accountTypeLabels[wallet.account_type]}
             </p>
           </div>
@@ -113,7 +120,7 @@ export function WalletCard({ wallet, onClick }: Props) {
 
       {/* Balance */}
       <div className="mt-1">
-        <p className="text-[12px] text-gray-400 mb-0.5">
+        <p className={`${isCompact ? 'text-[11px]' : 'text-[12px]'} text-gray-400 mb-0.5`}>
           {wallet.account_type === 'credit_card'
             ? t('wallets.outstanding_balance')
             : t('wallets.balance')}
@@ -128,8 +135,10 @@ export function WalletCard({ wallet, onClick }: Props) {
 
       {/* Credit card extras */}
       {isCreditCard && (
-        <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+        <div className={`border-t border-gray-100 ${
+          isCompact ? 'mt-2 space-y-2 pt-2' : 'mt-3 space-y-3 pt-3'
+        }`}>
+          <div className={`grid grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
             {wallet.credit_limit != null && (
               <div>
                 <p className="text-[11px] text-gray-400">{t('wallets.credit_limit')}</p>
@@ -164,7 +173,9 @@ export function WalletCard({ wallet, onClick }: Props) {
 
             return (
               <div
-              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold mb-2"
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold ${
+                isCompact ? 'mb-1.5' : 'mb-2'
+              }`}
               style={
                 debtStatus.status === 'overdue'
                     ? { background: 'rgba(244, 63, 94, 0.14)', color: 'var(--danger)' }
@@ -184,13 +195,13 @@ export function WalletCard({ wallet, onClick }: Props) {
           })()}
           {wallet.credit_limit != null && wallet.credit_limit > 0 && (
             <div>
-              <div className="mb-1 flex items-center justify-between">
+              <div className={`${isCompact ? 'mb-0.5' : 'mb-1'} flex items-center justify-between`}>
                 <p className="text-[11px] text-gray-400">{t('wallets.credit_used')}</p>
                 <p className="text-[11px] font-semibold text-gray-600 tabular-nums">
                   {Math.round(usagePercent)}%
                 </p>
               </div>
-              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className={`${isCompact ? 'h-1.5' : 'h-2'} rounded-full bg-gray-100 overflow-hidden`}>
                 <div
                   className="h-full rounded-full transition-[width]"
                   style={{ width: `${usagePercent}%`, backgroundColor: usageColor }}

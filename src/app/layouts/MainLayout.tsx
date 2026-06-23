@@ -19,6 +19,7 @@ import {
   Tags,
 } from 'lucide-react';
 import { ROUTES } from '@/shared/constants/routes';
+import { StartupScreenRedirector } from '@/shared/components/StartupScreenRedirector';
 import { useConfirm } from '@/shared/components/ConfirmDialog/ConfirmContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
@@ -227,6 +228,7 @@ export function MainLayout() {
 
   return (
     <div className="app-container">
+      <StartupScreenRedirector />
       <main ref={mainContentRef} className="main-content">
         <div
           key={location.pathname}

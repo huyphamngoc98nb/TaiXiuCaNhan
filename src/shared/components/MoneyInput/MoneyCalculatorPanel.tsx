@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Delete } from 'lucide-react';
 import { CurrencyCode } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { triggerLightHaptic } from '@/shared/utils/haptics';
 import { getFractionDigits } from './money-input-utils';
 import {
   appendMoneyCalculatorDigit,
@@ -57,16 +58,19 @@ export function MoneyCalculatorPanel({
   );
 
   const appendDigit = (digit: string) => {
+    void triggerLightHaptic();
     setExpression(current => appendMoneyCalculatorDigit(current, digit));
   };
 
   const appendOperator = (operator: MoneyCalculatorOperator) => {
+    void triggerLightHaptic();
     setExpression(current => appendMoneyCalculatorOperator(current, operator));
   };
 
   const applyResult = () => {
     if (!calculation.ok || calculation.value === undefined) return;
 
+    void triggerLightHaptic();
     onApply(calculation.value);
   };
 
@@ -95,7 +99,10 @@ export function MoneyCalculatorPanel({
               <MoneyKeyboardButton
                 key={key}
                 aria-label={t('money_keyboard.backspace')}
-                onClick={() => setExpression(current => backspaceMoneyExpression(current))}
+                onClick={() => {
+                  void triggerLightHaptic();
+                  setExpression(current => backspaceMoneyExpression(current));
+                }}
               >
                 <Delete size={22} strokeWidth={2.4} />
               </MoneyKeyboardButton>
@@ -109,7 +116,10 @@ export function MoneyCalculatorPanel({
                 variant="danger"
                 aria-label={t('money_keyboard.clear')}
                 className="text-[15px]"
-                onClick={() => setExpression(clearMoneyExpression())}
+                onClick={() => {
+                  void triggerLightHaptic();
+                  setExpression(clearMoneyExpression());
+                }}
               >
                 {t('money_keyboard.clear')}
               </MoneyKeyboardButton>
@@ -139,7 +149,13 @@ export function MoneyCalculatorPanel({
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
-        <MoneyKeyboardButton className="h-12 text-[15px]" onClick={onBack}>
+        <MoneyKeyboardButton
+          className="h-12 text-[15px]"
+          onClick={() => {
+            void triggerLightHaptic();
+            onBack();
+          }}
+        >
           {t('money_keyboard.back')}
         </MoneyKeyboardButton>
         <MoneyKeyboardButton

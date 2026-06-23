@@ -20,6 +20,7 @@ import {
   resetUiPersonalizationSettings,
   updateUiPersonalizationSettings,
 } from '../services/ui-personalization-settings.service';
+import { triggerLightHaptic } from '@/shared/utils/haptics';
 
 interface SettingLabelProps {
   icon: LucideIcon;
@@ -209,6 +210,9 @@ export function UiPersonalizationSettings() {
             </div>
             <button
               type="button"
+              onClick={() => {
+                void triggerLightHaptic();
+              }}
               className={`w-full rounded-[10px] bg-primary px-3 text-[0.82em] font-semibold text-white ${
                 isCompact ? 'min-h-[34px]' : 'min-h-[40px]'
               }`}

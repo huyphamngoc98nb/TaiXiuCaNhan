@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Calculator, Delete } from 'lucide-react';
 import { CurrencyCode } from '@/shared/context/CurrencyContext';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { triggerLightHaptic } from '@/shared/utils/haptics';
 import { MoneyCalculatorPanel } from './MoneyCalculatorPanel';
 import { MoneyKeyboardButton } from './MoneyKeyboardButton';
 
@@ -37,6 +38,7 @@ export function MoneyKeyboard({
   const [statusText, setStatusText] = useState('');
 
   const applyCalculatorValue = (nextValue: string) => {
+    void triggerLightHaptic();
     onChange(nextValue);
     setStatusText(t('money_keyboard.calculation_applied'));
     setMode('number');
@@ -66,6 +68,7 @@ export function MoneyKeyboard({
                 key={key}
                 aria-label={key === 'backspace' ? t('money_keyboard.backspace') : undefined}
                 onClick={() => {
+                  void triggerLightHaptic();
                   if (key === 'backspace') {
                     onChange(backspaceNumberValue(value));
                     return;
@@ -84,14 +87,20 @@ export function MoneyKeyboard({
               className="h-12 text-[15px]"
               aria-label={t('money_keyboard.calculator')}
               title={t('money_keyboard.calculator')}
-              onClick={() => setMode('calculator')}
+              onClick={() => {
+                void triggerLightHaptic();
+                setMode('calculator');
+              }}
             >
               <Calculator size={22} strokeWidth={2.4} />
             </MoneyKeyboardButton>
             <MoneyKeyboardButton
               className="h-12 text-[15px]"
               variant="primary"
-              onClick={onDone}
+              onClick={() => {
+                void triggerLightHaptic();
+                onDone();
+              }}
             >
               {t('money_keyboard.done')}
             </MoneyKeyboardButton>
