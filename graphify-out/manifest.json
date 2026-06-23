@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\version.config.json": {
-    "mtime": 1781858635.7796564,
-    "ast_hash": "e5bbdb9a7d0f102702a6c2b0de019397",
+    "mtime": 1782182567.0853355,
+    "ast_hash": "732d399f25d7b37700392a79c500cf15",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\vite.config.ts": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1782117441.0770135,
+    "mtime": 1782182531.826862,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1782117441.078014,
+    "mtime": 1782182531.826862,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1782117440.48701,
+    "mtime": 1782182531.184627,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1782117440.605151,
+    "mtime": 1782182531.2962213,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\MainActivity.java": {
-    "mtime": 1779411575.3790326,
-    "ast_hash": "2f082bd13977e8063be14d90ca43a841",
+    "mtime": 1782183435.2610214,
+    "ast_hash": "94377c6fa5e4fd27e276922bf94a5a0c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\NativeBiometricPlugin.java": {
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1782117441.0810184,
+    "mtime": 1782182531.8288686,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1782117441.0820186,
+    "mtime": 1782182531.8304632,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppProvider.tsx": {
-    "mtime": 1780545356.4978533,
-    "ast_hash": "88505841374d795e29b52173638328b6",
+    "mtime": 1782182099.929318,
+    "ast_hash": "3d0ceff7bf62bf0ec9d31737a1b5b46a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\app\\providers\\AppUnlock.tsx": {
@@ -945,8 +945,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\pages\\SettingsPage.tsx": {
-    "mtime": 1782119546.864651,
-    "ast_hash": "3da573854dc76bbcbf807c28d68a256c",
+    "mtime": 1782182045.3295045,
+    "ast_hash": "6d8a58972f0f28d2e7dc1c7a7e22f96e",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\AdvancedTransactionFilterSheet.tsx": {
@@ -965,8 +965,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionItem.tsx": {
-    "mtime": 1782120121.5382812,
-    "ast_hash": "5f424aded4082823af742f1d1af0a882",
+    "mtime": 1782182141.2418332,
+    "ast_hash": "a2c7785408b4748e416079c7146524fd",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\components\\TransactionList.tsx": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactionForm.ts": {
-    "mtime": 1782116179.1372595,
-    "ast_hash": "07681e3aafc29714d2155468b2552acc",
+    "mtime": 1782183438.1079898,
+    "ast_hash": "e0abd127dfae9c4ebc3bc1f037722cb9",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\hooks\\useTransactions.ts": {
@@ -1035,8 +1035,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\EditTransactionPage.tsx": {
-    "mtime": 1780028504.2633035,
-    "ast_hash": "a0ed3c365e0713ab4b72f827bd1ade79",
+    "mtime": 1782183439.533424,
+    "ast_hash": "3c5f48ff33618a5c3b47cc44e7cf96cd",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\TransactionsPage.tsx": {
@@ -1245,8 +1245,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1782119568.122069,
-    "ast_hash": "0b31e830e09a53f0d02a6f60b2273b77",
+    "mtime": 1782182076.5434263,
+    "ast_hash": "a64aeb894deafbe4478a57b863a3dea7",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -2052,6 +2052,56 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useDisplayFormatSettings.ts": {
     "mtime": 1782120118.1371555,
     "ast_hash": "dcf0baa254c961077e840fa31fb96814",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\UiPersonalizationSettings.tsx": {
+    "mtime": 1782182062.6927392,
+    "ast_hash": "9ce27ebb47fa564501327df1a9639f95",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\ui-personalization-settings.service.test.ts": {
+    "mtime": 1782181988.7038417,
+    "ast_hash": "d4387cf888185c7c89459f6cf7f014f3",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\ui-personalization-settings.service.ts": {
+    "mtime": 1782181986.112256,
+    "ast_hash": "75c8af51479bf47c59799029e5b7ae66",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\AppUiPreferencesApplier.tsx": {
+    "mtime": 1782182098.619288,
+    "ast_hash": "ccae39b7d196f4aad6a67b04c12ab7d5",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\use-ui-personalization-settings.test.tsx": {
+    "mtime": 1782181989.8618343,
+    "ast_hash": "76aad871c358203f7b57792d544d93d4",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\hooks\\useUiPersonalizationSettings.ts": {
+    "mtime": 1782181987.3454964,
+    "ast_hash": "db706210998b996bb84b8587b8e2e0dc",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\haptic-feedback.test.ts": {
+    "mtime": 1782183440.8956473,
+    "ast_hash": "921fce6307859341750a2a222d7f5c66",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\utils\\haptic-feedback.ts": {
+    "mtime": 1782183436.6139984,
+    "ast_hash": "ef7cc73bf9846b6b8c75c4315f773984",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\HapticFeedbackPlugin.java": {
+    "mtime": 1782183431.4019115,
+    "ast_hash": "66da5d66dd03774e6e31da5bd1d166f0",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\native\\haptic-feedback.ts": {
+    "mtime": 1782183433.9271674,
+    "ast_hash": "8815d9549a84b1413c5128cc7a4624ac",
     "semantic_hash": ""
   }
 }

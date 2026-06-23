@@ -11,6 +11,7 @@ import {
   getTransactionInputSettings,
   saveLastUsedTransactionDate,
 } from '@/modules/settings/services/transaction-input-settings.service';
+import { triggerHapticFeedback } from '@/shared/utils/haptic-feedback';
 
 export const TRANSFER_CATEGORY_ID = 'cat-transfer';
 const TRANSACTION_DRAFT_KEY = 'transaction_draft';
@@ -168,6 +169,7 @@ export function useTransactionForm(existing?: Transaction) {
 
       if (existing) {
         await updateTransactionUseCase.execute(existing.id, payload as UpdateTransactionInput, receiptBase64);
+        void triggerHapticFeedback('success');
         toast.success(t('transactions.update_success'));
       } else {
         await createTransactionUseCase.execute(payload as CreateTransactionInput, receiptBase64);
@@ -177,6 +179,7 @@ export function useTransactionForm(existing?: Transaction) {
         clearStoredCreateTransactionState();
         setFormData(getDefaultCreateTransactionValues());
         setReceiptBase64(undefined);
+        void triggerHapticFeedback('success');
         toast.success(t('transactions.add_success'));
       }
       return true;

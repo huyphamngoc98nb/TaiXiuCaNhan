@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(NativeBiometricPlugin.class);
         registerPlugin(DocumentSaverPlugin.class);
+        registerPlugin(HapticFeedbackPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

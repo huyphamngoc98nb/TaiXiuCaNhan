@@ -8,6 +8,7 @@ import { CurrencyProvider } from '@/shared/context/CurrencyContext';
 import { ThemeProvider } from '@/shared/context/ThemeContext';
 import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import { useKeyboardSafeFocus } from '@/shared/hooks/useKeyboardSafeFocus';
+import { AppUiPreferencesApplier } from '@/shared/components/AppUiPreferencesApplier';
 
 export function AppProvider() {
   useKeyboardSafeFocus();
@@ -15,6 +16,7 @@ export function AppProvider() {
   return (
     <GlobalErrorBoundary>
       <ThemeProvider>
+        <AppUiPreferencesApplier />
         <LanguageProvider>
           <CurrencyProvider>
             <ToastProvider>

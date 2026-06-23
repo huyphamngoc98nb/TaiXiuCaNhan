@@ -8,6 +8,7 @@ import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { CurrencySettings } from '../components/CurrencySettings';
 import { DisplayFormatSettings } from '../components/DisplayFormatSettings';
+import { UiPersonalizationSettings } from '../components/UiPersonalizationSettings';
 import { TransactionInputSettings } from '../components/TransactionInputSettings';
 import { SecuritySettings } from '../components/SecuritySettings';
 import { ThemeSelector } from '../components/ThemeSelector';
@@ -85,6 +86,7 @@ export function SettingsPage() {
           <div className="px-4 py-3"><LanguageSettings /></div>
           <div className="px-4 py-3"><CurrencySettings /></div>
           <div className="px-4 py-3"><DisplayFormatSettings /></div>
+          <div className="px-4 py-3"><UiPersonalizationSettings /></div>
           <div className="px-4 py-3"><TransactionInputSettings /></div>
         </div>
 
