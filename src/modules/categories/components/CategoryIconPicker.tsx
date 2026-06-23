@@ -5,6 +5,7 @@ import { useLanguage } from '@/shared/context/LanguageContext';
 import { ImeTextInput } from '@/shared/components/ImeTextInput';
 import type { CategoryType } from '../domain/category.model';
 import { CategoryIcon, getCategoryIconLibrary } from './CategoryIcon';
+import { validateCustomCategoryIconValue } from '../utils/category-icon-validation';
 
 interface Props {
   isOpen: boolean;
@@ -19,6 +20,8 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
   const [query, setQuery] = useState('');
   const [committedQuery, setCommittedQuery] = useState('');
   const [pendingIcon, setPendingIcon] = useState(selectedIcon);
+  const [customIcon, setCustomIcon] = useState('');
+  const [customIconError, setCustomIconError] = useState<string | null>(null);
   const iconLibrary = useMemo(() => getCategoryIconLibrary(language), [language]);
 
   useEffect(() => {
@@ -26,6 +29,8 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
       setPendingIcon(selectedIcon);
       setQuery('');
       setCommittedQuery('');
+      setCustomIcon('');
+      setCustomIconError(null);
     }
   }, [isOpen, selectedIcon]);
 
@@ -45,10 +50,21 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
     onClose();
   }
 
+  function useCustomIcon() {
+    const validation = validateCustomCategoryIconValue(customIcon);
+    if (!validation.valid || !validation.value) {
+      setCustomIconError(t('categories.invalid_custom_icon'));
+      return;
+    }
+
+    setCustomIconError(null);
+    setPendingIcon(validation.value);
+  }
+
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} transitionKey={`icons-${type}`}>
-      <div className="space-y-4">
-        <div>
+      <div className="flex max-h-[min(78vh,680px)] min-h-0 flex-col gap-4">
+        <div className="shrink-0">
           <h3 className="text-[18px] font-bold text-gray-900">{t('categories.icon_picker_title')}</h3>
           <p className="mt-1 text-[12px] text-gray-500">{t('categories.icon_picker_hint')}</p>
         </div>
@@ -66,7 +82,7 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
           />
         </div>
 
-        <div className="flex items-center gap-3 rounded-[14px] bg-indigo-50 px-3 py-2">
+        <div className="flex shrink-0 items-center gap-3 rounded-[14px] bg-indigo-50 px-3 py-2">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-white text-indigo-600">
             <CategoryIcon icon={pendingIcon} name={t('categories.icon')} type={type} size={21} />
           </div>
@@ -76,12 +92,40 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
           </div>
         </div>
 
+        <div className="shrink-0 space-y-2 rounded-[14px] border border-gray-200 bg-gray-50 p-3">
+          <div>
+            <p className="text-[13px] font-semibold text-gray-800">{t('categories.custom_icon')}</p>
+            <p className="mt-0.5 text-[12px] text-gray-500">{t('categories.custom_icon_hint')}</p>
+          </div>
+          <div className="flex gap-2">
+            <ImeTextInput
+              value={customIcon}
+              onValueChange={(nextValue) => {
+                setCustomIcon(nextValue);
+                setCustomIconError(null);
+              }}
+              placeholder={t('categories.custom_icon_placeholder')}
+              className="h-11 min-w-0 flex-1 rounded-[12px] border border-gray-200 bg-white px-3 text-center text-[18px] font-semibold text-gray-900 outline-none focus:border-indigo-400"
+            />
+            <button
+              type="button"
+              onClick={useCustomIcon}
+              className="h-11 shrink-0 rounded-[12px] bg-gray-900 px-3 text-[12px] font-bold text-white active:scale-[0.98]"
+            >
+              {t('categories.use_custom_icon')}
+            </button>
+          </div>
+          {customIconError && (
+            <p className="text-[12px] font-medium text-red-500">{customIconError}</p>
+          )}
+        </div>
+
         <div
           data-modal-scroll-container="true"
-          className="form-scroll-container max-h-[42vh] pr-1"
+          className="form-scroll-container min-h-[180px] flex-1 pr-1"
         >
           {matchingIcons.length === 0 ? (
-            <div className="py-8 text-center text-[13px] text-gray-400">
+            <div className="flex min-h-[160px] items-center justify-center rounded-[14px] border border-dashed border-gray-200 px-6 text-center text-[13px] text-gray-400">
               {t('categories.no_matching_icons')}
             </div>
           ) : (
@@ -91,7 +135,7 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
                   key={icon.value}
                   type="button"
                   onClick={() => setPendingIcon(icon.value)}
-                  className={`flex h-[72px] flex-col items-center justify-center gap-1 rounded-[12px] border px-2 transition-all ${
+                  className={`flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-[12px] border px-2 py-2 transition-all ${
                     pendingIcon === icon.value
                       ? 'border-indigo-500 bg-indigo-50 text-indigo-600'
                       : 'border-gray-200 bg-gray-50 text-gray-600'
@@ -106,7 +150,7 @@ export function CategoryIconPicker({ isOpen, type, selectedIcon, onSelect, onClo
           )}
         </div>
 
-        <div className="flex gap-3 pt-1">
+        <div className="sticky bottom-0 flex shrink-0 gap-3 border-t border-gray-100 bg-surface pt-3">
           <button
             type="button"
             onClick={onClose}

@@ -48,6 +48,10 @@ import {
 } from 'lucide-react';
 import { translations, type Language, type TranslationPath } from '@/shared/constants/translations';
 import type { CategoryType } from '../domain/category.model';
+import {
+  getSafeCustomCategoryIcon,
+  normalizeCategoryIconValue,
+} from '../utils/category-icon-validation';
 
 export interface CategoryIconPreset {
   value: string;
@@ -198,6 +202,23 @@ export function getCategoryIconLibrary(language: Language): CategoryIconPreset[]
   return CATEGORY_ICON_LIBRARY_DEFINITIONS.map((preset) => localizeIconPreset(preset, language));
 }
 
+export function getFirstCategoryIconForType(type: CategoryType): string {
+  return CATEGORY_ICON_PRESET_DEFINITIONS.find((preset) => preset.type === type || preset.type === 'all')?.value ?? '';
+}
+
+export function isCategoryIconCompatibleWithType(
+  icon: string | null | undefined,
+  type: CategoryType,
+): boolean {
+  const value = normalizeCategoryIconValue(icon);
+  if (!value || getSafeCustomCategoryIcon(value)) return true;
+
+  const preset = CATEGORY_ICON_LIBRARY_DEFINITIONS.find((item) => item.value === value);
+  if (!preset) return true;
+
+  return preset.type === type || preset.type === 'all';
+}
+
 export function getLocalizedCategoryDescription(
   icon: string | null | undefined,
   description: string | null | undefined,
@@ -230,14 +251,16 @@ export function getCategoryIconKey(icon?: string | null) {
 
 export function CategoryIcon({ icon, name, type, size = 18, className }: Props) {
   const iconKey = getCategoryIconKey(icon);
-  const Icon = ICONS[iconKey] ?? (type === 'income' ? CircleDollarSign : Receipt);
+  const Icon = ICONS[iconKey] ?? (type === 'income' ? CircleDollarSign : type === 'expense' ? Receipt : null);
+  const customIcon = getSafeCustomCategoryIcon(icon);
+  const textIconStyle = { fontSize: size, lineHeight: 1 };
 
-  if (icon && icon.trim().length > 0 && !/^[a-z0-9-_]+$/i.test(icon.trim())) {
-    return <span className={className}>{icon}</span>;
+  if (customIcon) {
+    return <span className={className} style={textIconStyle}>{customIcon}</span>;
   }
 
-  if (!iconKey && !type) {
-    return <span className={className}>{name.charAt(0).toUpperCase()}</span>;
+  if (!Icon) {
+    return <span className={className} style={textIconStyle}>{name.charAt(0).toUpperCase()}</span>;
   }
 
   return <Icon size={size} strokeWidth={2.2} className={className} />;

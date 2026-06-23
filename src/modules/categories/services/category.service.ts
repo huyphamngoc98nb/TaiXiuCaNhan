@@ -3,6 +3,7 @@ import { DB_NAME } from '@/core/db/sqlite/connection';
 import { translations, type TranslationPath } from '@/shared/constants/translations';
 import { SQLiteCategoryRepository } from '../repositories/sqlite-category.repository';
 import type { Category, CategoryInput, CategoryType } from '../domain/category.model';
+import { validateCategoryIconValue } from '../utils/category-icon-validation';
 
 function defaultText(path: TranslationPath): string {
   const keys = path.split('.');
@@ -40,11 +41,15 @@ function normalizeInput(input: CategoryInput): CategoryInput {
   if (!['income', 'expense'].includes(input.type)) {
     throw new Error(defaultText('categories.service_type_invalid'));
   }
+  const icon = validateCategoryIconValue(input.icon);
+  if (!icon.valid) {
+    throw new Error(defaultText('categories.invalid_custom_icon'));
+  }
 
   return {
     name,
     type: input.type,
-    icon: input.icon?.trim() || null,
+    icon: icon.value,
     color: input.color || null,
     description: input.description?.trim() || null,
   };

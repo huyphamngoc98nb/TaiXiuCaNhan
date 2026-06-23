@@ -1,6 +1,12 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import type { Category, CategoryInput, CategoryType } from '../domain/category.model';
-import { CategoryIcon, getCategoryIconPresets, getLocalizedCategoryDescription } from './CategoryIcon';
+import {
+  CategoryIcon,
+  getCategoryIconPresets,
+  getFirstCategoryIconForType,
+  getLocalizedCategoryDescription,
+  isCategoryIconCompatibleWithType,
+} from './CategoryIcon';
 import { CategoryIconPicker } from './CategoryIconPicker';
 import { ImeTextInput } from '@/shared/components/ImeTextInput';
 import { ImeTextarea } from '@/shared/components/ImeTextarea';
@@ -32,7 +38,14 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
 
   useEffect(() => {
-    if (!existing) setType(defaultType);
+    if (!existing) {
+      setType(defaultType);
+      setIcon((currentIcon) =>
+        isCategoryIconCompatibleWithType(currentIcon, defaultType)
+          ? currentIcon
+          : getFirstCategoryIconForType(defaultType),
+      );
+    }
   }, [defaultType, existing]);
 
   const iconPresets = useMemo(
@@ -43,6 +56,24 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
   useEffect(() => {
     setDescription((current) => getLocalizedCategoryDescription(icon, current, language) ?? current);
   }, [icon, language]);
+
+  const iconTypeMismatch = useMemo(
+    () => Boolean(existing && icon.trim() && !isCategoryIconCompatibleWithType(icon, type)),
+    [existing, icon, type],
+  );
+
+  function handleTypeChange(nextType: CategoryType) {
+    if (nextType === type) return;
+
+    setType(nextType);
+    setIcon((currentIcon) => {
+      if (!currentIcon || isCategoryIconCompatibleWithType(currentIcon, nextType)) {
+        return currentIcon;
+      }
+
+      return existing ? currentIcon : getFirstCategoryIconForType(nextType);
+    });
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -111,7 +142,7 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
             <button
               key={item.id}
               type="button"
-              onClick={() => setType(item.id)}
+              onClick={() => handleTypeChange(item.id)}
               className={`h-[44px] rounded-[12px] text-[13px] font-semibold border transition-all ${
                 type === item.id
                   ? 'bg-indigo-500 text-white border-indigo-500 shadow-sm'
@@ -131,6 +162,7 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
             <button
               type="button"
               onClick={() => setIcon('')}
+              aria-label={t('categories.clear_icon')}
               className="text-[12px] font-semibold text-gray-400"
             >
               {t('categories.clear_icon')}
@@ -153,11 +185,22 @@ export function CategoryForm({ existing, defaultType, onSave, onCancel }: Props)
           <button
             type="button"
             onClick={() => setIconPickerOpen(true)}
+            aria-label={t('categories.view_more_icons')}
             className="h-10 shrink-0 rounded-[10px] bg-indigo-500 px-3 text-[12px] font-semibold text-white active:scale-[0.98]"
           >
             {t('categories.view_more_icons')}
           </button>
         </div>
+        {iconTypeMismatch && (
+          <div className="rounded-[12px] border border-amber-200 bg-amber-50 px-3 py-2">
+            <p className="text-[12px] font-semibold text-amber-700">
+              {t('categories.icon_type_changed_title')}
+            </p>
+            <p className="mt-0.5 text-[12px] text-amber-600">
+              {t('categories.icon_type_changed_hint')}
+            </p>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2">
           {iconPresets.map((preset) => (
             <button
