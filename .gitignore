@@ -10,9 +10,19 @@ node_modules/
 private_key.pem
 *.pem
 
+# Android release signing - never commit keystores or generated signing config
+android/keystore.properties
+android/app/*.jks
+android/app/*.keystore
+android/*.keystore
+android/*.jks
+*.jks
+*.keystore
+
 # Build outputs
 artifacts/
 dist/
+dist-release/
 server/dist/
 
 # TypeScript incremental build cache

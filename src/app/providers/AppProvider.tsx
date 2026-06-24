@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/shared/context/ThemeContext';
 import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import { useKeyboardSafeFocus } from '@/shared/hooks/useKeyboardSafeFocus';
 import { AppUiPreferencesApplier } from '@/shared/components/AppUiPreferencesApplier';
+import { AppUpdateGate } from '@/modules/app-update/components/AppUpdateGate';
 
 export function AppProvider() {
   useKeyboardSafeFocus();
@@ -22,6 +23,7 @@ export function AppProvider() {
             <ToastProvider>
               <ConfirmProvider>
                 <AppBootstrap>
+                  <AppUpdateGate />
                   <RouterProvider router={router} />
                 </AppBootstrap>
               </ConfirmProvider>

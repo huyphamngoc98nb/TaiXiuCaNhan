@@ -6,6 +6,7 @@ interface ConfirmOptions {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  hideCancel?: boolean;
 }
 
 interface ConfirmContextType {
@@ -49,6 +50,7 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({ child
           message={confirmState.options.message}
           confirmText={confirmState.options.confirmText}
           cancelText={confirmState.options.cancelText}
+          hideCancel={confirmState.options.hideCancel}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
         />

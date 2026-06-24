@@ -10,6 +10,7 @@
     "lint": "eslint . --ext ts,tsx --rulesdir eslint-rules --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest run",
+    "generate:android-release-metadata": "node scripts/generate-android-release-metadata.cjs",
     "generate:icons": "node scripts/generate-android-icons.cjs",
     "postinstall": "copyfiles -u 3 node_modules/sql.js/dist/sql-wasm.wasm public/assets"
   },

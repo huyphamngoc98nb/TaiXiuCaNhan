@@ -9,6 +9,7 @@ interface ConfirmDialogProps {
   onCancel: () => void;
   confirmText?: string;
   cancelText?: string;
+  hideCancel?: boolean;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -17,21 +18,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   onCancel,
   confirmText = 'Yes',
-  cancelText = 'No'
+  cancelText = 'No',
+  hideCancel = false
 }) => {
   useBodyScrollLock(true);
 
   return (
-    <div className="confirm-overlay" onClick={onCancel}>
+    <div className="confirm-overlay" onClick={hideCancel ? undefined : onCancel}>
       <div className="confirm-dialog" onClick={e => e.stopPropagation()}>
         <div className="confirm-content">
           {title && <h3 className="confirm-title">{title}</h3>}
           <p className="confirm-message">{message}</p>
         </div>
         <div className="confirm-actions">
-          <button className="confirm-button" onClick={onCancel}>
-            {cancelText}
-          </button>
+          {!hideCancel && (
+            <button className="confirm-button" onClick={onCancel}>
+              {cancelText}
+            </button>
+          )}
           <button className="confirm-button confirm-button-danger" onClick={onConfirm}>
             {confirmText}
           </button>
