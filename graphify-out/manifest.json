@@ -525,13 +525,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\pages\\BackupPage.tsx": {
-    "mtime": 1782358886.739852,
-    "ast_hash": "6e4d564502f3af156cb189224f5424e3",
+    "mtime": 1782382678.9290004,
+    "ast_hash": "f9da54e26807dc6b308d0083e8b44b1c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\auto-backup.service.ts": {
-    "mtime": 1782380561.5847776,
-    "ast_hash": "6ac5ee5cd9f216092e40cef8cd1e714f",
+    "mtime": 1782382631.7464721,
+    "ast_hash": "c1d05ec373800ee304a63818270f819d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\backup\\services\\encrypted-backup.ts": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1782291450.8083866,
-    "ast_hash": "d838208ccf2180c305dfd505fc005934",
+    "mtime": 1782382695.937211,
+    "ast_hash": "5a945ce70247ef2e6d8e3f011f2e09fb",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1735,8 +1735,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\auto-backup.test.ts": {
-    "mtime": 1782381538.2906792,
-    "ast_hash": "9e82dc8285e8d7fb8f5993fef9fa3df0",
+    "mtime": 1782382741.9891932,
+    "ast_hash": "41e7a0f0e9d94a9eef63671fc073d951",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\backup.test.ts": {
@@ -1960,8 +1960,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\security.md": {
-    "mtime": 1781253235.589076,
-    "ast_hash": "b3f76bf134a8b7fded10431f68716c40",
+    "mtime": 1782382713.5354173,
+    "ast_hash": "cefd2abbe9dafe16c910ed4761e95223",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\state-management.md": {
@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\user-guide.md": {
-    "mtime": 1782091797.5222764,
-    "ast_hash": "0d06f063b328e53703f713dfd0170f68",
+    "mtime": 1782382711.8716536,
+    "ast_hash": "0c1760609f68d92952d1c88dc7640dfd",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\drawable\\splash.png": {

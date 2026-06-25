@@ -384,9 +384,18 @@ Trong màn hình backup:
 
 1. Bật công tắc **Sao lưu tự động**.
 2. Chọn chu kỳ **Hàng ngày**, **Hàng tuần** hoặc **Hàng tháng**.
-3. Kiểm tra trạng thái, chu kỳ hiện tại và lần chạy gần nhất.
+3. Chọn số bản sao lưu tự động cần giữ lại, ví dụ 3, 7, 14 hoặc 30 bản.
+4. Kiểm tra trạng thái, chu kỳ hiện tại và lần chạy gần nhất.
 
 Ứng dụng kiểm tra và chạy backup đến hạn khi khởi động và khi mở màn hình backup.
+
+Tùy chọn giữ lại backup tự động chỉ áp dụng cho các bản sao lưu tự động do ứng dụng đã tạo và
+đã ghi nhận metadata local. Khi số bản sao lưu tự động vượt quá giới hạn đã chọn, ứng dụng xóa
+các bản cũ nhất trong nhóm này. Backup thủ công không bị xóa bởi retention.
+
+Trên Web, trình duyệt có thể hạn chế khả năng xóa tệp đã tải xuống. Khi đó ứng dụng vẫn giữ
+metadata và có thể báo lỗi cleanup, nhưng không quét toàn bộ thư mục Downloads và không xóa theo
+mẫu tên tệp.
 
 Backup tự động hiện vẫn là plaintext vì ứng dụng không lưu mật khẩu backup. Hãy bảo vệ các tệp này
 và không lưu chúng ở vị trí người khác có thể truy cập.

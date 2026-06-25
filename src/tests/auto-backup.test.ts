@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as connection from '@/core/db/sqlite/connection';
 import * as exportBackup from '@/modules/backup/services/export-backup-json';
 import * as backupFileRepository from '@/modules/backup/services/backup-file.repository';
+import * as backupRetention from '@/modules/backup/services/backup-retention.service';
 import * as saveAutoBackup from '@/modules/backup/services/save-auto-backup-file';
+import { logger } from '@/core/telemetry/logger';
 import {
   AUTO_BACKUP_INTERVAL_MS,
   AUTO_BACKUP_SETTING_KEYS,
@@ -27,6 +29,10 @@ vi.mock('@/modules/backup/services/save-auto-backup-file', () => ({
 
 vi.mock('@/modules/backup/services/backup-file.repository', () => ({
   registerBackupFile: vi.fn(),
+}));
+
+vi.mock('@/modules/backup/services/backup-retention.service', () => ({
+  cleanupOldAutoBackups: vi.fn(),
 }));
 
 vi.mock('@/core/telemetry/logger', () => ({
@@ -86,6 +92,11 @@ describe('auto backup service', () => {
       createdAt: now,
       deletedAt: null,
     });
+    vi.mocked(backupRetention.cleanupOldAutoBackups).mockResolvedValue({
+      skipped: false,
+      deleted: 0,
+      failed: 0,
+    });
   });
 
   it('detects whether auto backup is due by interval', () => {
@@ -112,7 +123,7 @@ describe('auto backup service', () => {
     expect(settingsRows.get(AUTO_BACKUP_SETTING_KEYS.interval)).toBe('weekly');
   });
 
-  it('runs export and updates last_run_at when due', async () => {
+  it('runs export, registers metadata, cleans up retention, and updates last_run_at when due', async () => {
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.enabled, '1');
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.interval, 'daily');
     settingsRows.set(AUTO_BACKUP_SETTING_KEYS.lastRunAt, String(now - AUTO_BACKUP_INTERVAL_MS.daily));
@@ -134,6 +145,7 @@ describe('auto backup service', () => {
       encrypted: false,
       createdAt: now,
     });
+    expect(backupRetention.cleanupOldAutoBackups).toHaveBeenCalledWith(now);
     expect(settingsRows.get(AUTO_BACKUP_SETTING_KEYS.lastRunAt)).toBe(String(now));
   });
 
@@ -146,6 +158,7 @@ describe('auto backup service', () => {
     expect(exportBackup.exportBackupJson).not.toHaveBeenCalled();
     expect(saveAutoBackup.saveAutoBackupFile).not.toHaveBeenCalled();
     expect(backupFileRepository.registerBackupFile).not.toHaveBeenCalled();
+    expect(backupRetention.cleanupOldAutoBackups).not.toHaveBeenCalled();
   });
 
   it('does not update last_run_at when save is cancelled', async () => {
@@ -159,6 +172,68 @@ describe('auto backup service', () => {
 
     expect(result).toMatchObject({ ran: true, saved: false, reason: 'save_cancelled' });
     expect(backupFileRepository.registerBackupFile).not.toHaveBeenCalled();
+    expect(backupRetention.cleanupOldAutoBackups).not.toHaveBeenCalled();
     expect(settingsRows.get(AUTO_BACKUP_SETTING_KEYS.lastRunAt)).toBe(String(previousRunAt));
+  });
+
+  it('keeps auto backup successful when cleanup throws', async () => {
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.enabled, '1');
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.interval, 'daily');
+    vi.mocked(backupRetention.cleanupOldAutoBackups).mockRejectedValue(new Error('cleanup failed'));
+
+    const result = await runAutoBackupIfDue(now);
+
+    expect(result).toMatchObject({ ran: true, saved: true, reason: 'saved' });
+    expect(settingsRows.get(AUTO_BACKUP_SETTING_KEYS.lastRunAt)).toBe(String(now));
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Auto backup retention cleanup failed after backup save.',
+      expect.any(Error),
+      { context: 'AutoBackupService' }
+    );
+  });
+
+  it('keeps auto backup successful and logs when cleanup reports failures', async () => {
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.enabled, '1');
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.interval, 'daily');
+    vi.mocked(backupRetention.cleanupOldAutoBackups).mockResolvedValue({
+      skipped: false,
+      deleted: 1,
+      failed: 2,
+    });
+
+    const result = await runAutoBackupIfDue(now);
+
+    expect(result).toMatchObject({
+      ran: true,
+      saved: true,
+      reason: 'saved',
+      retention: { skipped: false, deleted: 1, failed: 2 },
+    });
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Auto backup retention completed with failures.',
+      expect.objectContaining({
+        context: 'AutoBackupService',
+        metadata: { failed: 2, deleted: 1 },
+      })
+    );
+  });
+
+  it('keeps auto backup successful and skips cleanup when metadata registration fails', async () => {
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.enabled, '1');
+    settingsRows.set(AUTO_BACKUP_SETTING_KEYS.interval, 'daily');
+    vi.mocked(backupFileRepository.registerBackupFile).mockRejectedValue(
+      new Error('metadata failed')
+    );
+
+    const result = await runAutoBackupIfDue(now);
+
+    expect(result).toMatchObject({ ran: true, saved: true, reason: 'saved' });
+    expect(settingsRows.get(AUTO_BACKUP_SETTING_KEYS.lastRunAt)).toBe(String(now));
+    expect(backupRetention.cleanupOldAutoBackups).not.toHaveBeenCalled();
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Auto backup file was saved but metadata registration failed.',
+      expect.any(Error),
+      { context: 'AutoBackupService' }
+    );
   });
 });

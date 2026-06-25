@@ -1,16 +1,16 @@
 # Graph Report - TaiXiuCaNhan  (2026-06-25)
 
 ## Corpus Check
-- 410 files · ~170,642 words
+- 410 files · ~171,496 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3000 nodes · 10308 edges · 158 communities (147 shown, 11 thin omitted)
+- 3000 nodes · 10319 edges · 158 communities (147 shown, 11 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c507846a`
+- Built from commit: `28bbb917`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -146,7 +146,7 @@
 3. `Wallet` - 91 edges
 4. `useToast()` - 66 edges
 5. `useCurrency()` - 59 edges
-6. `Logger` - 53 edges
+6. `Logger` - 54 edges
 7. `Transaction` - 52 edges
 8. `getDbConnectionForTransaction()` - 51 edges
 9. `ITransactionRepository` - 50 edges
@@ -171,8 +171,8 @@ Cohesion: 0.22
 Nodes (14): DonutItem, formatPercentLabel(), makeId(), normalizeDonutData(), NormalizeDonutDataOptions, RawDonutItem, DonutCenterLabel(), DonutCenterLabelProps (+6 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.15
-Nodes (17): BudgetAddSheet(), BudgetCategoryList(), BudgetEditForm(), BudgetEditSheet(), BudgetSummaryStats(), Props, StatCard(), StatCardProps (+9 more)
+Cohesion: 0.14
+Nodes (20): BudgetAddSheet(), BudgetCategoryList(), BudgetEditForm(), BudgetEditSheet(), BudgetSummaryStats(), Props, StatCard(), StatCardProps (+12 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.10
@@ -184,11 +184,11 @@ Nodes (22): devDependencies, autoprefixer, @capacitor/cli, copyfiles, eslint, es
 
 ### Community 4 - "Community 4"
 Cohesion: 0.10
-Nodes (38): dateInputValue(), DateRangePicker(), endOfInputDate(), Props, startOfInputDate(), percentChange(), Props, ReportSummaryCards() (+30 more)
+Nodes (35): dateInputValue(), DateRangePicker(), endOfInputDate(), Props, startOfInputDate(), dumpReportData(), CashflowSummary, CategorySummary (+27 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.11
-Nodes (26): StartupScreenRedirector(), ConfirmContext, ConfirmContextType, ConfirmOptions, ConfirmDialog(), ConfirmDialogProps, BodyScrollLockSnapshot, lockBodyScroll() (+18 more)
+Cohesion: 0.09
+Nodes (32): BackupPasswordDialog(), BackupPasswordDialogProps, cancelNextFrame(), prefersReducedMotion(), Props, scheduleNextFrame(), SheetTransitionState, ConfirmContext (+24 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.11
@@ -203,16 +203,16 @@ Cohesion: 0.06
 Nodes (13): InMemoryWalletRepository, destinationWallet, includeDeletedSpy, readStoredWallet, sourceWallet, transactionRepository, transfer, useCase (+5 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.06
+Cohesion: 0.07
 Nodes (60): BackupFileKind, BackupFileRecord, BackupRetentionSettings, SavedBackupFile, DeleteSavedFileOptions, DeleteSavedFileResult, documentSaver, DocumentSaverPlugin (+52 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.08
-Nodes (35): AppUiPreferencesApplier(), ErrorScreen(), ErrorScreenProps, LoadingScreen(), ConfirmProvider(), error, toastMock, ACTIVITY_EVENTS (+27 more)
+Cohesion: 0.13
+Nodes (16): AppUiPreferencesApplier(), ErrorScreen(), ErrorScreenProps, LoadingScreen(), ConfirmProvider(), ACTIVITY_EVENTS, AppBootstrap(), AppBootstrapProps (+8 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.11
-Nodes (38): previewTimestamp, SettingLabel(), SettingLabelProps, ToggleSetting(), ToggleSettingProps, transaction(), matchingInputs, messages (+30 more)
+Cohesion: 0.12
+Nodes (36): previewTimestamp, SettingLabel(), SettingLabelProps, ToggleSetting(), ToggleSettingProps, transaction(), matchingInputs, messages (+28 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.07
@@ -251,8 +251,8 @@ Cohesion: 0.06
 Nodes (39): 1. Local Backup & Restore, 2. Human-Readable Exports, 3. Portability Limitations, Android Sync & Build, Backup, restore và export, Build Android, Chạy Web, code:text (src/) (+31 more)
 
 ### Community 21 - "Community 21"
-Cohesion: 0.06
-Nodes (29): categories, categoryInserts, countTransactionalMigrations(), dbError, expectExecuteContaining(), expectMigrationMarked(), expectNoExecuteContaining(), id (+21 more)
+Cohesion: 0.07
+Nodes (49): AppliedMigration, buildLoanSkipTransactionSql(), columnExists(), DbConnection, executeMigrationSql(), executeMigrationStatement(), getAppliedMigrations(), markMigrationDone() (+41 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.19
@@ -279,8 +279,8 @@ Cohesion: 0.15
 Nodes (13): code:block10 (You are a graphify extraction subagent. Read the files liste), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:bash ($(cat graphify-out/.graphify_python) -c "), code:block8 (spawn_agent(agent_type="worker", message="Your task is to pe) (+5 more)
 
 ### Community 28 - "Community 28"
-Cohesion: 0.19
-Nodes (26): DaySummaryRow, MonthSummaryRow, Props, QuarterSummaryRow, SummaryRow, WeekSummaryRow, YearMonthSummaryRow, toDateKey() (+18 more)
+Cohesion: 0.12
+Nodes (43): DaySummaryRow, MonthSummaryRow, Props, QuarterSummaryRow, SummaryRow, TransactionList(), WeekSummaryRow, YearMonthSummaryRow (+35 more)
 
 ### Community 29 - "Community 29"
 Cohesion: 0.09
@@ -299,8 +299,8 @@ Cohesion: 0.14
 Nodes (13): compilerOptions, allowImportingTsExtensions, composite, isolatedModules, module, moduleResolution, noEmit, resolveJsonModule (+5 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.13
-Nodes (22): BackButton(), BackButtonProps, RecurringBillForm(), RecurringBillList(), hasStartupRedirectBeenApplied(), markStartupRedirectApplied(), TransactionForm(), ROUTES (+14 more)
+Cohesion: 0.12
+Nodes (33): BackButton(), BackButtonProps, BottomSheet(), FormSheet(), FormSheetProps, FormTransition(), RecurringBillForm(), TransactionForm() (+25 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.31
@@ -395,8 +395,8 @@ Cohesion: 0.67
 Nodes (3): code:bash ($(cat graphify-out/.graphify_python) -c "), code:block4 (Corpus: X files · ~Y words), Step 2 - Detect files
 
 ### Community 84 - "Community 84"
-Cohesion: 0.21
-Nodes (23): appendMoneyCalculatorDecimalSeparator(), appendMoneyCalculatorDigit(), appendMoneyCalculatorOperator(), backspaceMoneyExpression(), calculateTokens(), clearMoneyExpression(), evaluateMoneyExpression(), formatCalculationValue() (+15 more)
+Cohesion: 0.16
+Nodes (31): appendMoneyCalculatorDecimalSeparator(), appendMoneyCalculatorDigit(), appendMoneyCalculatorOperator(), backspaceMoneyExpression(), calculateTokens(), clearMoneyExpression(), evaluateMoneyExpression(), formatCalculationValue() (+23 more)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.20
@@ -415,20 +415,20 @@ Cohesion: 0.09
 Nodes (38): CreditCardAlertBanner(), CreditCardAlertBannerProps, fmtDayMonth(), getAlertTitle(), CreditCardAlertsPanelProps, CreditCardAlert, CreditCardAlertType, computeCreditCardAlerts() (+30 more)
 
 ### Community 89 - "Community 89"
-Cohesion: 0.16
-Nodes (19): MoneyCalculationError, MoneyCalculatorOperator, calculatorRows, formatExpressionForDisplay(), getErrorText(), getOperatorLabel(), MoneyCalculatorPanel(), MoneyCalculatorPanelProps (+11 more)
+Cohesion: 0.14
+Nodes (23): CurrencyAmountInput(), CurrencyAmountInputProps, formatAmountInput(), getFractionDigits(), getMoneyKeyboardScrollContainer(), MoneyKeyboardScrollState, normalizeAmountInput(), restoreMoneyKeyboardScrollPadding() (+15 more)
 
 ### Community 90 - "Community 90"
 Cohesion: 0.13
 Nodes (27): loanListDeps, loanMutationDeps, loanServiceDeps, emitLoanEvent(), toError(), useLoanMutations(), formatIsoDate(), formatMsDate() (+19 more)
 
 ### Community 96 - "Community 96"
-Cohesion: 0.16
-Nodes (13): ENV, DEFAULT_CATEGORIES, DefaultCategory, DefaultCategoryType, insertDefaultCategories(), seedDefaultData(), isLogOptions(), Logger (+5 more)
+Cohesion: 0.35
+Nodes (7): ENV, isLogOptions(), LogLevel, LogOptions, normalizeError(), normalizeMetadata(), toSafeLogValue()
 
 ### Community 98 - "Community 98"
-Cohesion: 0.15
-Nodes (28): SettingLabel(), SettingLabelProps, ToggleSetting(), ToggleSettingProps, { result }, isUiPersonalizationStorageKey(), DEFAULT_UI_PERSONALIZATION_SETTINGS, FONT_SIZES (+20 more)
+Cohesion: 0.10
+Nodes (44): SettingLabel(), SettingLabelProps, ToggleSetting(), ToggleSettingProps, { result }, isUiPersonalizationStorageKey(), HapticFeedbackPlugin, HapticFeedbackResult (+36 more)
 
 ### Community 99 - "Community 99"
 Cohesion: 0.14
@@ -449,12 +449,12 @@ Cohesion: 0.13
 Nodes (18): buildErrorLogExportPayload(), ErrorLogExportItem, ErrorLogExportPayload, exportErrorLogsToJson(), parseMetadata(), escapeCsvCell(), exportToCsv(), formatCsvDate() (+10 more)
 
 ### Community 106 - "Community 106"
-Cohesion: 0.32
-Nodes (11): CurrencyAmountInput(), CurrencyAmountInputProps, formatAmountInput(), getFractionDigits(), getMoneyKeyboardScrollContainer(), MoneyKeyboardScrollState, normalizeAmountInput(), restoreMoneyKeyboardScrollPadding() (+3 more)
+Cohesion: 0.17
+Nodes (17): AppProvider(), AppErrorContext, buildExportPayload(), clearErrorLogs(), downloadInBrowser(), exportErrorLogs(), getAppVersion(), isShareCanceledError() (+9 more)
 
 ### Community 107 - "Community 107"
-Cohesion: 0.27
-Nodes (20): AppliedMigration, buildLoanSkipTransactionSql(), columnExists(), DbConnection, executeMigrationSql(), executeMigrationStatement(), getAppliedMigrations(), markMigrationDone() (+12 more)
+Cohesion: 0.20
+Nodes (15): useCreditCardAlerts(), useLoans(), useMonthEndForecast(), useRecurringBills(), useRecurringReminders(), useTransactionSummary(), useWalletBalances(), ACCOUNT_TYPE_ICON (+7 more)
 
 ### Community 108 - "Community 108"
 Cohesion: 0.11
@@ -465,68 +465,68 @@ Cohesion: 0.19
 Nodes (14): blurActiveEditableElement(), HIDDEN_MANUAL_TRANSACTION_CATEGORY_KEYS, HIDDEN_MANUAL_TRANSACTION_CATEGORY_SLUGS, isDuplicateCheckTransactionType(), isHiddenManualTransactionCategory(), normalizeCategoryFilterKey(), Props, TransactionFormCategoryOption (+6 more)
 
 ### Community 110 - "Community 110"
-Cohesion: 0.12
-Nodes (27): RecoveryResetDialog(), AppUpdateGate(), BiometricUnlockSettings(), BudgetProgressCard(), Props, CurrencySettings(), DatabaseDiagnostics(), DisplayFormatSettings() (+19 more)
+Cohesion: 0.08
+Nodes (27): RecoveryResetDialog(), AppUpdateGate(), BiometricUnlockSettings(), BudgetProgressCard(), Props, CategoryForm(), CategoryList(), Props (+19 more)
 
 ### Community 111 - "Community 111"
-Cohesion: 0.31
-Nodes (8): HapticFeedbackPlugin, HapticFeedbackResult, nativeHapticFeedback, getPrimaryDuration(), HAPTIC_PATTERNS, HapticFeedbackPattern, vibrate, triggerHapticFeedback()
+Cohesion: 0.33
+Nodes (5): hasStartupRedirectBeenApplied(), markStartupRedirectApplied(), StartupScreenRedirector(), getStartupScreenRoute(), STARTUP_SCREEN_ROUTE_MAP
 
 ### Community 112 - "Community 112"
-Cohesion: 0.29
-Nodes (13): buildTimestamp(), detectMode(), formatDateDisplay(), formatPreview(), getDateTimePickerErrorContext(), isValidDateInput(), isValidTimeInput(), isValidTimestamp() (+5 more)
+Cohesion: 0.14
+Nodes (23): formatDate(), formatVnd(), isOverdue(), LoanCard(), LoanCardProps, STATUS_LABELS, TYPE_LABELS, buildTimestamp() (+15 more)
 
 ### Community 113 - "Community 113"
-Cohesion: 0.41
-Nodes (8): getPrimaryDuration(), HAPTIC_PATTERNS, HapticPattern, vibrate, triggerHaptic(), triggerLightHaptic(), triggerSuccessHaptic(), triggerWarningHaptic()
+Cohesion: 0.52
+Nodes (4): EXPORT_COPY, base64ToBlob(), parseBase64DataUri(), shareFile()
 
 ### Community 114 - "Community 114"
 Cohesion: 0.33
 Nodes (5): bundleVersion, _comment, minNativeVersionCodeForBundle, nativeVersionCode, nativeVersionName
 
 ### Community 115 - "Community 115"
-Cohesion: 0.10
-Nodes (42): ACCOUNT_TYPE_ICONS, BudgetByAccountTypeSummary(), Props, STATUS_COLORS, BudgetCategoryItem(), Props, BudgetStatusBadge(), Props (+34 more)
+Cohesion: 0.11
+Nodes (36): ACCOUNT_TYPE_ICONS, BudgetByAccountTypeSummary(), Props, STATUS_COLORS, BudgetCategoryItem(), Props, BudgetStatusBadge(), Props (+28 more)
 
 ### Community 116 - "Community 116"
-Cohesion: 0.15
-Nodes (20): BottomSheet(), cancelNextFrame(), prefersReducedMotion(), Props, scheduleNextFrame(), SheetTransitionState, CategoryForm(), CategoryList() (+12 more)
+Cohesion: 0.52
+Nodes (5): DEFAULT_CATEGORIES, DefaultCategory, DefaultCategoryType, insertDefaultCategories(), seedDefaultData()
 
 ### Community 117 - "Community 117"
-Cohesion: 0.15
-Nodes (18): BackupPasswordDialog(), BackupPasswordDialogProps, BackupPage(), formatLastRunAt(), forceAppUnlock(), resumeAppLock(), suspendAppLock(), BackupDecryptionError (+10 more)
+Cohesion: 0.25
+Nodes (13): forceAppUnlock(), resumeAppLock(), suspendAppLock(), appListeners, authServiceMock, autoBackupMock, capacitorMock, emitAppStateChange() (+5 more)
 
 ### Community 118 - "Community 118"
-Cohesion: 0.14
-Nodes (15): LanguageProvider(), LoanListPage(), AppUnlock(), AppUnlockProps, PIN_KEYS, UnlockMode, authServiceMock, enterPin() (+7 more)
+Cohesion: 0.13
+Nodes (16): LanguageContext, LanguageContextType, LanguageProvider(), AppUnlock(), AppUnlockProps, PIN_KEYS, UnlockMode, authServiceMock (+8 more)
 
 ### Community 119 - "Community 119"
-Cohesion: 0.12
-Nodes (20): dateInputToMs(), formatVnd(), PaymentForm(), PaymentFormProps, startOfLocalDay(), todayInputValue(), formatDueDate(), fromDateInput() (+12 more)
+Cohesion: 0.10
+Nodes (23): dateInputToMs(), formatVnd(), PaymentForm(), PaymentFormProps, startOfLocalDay(), todayInputValue(), formatDueDate(), fromDateInput() (+15 more)
 
 ### Community 120 - "Community 120"
 Cohesion: 0.40
 Nodes (9): appendTable(), appendText(), AutoTableDocument, buildImageReportPages(), exportImagePdf(), exportToPdf(), jsPDF, PdfExportLabels (+1 more)
 
 ### Community 121 - "Community 121"
-Cohesion: 0.13
-Nodes (13): 10. Xuất dữ liệu, 13. Lưu ý bảo mật và dữ liệu, 1. Giới thiệu, 6. Ngân sách, 7. Hóa đơn định kỳ, Hướng dẫn sử dụng Expense Tracker, Theo dõi và chỉnh sửa ngân sách, Theo dõi và quản lý hóa đơn (+5 more)
+Cohesion: 0.17
+Nodes (10): 10. Xuất dữ liệu, 13. Lưu ý bảo mật và dữ liệu, 1. Giới thiệu, 9. Báo cáo, Chọn khoảng thời gian, Hướng dẫn sử dụng Expense Tracker, Nội dung báo cáo, Web và Android khác nhau thế nào? (+2 more)
 
 ### Community 122 - "Community 122"
 Cohesion: 0.27
 Nodes (10): isDatabaseReady(), appendPendingLog(), canUseLocalStorage(), ErrorLogRepository, generateId(), readPendingErrorLogs(), readPendingLogs(), entry (+2 more)
 
 ### Community 123 - "Community 123"
-Cohesion: 0.14
-Nodes (10): Props, ReceiptCapture(), OrphanReceiptCleanupService, runReceiptOrphanCleanup(), ReceiptStorageService, cleanupSpy, db, deleteSpy (+2 more)
+Cohesion: 0.12
+Nodes (11): Props, ReceiptCapture(), OrphanReceiptCleanupService, runReceiptOrphanCleanup(), ReceiptStorageService, Logger, cleanupSpy, db (+3 more)
 
 ### Community 124 - "Community 124"
 Cohesion: 0.22
 Nodes (7): Currency Và Format, Luồng Bàn Tính, Luồng Nhập Số, Màn Hình Cần Test, Pass Criteria, QA Checklist: Bàn Phím Tiền Custom Và Bàn Tính, Scroll Và Layout Android
 
 ### Community 125 - "Community 125"
-Cohesion: 0.29
-Nodes (14): TransactionNavigationState, ViewType, input, range, addMonths(), coerceMonthDate(), DateRange, endOfMonth() (+6 more)
+Cohesion: 0.67
+Nodes (3): 6. Ngân sách, Theo dõi và chỉnh sửa ngân sách, Tạo ngân sách
 
 ### Community 126 - "Community 126"
 Cohesion: 0.26
@@ -542,11 +542,11 @@ Nodes (8): createUseCase, existingNoReceipt, existingWithReceipt, input, makeBas
 
 ### Community 130 - "Community 130"
 Cohesion: 0.67
-Nodes (3): 9. Báo cáo, Chọn khoảng thời gian, Nội dung báo cáo
+Nodes (3): 7. Hóa đơn định kỳ, Theo dõi và quản lý hóa đơn, Tạo hóa đơn định kỳ
 
 ### Community 132 - "Community 132"
-Cohesion: 0.18
-Nodes (7): PromptUpdateOptions, markVersionSkipped(), Toast(), ToastProps, ToastType, ToastContext, ToastContextType
+Cohesion: 0.47
+Nodes (4): Toast(), ToastProps, ToastType, ToastContextType
 
 ### Community 133 - "Community 133"
 Cohesion: 0.18
@@ -593,8 +593,8 @@ Cohesion: 0.50
 Nodes (4): 5. Quản lý danh mục, Phân biệt danh mục thu và chi, Sửa hoặc xóa danh mục, Tạo danh mục
 
 ### Community 152 - "Community 152"
-Cohesion: 0.12
-Nodes (29): BudgetProgress, BudgetStatus, resolveBudgetScope(), isDisplayFormatStorageKey(), CalculateBudgetProgressUseCase, BUDGET_THRESHOLDS, classifyBudgetStatus(), DisplayFormatSettings (+21 more)
+Cohesion: 0.10
+Nodes (39): BudgetProgress, BudgetStatus, resolveBudgetScope(), useBudgetAnalysis(), useBudgets(), BUDGET_STATUS_ORDER, buildDashboardViewModel(), DashboardViewModel (+31 more)
 
 ### Community 153 - "Community 153"
 Cohesion: 0.20
@@ -605,16 +605,16 @@ Cohesion: 0.18
 Nodes (18): CreateLoanInput, CreateLoanPaymentInput, LoanType, UpdateLoanInput, LOAN_TYPES, validateCreateLoan(), validateLoanFields(), validateUpdateLoan() (+10 more)
 
 ### Community 158 - "Community 158"
-Cohesion: 0.17
-Nodes (14): dateStringToTimestamp(), LoanForm(), LoanFormProps, startOfLocalDay(), timestampToDateString(), TYPE_OPTIONS, renderSettingsPage(), renderPicker() (+6 more)
+Cohesion: 0.22
+Nodes (12): dateStringToTimestamp(), LoanForm(), LoanFormProps, startOfLocalDay(), timestampToDateString(), TYPE_OPTIONS, { container }, existingLoan (+4 more)
 
 ### Community 163 - "Community 163"
 Cohesion: 0.15
 Nodes (14): addTransactionAmount(), makeRow(), makeTx(), row, SummaryRow, mapToTransaction(), CreateTransactionInput, Transaction (+6 more)
 
 ### Community 165 - "Community 165"
-Cohesion: 0.05
-Nodes (62): Props, Props, STATUS_COLORS, formatDaysDiff(), Props, RecurringBillReminderBanner(), STATUS_CONFIG, getDueRemindersUseCase (+54 more)
+Cohesion: 0.09
+Nodes (35): Props, Props, STATUS_COLORS, formatDaysDiff(), Props, RecurringBillReminderBanner(), STATUS_CONFIG, getDueRemindersUseCase (+27 more)
 
 ### Community 168 - "Community 168"
 Cohesion: 0.50
@@ -622,7 +622,7 @@ Nodes (4): 8. Khoản vay và cho vay, Ghi nhận thanh toán, Phân biệt vớ
 
 ### Community 169 - "Community 169"
 Cohesion: 0.13
-Nodes (21): DropdownList(), DropdownListProps, DropdownOption, isEditableElement(), ACCOUNT_TYPE_ICONS, ACCOUNT_TYPES, COLOR_PRESETS, EMOJI_PRESETS (+13 more)
+Nodes (19): DropdownList(), DropdownListProps, DropdownOption, isEditableElement(), ACCOUNT_TYPE_ICONS, ACCOUNT_TYPES, COLOR_PRESETS, EMOJI_PRESETS (+11 more)
 
 ### Community 172 - "Community 172"
 Cohesion: 0.13
@@ -636,17 +636,17 @@ Nodes (18): Android release, Bump version.config.json, Check the GitHub Release,
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useLanguage()` connect `Community 110` to `Community 0`, `Community 1`, `Community 132`, `Community 5`, `Community 4`, `Community 10`, `Community 11`, `Community 140`, `Community 144`, `Community 152`, `Community 28`, `Community 29`, `Community 158`, `Community 33`, `Community 36`, `Community 165`, `Community 169`, `Community 79`, `Community 88`, `Community 89`, `Community 90`, `Community 98`, `Community 108`, `Community 109`, `Community 112`, `Community 115`, `Community 116`, `Community 117`, `Community 118`, `Community 119`, `Community 125`, `Community 126`, `Community 127`?**
+- **Why does `useLanguage()` connect `Community 110` to `Community 0`, `Community 1`, `Community 4`, `Community 5`, `Community 10`, `Community 11`, `Community 140`, `Community 144`, `Community 152`, `Community 28`, `Community 29`, `Community 158`, `Community 33`, `Community 36`, `Community 165`, `Community 169`, `Community 79`, `Community 84`, `Community 88`, `Community 89`, `Community 90`, `Community 98`, `Community 107`, `Community 108`, `Community 109`, `Community 112`, `Community 113`, `Community 115`, `Community 118`, `Community 119`, `Community 126`, `Community 127`?**
   _High betweenness centrality (0.103) - this node is a cross-community bridge._
-- **Why does `getDbConnection()` connect `Community 13` to `Community 96`, `Community 129`, `Community 163`, `Community 4`, `Community 165`, `Community 36`, `Community 9`, `Community 107`, `Community 108`, `Community 109`, `Community 79`, `Community 22`, `Community 87`, `Community 56`, `Community 122`, `Community 29`, `Community 127`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `Wallet` connect `Community 36` to `Community 99`, `Community 165`, `Community 8`, `Community 73`, `Community 169`, `Community 76`, `Community 140`, `Community 13`, `Community 143`, `Community 115`, `Community 23`, `Community 116`, `Community 87`, `Community 88`, `Community 157`, `Community 126`?**
+- **Why does `getDbConnection()` connect `Community 13` to `Community 129`, `Community 163`, `Community 4`, `Community 165`, `Community 36`, `Community 9`, `Community 108`, `Community 109`, `Community 79`, `Community 116`, `Community 21`, `Community 22`, `Community 87`, `Community 56`, `Community 122`, `Community 29`, `Community 127`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `Wallet` connect `Community 36` to `Community 33`, `Community 99`, `Community 8`, `Community 73`, `Community 169`, `Community 107`, `Community 76`, `Community 140`, `Community 13`, `Community 143`, `Community 115`, `Community 23`, `Community 157`, `Community 87`, `Community 88`, `Community 152`, `Community 126`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `config`, `dev`, `build` to the rest of the system?**
   _661 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.13756613756613756 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._
-- **Should `Community 4` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._

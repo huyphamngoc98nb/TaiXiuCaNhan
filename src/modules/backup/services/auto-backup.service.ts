@@ -2,6 +2,7 @@ import { getDbConnection } from '@/core/db/sqlite/connection';
 import { logger } from '@/core/telemetry/logger';
 import { exportBackupJson } from './export-backup-json';
 import { registerBackupFile } from './backup-file.repository';
+import { cleanupOldAutoBackups } from './backup-retention.service';
 import { saveAutoBackupFile } from './save-auto-backup-file';
 
 export const AUTO_BACKUP_SETTING_KEYS = {
@@ -38,6 +39,11 @@ export interface AutoBackupRunResult {
   reason: AutoBackupRunReason;
   fileName?: string;
   settings?: AutoBackupSettings;
+  retention?: {
+    skipped: boolean;
+    deleted: number;
+    failed: number;
+  };
   error?: unknown;
 }
 
@@ -182,6 +188,8 @@ async function runAutoBackupIfDueInternal(now: number): Promise<AutoBackupRunRes
       return { ran: true, saved: false, reason: 'save_cancelled', fileName, settings };
     }
 
+    let metadataRegistered = false;
+
     try {
       await registerBackupFile({
         fileName: savedFile.fileName ?? fileName,
@@ -192,6 +200,7 @@ async function runAutoBackupIfDueInternal(now: number): Promise<AutoBackupRunRes
         encrypted: false,
         createdAt: now,
       });
+      metadataRegistered = true;
     } catch (error) {
       logger.warn('Auto backup file was saved but metadata registration failed.', error, {
         context: 'AutoBackupService',
@@ -200,11 +209,30 @@ async function runAutoBackupIfDueInternal(now: number): Promise<AutoBackupRunRes
 
     await updateLastRunAt(now);
 
+    let retention: AutoBackupRunResult['retention'];
+
+    if (metadataRegistered) {
+      try {
+        retention = await cleanupOldAutoBackups(now);
+        if (retention.failed > 0) {
+          logger.warn('Auto backup retention completed with failures.', {
+            context: 'AutoBackupService',
+            metadata: { failed: retention.failed, deleted: retention.deleted },
+          });
+        }
+      } catch (error) {
+        logger.warn('Auto backup retention cleanup failed after backup save.', error, {
+          context: 'AutoBackupService',
+        });
+      }
+    }
+
     return {
       ran: true,
       saved: true,
       reason: 'saved',
       fileName,
+      retention,
       settings: {
         ...settings,
         lastRunAt: now,

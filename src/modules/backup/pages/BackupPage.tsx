@@ -25,6 +25,11 @@ import {
   runAutoBackupIfDue,
   updateAutoBackupSettings,
 } from '../services/auto-backup.service';
+import type { BackupRetentionSettings } from '../domain/backup-file.model';
+import {
+  getAutoBackupRetentionSettings,
+  updateAutoBackupRetentionSettings,
+} from '../services/backup-retention.service';
 
 function formatLastRunAt(timestamp: number | null, locale: string, fallback: string) {
   if (!timestamp) return fallback;
@@ -59,6 +64,9 @@ export function BackupPage() {
   const [autoSettings, setAutoSettings] = useState<AutoBackupSettings | null>(null);
   const [autoLoading, setAutoLoading] = useState(true);
   const [autoSaving, setAutoSaving] = useState(false);
+  const [retentionSettings, setRetentionSettings] = useState<BackupRetentionSettings | null>(null);
+  const [retentionLoading, setRetentionLoading] = useState(true);
+  const [retentionSaving, setRetentionSaving] = useState(false);
   const [encryptExport, setEncryptExport] = useState(true);
   const [exportPassword, setExportPassword] = useState('');
   const [confirmExportPassword, setConfirmExportPassword] = useState('');
@@ -72,10 +80,15 @@ export function BackupPage() {
 
     async function loadAutoBackupSettings() {
       setAutoLoading(true);
+      setRetentionLoading(true);
       try {
-        const settings = await getAutoBackupSettings();
+        const [settings, retention] = await Promise.all([
+          getAutoBackupSettings(),
+          getAutoBackupRetentionSettings(),
+        ]);
         if (!mounted) return;
         setAutoSettings(settings);
+        setRetentionSettings(retention);
 
         const result = await runAutoBackupIfDue();
         if (!mounted) return;
@@ -94,6 +107,7 @@ export function BackupPage() {
       } finally {
         if (mounted) {
           setAutoLoading(false);
+          setRetentionLoading(false);
         }
       }
     }
@@ -136,6 +150,28 @@ export function BackupPage() {
       showErrorToast(error?.message || t('backup.auto_settings_save_failed'));
     } finally {
       setAutoSaving(false);
+    }
+  };
+
+  const handleChangeRetentionMaxFiles = async (maxFiles: number) => {
+    if (
+      !retentionSettings ||
+      autoSaving ||
+      retentionSaving ||
+      retentionSettings.maxFiles === maxFiles
+    ) {
+      return;
+    }
+
+    setRetentionSaving(true);
+    try {
+      const nextSettings = await updateAutoBackupRetentionSettings({ maxFiles });
+      setRetentionSettings(nextSettings);
+      showSuccessToast(t('backup.retention_updated'));
+    } catch (error: any) {
+      showErrorToast(error?.message || t('backup.retention_update_failed'));
+    } finally {
+      setRetentionSaving(false);
     }
   };
 
@@ -333,10 +369,17 @@ export function BackupPage() {
     { value: 'weekly', label: t('backup.auto_interval_weekly') },
     { value: 'monthly', label: t('backup.auto_interval_monthly') },
   ];
+  const retentionOptions = [
+    { value: 3, label: t('backup.retention_option_3') },
+    { value: 7, label: t('backup.retention_option_7') },
+    { value: 14, label: t('backup.retention_option_14') },
+    { value: 30, label: t('backup.retention_option_30') },
+  ];
   const selectedIntervalLabel =
     intervalOptions.find((option) => option.value === autoSettings?.interval)?.label ||
     t('backup.auto_interval_daily');
-  const autoControlsDisabled = loading || autoLoading || autoSaving;
+  const autoControlsDisabled = loading || autoLoading || autoSaving || retentionLoading || retentionSaving;
+  const retentionControlsDisabled = autoControlsDisabled || !retentionSettings;
   const autoLocale = language === 'vi' ? 'vi-VN' : 'en-US';
   const autoStatusLabel = autoLoading
     ? t('common.loading')
@@ -556,6 +599,68 @@ export function BackupPage() {
                 </button>
               );
             })}
+          </div>
+
+          <div
+            style={{
+              marginTop: '16px',
+              paddingTop: '16px',
+              borderTop: '1px solid var(--border)',
+              display: 'grid',
+              gap: '10px',
+            }}
+          >
+            <div>
+              <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '700' }}>
+                {t('backup.retention_title')}
+              </h4>
+              <p
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '0.8rem',
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.45,
+                }}
+              >
+                {t('backup.retention_desc')}{' '}
+                <span style={{ color: '#64748b' }}>{t('backup.retention_manual_safe')}</span>
+              </p>
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gap: '8px',
+              }}
+            >
+              {retentionOptions.map((option) => {
+                const selected = retentionSettings?.maxFiles === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => void handleChangeRetentionMaxFiles(option.value)}
+                    disabled={retentionControlsDisabled}
+                    style={{
+                      minHeight: '40px',
+                      padding: '9px 6px',
+                      borderRadius: '10px',
+                      border: '1px solid',
+                      borderColor: selected ? 'var(--primary)' : 'var(--border)',
+                      background: selected ? 'rgba(14, 165, 233, 0.1)' : 'var(--bg)',
+                      color: selected ? 'var(--primary)' : 'var(--text)',
+                      fontWeight: selected ? '700' : '600',
+                      fontSize: '0.78rem',
+                      lineHeight: 1.2,
+                      cursor: retentionControlsDisabled ? 'not-allowed' : 'pointer',
+                      opacity: retentionControlsDisabled && !retentionLoading ? 0.75 : 1,
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div

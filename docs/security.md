@@ -19,6 +19,11 @@ The app must authenticate the user before opening the database connection. `AppB
   exported file.
 - Plaintext manual exports remain available for compatibility, and automatic backups are still
   plaintext. Anyone with access to those files can read their contents.
+- Automatic backup retention manages only local metadata for automatic backup files recorded by the
+  app. It does not encrypt backup files.
+- Automatic backups remain plaintext until a later automatic-backup encryption phase is implemented.
+- Retention does not scan the whole Downloads folder and does not delete files outside recorded
+  automatic-backup metadata.
 
 ### Secret Handling
 
