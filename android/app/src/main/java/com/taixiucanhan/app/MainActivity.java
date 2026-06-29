@@ -11,6 +11,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(DocumentSaverPlugin.class);
         registerPlugin(HapticFeedbackPlugin.class);
         registerPlugin(SecureSecretStorePlugin.class);
+        registerPlugin(AppUpdatePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

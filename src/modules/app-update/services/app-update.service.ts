@@ -1,341 +1,175 @@
-import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { logger } from '@/core/telemetry/logger';
+import { getAndroidLatestJsonUrl } from '../app-update.config';
+import { getCurrentAndroidVersion } from './app-update.native';
 import type {
+  AndroidLatestRelease,
   AppUpdateCheckResult,
-  AndroidUpdateCheckOptions,
-  CurrentAppVersion,
-  LatestAndroidRelease,
 } from '../types/app-update.types';
 
-export const DEFAULT_ANDROID_UPDATE_MANIFEST_URL =
-  'https://huyphamngoc98nb.github.io/TaiChinhCaNhan/latest.json';
-
 const SKIPPED_ANDROID_VERSION_CODE_KEY = 'app_update.skipped_android_version_code';
-const UPDATE_LOG_CONTEXT = 'AppUpdate.check';
-const BODY_SNIPPET_MAX_LENGTH = 500;
 
-function getManifestUrl(): string {
-  return (
-    import.meta.env.VITE_ANDROID_UPDATE_MANIFEST_URL?.trim() ||
-    DEFAULT_ANDROID_UPDATE_MANIFEST_URL
-  );
+export const APP_UPDATE_ERROR_MESSAGES = {
+  checkFailed: 'Không thể kiểm tra cập nhật. Vui lòng thử lại sau.',
+  invalidManifest: 'Dữ liệu phiên bản mới không hợp lệ.',
+  currentVersionUnavailable:
+    'Không xác định được phiên bản hiện tại của ứng dụng.',
+} as const;
+
+class AppUpdateManifestError extends Error {
+  readonly cause?: unknown;
+
+  constructor(message: string, cause?: unknown) {
+    super(message);
+    this.name = 'AppUpdateManifestError';
+    this.cause = cause;
+  }
 }
 
-function createBodySnippet(body: string): string {
-  return body.length > BODY_SNIPPET_MAX_LENGTH
-    ? body.slice(0, BODY_SNIPPET_MAX_LENGTH)
-    : body;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-function getErrorMetadata(error: unknown): Record<string, unknown> {
-  if (error instanceof Error) {
-    return {
-      errorName: error.name,
-      errorMessage: error.message,
-    };
-  }
-
-  if (error === undefined) return {};
-
-  return {
-    errorMessage: String(error),
-  };
+function isPositiveInteger(value: unknown): value is number {
+  return Number.isSafeInteger(value) && Number(value) > 0;
 }
 
-function getManifestDiagnostics(value: unknown): Record<string, unknown> {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return {};
-  }
+function optionalTrimmedString(value: unknown): string | undefined | null {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string') return null;
 
-  const data = value as Record<string, unknown>;
-  const diagnostics: Record<string, unknown> = {
-    parsedKeys: Object.keys(data).slice(0, 25),
-  };
-
-  if (typeof data.versionName === 'string') {
-    diagnostics.latestVersionName = data.versionName;
-  }
-
-  if (typeof data.versionCode === 'number') {
-    diagnostics.latestVersionCode = data.versionCode;
-  }
-
-  return diagnostics;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
 }
 
-function getCurrentVersionMetadata(current?: CurrentAppVersion | null): Record<string, unknown> {
-  if (!current) return {};
-
-  return {
-    currentVersionName: current.versionName,
-    currentVersionCode: current.versionCode,
-  };
-}
-
-function warnUpdateCheck(
-  message: string,
-  metadata: Record<string, unknown>,
-  error?: unknown,
-): void {
-  const options = {
-    context: UPDATE_LOG_CONTEXT,
-    metadata: {
-      ...metadata,
-      ...getErrorMetadata(error),
-    },
-  };
-
-  if (error instanceof Error) {
-    logger.warn(message, error, options);
-    return;
+export function parseAndroidLatestRelease(value: unknown): AndroidLatestRelease {
+  if (!isRecord(value)) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.invalidManifest);
   }
 
-  logger.warn(message, options);
-}
+  const versionName = optionalTrimmedString(value.versionName);
+  const apkUrl = optionalTrimmedString(value.apkUrl);
+  const sha256 = optionalTrimmedString(value.sha256);
+  const releaseDate = optionalTrimmedString(value.releaseDate);
 
-function noUpdateResult(
-  status: AppUpdateCheckResult['status'],
-  platform = Capacitor.getPlatform(),
-  current: CurrentAppVersion | null = null,
-  latest: LatestAndroidRelease | null = null,
-): AppUpdateCheckResult {
-  return {
-    platform,
-    current,
-    latest,
-    updateAvailable: false,
-    mandatory: false,
-    skipped: false,
-    status,
-  };
-}
+  const invalidRequiredFields =
+    value.platform !== 'android' ||
+    !versionName ||
+    !isPositiveInteger(value.versionCode) ||
+    !apkUrl ||
+    !sha256;
+  const invalidOptionalFields =
+    (value.minSupportedVersionCode !== undefined &&
+      !isPositiveInteger(value.minSupportedVersionCode)) ||
+    (value.mandatory !== undefined && typeof value.mandatory !== 'boolean') ||
+    releaseDate === null ||
+    (value.releaseNotes !== undefined &&
+      (!Array.isArray(value.releaseNotes) ||
+        !value.releaseNotes.every((note) => typeof note === 'string')));
 
-function parseVersionCode(build: string | number | undefined): number | null {
-  if (typeof build === 'number' && Number.isInteger(build) && build > 0) {
-    return build;
+  if (invalidRequiredFields || invalidOptionalFields) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.invalidManifest);
   }
 
-  if (typeof build === 'string' && /^\d+$/.test(build.trim())) {
-    const value = Number(build.trim());
-    return Number.isSafeInteger(value) && value > 0 ? value : null;
-  }
-
-  return null;
-}
-
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === 'string');
-}
-
-function normalizeLatestAndroidRelease(value: unknown): LatestAndroidRelease | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return null;
-  }
-
-  const data = value as Record<string, unknown>;
-
-  if (
-    data.platform !== 'android' ||
-    typeof data.versionName !== 'string' ||
-    data.versionName.trim() === '' ||
-    typeof data.versionCode !== 'number' ||
-    !Number.isInteger(data.versionCode) ||
-    data.versionCode <= 0 ||
-    typeof data.apkUrl !== 'string' ||
-    data.apkUrl.trim() === ''
-  ) {
-    return null;
-  }
-
-  if (
-    data.minSupportedVersionCode !== undefined &&
-    (typeof data.minSupportedVersionCode !== 'number' ||
-      !Number.isInteger(data.minSupportedVersionCode) ||
-      data.minSupportedVersionCode <= 0)
-  ) {
-    return null;
-  }
-
-  if (data.mandatory !== undefined && typeof data.mandatory !== 'boolean') {
-    return null;
-  }
-
-  if (data.sha256 !== undefined && typeof data.sha256 !== 'string') {
-    return null;
-  }
-
-  if (data.releaseDate !== undefined && typeof data.releaseDate !== 'string') {
-    return null;
-  }
-
-  if (data.releaseNotes !== undefined && !isStringArray(data.releaseNotes)) {
-    return null;
-  }
+  const versionCode = value.versionCode as number;
+  const minSupportedVersionCode = value.minSupportedVersionCode as number | undefined;
+  const mandatory = value.mandatory as boolean | undefined;
+  const releaseNotes = value.releaseNotes as string[] | undefined;
 
   return {
     platform: 'android',
-    versionName: data.versionName.trim(),
-    versionCode: data.versionCode,
-    minSupportedVersionCode: data.minSupportedVersionCode,
-    mandatory: data.mandatory,
-    apkUrl: data.apkUrl.trim(),
-    sha256: data.sha256,
-    releaseDate: data.releaseDate,
-    releaseNotes: data.releaseNotes,
+    versionName,
+    versionCode,
+    ...(minSupportedVersionCode !== undefined
+      ? { minSupportedVersionCode }
+      : {}),
+    mandatory: mandatory ?? false,
+    apkUrl,
+    sha256,
+    ...(releaseDate ? { releaseDate } : {}),
+    releaseNotes: (releaseNotes ?? []).map((note) => note.trim()),
   };
 }
 
-export async function getCurrentAppVersion(): Promise<CurrentAppVersion | null> {
-  const platform = Capacitor.getPlatform();
+export async function fetchLatestAndroidRelease(): Promise<AndroidLatestRelease> {
+  const response = await fetch(getAndroidLatestJsonUrl(), { cache: 'no-store' });
+  if (!response.ok) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.checkFailed);
+  }
 
-  if (platform !== 'android') {
-    return null;
+  let value: unknown;
+  try {
+    value = await response.json();
+  } catch (cause) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.invalidManifest, cause);
+  }
+
+  return parseAndroidLatestRelease(value);
+}
+
+export async function checkForAndroidUpdate(): Promise<AppUpdateCheckResult> {
+  if (Capacitor.getPlatform() !== 'android') {
+    return { status: 'unsupported_platform' };
   }
 
   try {
-    const info = await App.getInfo();
-    const versionCode = parseVersionCode(info.build);
+    const latest = await fetchLatestAndroidRelease();
 
-    if (versionCode === null) {
-      warnUpdateCheck('Could not parse Android build number.', {
-        action: 'read-current-version',
-        platform,
-        manifestUrl: getManifestUrl(),
-        status: 'invalid-current-version',
-        rawVersion: info.version,
-        rawBuild: info.build,
-      });
-      return null;
+    let current;
+    try {
+      current = await getCurrentAndroidVersion();
+    } catch (cause) {
+      return {
+        status: 'error',
+        message: APP_UPDATE_ERROR_MESSAGES.currentVersionUnavailable,
+        cause,
+      };
+    }
+
+    if (latest.versionCode > current.versionCode) {
+      return {
+        status: 'update_available',
+        latest,
+        currentVersionCode: current.versionCode,
+        mandatory:
+          latest.mandatory ||
+          (latest.minSupportedVersionCode !== undefined &&
+            current.versionCode < latest.minSupportedVersionCode),
+      };
     }
 
     return {
-      platform: 'android',
-      versionName: info.version,
-      versionCode,
-      build: String(info.build),
+      status: 'up_to_date',
+      latest,
+      currentVersionCode: current.versionCode,
     };
-  } catch (error) {
-    warnUpdateCheck(
-      'Could not read current app version.',
-      {
-        action: 'read-current-version',
-        platform,
-        manifestUrl: getManifestUrl(),
-        status: 'invalid-current-version',
+  } catch (cause) {
+    const message =
+      cause instanceof AppUpdateManifestError
+        ? cause.message
+        : APP_UPDATE_ERROR_MESSAGES.checkFailed;
+
+    logger.warn('Android update check failed.', cause, {
+      context: 'AppUpdate.check',
+      metadata: {
+        manifestUrl: getAndroidLatestJsonUrl(),
+        platform: Capacitor.getPlatform(),
       },
-      error,
-    );
-    return null;
-  }
-}
-
-export async function fetchLatestAndroidRelease(
-  current: CurrentAppVersion | null = null,
-): Promise<LatestAndroidRelease | null> {
-  const manifestUrl = getManifestUrl();
-  const platform = Capacitor.getPlatform();
-  const baseMetadata = {
-    action: 'fetch-manifest',
-    platform,
-    manifestUrl,
-    ...getCurrentVersionMetadata(current),
-  };
-
-  try {
-    const response = await fetch(manifestUrl, {
-      cache: 'no-store',
     });
 
-    let bodyText = '';
-    try {
-      bodyText = await response.text();
-    } catch (error) {
-      warnUpdateCheck(
-        'Could not read Android update manifest response.',
-        {
-          ...baseMetadata,
-          status: 'read-response-failed',
-          httpStatus: response.status,
-        },
-        error,
-      );
-      return null;
-    }
-
-    if (!response.ok) {
-      warnUpdateCheck('Android update manifest request failed.', {
-        ...baseMetadata,
-        status: 'http-error',
-        httpStatus: response.status,
-        bodySnippet: createBodySnippet(bodyText),
-      });
-      return null;
-    }
-
-    let parsedManifest: unknown;
-    try {
-      parsedManifest = JSON.parse(bodyText);
-    } catch (error) {
-      warnUpdateCheck(
-        'Android update manifest JSON could not be parsed.',
-        {
-          ...baseMetadata,
-          status: 'invalid-json',
-          httpStatus: response.status,
-          bodySnippet: createBodySnippet(bodyText),
-        },
-        error,
-      );
-      return null;
-    }
-
-    const manifest = normalizeLatestAndroidRelease(parsedManifest);
-
-    if (!manifest) {
-      warnUpdateCheck('Android update manifest is invalid.', {
-        ...baseMetadata,
-        ...getManifestDiagnostics(parsedManifest),
-        status: 'invalid-manifest',
-        httpStatus: response.status,
-        bodySnippet: createBodySnippet(bodyText),
-      });
-      return null;
-    }
-
-    return manifest;
-  } catch (error) {
-    warnUpdateCheck(
-      'Could not fetch Android update manifest.',
-      {
-        ...baseMetadata,
-        status: 'fetch-failed',
-      },
-      error,
-    );
-    return null;
+    return { status: 'error', message, cause };
   }
 }
 
 export async function getSkippedVersionCode(): Promise<number | null> {
   const { value } = await Preferences.get({ key: SKIPPED_ANDROID_VERSION_CODE_KEY });
-  const versionCode = parseVersionCode(value ?? undefined);
-
-  return versionCode;
+  const versionCode = Number(value);
+  return Number.isSafeInteger(versionCode) && versionCode > 0 ? versionCode : null;
 }
 
 export async function markVersionSkipped(versionCode: number): Promise<void> {
-  if (!Number.isInteger(versionCode) || versionCode <= 0) {
-    warnUpdateCheck('Ignoring invalid skipped Android versionCode.', {
-      action: 'mark-version-skipped',
-      platform: Capacitor.getPlatform(),
-      manifestUrl: getManifestUrl(),
-      status: 'invalid-version-code',
-      latestVersionCode: versionCode,
-    });
-    return;
-  }
+  if (!Number.isSafeInteger(versionCode) || versionCode <= 0) return;
 
   await Preferences.set({
     key: SKIPPED_ANDROID_VERSION_CODE_KEY,
@@ -345,47 +179,4 @@ export async function markVersionSkipped(versionCode: number): Promise<void> {
 
 export async function clearSkippedVersion(): Promise<void> {
   await Preferences.remove({ key: SKIPPED_ANDROID_VERSION_CODE_KEY });
-}
-
-export async function checkForAndroidUpdate(
-  options: AndroidUpdateCheckOptions = {}
-): Promise<AppUpdateCheckResult> {
-  const platform = Capacitor.getPlatform();
-
-  if (platform !== 'android') {
-    return noUpdateResult('unsupported-platform', platform);
-  }
-
-  const current = await getCurrentAppVersion();
-  if (!current) {
-    return noUpdateResult('invalid-current-version', platform);
-  }
-
-  const latest = await fetchLatestAndroidRelease(current);
-  if (!latest) {
-    return noUpdateResult('manifest-unavailable', platform, current);
-  }
-
-  const updateAvailable = latest.versionCode > current.versionCode;
-  const mandatory = latest.mandatory === true;
-  const skippedVersionCode = options.ignoreSkipped ? null : await getSkippedVersionCode();
-  const skipped =
-    !options.ignoreSkipped && !mandatory && updateAvailable && skippedVersionCode === latest.versionCode;
-
-  return {
-    platform,
-    current,
-    latest,
-    updateAvailable,
-    mandatory,
-    skipped,
-    status: updateAvailable ? 'update-available' : 'up-to-date',
-  };
-}
-
-export function shouldPromptUpdate(result: AppUpdateCheckResult): boolean {
-  if (!result.updateAvailable) return false;
-  if (result.mandatory) return true;
-
-  return !result.skipped;
 }

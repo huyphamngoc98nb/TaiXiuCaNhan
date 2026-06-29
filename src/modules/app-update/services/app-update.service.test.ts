@@ -1,33 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { logger } from '@/core/telemetry/logger';
 import {
-  DEFAULT_ANDROID_UPDATE_MANIFEST_URL,
+  APP_UPDATE_ERROR_MESSAGES,
   checkForAndroidUpdate,
   clearSkippedVersion,
-  fetchLatestAndroidRelease,
-  getCurrentAppVersion,
   getSkippedVersionCode,
   markVersionSkipped,
-  shouldPromptUpdate,
+  parseAndroidLatestRelease,
 } from './app-update.service';
+import { getCurrentAndroidVersion } from './app-update.native';
+import { DEFAULT_ANDROID_LATEST_JSON_URL } from '../app-update.config';
 
-const preferencesMock = vi.hoisted(() => {
-  const values = new Map<string, string>();
-
-  return {
-    values,
-    get: vi.fn(async ({ key }: { key: string }) => ({ value: values.get(key) ?? null })),
-    set: vi.fn(async ({ key, value }: { key: string; value: string }) => {
-      values.set(key, value);
-    }),
-    remove: vi.fn(async ({ key }: { key: string }) => {
-      values.delete(key);
-    }),
-  };
-});
+const preferencesMock = vi.hoisted(() => ({
+  get: vi.fn(),
+  set: vi.fn(),
+  remove: vi.fn(),
+}));
 
 const loggerMock = vi.hoisted(() => ({
   debug: vi.fn(),
@@ -36,342 +26,184 @@ const loggerMock = vi.hoisted(() => ({
   warn: vi.fn(),
 }));
 
-vi.mock('@capacitor/core', () => ({
-  Capacitor: {
-    getPlatform: vi.fn(),
-  },
-}));
+const currentVersionMock = vi.hoisted(() => vi.fn());
 
-vi.mock('@capacitor/app', () => ({
-  App: {
-    getInfo: vi.fn(),
-  },
+vi.mock('@capacitor/core', () => ({
+  Capacitor: { getPlatform: vi.fn() },
 }));
 
 vi.mock('@capacitor/preferences', () => ({
-  Preferences: {
-    get: preferencesMock.get,
-    set: preferencesMock.set,
-    remove: preferencesMock.remove,
-  },
+  Preferences: preferencesMock,
 }));
 
-vi.mock('@/core/telemetry/logger', () => ({
-  logger: loggerMock,
+vi.mock('@/core/telemetry/logger', () => ({ logger: loggerMock }));
+
+vi.mock('./app-update.native', () => ({
+  getCurrentAndroidVersion: currentVersionMock,
 }));
-
-function mockFetchText(body: string, ok = true, status = 200) {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async () => ({
-      ok,
-      status,
-      text: async () => body,
-    })),
-  );
-}
-
-function mockFetchJson(value: unknown, ok = true, status = 200) {
-  mockFetchText(JSON.stringify(value), ok, status);
-}
 
 function latestManifest(overrides: Record<string, unknown> = {}) {
   return {
     platform: 'android',
-    versionName: '0.1.15',
-    versionCode: 115,
-    minSupportedVersionCode: 100,
-    mandatory: false,
-    apkUrl:
-      'https://github.com/huyphamngoc98nb/TaiChinhCaNhan/releases/download/v0.1.15/TaiChinhCaNhan-v0.1.15.apk',
+    versionName: '0.1.21',
+    versionCode: 121,
+    apkUrl: 'https://example.com/TaiChinhCaNhan-0.1.21.apk',
     sha256: 'abc123',
-    releaseDate: '2026-06-24',
-    releaseNotes: ['Fix backup flow'],
     ...overrides,
   };
 }
 
+function mockFetchJson(value: unknown, ok = true) {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => ({
+      ok,
+      json: async () => value,
+    })),
+  );
+}
+
 describe('app update service', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
-    vi.clearAllMocks();
-    preferencesMock.values.clear();
     vi.mocked(Capacitor.getPlatform).mockReturnValue('android');
-    vi.mocked(App.getInfo).mockResolvedValue({
-      name: 'TaiChinhCaNhan',
-      id: 'com.taixiucanhan.app',
-      version: '0.1.14',
-      build: '114',
+    vi.mocked(getCurrentAndroidVersion).mockResolvedValue({
+      versionName: '0.1.20',
+      versionCode: 120,
     });
+    preferencesMock.get.mockResolvedValue({ value: null });
     mockFetchJson(latestManifest());
   });
 
-  it('returns no update on web without reading native app info or fetching manifest', async () => {
+  it('validates latest.json and applies optional defaults', () => {
+    expect(parseAndroidLatestRelease(latestManifest())).toEqual({
+      platform: 'android',
+      versionName: '0.1.21',
+      versionCode: 121,
+      mandatory: false,
+      apkUrl: 'https://example.com/TaiChinhCaNhan-0.1.21.apk',
+      sha256: 'abc123',
+      releaseNotes: [],
+    });
+  });
+
+  it.each([
+    ['missing platform', latestManifest({ platform: undefined })],
+    ['wrong platform', latestManifest({ platform: 'ios' })],
+    ['missing versionName', latestManifest({ versionName: undefined })],
+    ['missing versionCode', latestManifest({ versionCode: undefined })],
+    ['invalid versionCode', latestManifest({ versionCode: 0 })],
+    ['missing apkUrl', latestManifest({ apkUrl: undefined })],
+    ['missing sha256', latestManifest({ sha256: undefined })],
+    ['invalid releaseNotes', latestManifest({ releaseNotes: ['valid', 42] })],
+  ])('rejects invalid latest.json metadata: %s', (_caseName, manifest) => {
+    expect(() => parseAndroidLatestRelease(manifest)).toThrow(
+      APP_UPDATE_ERROR_MESSAGES.invalidManifest,
+    );
+  });
+
+  it('returns update_available when latest versionCode is greater', async () => {
+    await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+      status: 'update_available',
+      currentVersionCode: 120,
+      mandatory: false,
+      latest: { versionCode: 121 },
+    });
+  });
+
+  it.each([120, 119])(
+    'returns up_to_date when latest versionCode is %s',
+    async (latestVersionCode) => {
+      mockFetchJson(latestManifest({ versionCode: latestVersionCode }));
+
+      await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+        status: 'up_to_date',
+        currentVersionCode: 120,
+        latest: { versionCode: latestVersionCode },
+      });
+    },
+  );
+
+  it('returns unsupported_platform without fetching on web', async () => {
     vi.mocked(Capacitor.getPlatform).mockReturnValue('web');
 
-    const result = await checkForAndroidUpdate();
-
-    expect(result).toMatchObject({
-      platform: 'web',
-      current: null,
-      latest: null,
-      updateAvailable: false,
-      mandatory: false,
-      skipped: false,
-      status: 'unsupported-platform',
+    await expect(checkForAndroidUpdate()).resolves.toEqual({
+      status: 'unsupported_platform',
     });
-    expect(App.getInfo).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
-    expect(logger.warn).not.toHaveBeenCalled();
+    expect(getCurrentAndroidVersion).not.toHaveBeenCalled();
   });
 
-  it('reads the current Android version from Capacitor App info', async () => {
-    await expect(getCurrentAppVersion()).resolves.toEqual({
-      platform: 'android',
-      versionName: '0.1.14',
-      versionCode: 114,
-      build: '114',
+  it('returns a safe error when the network request fails', async () => {
+    const cause = new Error('offline');
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(cause)));
+
+    await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+      status: 'error',
+      message: APP_UPDATE_ERROR_MESSAGES.checkFailed,
+      cause,
+    });
+    expect(logger.warn).toHaveBeenCalled();
+  });
+
+  it('returns the invalid metadata message when response JSON is invalid', async () => {
+    mockFetchJson(latestManifest({ sha256: undefined }));
+
+    await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+      status: 'error',
+      message: APP_UPDATE_ERROR_MESSAGES.invalidManifest,
     });
   });
 
-  it('returns no update when the current Android build is not numeric', async () => {
-    vi.mocked(App.getInfo).mockResolvedValue({
-      name: 'TaiChinhCaNhan',
-      id: 'com.taixiucanhan.app',
-      version: '0.1.14',
-      build: 'debug',
+  it('returns a clear error when current version cannot be resolved', async () => {
+    vi.mocked(getCurrentAndroidVersion).mockRejectedValue(new Error('not available'));
+
+    await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+      status: 'error',
+      message: APP_UPDATE_ERROR_MESSAGES.currentVersionUnavailable,
     });
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('invalid-current-version');
-    expect(result.updateAvailable).toBe(false);
-    expect(fetch).not.toHaveBeenCalled();
-    expect(logger.warn).toHaveBeenCalledWith(
-      'Could not parse Android build number.',
-      expect.objectContaining({
-        context: 'AppUpdate.check',
-        metadata: expect.objectContaining({
-          action: 'read-current-version',
-          platform: 'android',
-          rawBuild: 'debug',
-          rawVersion: '0.1.14',
-          status: 'invalid-current-version',
-        }),
-      }),
-    );
   });
 
-  it('fetches and validates the latest Android release manifest', async () => {
-    await expect(fetchLatestAndroidRelease()).resolves.toEqual(latestManifest());
+  it('treats versions below minSupportedVersionCode as mandatory', async () => {
+    mockFetchJson(latestManifest({ minSupportedVersionCode: 121 }));
+
+    await expect(checkForAndroidUpdate()).resolves.toMatchObject({
+      status: 'update_available',
+      mandatory: true,
+    });
   });
 
-  it('uses the GitHub Pages manifest URL by default', async () => {
-    expect(DEFAULT_ANDROID_UPDATE_MANIFEST_URL).toBe(
-      'https://huyphamngoc98nb.github.io/TaiChinhCaNhan/latest.json',
-    );
+  it('uses the configured latest.json URL', async () => {
+    vi.stubEnv('VITE_ANDROID_LATEST_JSON_URL', ' https://example.com/latest.json ');
 
-    await fetchLatestAndroidRelease();
+    await checkForAndroidUpdate();
 
-    expect(fetch).toHaveBeenCalledWith(DEFAULT_ANDROID_UPDATE_MANIFEST_URL, {
+    expect(fetch).toHaveBeenCalledWith('https://example.com/latest.json', {
       cache: 'no-store',
     });
   });
 
-  it('allows VITE_ANDROID_UPDATE_MANIFEST_URL to override the default manifest URL', async () => {
-    vi.stubEnv('VITE_ANDROID_UPDATE_MANIFEST_URL', ' https://example.com/custom-latest.json ');
+  it('uses the documented manifest URL by default', async () => {
+    await checkForAndroidUpdate();
 
-    await fetchLatestAndroidRelease();
-
-    expect(fetch).toHaveBeenCalledWith('https://example.com/custom-latest.json', {
+    expect(fetch).toHaveBeenCalledWith(DEFAULT_ANDROID_LATEST_JSON_URL, {
       cache: 'no-store',
     });
   });
 
-  it('returns no update when the latest manifest is invalid', async () => {
-    mockFetchJson(latestManifest({ platform: 'ios' }));
+  it('stores and clears a skipped optional version', async () => {
+    preferencesMock.get.mockResolvedValue({ value: '121' });
 
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('manifest-unavailable');
-    expect(result.updateAvailable).toBe(false);
-    expect(result.current?.versionCode).toBe(114);
-    expect(logger.warn).toHaveBeenCalledWith(
-      'Android update manifest is invalid.',
-      expect.objectContaining({
-        context: 'AppUpdate.check',
-        metadata: expect.objectContaining({
-          action: 'fetch-manifest',
-          currentVersionCode: 114,
-          currentVersionName: '0.1.14',
-          latestVersionCode: 115,
-          latestVersionName: '0.1.15',
-          manifestUrl: DEFAULT_ANDROID_UPDATE_MANIFEST_URL,
-          parsedKeys: expect.arrayContaining(['platform', 'versionName', 'versionCode']),
-          platform: 'android',
-          status: 'invalid-manifest',
-        }),
-      }),
-    );
-  });
-
-  it('does not crash when fetching the manifest fails', async () => {
-    const error = new Error('network down');
-    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(error)));
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('manifest-unavailable');
-    expect(result.updateAvailable).toBe(false);
-    expect(logger.warn).toHaveBeenCalledWith(
-      'Could not fetch Android update manifest.',
-      error,
-      expect.objectContaining({
-        context: 'AppUpdate.check',
-        metadata: expect.objectContaining({
-          action: 'fetch-manifest',
-          currentVersionCode: 114,
-          currentVersionName: '0.1.14',
-          errorMessage: 'network down',
-          errorName: 'Error',
-          manifestUrl: DEFAULT_ANDROID_UPDATE_MANIFEST_URL,
-          platform: 'android',
-          status: 'fetch-failed',
-        }),
-      }),
-    );
-  });
-
-  it('logs HTTP status when the manifest request fails', async () => {
-    mockFetchText('<html>not found</html>', false, 404);
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('manifest-unavailable');
-    expect(logger.warn).toHaveBeenCalledWith(
-      'Android update manifest request failed.',
-      expect.objectContaining({
-        context: 'AppUpdate.check',
-        metadata: expect.objectContaining({
-          action: 'fetch-manifest',
-          bodySnippet: '<html>not found</html>',
-          httpStatus: 404,
-          manifestUrl: DEFAULT_ANDROID_UPDATE_MANIFEST_URL,
-          platform: 'android',
-          status: 'http-error',
-        }),
-      }),
-    );
-  });
-
-  it('logs invalid JSON without throwing', async () => {
-    mockFetchText('<html>not json</html>');
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('manifest-unavailable');
-    expect(logger.warn).toHaveBeenCalledWith(
-      'Android update manifest JSON could not be parsed.',
-      expect.any(SyntaxError),
-      expect.objectContaining({
-        context: 'AppUpdate.check',
-        metadata: expect.objectContaining({
-          action: 'fetch-manifest',
-          bodySnippet: '<html>not json</html>',
-          errorName: 'SyntaxError',
-          httpStatus: 200,
-          manifestUrl: DEFAULT_ANDROID_UPDATE_MANIFEST_URL,
-          platform: 'android',
-          status: 'invalid-json',
-        }),
-      }),
-    );
-  });
-
-  it('detects an available optional update and prompts when it is not skipped', async () => {
-    const result = await checkForAndroidUpdate();
-
-    expect(result.updateAvailable).toBe(true);
-    expect(result.mandatory).toBe(false);
-    expect(result.skipped).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(true);
-  });
-
-  it('returns no update when latest versionCode matches current versionCode', async () => {
-    mockFetchJson(latestManifest({ versionName: '0.1.14', versionCode: 114 }));
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('up-to-date');
-    expect(result.updateAvailable).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(false);
-  });
-
-  it('returns no update when latest versionCode is lower than current versionCode', async () => {
-    mockFetchJson(latestManifest({ versionName: '0.1.13', versionCode: 113 }));
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.status).toBe('up-to-date');
-    expect(result.updateAvailable).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(false);
-  });
-
-  it('does not prompt again for an optional update skipped by versionCode', async () => {
-    await markVersionSkipped(115);
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.updateAvailable).toBe(true);
-    expect(result.skipped).toBe(true);
-    expect(shouldPromptUpdate(result)).toBe(false);
-  });
-
-  it('ignores skipped versionCode when requested for manual checks', async () => {
-    await markVersionSkipped(115);
-
-    const result = await checkForAndroidUpdate({ ignoreSkipped: true });
-
-    expect(result.updateAvailable).toBe(true);
-    expect(result.skipped).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(true);
-  });
-
-  it('prompts again when the latest optional version differs from the skipped versionCode', async () => {
-    await markVersionSkipped(115);
-    mockFetchJson(latestManifest({ versionName: '0.1.16', versionCode: 116 }));
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.updateAvailable).toBe(true);
-    expect(result.skipped).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(true);
-  });
-
-  it('always prompts for mandatory updates even if the version was skipped before', async () => {
-    await markVersionSkipped(115);
-    mockFetchJson(latestManifest({ mandatory: true }));
-
-    const result = await checkForAndroidUpdate();
-
-    expect(result.mandatory).toBe(true);
-    expect(result.skipped).toBe(false);
-    expect(shouldPromptUpdate(result)).toBe(true);
-  });
-
-  it('stores and clears the skipped versionCode with Preferences', async () => {
-    await markVersionSkipped(115);
-
-    await expect(getSkippedVersionCode()).resolves.toBe(115);
+    await expect(getSkippedVersionCode()).resolves.toBe(121);
+    await markVersionSkipped(121);
     expect(Preferences.set).toHaveBeenCalledWith({
       key: 'app_update.skipped_android_version_code',
-      value: '115',
+      value: '121',
     });
 
     await clearSkippedVersion();
-
-    await expect(getSkippedVersionCode()).resolves.toBeNull();
     expect(Preferences.remove).toHaveBeenCalledWith({
       key: 'app_update.skipped_android_version_code',
     });

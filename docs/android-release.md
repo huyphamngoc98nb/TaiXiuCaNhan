@@ -4,6 +4,8 @@ Workflow `.github/workflows/android-release.yml` builds the Capacitor Android re
 
 The APK stays on GitHub Releases. The app reads the update manifest from GitHub Pages at `https://huyphamngoc98nb.github.io/TaiChinhCaNhan/latest.json` because that static URL is friendlier to Android WebView fetch/CORS behavior than GitHub Release download redirects.
 
+The frontend endpoint can be overridden at build time with `VITE_ANDROID_LATEST_JSON_URL`; see `.env.example`. `VITE_ANDROID_CURRENT_VERSION_NAME` and `VITE_ANDROID_CURRENT_VERSION_CODE` remain optional compatibility fallbacks. Android builds normally resolve these values through the native `AppUpdatePlugin`, with `@capacitor/app` as a secondary fallback.
+
 ## Operational checklist
 
 Use this checklist for every Android release:
@@ -140,7 +142,41 @@ Review this checklist before merging Android release or app-update changes:
 - Update UI text must come from `translations.ts`.
 - The update dialog should show current version, latest version, and release notes when available.
 - Manual update checks in Settings should bypass the skipped-version preference and show a clear toast when already up to date.
-- Do not add a native APK downloader, installer plugin, background silent update, or Play Store in-app update flow in this phase.
+- The Phase 1-3 frontend must not use a browser APK download fallback. APK installation is handled only by the native `AppUpdatePlugin` added in Phase 4-6.
+
+## Phase 1-3 app update manual QA
+
+- Android app opens normally when update check fails.
+- No dialog appears when `latest.versionCode <= current.versionCode`.
+- Dialog appears when `latest.versionCode > current.versionCode`.
+- Release notes are displayed when present.
+- Optional update allows “Để sau”.
+- Mandatory update hides “Để sau”.
+- Clicking “Cập nhật” calls `startAndroidUpdate()`.
+- If the native plugin is unavailable, the app shows a clear fallback message and does not crash.
+- The Settings button can manually check for an update.
+
+Phase 1-3 intentionally does not download or install APKs in the browser. `startAndroidUpdate()` calls the native `AppUpdatePlugin.downloadAndInstallApk()` implementation on Android.
+
+## Phase 4-6 native app update manual QA
+
+1. Build the Android app successfully.
+2. Confirm the app starts without crashing.
+3. Call `AppUpdatePlugin.getCurrentVersion()` from the frontend.
+4. Confirm `getCurrentVersion()` returns the real native `versionName` and `versionCode`.
+5. Confirm `canInstallUnknownApps()` returns the current allowed state.
+6. Confirm `downloadAndInstallApk()` rejects a missing `apkUrl` with `APP_UPDATE_INVALID_INPUT`.
+7. Confirm `downloadAndInstallApk()` rejects a missing `expectedSha256` with `APP_UPDATE_INVALID_INPUT`.
+8. Confirm a valid request streams the APK to `cache/app-update/`.
+9. Confirm `appUpdateDownloadProgress` events are emitted during download.
+10. Confirm a SHA-256 mismatch deletes the APK and never opens the installer.
+11. Confirm a SHA-256 match creates a FileProvider `content://` URI.
+12. With “Install unknown apps” disabled, confirm settings opens and the call rejects with `APP_UPDATE_INSTALL_PERMISSION_REQUIRED`.
+13. Grant the permission, return to the app, and retry the update.
+14. Confirm the Android installer opens for a valid APK.
+15. Cancel the installer and confirm the app remains stable.
+
+The plugin stores APKs only in app cache, verifies SHA-256 before installation, and uses `${applicationId}.fileprovider`; it never exposes a `file://` URI or writes the update to public Downloads.
 
 Run these checks before merge:
 

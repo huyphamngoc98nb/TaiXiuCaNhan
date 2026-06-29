@@ -1,39 +1,82 @@
-export interface LatestAndroidRelease {
+export type AndroidLatestRelease = {
   platform: 'android';
   versionName: string;
   versionCode: number;
   minSupportedVersionCode?: number;
   mandatory?: boolean;
   apkUrl: string;
-  sha256?: string;
+  sha256: string;
   releaseDate?: string;
   releaseNotes?: string[];
-}
+};
 
-export interface CurrentAppVersion {
-  platform: 'android';
+export type AndroidCurrentVersion = {
+  versionName?: string;
+  versionCode: number;
+};
+
+export type CurrentAndroidVersion = {
   versionName: string;
   versionCode: number;
-  build: string;
-}
+};
 
-export type AppUpdateCheckStatus =
-  | 'unsupported-platform'
-  | 'invalid-current-version'
-  | 'manifest-unavailable'
-  | 'up-to-date'
-  | 'update-available';
+export type AppUpdateCheckResult =
+  | {
+      status: 'update_available';
+      latest: AndroidLatestRelease;
+      currentVersionCode: number;
+      mandatory: boolean;
+    }
+  | {
+      status: 'up_to_date';
+      latest: AndroidLatestRelease;
+      currentVersionCode: number;
+    }
+  | {
+      status: 'unsupported_platform';
+    }
+  | {
+      status: 'error';
+      message: string;
+      cause?: unknown;
+    };
 
-export interface AppUpdateCheckResult {
-  platform: string;
-  current: CurrentAppVersion | null;
-  latest: LatestAndroidRelease | null;
-  updateAvailable: boolean;
-  mandatory: boolean;
-  skipped: boolean;
-  status: AppUpdateCheckStatus;
-}
+export type AppUpdateDownloadOptions = {
+  apkUrl: string;
+  expectedSha256: string;
+  fileName?: string;
+};
 
-export interface AndroidUpdateCheckOptions {
-  ignoreSkipped?: boolean;
-}
+export type AppUpdateDownloadResult = {
+  status: 'installer_opened';
+};
+
+export type InstallUnknownAppsPermission = {
+  allowed: boolean;
+};
+
+export type AppUpdateDownloadProgress = {
+  bytesDownloaded: number;
+  totalBytes: number;
+  percent: number;
+};
+
+export type UpdateInstallState =
+  | 'idle'
+  | 'downloading'
+  | 'verifying'
+  | 'opening_installer'
+  | 'permission_required'
+  | 'error'
+  | 'installer_opened';
+
+export type AppUpdateNativeErrorCode =
+  | 'APP_UPDATE_INVALID_INPUT'
+  | 'APP_UPDATE_DOWNLOAD_FAILED'
+  | 'APP_UPDATE_SHA256_MISMATCH'
+  | 'APP_UPDATE_FILE_PROVIDER_FAILED'
+  | 'APP_UPDATE_INSTALL_PERMISSION_REQUIRED'
+  | 'APP_UPDATE_INSTALL_INTENT_FAILED'
+  | 'APP_UPDATE_UNKNOWN_ERROR';
+
+export type StartAndroidUpdateOptions = AppUpdateDownloadOptions;

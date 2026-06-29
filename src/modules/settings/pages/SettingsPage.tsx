@@ -11,10 +11,10 @@ import {
   logAppError,
 } from '@/core/telemetry/error.service';
 import {
-  checkForAndroidUpdate,
-  getCurrentAppVersion,
-  useAppUpdatePrompt,
-  type CurrentAppVersion,
+  AppUpdateDialog,
+  getCurrentAndroidVersion,
+  useAppUpdate,
+  type AndroidCurrentVersion,
 } from '@/modules/app-update';
 import { DatabaseDiagnostics } from '../components/DatabaseDiagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
@@ -37,23 +37,34 @@ export function SettingsPage() {
   const { t } = useLanguage();
   const toast = useToast();
   const navigate = useNavigate();
-  const { promptForUpdate } = useAppUpdatePrompt();
+  const {
+    availableUpdate,
+    beginUpdate,
+    checkForUpdate,
+    dismissUpdate,
+    downloadProgress,
+    installState,
+    isChecking: isCheckingUpdate,
+    isUpdating,
+    updateError,
+  } = useAppUpdate({ respectSkippedVersion: false });
   const isAndroid = Capacitor.getPlatform() === 'android';
   const [isExportingLogs, setIsExportingLogs] = useState(false);
   const [isClearingLogs, setIsClearingLogs] = useState(false);
-  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
-  const [currentAppVersion, setCurrentAppVersion] = useState<CurrentAppVersion | null>(null);
+  const [currentAppVersion, setCurrentAppVersion] = useState<AndroidCurrentVersion | null>(null);
 
   useEffect(() => {
     if (!isAndroid) return;
 
     let mounted = true;
 
-    void getCurrentAppVersion().then((version) => {
-      if (mounted) {
-        setCurrentAppVersion(version);
-      }
-    });
+    void getCurrentAndroidVersion()
+      .then((version) => {
+        if (mounted) setCurrentAppVersion(version);
+      })
+      .catch(() => {
+        if (mounted) setCurrentAppVersion(null);
+      });
 
     return () => {
       mounted = false;
@@ -63,17 +74,18 @@ export function SettingsPage() {
   const handleCheckForUpdate = async () => {
     if (isCheckingUpdate) return;
 
-    setIsCheckingUpdate(true);
     try {
-      const result = await checkForAndroidUpdate({ ignoreSkipped: true });
+      const result = await checkForUpdate();
 
-      if (result.updateAvailable && result.latest) {
-        await promptForUpdate(result);
+      if (result.status === 'update_available') return;
+
+      if (result.status === 'error') {
+        toast.error(result.message);
         return;
       }
 
-      if (result.status === 'manifest-unavailable' || result.status === 'invalid-current-version') {
-        toast.error(t('app_update.check_failed'));
+      if (result.status === 'unsupported_platform') {
+        toast.info(t('app_update.android_only'));
         return;
       }
 
@@ -85,8 +97,6 @@ export function SettingsPage() {
         userMessage: t('app_update.check_failed'),
       });
       toast.error(t('app_update.check_failed'));
-    } finally {
-      setIsCheckingUpdate(false);
     }
   };
 
@@ -160,8 +170,7 @@ export function SettingsPage() {
 
         <SecuritySettings />
 
-        {isAndroid && (
-          <div
+        <div
             className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
             style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}
           >
@@ -183,16 +192,17 @@ export function SettingsPage() {
                 </p>
                 <p className="text-[11px] text-muted truncate">
                   {currentAppVersion
-                    ? `${currentAppVersion.versionName} (${currentAppVersion.build})`
-                    : t('common.loading')}
+                    ? `${currentAppVersion.versionName ?? 'Android'} (${currentAppVersion.versionCode})`
+                    : isAndroid
+                      ? t('common.loading')
+                      : t('app_update.android_only')}
                 </p>
               </div>
               <span className="shrink-0 text-[12px] font-semibold text-primary">
                 {t('app_update.check_update')}
               </span>
             </button>
-          </div>
-        )}
+        </div>
 
         {/* Debug tools */}
         <div className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
@@ -251,6 +261,20 @@ export function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {availableUpdate && (
+        <AppUpdateDialog
+          latest={availableUpdate.latest}
+          currentVersionCode={availableUpdate.currentVersionCode}
+          mandatory={availableUpdate.mandatory}
+          installState={installState}
+          isUpdating={isUpdating}
+          progress={downloadProgress}
+          error={updateError}
+          onUpdate={() => void beginUpdate()}
+          onDismiss={() => void dismissUpdate()}
+        />
+      )}
     </div>
   );
 }

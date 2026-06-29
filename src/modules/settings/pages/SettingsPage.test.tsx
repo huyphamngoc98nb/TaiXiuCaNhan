@@ -11,8 +11,11 @@ import {
 
 const toastMock = vi.hoisted(() => ({
   error: vi.fn(),
+  info: vi.fn(),
   success: vi.fn(),
 }));
+
+const checkForUpdateMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
@@ -28,10 +31,21 @@ vi.mock('@/core/telemetry/error.service', () => ({
 }));
 
 vi.mock('@/modules/app-update', () => ({
-  checkForAndroidUpdate: vi.fn(),
-  getCurrentAppVersion: vi.fn(),
-  useAppUpdatePrompt: () => ({
-    promptForUpdate: vi.fn(),
+  AppUpdateDialog: () => <div>AppUpdateDialog</div>,
+  getCurrentAndroidVersion: vi.fn(async () => ({
+    versionName: '0.1.20',
+    versionCode: 120,
+  })),
+  useAppUpdate: () => ({
+    availableUpdate: null,
+    beginUpdate: vi.fn(),
+    checkForUpdate: checkForUpdateMock,
+    dismissUpdate: vi.fn(),
+    downloadProgress: null,
+    installState: 'idle',
+    isChecking: false,
+    isUpdating: false,
+    updateError: null,
   }),
 }));
 
@@ -91,6 +105,60 @@ describe('SettingsPage error log export', () => {
     vi.mocked(Capacitor.getPlatform).mockReturnValue('web');
     vi.mocked(isShareCanceledError).mockReturnValue(false);
     vi.mocked(logAppError).mockResolvedValue(undefined);
+    checkForUpdateMock.mockResolvedValue({ status: 'up_to_date' });
+  });
+
+  it('shows a friendly message when the Android app is up to date', async () => {
+    vi.mocked(Capacitor.getPlatform).mockReturnValue('android');
+    checkForUpdateMock.mockResolvedValue({
+      status: 'up_to_date',
+      latest: {
+        platform: 'android',
+        versionName: '0.1.20',
+        versionCode: 120,
+        mandatory: false,
+        apkUrl: 'https://example.com/app.apk',
+        sha256: 'abc123',
+        releaseNotes: [],
+      },
+      currentVersionCode: 120,
+    });
+
+    renderSettingsPage();
+    fireEvent.click(screen.getByText('app_update.check_update'));
+
+    await waitFor(() => expect(checkForUpdateMock).toHaveBeenCalledTimes(1));
+    expect(toastMock.success).toHaveBeenCalledWith(
+      'app_update.latest_already_installed',
+    );
+  });
+
+  it('shows the update check error returned by the service', async () => {
+    vi.mocked(Capacitor.getPlatform).mockReturnValue('android');
+    checkForUpdateMock.mockResolvedValue({
+      status: 'error',
+      message: 'Không thể kiểm tra cập nhật. Vui lòng thử lại sau.',
+    });
+
+    renderSettingsPage();
+    fireEvent.click(screen.getByText('app_update.check_update'));
+
+    await waitFor(() =>
+      expect(toastMock.error).toHaveBeenCalledWith(
+        'Không thể kiểm tra cập nhật. Vui lòng thử lại sau.',
+      ),
+    );
+  });
+
+  it('explains that APK updates are Android-only on unsupported platforms', async () => {
+    checkForUpdateMock.mockResolvedValue({ status: 'unsupported_platform' });
+
+    renderSettingsPage();
+    fireEvent.click(screen.getByText('app_update.check_update'));
+
+    await waitFor(() =>
+      expect(toastMock.info).toHaveBeenCalledWith('app_update.android_only'),
+    );
   });
 
   it('does not log or show an error when the user cancels sharing logs', async () => {

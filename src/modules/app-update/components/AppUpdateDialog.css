@@ -1,0 +1,132 @@
+.app-update-dialog {
+  max-width: 360px;
+}
+
+.app-update-content {
+  text-align: left;
+}
+
+.app-update-content > .confirm-title {
+  text-align: center;
+}
+
+.app-update-version {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.app-update-current-version {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.app-update-mandatory,
+.app-update-error,
+.app-update-success {
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin-top: 14px;
+  padding: 10px 12px;
+}
+
+.app-update-mandatory {
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  color: var(--danger);
+}
+
+.app-update-error {
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  color: var(--danger);
+}
+
+.app-update-success {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+}
+
+.app-update-progress {
+  margin-top: 16px;
+}
+
+.app-update-progress-label {
+  color: var(--text-muted);
+  display: flex;
+  font-size: 0.82rem;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.app-update-progress-label strong {
+  color: var(--primary);
+}
+
+.app-update-progress-track,
+.app-update-progress-indeterminate {
+  background: var(--surface-muted);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.app-update-progress-value {
+  background: var(--primary);
+  border-radius: inherit;
+  height: 100%;
+  transition: width 0.2s ease-out;
+}
+
+.app-update-progress-indeterminate::after {
+  animation: app-update-progress-slide 1.1s ease-in-out infinite;
+  background: var(--primary);
+  border-radius: inherit;
+  content: '';
+  display: block;
+  height: 100%;
+  width: 38%;
+}
+
+.app-update-progress-bytes {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 6px;
+}
+
+@keyframes app-update-progress-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(365%); }
+}
+
+.app-update-notes {
+  margin-top: 16px;
+}
+
+.app-update-notes h3 {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.app-update-notes ul {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  list-style: disc;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.app-update-primary-button {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.confirm-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
