@@ -16,6 +16,8 @@ const hookValue = vi.hoisted(() => ({
 }));
 
 const getAutoCheckEnabledMock = vi.hoisted(() => vi.fn());
+const cleanupUpdateCacheMock = vi.hoisted(() => vi.fn());
+const loggerWarnMock = vi.hoisted(() => vi.fn());
 
 vi.mock('../hooks/useAppUpdate', () => ({
   useAppUpdate: vi.fn(() => hookValue),
@@ -23,6 +25,14 @@ vi.mock('../hooks/useAppUpdate', () => ({
 
 vi.mock('../services/app-update.service', () => ({
   getAppUpdateAutoCheckEnabled: getAutoCheckEnabledMock,
+}));
+
+vi.mock('../services/app-update.native', () => ({
+  cleanupAndroidUpdateCache: cleanupUpdateCacheMock,
+}));
+
+vi.mock('@/core/telemetry/logger', () => ({
+  logger: { warn: loggerWarnMock },
 }));
 
 vi.mock('@/shared/context/LanguageContext', () => ({
@@ -39,13 +49,29 @@ describe('AppUpdateGate', () => {
     hookValue.availableUpdate = null;
     hookValue.updateError = null;
     getAutoCheckEnabledMock.mockResolvedValue(true);
+    cleanupUpdateCacheMock.mockResolvedValue(0);
   });
 
   it('checks for an update on mount when automatic checks are enabled', async () => {
     const { container } = render(<AppUpdateGate />);
 
     await waitFor(() => expect(hookValue.checkForUpdate).toHaveBeenCalledTimes(1));
+    expect(cleanupUpdateCacheMock).toHaveBeenCalledWith({ maxAgeHours: 24 });
     expect(container.innerHTML).toBe('');
+  });
+
+  it('continues the update check when cache cleanup fails', async () => {
+    const cleanupError = new Error('cleanup failed');
+    cleanupUpdateCacheMock.mockRejectedValue(cleanupError);
+
+    render(<AppUpdateGate />);
+
+    await waitFor(() => expect(hookValue.checkForUpdate).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(loggerWarnMock).toHaveBeenCalledWith(
+      'Android update cache cleanup failed.',
+      cleanupError,
+      { context: 'AppUpdateGate.cleanup' },
+    ));
   });
 
   it('does not check for an update when automatic checks are disabled', async () => {

@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
+import { logger } from '@/core/telemetry/logger';
 import { AppUpdateDialog } from './AppUpdateDialog';
 import { useAppUpdate } from '../hooks/useAppUpdate';
+import { cleanupAndroidUpdateCache } from '../services/app-update.native';
 import { getAppUpdateAutoCheckEnabled } from '../services/app-update.service';
 
 export function AppUpdateGate() {
@@ -18,6 +20,12 @@ export function AppUpdateGate() {
 
   useEffect(() => {
     if (hasCheckedRef.current) return;
+
+    void cleanupAndroidUpdateCache({ maxAgeHours: 24 }).catch((error) => {
+      logger.warn('Android update cache cleanup failed.', error, {
+        context: 'AppUpdateGate.cleanup',
+      });
+    });
 
     let active = true;
 

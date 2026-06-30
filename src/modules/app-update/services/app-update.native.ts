@@ -8,6 +8,8 @@ import { getFallbackAndroidVersion } from '../app-update.config';
 import type {
   AndroidCurrentVersion,
   AndroidLatestRelease,
+  AppUpdateCacheCleanupOptions,
+  AppUpdateCacheCleanupResult,
   AppUpdateDownloadOptions,
   AppUpdateDownloadProgress,
   AppUpdateDownloadResult,
@@ -19,6 +21,9 @@ export interface AppUpdatePlugin {
   getCurrentVersion(): Promise<CurrentAndroidVersion>;
   canInstallUnknownApps(): Promise<InstallUnknownAppsPermission>;
   openInstallUnknownAppsSettings(): Promise<void>;
+  cleanupUpdateCache(
+    options?: AppUpdateCacheCleanupOptions,
+  ): Promise<AppUpdateCacheCleanupResult>;
   downloadAndInstallApk(
     options: AppUpdateDownloadOptions,
   ): Promise<AppUpdateDownloadResult>;
@@ -39,6 +44,22 @@ export class AppUpdatePluginUnavailableError extends Error {
 }
 
 export const AppUpdatePlugin = registerPlugin<AppUpdatePlugin>('AppUpdatePlugin');
+
+export async function cleanupAndroidUpdateCache(
+  options: AppUpdateCacheCleanupOptions = {},
+): Promise<number> {
+  if (
+    Capacitor.getPlatform() !== 'android' ||
+    !Capacitor.isPluginAvailable('AppUpdatePlugin')
+  ) {
+    return 0;
+  }
+
+  const result = await AppUpdatePlugin.cleanupUpdateCache(options);
+  return Number.isSafeInteger(result.deletedCount) && result.deletedCount >= 0
+    ? result.deletedCount
+    : 0;
+}
 
 export async function addAppUpdateDownloadProgressListener(
   listener: (event: AppUpdateDownloadProgress) => void,

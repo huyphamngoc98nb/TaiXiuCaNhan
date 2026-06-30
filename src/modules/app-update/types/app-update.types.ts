@@ -51,6 +51,15 @@ export type AppUpdateDownloadResult = {
   status: 'installer_opened';
 };
 
+export type AppUpdateCacheCleanupOptions = {
+  maxAgeHours?: number;
+  keepFileName?: string;
+};
+
+export type AppUpdateCacheCleanupResult = {
+  deletedCount: number;
+};
+
 export type InstallUnknownAppsPermission = {
   allowed: boolean;
 };

@@ -8,8 +8,10 @@ Android in-app updates use this flow:
 latest.json
 → compare latest.versionCode with the installed versionCode
 → show AppUpdateDialog
+→ check Install unknown apps permission
 → stream the APK into app cache through AppUpdatePlugin
 → verify SHA-256
+→ verify APK package, version, and optional signing certificate pin
 → create a FileProvider content URI
 → open the Android installer
 ```
@@ -71,7 +73,11 @@ See [android-release.md](./android-release.md) for signing, tagging, and GitHub 
 
 ## Error and retry behavior
 
-Native error codes are mapped to localized messages. Download, verification, permission, FileProvider, and installer failures leave the dialog open with a `Thử lại` button. Permission failures open Android's “Install unknown apps” settings; after granting permission, return to the app and retry manually. Retries never loop automatically.
+Native error codes are mapped to localized messages. Download, verification, permission, FileProvider, and installer failures leave the dialog open with a `Thử lại` button. Before a new download, a missing “Install unknown apps” permission opens Android Settings and rejects the attempt without downloading. After granting permission, return to the app and retry manually; retries never loop automatically.
+
+If the release APK already exists in private app cache, the native plugin verifies its SHA-256 and APK identity before reusing it. Invalid cached files are deleted. A valid cached APK is opened through FileProvider after permission is granted, so returning through the app lock flow does not force the same release to download again.
+
+The APK is deliberately retained after installer handoff because Android may still be reading the FileProvider URI. On later app startups and update attempts, files older than 24 hours are removed from `cache/app-update/`. This cleanup is best-effort, preserves the current target filename, and never blocks update checks.
 
 ## Manual QA checklist
 
@@ -81,15 +87,22 @@ Native error codes are mapped to localized messages. Download, verification, per
 - Release notes are displayed when present.
 - Optional update allows “Để sau”.
 - Mandatory update hides “Để sau”.
-- Clicking “Cập nhật” starts the native APK download.
+- Clicking “Cập nhật” checks install permission before starting a new native APK download.
 - Progress updates during download.
 - Unknown content length shows indeterminate progress and downloaded bytes.
 - Repeated taps do not start duplicate downloads.
 - Native progress listeners are removed after success, error, and unmount.
 - SHA-256 mismatch shows an error, deletes the cached APK, and does not open the installer.
 - Valid SHA-256 opens the Android installer through a `content://` FileProvider URI.
-- Missing “Install unknown apps” permission opens Android settings and shows the permission message.
-- After permission is granted, the user can retry the update.
+- Missing “Install unknown apps” permission opens Android settings, shows the permission message, and does not start a new download.
+- After permission is granted, the user can retry the update manually.
+- A valid cached APK is reverified and reused without another download.
+- An invalid cached APK is deleted and downloaded fresh only when permission is granted.
+- Returning through app lock after Android Settings does not force a valid cached APK to download again.
+- Installer handoff does not immediately delete the APK backing its FileProvider URI.
+- A later app startup deletes unrelated APK files older than 24 hours.
+- Cleanup keeps the active target APK and never deletes outside `cache/app-update/`.
+- Cleanup failure is logged but does not block startup or update checks.
 - Failed downloads show “Thử lại” without automatically looping.
 - Canceling the installer does not crash the app.
 - After installing the new APK, the same update no longer appears.

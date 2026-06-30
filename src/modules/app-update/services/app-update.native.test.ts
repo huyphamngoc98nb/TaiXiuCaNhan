@@ -3,6 +3,7 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import {
   APP_UPDATE_PLUGIN_UNAVAILABLE_MESSAGE,
+  cleanupAndroidUpdateCache,
   getCurrentAndroidVersion,
   startAndroidUpdate,
 } from './app-update.native';
@@ -12,6 +13,7 @@ const nativePluginMock = vi.hoisted(() => ({
   getCurrentVersion: vi.fn(),
   canInstallUnknownApps: vi.fn(),
   openInstallUnknownAppsSettings: vi.fn(),
+  cleanupUpdateCache: vi.fn(),
   downloadAndInstallApk: vi.fn(),
   addListener: vi.fn(),
 }));
@@ -88,6 +90,21 @@ describe('app update native bridge', () => {
       APP_UPDATE_PLUGIN_UNAVAILABLE_MESSAGE,
     );
     expect(nativePluginMock.downloadAndInstallApk).not.toHaveBeenCalled();
+  });
+
+  it('skips cache cleanup when the native plugin is unavailable', async () => {
+    await expect(cleanupAndroidUpdateCache({ maxAgeHours: 24 })).resolves.toBe(0);
+    expect(nativePluginMock.cleanupUpdateCache).not.toHaveBeenCalled();
+  });
+
+  it('runs native cache cleanup and returns the deleted file count', async () => {
+    vi.mocked(Capacitor.isPluginAvailable).mockReturnValue(true);
+    nativePluginMock.cleanupUpdateCache.mockResolvedValue({ deletedCount: 2 });
+
+    await expect(cleanupAndroidUpdateCache({ maxAgeHours: 24 })).resolves.toBe(2);
+    expect(nativePluginMock.cleanupUpdateCache).toHaveBeenCalledWith({
+      maxAgeHours: 24,
+    });
   });
 
   it('passes the APK contract to the future native installer', async () => {

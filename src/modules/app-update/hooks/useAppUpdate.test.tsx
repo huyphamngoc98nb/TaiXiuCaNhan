@@ -131,10 +131,13 @@ describe('useAppUpdate install flow', () => {
   });
 
   it('keeps the dialog retryable when install permission is required', async () => {
-    nativeMock.addProgressListener.mockResolvedValue({ remove: vi.fn() });
-    nativeMock.startUpdate.mockRejectedValue({
-      code: 'APP_UPDATE_INSTALL_PERMISSION_REQUIRED',
-    });
+    const remove = vi.fn(async () => undefined);
+    nativeMock.addProgressListener.mockResolvedValue({ remove });
+    nativeMock.startUpdate
+      .mockRejectedValueOnce({
+        code: 'APP_UPDATE_INSTALL_PERMISSION_REQUIRED',
+      })
+      .mockResolvedValueOnce({ status: 'installer_opened' });
 
     const { result } = renderHook(() => useAppUpdate());
     await act(async () => {
@@ -147,6 +150,14 @@ describe('useAppUpdate install flow', () => {
     expect(result.current.installState).toBe('permission_required');
     expect(result.current.updateError).toBe('app_update.install_permission_required');
     expect(result.current.isUpdating).toBe(false);
+
+    await act(async () => {
+      await result.current.beginUpdate();
+    });
+
+    expect(nativeMock.startUpdate).toHaveBeenCalledTimes(2);
+    expect(result.current.installState).toBe('installer_opened');
+    expect(remove).toHaveBeenCalledTimes(2);
   });
 
   it('removes the native listener when unmounted during a download', async () => {

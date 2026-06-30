@@ -94,4 +94,17 @@ describe('AppUpdateDialog', () => {
     expect(onUpdate).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('alert').textContent).toBe('Native download failed');
   });
+
+  it('shows the retry action when install permission is required', () => {
+    const onUpdate = vi.fn();
+    renderDialog({
+      installState: 'permission_required',
+      error: 'Install permission required',
+      onUpdate,
+    });
+
+    fireEvent.click(screen.getByText('app_update.retry'));
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('alert').textContent).toBe('Install permission required');
+  });
 });

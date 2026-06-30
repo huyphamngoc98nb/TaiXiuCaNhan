@@ -48,6 +48,8 @@ public class AppUpdatePlugin extends Plugin {
     private static final int READ_TIMEOUT_MS = 60_000;
     private static final int BUFFER_SIZE = 32 * 1024;
     private static final long UNKNOWN_SIZE_PROGRESS_INTERVAL_BYTES = 256 * 1024;
+    private static final double DEFAULT_CACHE_MAX_AGE_HOURS = 24.0;
+    private static final long MILLIS_PER_HOUR = 60L * 60L * 1000L;
     private static final Set<String> ALLOWED_APK_HOSTS = Collections.unmodifiableSet(
         new HashSet<>(
             Arrays.asList(
@@ -64,7 +66,10 @@ public class AppUpdatePlugin extends Plugin {
     private static final String ERROR_FILE_PROVIDER_FAILED = "APP_UPDATE_FILE_PROVIDER_FAILED";
     private static final String ERROR_INSTALL_PERMISSION_REQUIRED = "APP_UPDATE_INSTALL_PERMISSION_REQUIRED";
     private static final String ERROR_INSTALL_INTENT_FAILED = "APP_UPDATE_INSTALL_INTENT_FAILED";
+    private static final String ERROR_CACHE_CLEANUP_FAILED = "APP_UPDATE_CACHE_CLEANUP_FAILED";
     private static final String ERROR_UNKNOWN = "APP_UPDATE_UNKNOWN_ERROR";
+    private static final String MESSAGE_CACHE_CLEANUP_FAILED =
+        "Unable to clean up cached app updates.";
 
     private static final String MESSAGE_INVALID_INPUT = "Thiếu thông tin cập nhật.";
     private static final String MESSAGE_DOWNLOAD_FAILED =
@@ -129,6 +134,51 @@ public class AppUpdatePlugin extends Plugin {
     }
 
     @PluginMethod
+    public void cleanupUpdateCache(PluginCall call) {
+        Double maxAgeHours = call.getDouble("maxAgeHours");
+        if (maxAgeHours == null) {
+            if (call.hasOption("maxAgeHours")) {
+                call.reject(MESSAGE_INVALID_INPUT, ERROR_INVALID_INPUT);
+                return;
+            }
+            maxAgeHours = DEFAULT_CACHE_MAX_AGE_HOURS;
+        }
+
+        String keepFileName = trimmedOrNull(call.getString("keepFileName"));
+        if (
+            !Double.isFinite(maxAgeHours) ||
+            maxAgeHours < 0 ||
+            (keepFileName != null && !isSafeFileName(keepFileName))
+        ) {
+            call.reject(MESSAGE_INVALID_INPUT, ERROR_INVALID_INPUT);
+            return;
+        }
+
+        double resolvedMaxAgeHours = maxAgeHours;
+        try {
+            downloadExecutor.execute(() -> {
+                try {
+                    int deletedCount = cleanupUpdateCache(
+                        resolvedMaxAgeHours,
+                        keepFileName
+                    );
+                    JSObject response = new JSObject();
+                    response.put("deletedCount", deletedCount);
+                    call.resolve(response);
+                } catch (Exception error) {
+                    call.reject(
+                        MESSAGE_CACHE_CLEANUP_FAILED,
+                        ERROR_CACHE_CLEANUP_FAILED,
+                        error
+                    );
+                }
+            });
+        } catch (Exception error) {
+            call.reject(MESSAGE_CACHE_CLEANUP_FAILED, ERROR_CACHE_CLEANUP_FAILED, error);
+        }
+    }
+
+    @PluginMethod
     public void downloadAndInstallApk(PluginCall call) {
         String apkUrl = trimmedOrNull(call.getString("apkUrl"));
         String expectedSha256 = trimmedOrNull(call.getString("expectedSha256"));
@@ -168,9 +218,32 @@ public class AppUpdatePlugin extends Plugin {
         String expectedSha256,
         String fileName
     ) {
-        File apkFile;
+        File apkFile = resolveDownloadFile(fileName);
+
         try {
-            apkFile = prepareDownloadFile(fileName);
+            prepareDownloadDirectory();
+        } catch (IOException error) {
+            call.reject(MESSAGE_DOWNLOAD_FAILED, ERROR_DOWNLOAD_FAILED, error);
+            return;
+        }
+
+        try {
+            cleanupUpdateCache(DEFAULT_CACHE_MAX_AGE_HOURS, fileName);
+        } catch (Exception ignored) {
+            // Stale-cache cleanup is best-effort and must not block an update attempt.
+        }
+
+        if (isCachedApkUsable(apkFile, expectedSha256)) {
+            openInstallerOrRequestPermission(call, apkFile);
+            return;
+        }
+
+        if (!requestInstallPermissionIfNeeded(call)) {
+            return;
+        }
+
+        try {
+            apkFile = prepareNewDownloadFile(fileName);
             downloadApk(apkUrl, apkFile);
         } catch (Exception error) {
             deleteQuietly(resolveDownloadFile(fileName));
@@ -206,19 +279,64 @@ public class AppUpdatePlugin extends Plugin {
             return;
         }
 
-        if (!canInstallUnknownApps()) {
-            try {
-                openInstallUnknownAppsSettings();
-                call.reject(
-                    MESSAGE_INSTALL_PERMISSION_REQUIRED,
-                    ERROR_INSTALL_PERMISSION_REQUIRED
-                );
-            } catch (Exception error) {
-                call.reject(MESSAGE_INSTALL_INTENT_FAILED, ERROR_INSTALL_INTENT_FAILED, error);
+        openInstallerOrRequestPermission(call, apkFile);
+    }
+
+    private boolean isCachedApkUsable(File apkFile, String expectedSha256) {
+        if (!apkFile.exists()) {
+            return false;
+        }
+        if (!apkFile.isFile()) {
+            deleteQuietly(apkFile);
+            return false;
+        }
+
+        try {
+            String actualSha256 = calculateSha256(apkFile);
+            if (!actualSha256.equalsIgnoreCase(expectedSha256)) {
+                deleteQuietly(apkFile);
+                return false;
             }
+
+            if (!isDownloadedApkIdentityValid(apkFile)) {
+                deleteQuietly(apkFile);
+                return false;
+            }
+
+            return true;
+        } catch (Exception ignored) {
+            deleteQuietly(apkFile);
+            return false;
+        }
+    }
+
+    private void openInstallerOrRequestPermission(PluginCall call, File apkFile) {
+        if (!requestInstallPermissionIfNeeded(call)) {
             return;
         }
 
+        openInstaller(call, apkFile);
+    }
+
+    private boolean requestInstallPermissionIfNeeded(PluginCall call) {
+        if (canInstallUnknownApps()) {
+            return true;
+        }
+
+        try {
+            openInstallUnknownAppsSettings();
+            call.reject(
+                MESSAGE_INSTALL_PERMISSION_REQUIRED,
+                ERROR_INSTALL_PERMISSION_REQUIRED
+            );
+        } catch (Exception error) {
+            call.reject(MESSAGE_INSTALL_INTENT_FAILED, ERROR_INSTALL_INTENT_FAILED, error);
+        }
+
+        return false;
+    }
+
+    private void openInstaller(PluginCall call, File apkFile) {
         Uri apkUri;
         try {
             String authority = getContext().getPackageName() + ".fileprovider";
@@ -251,16 +369,23 @@ public class AppUpdatePlugin extends Plugin {
         }
     }
 
-    private File prepareDownloadFile(String fileName) throws IOException {
+    private File prepareDownloadDirectory() throws IOException {
         File directory = new File(getContext().getCacheDir(), DOWNLOAD_DIRECTORY_NAME);
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Unable to create app update cache directory.");
         }
+        if (!directory.isDirectory()) {
+            throw new IOException("App update cache path is not a directory.");
+        }
 
-        File apkFile = new File(directory, fileName);
-        String directoryPath = directory.getCanonicalPath();
-        String filePath = apkFile.getCanonicalPath();
-        if (!filePath.startsWith(directoryPath + File.separator)) {
+        return getCanonicalDownloadDirectory(directory);
+    }
+
+    private File prepareNewDownloadFile(String fileName) throws IOException {
+        File directory = prepareDownloadDirectory();
+        File apkFile = resolveDownloadFile(fileName);
+
+        if (!isFileInsideDownloadDirectory(apkFile, directory)) {
             throw new IOException("Invalid app update file path.");
         }
 
@@ -275,6 +400,69 @@ public class AppUpdatePlugin extends Plugin {
         return new File(
             new File(getContext().getCacheDir(), DOWNLOAD_DIRECTORY_NAME),
             fileName
+        );
+    }
+
+    private int cleanupUpdateCache(double maxAgeHours, String keepFileName)
+        throws IOException {
+        File directory = new File(getContext().getCacheDir(), DOWNLOAD_DIRECTORY_NAME);
+        if (!directory.exists()) {
+            return 0;
+        }
+        if (!directory.isDirectory()) {
+            throw new IOException("App update cache path is not a directory.");
+        }
+
+        File canonicalDirectory = getCanonicalDownloadDirectory(directory);
+        File[] entries = directory.listFiles();
+        if (entries == null) {
+            throw new IOException("Unable to list app update cache directory.");
+        }
+
+        double requestedAgeMillis = maxAgeHours * MILLIS_PER_HOUR;
+        long maxAgeMillis = (long) Math.min(requestedAgeMillis, Long.MAX_VALUE);
+        long cutoff = System.currentTimeMillis() - maxAgeMillis;
+        int deletedCount = 0;
+
+        for (File entry : entries) {
+            try {
+                if (
+                    !entry.isFile() ||
+                    (keepFileName != null && keepFileName.equals(entry.getName())) ||
+                    !isFileInsideDownloadDirectory(entry, canonicalDirectory) ||
+                    entry.lastModified() >= cutoff
+                ) {
+                    continue;
+                }
+
+                if (entry.delete()) {
+                    deletedCount++;
+                }
+            } catch (IOException | SecurityException ignored) {
+                // One undeletable entry must not prevent cleanup of the remaining files.
+            }
+        }
+
+        return deletedCount;
+    }
+
+    private File getCanonicalDownloadDirectory(File directory) throws IOException {
+        File canonicalCacheDirectory = getContext().getCacheDir().getCanonicalFile();
+        File canonicalDirectory = directory.getCanonicalFile();
+        if (
+            !canonicalCacheDirectory.equals(canonicalDirectory.getParentFile()) ||
+            !DOWNLOAD_DIRECTORY_NAME.equals(canonicalDirectory.getName())
+        ) {
+            throw new IOException("Invalid app update cache directory path.");
+        }
+
+        return canonicalDirectory;
+    }
+
+    private boolean isFileInsideDownloadDirectory(File file, File directory)
+        throws IOException {
+        return directory.getCanonicalFile().equals(
+            file.getCanonicalFile().getParentFile()
         );
     }
 

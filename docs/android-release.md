@@ -158,6 +158,20 @@ Review this checklist before merging Android release or app-update changes:
 
 Phase 1-3 intentionally does not download or install APKs in the browser. `startAndroidUpdate()` calls the native `AppUpdatePlugin.downloadAndInstallApk()` implementation on Android.
 
+## Install unknown apps permission behavior
+
+The app checks the `Install unknown apps` permission before starting a new APK download. If permission is missing, Android Settings is opened and the APK is not downloaded yet.
+
+If a verified APK already exists in app cache, the app reuses it after permission is granted instead of downloading the same release again. The cached APK is still verified with SHA-256 and APK identity checks before the Android installer is opened.
+
+## APK cache cleanup
+
+Downloaded APK files are stored in the app internal cache under `cache/app-update/`.
+
+The app does not delete an APK immediately after opening Android installer because the installer may still need to read the file through the FileProvider `content://` URI.
+
+Instead, APK files older than 24 hours are cleaned up on later app startups and update attempts. Cleanup is canonical-path-safe and best-effort: it stays inside `cache/app-update/`, preserves the APK targeted by the current attempt, and does not block app startup or update checks when an entry cannot be deleted.
+
 ## Phase 4-6 native app update manual QA
 
 1. Build the Android app successfully.
@@ -167,14 +181,19 @@ Phase 1-3 intentionally does not download or install APKs in the browser. `start
 5. Confirm `canInstallUnknownApps()` returns the current allowed state.
 6. Confirm `downloadAndInstallApk()` rejects a missing `apkUrl` with `APP_UPDATE_INVALID_INPUT`.
 7. Confirm `downloadAndInstallApk()` rejects a missing `expectedSha256` with `APP_UPDATE_INVALID_INPUT`.
-8. Confirm a valid request streams the APK to `cache/app-update/`.
-9. Confirm `appUpdateDownloadProgress` events are emitted during download.
-10. Confirm a SHA-256 mismatch deletes the APK and never opens the installer.
-11. Confirm a SHA-256 match creates a FileProvider `content://` URI.
-12. With “Install unknown apps” disabled, confirm settings opens and the call rejects with `APP_UPDATE_INSTALL_PERMISSION_REQUIRED`.
-13. Grant the permission, return to the app, and retry the update.
-14. Confirm the Android installer opens for a valid APK.
-15. Cancel the installer and confirm the app remains stable.
+8. With `Install unknown apps` disabled and no cached APK, confirm settings opens, the call rejects with `APP_UPDATE_INSTALL_PERMISSION_REQUIRED`, and no APK download starts.
+9. Grant the permission, return to and unlock the app if needed, then retry the update.
+10. Confirm a valid request streams the APK once to `cache/app-update/` and emits `appUpdateDownloadProgress` events.
+11. With a valid APK already cached, retry and confirm the cached file is reused without another download.
+12. With an invalid or wrong-SHA APK cached, confirm it is deleted and a fresh download starts only when install permission is granted.
+13. Confirm a SHA-256 mismatch deletes the downloaded APK and never opens the installer.
+14. Confirm an APK with an invalid package, version code, or pinned signer is deleted and never opens the installer.
+15. Confirm a verified APK creates a FileProvider `content://` URI and opens the Android installer.
+16. Confirm the APK is not deleted immediately and the installer can still read it.
+17. Reopen the app with an unrelated APK older than 24 hours and confirm cleanup deletes it.
+18. Confirm cleanup keeps a valid target APK, ignores non-file entries, and never deletes outside `cache/app-update/`.
+19. Simulate cleanup failure and confirm it does not block startup or the update check.
+20. Cancel the installer and confirm the app remains stable.
 
 The plugin stores APKs only in app cache, verifies SHA-256 before installation, and uses `${applicationId}.fileprovider`; it never exposes a `file://` URI or writes the update to public Downloads.
 
