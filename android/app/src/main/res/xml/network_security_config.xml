@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="false">huyphamngoc98nb.github.io</domain>
+        <domain includeSubdomains="false">github.com</domain>
+        <domain includeSubdomains="false">githubusercontent.com</domain>
+        <domain includeSubdomains="false">github-releases.githubusercontent.com</domain>
+        <domain includeSubdomains="false">objects.githubusercontent.com</domain>
+    </domain-config>
+</network-security-config>

@@ -4,11 +4,15 @@ import { Preferences } from '@capacitor/preferences';
 import { logger } from '@/core/telemetry/logger';
 import {
   APP_UPDATE_ERROR_MESSAGES,
+  APP_UPDATE_AUTO_CHECK_ENABLED_KEY,
   checkForAndroidUpdate,
   clearSkippedVersion,
+  fetchLatestAndroidRelease,
+  getAppUpdateAutoCheckEnabled,
   getSkippedVersionCode,
   markVersionSkipped,
   parseAndroidLatestRelease,
+  setAppUpdateAutoCheckEnabled,
 } from './app-update.service';
 import { getCurrentAndroidVersion } from './app-update.native';
 import { DEFAULT_ANDROID_LATEST_JSON_URL } from '../app-update.config';
@@ -47,7 +51,8 @@ function latestManifest(overrides: Record<string, unknown> = {}) {
     platform: 'android',
     versionName: '0.1.21',
     versionCode: 121,
-    apkUrl: 'https://example.com/TaiChinhCaNhan-0.1.21.apk',
+    apkUrl:
+      'https://github.com/huyphamngoc98nb/TaiChinhCaNhan/releases/download/v0.1.21/TaiChinhCaNhan-0.1.21.apk',
     sha256: 'abc123',
     ...overrides,
   };
@@ -83,7 +88,8 @@ describe('app update service', () => {
       versionName: '0.1.21',
       versionCode: 121,
       mandatory: false,
-      apkUrl: 'https://example.com/TaiChinhCaNhan-0.1.21.apk',
+      apkUrl:
+        'https://github.com/huyphamngoc98nb/TaiChinhCaNhan/releases/download/v0.1.21/TaiChinhCaNhan-0.1.21.apk',
       sha256: 'abc123',
       releaseNotes: [],
     });
@@ -102,6 +108,53 @@ describe('app update service', () => {
     expect(() => parseAndroidLatestRelease(manifest)).toThrow(
       APP_UPDATE_ERROR_MESSAGES.invalidManifest,
     );
+  });
+
+  it.each([
+    ['an HTTP URL', 'http://github.com/release.apk'],
+    ['an unknown host', 'https://example.com/release.apk'],
+    ['an unlisted subdomain', 'https://downloads.github.com/release.apk'],
+    ['an invalid URL', 'not-a-url'],
+  ])('rejects an APK URL using %s', (_caseName, apkUrl) => {
+    expect(() => parseAndroidLatestRelease(latestManifest({ apkUrl }))).toThrow(
+      APP_UPDATE_ERROR_MESSAGES.invalidManifest,
+    );
+  });
+
+  it.each([
+    'https://github.com/owner/repo/releases/download/v1/app.apk',
+    'https://objects.githubusercontent.com/github-production-release-asset/app.apk',
+    'https://github-releases.githubusercontent.com/app.apk',
+  ])('accepts an APK URL from allowed host %s', (apkUrl) => {
+    expect(parseAndroidLatestRelease(latestManifest({ apkUrl })).apkUrl).toBe(apkUrl);
+  });
+
+  it.each([
+    ['an HTTP URL', 'http://huyphamngoc98nb.github.io/latest.json'],
+    ['an unknown host', 'https://example.com/latest.json'],
+    ['an unlisted subdomain', 'https://updates.huyphamngoc98nb.github.io/latest.json'],
+    ['an invalid URL', 'not-a-url'],
+  ])('rejects a manifest URL using %s before fetch', async (_caseName, manifestUrl) => {
+    vi.stubEnv('VITE_ANDROID_LATEST_JSON_URL', manifestUrl);
+
+    await expect(fetchLatestAndroidRelease()).rejects.toThrow(
+      APP_UPDATE_ERROR_MESSAGES.invalidManifest,
+    );
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('accepts the allowed GitHub Pages manifest URL', async () => {
+    const manifestUrl = 'https://huyphamngoc98nb.github.io/TaiChinhCaNhan/latest.json';
+    vi.stubEnv('VITE_ANDROID_LATEST_JSON_URL', manifestUrl);
+
+    await expect(fetchLatestAndroidRelease()).resolves.toMatchObject({
+      versionCode: 121,
+    });
+    expect(fetch).toHaveBeenCalledWith(manifestUrl, {
+      cache: 'no-store',
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+    });
   });
 
   it('returns update_available when latest versionCode is greater', async () => {
@@ -176,13 +229,21 @@ describe('app update service', () => {
   });
 
   it('uses the configured latest.json URL', async () => {
-    vi.stubEnv('VITE_ANDROID_LATEST_JSON_URL', ' https://example.com/latest.json ');
+    vi.stubEnv(
+      'VITE_ANDROID_LATEST_JSON_URL',
+      ' https://huyphamngoc98nb.github.io/custom/latest.json ',
+    );
 
     await checkForAndroidUpdate();
 
-    expect(fetch).toHaveBeenCalledWith('https://example.com/latest.json', {
-      cache: 'no-store',
-    });
+    expect(fetch).toHaveBeenCalledWith(
+      'https://huyphamngoc98nb.github.io/custom/latest.json',
+      {
+        cache: 'no-store',
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
+      },
+    );
   });
 
   it('uses the documented manifest URL by default', async () => {
@@ -190,6 +251,8 @@ describe('app update service', () => {
 
     expect(fetch).toHaveBeenCalledWith(DEFAULT_ANDROID_LATEST_JSON_URL, {
       cache: 'no-store',
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
     });
   });
 
@@ -207,5 +270,25 @@ describe('app update service', () => {
     expect(Preferences.remove).toHaveBeenCalledWith({
       key: 'app_update.skipped_android_version_code',
     });
+  });
+
+  it('defaults automatic checks to enabled and persists local changes', async () => {
+    let storedValue: string | null = null;
+    preferencesMock.get.mockImplementation(async () => ({ value: storedValue }));
+    preferencesMock.set.mockImplementation(
+      async ({ value }: { value: string }) => {
+        storedValue = value;
+      },
+    );
+
+    await expect(getAppUpdateAutoCheckEnabled()).resolves.toBe(true);
+
+    await setAppUpdateAutoCheckEnabled(false);
+
+    expect(Preferences.set).toHaveBeenCalledWith({
+      key: APP_UPDATE_AUTO_CHECK_ENABLED_KEY,
+      value: 'false',
+    });
+    await expect(getAppUpdateAutoCheckEnabled()).resolves.toBe(false);
   });
 });

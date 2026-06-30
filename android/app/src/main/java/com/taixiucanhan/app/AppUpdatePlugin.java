@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -28,7 +29,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,10 +42,21 @@ public class AppUpdatePlugin extends Plugin {
     private static final String DEFAULT_APK_FILE_NAME = "TaiChinhCaNhan-update.apk";
     private static final String DOWNLOAD_DIRECTORY_NAME = "app-update";
     private static final String DOWNLOAD_PROGRESS_EVENT = "appUpdateDownloadProgress";
+    private static final String SIGNING_CERT_BUILD_CONFIG_FIELD =
+        "APP_UPDATE_SIGNING_CERT_SHA256";
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
     private static final int BUFFER_SIZE = 32 * 1024;
     private static final long UNKNOWN_SIZE_PROGRESS_INTERVAL_BYTES = 256 * 1024;
+    private static final Set<String> ALLOWED_APK_HOSTS = Collections.unmodifiableSet(
+        new HashSet<>(
+            Arrays.asList(
+                "github.com",
+                "objects.githubusercontent.com",
+                "github-releases.githubusercontent.com"
+            )
+        )
+    );
 
     private static final String ERROR_INVALID_INPUT = "APP_UPDATE_INVALID_INPUT";
     private static final String ERROR_DOWNLOAD_FAILED = "APP_UPDATE_DOWNLOAD_FAILED";
@@ -127,7 +143,11 @@ public class AppUpdatePlugin extends Plugin {
             fileName = DEFAULT_APK_FILE_NAME;
         }
 
-        if (!isSafeFileName(fileName) || !isHttpUrl(apkUrl)) {
+        if (
+            !isSafeFileName(fileName) ||
+            !isHttpsUrl(apkUrl) ||
+            !isAllowedApkHost(apkUrl)
+        ) {
             call.reject(MESSAGE_INVALID_INPUT, ERROR_INVALID_INPUT);
             return;
         }
@@ -159,6 +179,7 @@ public class AppUpdatePlugin extends Plugin {
         }
 
         try {
+            // SHA-256 confirms the downloaded bytes match the update manifest.
             String actualSha256 = calculateSha256(apkFile);
             if (!actualSha256.equalsIgnoreCase(expectedSha256)) {
                 deleteQuietly(apkFile);
@@ -168,6 +189,20 @@ public class AppUpdatePlugin extends Plugin {
         } catch (IOException | NoSuchAlgorithmException error) {
             deleteQuietly(apkFile);
             call.reject(MESSAGE_UNKNOWN, ERROR_UNKNOWN, error);
+            return;
+        }
+
+        try {
+            // Package name, version code, and optional signer pin verify APK identity
+            // before the file is exposed to the Android installer.
+            if (!isDownloadedApkIdentityValid(apkFile)) {
+                deleteQuietly(apkFile);
+                call.reject(MESSAGE_SHA256_MISMATCH, ERROR_SHA256_MISMATCH);
+                return;
+            }
+        } catch (Exception ignored) {
+            deleteQuietly(apkFile);
+            call.reject(MESSAGE_SHA256_MISMATCH, ERROR_SHA256_MISMATCH);
             return;
         }
 
@@ -322,6 +357,99 @@ public class AppUpdatePlugin extends Plugin {
         return hex.toString();
     }
 
+    private boolean isDownloadedApkIdentityValid(File apkFile)
+        throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
+        PackageManager packageManager = getContext().getPackageManager();
+        int archiveFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+            ? PackageManager.GET_SIGNING_CERTIFICATES
+            : PackageManager.GET_SIGNATURES;
+        PackageInfo downloadedPackage = packageManager.getPackageArchiveInfo(
+            apkFile.getAbsolutePath(),
+            archiveFlags
+        );
+
+        if (
+            downloadedPackage == null ||
+            !getContext().getPackageName().equals(downloadedPackage.packageName)
+        ) {
+            return false;
+        }
+
+        PackageInfo currentPackage = packageManager.getPackageInfo(
+            getContext().getPackageName(),
+            0
+        );
+        if (getVersionCode(downloadedPackage) <= getVersionCode(currentPackage)) {
+            return false;
+        }
+
+        String expectedFingerprint = getExpectedSigningCertificateSha256();
+        if (expectedFingerprint == null) {
+            // Certificate pinning is intentionally skipped until a real release fingerprint
+            // is supplied through BuildConfig.APP_UPDATE_SIGNING_CERT_SHA256.
+            return true;
+        }
+
+        Signature[] signatures = getApkSignatures(downloadedPackage);
+        if (signatures == null || signatures.length != 1) {
+            return false;
+        }
+
+        String actualFingerprint = calculateSigningCertificateSha256(signatures[0]);
+        return normalizeSha256Fingerprint(expectedFingerprint).equals(actualFingerprint);
+    }
+
+    @SuppressWarnings("deprecation")
+    private long getVersionCode(PackageInfo packageInfo) {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+            ? packageInfo.getLongVersionCode()
+            : packageInfo.versionCode;
+    }
+
+    @SuppressWarnings("deprecation")
+    private Signature[] getApkSignatures(PackageInfo packageInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return packageInfo.signingInfo != null
+                ? packageInfo.signingInfo.getApkContentsSigners()
+                : null;
+        }
+
+        return packageInfo.signatures;
+    }
+
+    private String calculateSigningCertificateSha256(Signature signature)
+        throws NoSuchAlgorithmException {
+        byte[] fingerprint = MessageDigest
+            .getInstance("SHA-256")
+            .digest(signature.toByteArray());
+        StringBuilder hex = new StringBuilder(fingerprint.length * 2);
+        for (byte value : fingerprint) {
+            hex.append(String.format(Locale.US, "%02x", value & 0xff));
+        }
+        return hex.toString();
+    }
+
+    private String getExpectedSigningCertificateSha256() {
+        try {
+            Class<?> buildConfig = Class.forName(
+                getContext().getPackageName() + ".BuildConfig"
+            );
+            Object value = buildConfig
+                .getField(SIGNING_CERT_BUILD_CONFIG_FIELD)
+                .get(null);
+            return value instanceof String ? trimmedOrNull((String) value) : null;
+        } catch (ReflectiveOperationException | SecurityException ignored) {
+            return null;
+        }
+    }
+
+    private String normalizeSha256Fingerprint(String fingerprint) {
+        return fingerprint
+            .replace(":", "")
+            .replaceAll("\\s+", "")
+            .toLowerCase(Locale.US);
+    }
+
     private boolean canInstallUnknownApps() {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.O ||
             getContext().getPackageManager().canRequestPackageInstalls();
@@ -371,10 +499,19 @@ public class AppUpdatePlugin extends Plugin {
             !fileName.contains("\\");
     }
 
-    private boolean isHttpUrl(String rawUrl) {
+    private boolean isHttpsUrl(String rawUrl) {
         try {
             String protocol = new URL(rawUrl).getProtocol();
-            return "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
+            return "https".equalsIgnoreCase(protocol);
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private boolean isAllowedApkHost(String rawUrl) {
+        try {
+            String host = new URL(rawUrl).getHost();
+            return ALLOWED_APK_HOSTS.contains(host.toLowerCase(Locale.US));
         } catch (Exception ignored) {
             return false;
         }

@@ -174,6 +174,19 @@ Lưu ý:
 - Sinh trắc học có thể được bật để mở khóa trên thiết bị hỗ trợ.
 - Web không cung cấp mức bảo vệ tương đương native.
 
+### Quyền Android `INTERNET`
+
+Ứng dụng là local-first và lưu dữ liệu tài chính chính trong SQLite trên thiết bị. Quyền
+`INTERNET` trên Android chỉ dùng để kiểm tra `latest.json` và tải APK sau khi người dùng bấm
+**Cập nhật**; ứng dụng không tự động tải lên ví, giao dịch, backup, ảnh hóa đơn hoặc nhật ký lỗi.
+Người dùng có thể tắt **Tự động kiểm tra cập nhật** trong Cài đặt và vẫn kiểm tra thủ công khi cần.
+
+Luồng update chỉ chấp nhận URL HTTPS thuộc danh sách tên miền cho phép, chặn kết nối HTTP không mã
+hóa, kiểm tra SHA-256 và xác minh package/version của APK trước khi mở trình cài đặt. Dấu vân tay
+chứng thư ký chỉ được bắt buộc đối chiếu khi bản release đã cấu hình
+`APP_UPDATE_SIGNING_CERT_SHA256`; nếu giá trị thiếu hoặc rỗng, bước này được bỏ qua. Android vẫn yêu
+cầu người dùng xác nhận cài đặt.
+
 Xem chi tiết và các hạng mục hardening còn lại tại [docs/security.md](docs/security.md).
 
 ## Server tùy chọn

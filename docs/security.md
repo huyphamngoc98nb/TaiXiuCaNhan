@@ -66,3 +66,25 @@ The app must authenticate the user before opening the database connection. `AppB
 
 1. Test fresh install, app upgrade from unencrypted DB, encrypted/plaintext restore, biometric failure, local reset, auto-backup encryption, and secret rotation on real devices.
 2. Add an iOS native secure-secret-store implementation before enabling encrypted automatic backup on iOS.
+
+## Android Internet Permission And App Updates
+
+The app is local-first: core financial data stays in the local SQLite database. The Android
+`INTERNET` permission is used only to check the update `latest.json` file and to download an APK
+after the user confirms an update. The app does not automatically upload wallets, transactions,
+backups, receipt images, or error logs.
+
+Automatic update checks are enabled by default and can be disabled in **Settings**. Manual update
+checks remain available when automatic checks are off.
+
+Android update traffic is protected by these controls:
+
+- Update manifest and APK URLs must use HTTPS and match their configured domain allowlists;
+  Android cleartext traffic is disabled.
+- The downloaded file must match the SHA-256 value in the update manifest.
+- Before opening the installer, the APK package name must match this app and its version code must
+  be newer than the installed version.
+- Signing-certificate fingerprint verification is enforced only when a real release fingerprint is
+  configured as `APP_UPDATE_SIGNING_CERT_SHA256`. If it is missing or blank, certificate pinning is
+  skipped; no placeholder fingerprint is used.
+- Android still shows its installer confirmation before installation.

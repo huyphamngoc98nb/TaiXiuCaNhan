@@ -23,6 +23,7 @@ import { DisplayFormatSettings } from '../components/DisplayFormatSettings';
 import { UiPersonalizationSettings } from '../components/UiPersonalizationSettings';
 import { TransactionInputSettings } from '../components/TransactionInputSettings';
 import { SecuritySettings } from '../components/SecuritySettings';
+import { AppUpdateSettings } from '../components/AppUpdateSettings';
 import { ThemeSelector } from '../components/ThemeSelector';
 import { useLanguage } from '@/shared/context/LanguageContext';
 import {
@@ -174,6 +175,9 @@ export function SettingsPage() {
             className="bg-surface rounded-[16px] divide-y divide-border overflow-hidden border border-border"
             style={{ boxShadow: '0 1px 4px var(--shadow-color)' }}
           >
+            <div className="px-4 py-3.5">
+              <AppUpdateSettings />
+            </div>
             <button
               type="button"
               onClick={handleCheckForUpdate}

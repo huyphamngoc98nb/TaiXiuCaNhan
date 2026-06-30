@@ -456,6 +456,21 @@ Khu vực **Bảo mật** hiển thị trạng thái bảo vệ local. Trên nat
 
 Trên Web, dữ liệu dùng IndexedDB/jeep-sqlite và không có lớp mở khóa SQLCipher/PIN như native.
 
+### Cập nhật Android và quyền Internet
+
+Ứng dụng hoạt động theo hướng local-first và lưu dữ liệu tài chính chính trong SQLite trên thiết
+bị. Quyền Android `INTERNET` chỉ được dùng để kiểm tra tệp phiên bản `latest.json` và tải APK sau
+khi bạn bấm **Cập nhật**. Ứng dụng không tự động tải lên dữ liệu ví, giao dịch, backup, ảnh hóa đơn
+hoặc nhật ký lỗi.
+
+Trong **Cài đặt**, bạn có thể tắt **Tự động kiểm tra cập nhật**. Khi tắt, ứng dụng không kiểm tra
+phiên bản lúc khởi động; nút **Kiểm tra cập nhật** thủ công vẫn dùng được.
+
+URL cập nhật bắt buộc dùng HTTPS và đúng domain cho phép. APK tải về được kiểm tra SHA-256, tên
+package và mã phiên bản trước khi mở trình cài đặt. Dấu vân tay chứng thư ký chỉ được đối chiếu khi
+bản release đã cấu hình fingerprint thật; nếu chưa cấu hình thì bước kiểm tra này được bỏ qua.
+Android vẫn yêu cầu bạn xác nhận trong trình cài đặt trước khi cài APK.
+
 ### Các lối tắt khác
 
 Màn hình Cài đặt cũng có lối tắt đến Ví, Danh mục, Báo cáo, Hóa đơn định kỳ, Xuất dữ liệu và Sao lưu/khôi phục.

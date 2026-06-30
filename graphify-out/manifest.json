@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\package.json": {
-    "mtime": 1782290000.11549,
-    "ast_hash": "1c14963f559051cece48473b74182d1a",
+    "mtime": 1782786027.5780673,
+    "ast_hash": "777cf30019e2975e1cb9e5dcd8efb9c7",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\postcss.config.js": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\version.config.json": {
-    "mtime": 1782720670.3774812,
-    "ast_hash": "9888b7c3e9dadaa5bcc8a406cb8199a5",
+    "mtime": 1782725853.0369368,
+    "ast_hash": "3833b38ad36a16bc09ff4360882b0a14",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\vite.config.ts": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1782720555.2826722,
+    "mtime": 1782725773.3079088,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1782720555.2826722,
+    "mtime": 1782725773.308966,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1782720554.8333132,
+    "mtime": 1782725772.8595169,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1782720554.9208732,
+    "mtime": 1782725772.9388583,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -120,12 +120,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1782720555.2846787,
+    "mtime": 1782725773.3103912,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1782720555.2846787,
+    "mtime": 1782725773.3116186,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\pages\\SettingsPage.tsx": {
-    "mtime": 1782724783.7613168,
-    "ast_hash": "f3ff3b1169be8b33bbb11d110d2c004a",
+    "mtime": 1782786422.8068979,
+    "ast_hash": "0762b3d8be18dfd9d25ba63342b69976",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\services\\display-format-settings.service.test.ts": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1782724784.9918504,
-    "ast_hash": "3586f9e76e9bfe2ec4236a97223a5991",
+    "mtime": 1782786446.0435364,
+    "ast_hash": "515a0af9b23a997d0c5440f5fa977a26",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1930,8 +1930,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\README.md": {
-    "mtime": 1782354494.5729942,
-    "ast_hash": "6bd7f739ca0196071d5f2e89b9b378b7",
+    "mtime": 1782786818.3595421,
+    "ast_hash": "aae4fa686c25aec4ba25b990ee32fa36",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\.agents\\skills\\graphify\\SKILL.md": {
@@ -1960,8 +1960,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\security.md": {
-    "mtime": 1782437395.7798572,
-    "ast_hash": "cc9b9e5df6ee880a109281b75b1dd7ad",
+    "mtime": 1782786770.9497752,
+    "ast_hash": "cfd446686e004cb31c64b8d2a3513f57",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\state-management.md": {
@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\user-guide.md": {
-    "mtime": 1782437434.101647,
-    "ast_hash": "30032530fd39efdebcb34f4f40ecd81a",
+    "mtime": 1782786819.6677887,
+    "ast_hash": "22faa6d8cbbda82c8b1a3115f6f7b800",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\res\\drawable\\splash.png": {
@@ -2160,13 +2160,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\services\\app-update.service.test.ts": {
-    "mtime": 1782724903.0305903,
-    "ast_hash": "f09d2d86fe594f58c59e457d63b2209d",
+    "mtime": 1782786493.026399,
+    "ast_hash": "591a219b7435ce551415dccb849bfa95",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\services\\app-update.service.ts": {
-    "mtime": 1782723146.7304068,
-    "ast_hash": "3616401b01ef2158ed206414c88240fe",
+    "mtime": 1782786419.341056,
+    "ast_hash": "20259f61c435397d618b1738ff3273e7",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\types\\app-update.types.ts": {
@@ -2175,13 +2175,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\components\\AppUpdateGate.test.tsx": {
-    "mtime": 1782724900.5914917,
-    "ast_hash": "f2a0ca68b580c84648ba39a1a41fd486",
+    "mtime": 1782786491.7322807,
+    "ast_hash": "8f589f0c3c895ed63511b30e13550e89",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\components\\AppUpdateGate.tsx": {
-    "mtime": 1782724782.5558693,
-    "ast_hash": "8026dec0863403909284e2c0579792b0",
+    "mtime": 1782786420.532132,
+    "ast_hash": "5ea283d5da727353f773b6f35152774d",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\release.keystore.base64.txt": {
@@ -2195,8 +2195,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\pages\\SettingsPage.test.tsx": {
-    "mtime": 1782724901.792614,
-    "ast_hash": "3556a1cda224e14bf802d219143a7211",
+    "mtime": 1782786495.4831674,
+    "ast_hash": "3a12affbda8ec94ba0db851718a31ea2",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\core\\telemetry\\error-log.repository.test.ts": {
@@ -2275,8 +2275,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\java\\com\\taixiucanhan\\app\\AppUpdatePlugin.java": {
-    "mtime": 1782724220.0828667,
-    "ast_hash": "0cac65d6ea9c18fa19e1cdf889e7b85c",
+    "mtime": 1782785804.4852638,
+    "ast_hash": "df06eae2e0d36a6f63dbc92247cbb056",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\app-update.errors.test.ts": {
@@ -2297,6 +2297,21 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\app-update.md": {
     "mtime": 1782724932.4994774,
     "ast_hash": "79da5e2677b0ff54307308d401ce8ec9",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\app-update.security.ts": {
+    "mtime": 1782785018.95462,
+    "ast_hash": "9b9334625eb96936221816e55baee6dc",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\AppUpdateSettings.test.tsx": {
+    "mtime": 1782786494.233961,
+    "ast_hash": "9099774818135d44fea5e6aa08bd945d",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\settings\\components\\AppUpdateSettings.tsx": {
+    "mtime": 1782786421.693734,
+    "ast_hash": "1622a8d943d9c982086d4786452e5f00",
     "semantic_hash": ""
   }
 }

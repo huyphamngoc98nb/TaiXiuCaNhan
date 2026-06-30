@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AppUpdateDialog } from './AppUpdateDialog';
 import { useAppUpdate } from '../hooks/useAppUpdate';
+import { getAppUpdateAutoCheckEnabled } from '../services/app-update.service';
 
 export function AppUpdateGate() {
   const hasCheckedRef = useRef(false);
@@ -17,8 +18,27 @@ export function AppUpdateGate() {
 
   useEffect(() => {
     if (hasCheckedRef.current) return;
-    hasCheckedRef.current = true;
-    void checkForUpdate();
+
+    let active = true;
+
+    async function checkIfEnabled() {
+      let enabled = true;
+      try {
+        enabled = await getAppUpdateAutoCheckEnabled();
+      } catch {
+        // The setting defaults to enabled when local preferences are unavailable.
+      }
+
+      if (!active || hasCheckedRef.current) return;
+      hasCheckedRef.current = true;
+      if (enabled) void checkForUpdate();
+    }
+
+    void checkIfEnabled();
+
+    return () => {
+      active = false;
+    };
   }, [checkForUpdate]);
 
   if (!availableUpdate) return null;

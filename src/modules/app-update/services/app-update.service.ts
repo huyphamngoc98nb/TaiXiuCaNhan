@@ -2,6 +2,10 @@ import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { logger } from '@/core/telemetry/logger';
 import { getAndroidLatestJsonUrl } from '../app-update.config';
+import {
+  assertAllowedApkUrl,
+  assertAllowedManifestUrl,
+} from '../app-update.security';
 import { getCurrentAndroidVersion } from './app-update.native';
 import type {
   AndroidLatestRelease,
@@ -9,6 +13,7 @@ import type {
 } from '../types/app-update.types';
 
 const SKIPPED_ANDROID_VERSION_CODE_KEY = 'app_update.skipped_android_version_code';
+export const APP_UPDATE_AUTO_CHECK_ENABLED_KEY = 'app_update_auto_check_enabled';
 
 export const APP_UPDATE_ERROR_MESSAGES = {
   checkFailed: 'Không thể kiểm tra cập nhật. Vui lòng thử lại sau.',
@@ -77,6 +82,12 @@ export function parseAndroidLatestRelease(value: unknown): AndroidLatestRelease 
   const mandatory = value.mandatory as boolean | undefined;
   const releaseNotes = value.releaseNotes as string[] | undefined;
 
+  try {
+    assertAllowedApkUrl(apkUrl);
+  } catch (cause) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.invalidManifest, cause);
+  }
+
   return {
     platform: 'android',
     versionName,
@@ -93,7 +104,19 @@ export function parseAndroidLatestRelease(value: unknown): AndroidLatestRelease 
 }
 
 export async function fetchLatestAndroidRelease(): Promise<AndroidLatestRelease> {
-  const response = await fetch(getAndroidLatestJsonUrl(), { cache: 'no-store' });
+  const manifestUrl = getAndroidLatestJsonUrl();
+
+  try {
+    assertAllowedManifestUrl(manifestUrl);
+  } catch (cause) {
+    throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.invalidManifest, cause);
+  }
+
+  const response = await fetch(manifestUrl, {
+    cache: 'no-store',
+    credentials: 'omit',
+    referrerPolicy: 'no-referrer',
+  });
   if (!response.ok) {
     throw new AppUpdateManifestError(APP_UPDATE_ERROR_MESSAGES.checkFailed);
   }
@@ -179,4 +202,20 @@ export async function markVersionSkipped(versionCode: number): Promise<void> {
 
 export async function clearSkippedVersion(): Promise<void> {
   await Preferences.remove({ key: SKIPPED_ANDROID_VERSION_CODE_KEY });
+}
+
+export async function getAppUpdateAutoCheckEnabled(): Promise<boolean> {
+  const { value } = await Preferences.get({
+    key: APP_UPDATE_AUTO_CHECK_ENABLED_KEY,
+  });
+
+  if (value === 'false') return false;
+  return true;
+}
+
+export async function setAppUpdateAutoCheckEnabled(enabled: boolean): Promise<void> {
+  await Preferences.set({
+    key: APP_UPDATE_AUTO_CHECK_ENABLED_KEY,
+    value: String(enabled),
+  });
 }

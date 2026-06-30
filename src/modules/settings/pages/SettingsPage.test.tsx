@@ -87,6 +87,10 @@ vi.mock('../components/SecuritySettings', () => ({
   SecuritySettings: () => <div>SecuritySettings</div>,
 }));
 
+vi.mock('../components/AppUpdateSettings', () => ({
+  AppUpdateSettings: () => <div>AppUpdateSettings</div>,
+}));
+
 vi.mock('../components/ThemeSelector', () => ({
   ThemeSelector: () => <div>ThemeSelector</div>,
 }));
