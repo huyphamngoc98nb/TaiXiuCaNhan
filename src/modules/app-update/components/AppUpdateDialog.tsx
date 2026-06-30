@@ -1,5 +1,7 @@
+import { useEffect, useRef } from 'react';
 import { useBodyScrollLock } from '@/shared/hooks/useBodyScrollLock';
 import { useLanguage } from '@/shared/context/LanguageContext';
+import { registerAppBackHandler } from '@/shared/utils/app-back-stack';
 import type {
   AndroidLatestRelease,
   AppUpdateDownloadProgress,
@@ -33,19 +35,92 @@ export function AppUpdateDialog({
 }: AppUpdateDialogProps) {
   const { t } = useLanguage();
   const releaseNotes = (latest.releaseNotes ?? []).filter((note) => note.trim() !== '');
+  const visibleReleaseNotes = releaseNotes.length > 0
+    ? releaseNotes
+    : [t('app_update.default_release_note')];
   const isRetry = installState === 'error' || installState === 'permission_required';
+  const dialogRef = useRef<HTMLElement>(null);
+  const primaryButtonRef = useRef<HTMLButtonElement>(null);
   useBodyScrollLock(true);
+
+  useEffect(() => registerAppBackHandler(() => true), []);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+
+    function focusFirstDialogControl() {
+      const focusable = getFocusableElements(dialogRef.current);
+      (focusable[0] ?? dialogRef.current)?.focus();
+    }
+
+    if (primaryButtonRef.current?.disabled) {
+      dialogRef.current?.focus();
+    } else {
+      primaryButtonRef.current?.focus();
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusable = getFocusableElements(dialogRef.current);
+      if (focusable.length === 0) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const activeElement = document.activeElement;
+
+      if (event.shiftKey && (activeElement === first || !dialogRef.current?.contains(activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (activeElement === last || !dialogRef.current?.contains(activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function handleFocusIn(event: FocusEvent) {
+      if (event.target instanceof Node && !dialogRef.current?.contains(event.target)) {
+        focusFirstDialogControl();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('focusin', handleFocusIn, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('focusin', handleFocusIn, true);
+      previouslyFocused?.focus();
+    };
+  }, []);
 
   return (
     <div
       className="confirm-overlay"
-      onClick={mandatory || isUpdating ? undefined : onDismiss}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
     >
       <section
+        ref={dialogRef}
         className="confirm-dialog app-update-dialog"
         role="dialog"
         aria-modal="true"
         aria-labelledby="app-update-title"
+        tabIndex={-1}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="confirm-content app-update-content">
@@ -66,16 +141,14 @@ export function AppUpdateDialog({
             </p>
           )}
 
-          {releaseNotes.length > 0 && (
-            <div className="app-update-notes">
-              <h3>{t('app_update.release_notes')}</h3>
-              <ul>
-                {releaseNotes.map((note, index) => (
-                  <li key={`${index}-${note}`}>{note}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="app-update-notes">
+            <h3>{t('app_update.release_notes')}</h3>
+            <ul>
+              {visibleReleaseNotes.map((note, index) => (
+                <li key={`${index}-${note}`}>{note}</li>
+              ))}
+            </ul>
+          </div>
 
           {isUpdating && (
             <div className="app-update-progress" aria-live="polite">
@@ -131,10 +204,11 @@ export function AppUpdateDialog({
               onClick={onDismiss}
               disabled={isUpdating}
             >
-              {t('app_update.later')}
+              {t('app_update.skip_this_version')}
             </button>
           )}
           <button
+            ref={primaryButtonRef}
             type="button"
             className="confirm-button app-update-primary-button"
             onClick={onUpdate}
@@ -150,6 +224,14 @@ export function AppUpdateDialog({
       </section>
     </div>
   );
+}
+
+function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
+  if (!container) return [];
+
+  return Array.from(container.querySelectorAll<HTMLElement>(
+    'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+  ));
 }
 
 function formatBytes(bytes: number): string {

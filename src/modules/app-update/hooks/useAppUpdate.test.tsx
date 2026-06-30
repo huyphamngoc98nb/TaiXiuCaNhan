@@ -55,6 +55,45 @@ describe('useAppUpdate install flow', () => {
     serviceMock.markVersionSkipped.mockResolvedValue(undefined);
   });
 
+  it('does not surface a skipped optional version during automatic checks', async () => {
+    serviceMock.getSkippedVersionCode.mockResolvedValue(121);
+
+    const { result } = renderHook(() => useAppUpdate());
+    await act(async () => {
+      await result.current.checkForUpdate();
+    });
+
+    expect(serviceMock.getSkippedVersionCode).toHaveBeenCalledTimes(1);
+    expect(result.current.availableUpdate).toBeNull();
+  });
+
+  it('ignores a skipped version when respectSkippedVersion is false', async () => {
+    serviceMock.getSkippedVersionCode.mockResolvedValue(121);
+
+    const { result } = renderHook(() =>
+      useAppUpdate({ respectSkippedVersion: false }),
+    );
+    await act(async () => {
+      await result.current.checkForUpdate();
+    });
+
+    expect(serviceMock.getSkippedVersionCode).not.toHaveBeenCalled();
+    expect(result.current.availableUpdate).toEqual(updateResult);
+  });
+
+  it('stores the skipped version when an optional update is dismissed', async () => {
+    const { result } = renderHook(() => useAppUpdate());
+    await act(async () => {
+      await result.current.checkForUpdate();
+    });
+    await act(async () => {
+      await result.current.dismissUpdate();
+    });
+
+    expect(serviceMock.markVersionSkipped).toHaveBeenCalledWith(121);
+    expect(result.current.availableUpdate).toBeNull();
+  });
+
   it('tracks native progress, prevents duplicates, and removes the listener', async () => {
     const remove = vi.fn(async () => undefined);
     let progressListener: ((event: {

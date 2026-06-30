@@ -144,14 +144,31 @@ Review this checklist before merging Android release or app-update changes:
 - Manual update checks in Settings should bypass the skipped-version preference and show a clear toast when already up to date.
 - The Phase 1-3 frontend must not use a browser APK download fallback. APK installation is handled only by the native `AppUpdatePlugin` added in Phase 4-6.
 
+## Update dialog behavior
+
+When the app detects a newer Android version, it shows a blocking update dialog with the new version and release notes from `latest.json`. Clicking outside the dialog, pressing Escape, or pressing Android Back does not close the dialog or allow navigation behind it.
+
+For optional updates, the user must explicitly choose `Cập nhật` or `Bỏ qua phiên bản này`. Skipping stores the release `versionCode`, closes the dialog, and suppresses that optional version during later automatic checks. Settings manual checks bypass this preference.
+
+For mandatory updates, the dialog does not show `Bỏ qua phiên bản này`; the user must choose `Cập nhật` to continue.
+
+## Release notes
+
+Each `latest.json` should include a user-facing `releaseNotes` array. The field remains optional for compatibility. If it is missing, empty, or contains only blank entries, the dialog displays a localized fallback note.
+
 ## Phase 1-3 app update manual QA
 
 - Android app opens normally when update check fails.
 - No dialog appears when `latest.versionCode <= current.versionCode`.
 - Dialog appears when `latest.versionCode > current.versionCode`.
 - Release notes are displayed when present.
-- Optional update allows “Để sau”.
-- Mandatory update hides “Để sau”.
+- A fallback release note is displayed when `releaseNotes` is missing or empty.
+- Clicking outside the dialog does not close it.
+- Escape does not close the dialog in web/development builds.
+- Android Back does not close the dialog, navigate away, or exit the app.
+- Optional updates require either `Cập nhật` or `Bỏ qua phiên bản này`.
+- `Bỏ qua phiên bản này` closes an optional update and allows normal app use.
+- Mandatory updates hide `Bỏ qua phiên bản này` and cannot be bypassed.
 - Clicking “Cập nhật” calls `startAndroidUpdate()`.
 - If the native plugin is unavailable, the app shows a clear fallback message and does not crash.
 - The Settings button can manually check for an update.

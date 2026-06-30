@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AppUpdateDialog } from './AppUpdateDialog';
+import { consumeAppBackButton } from '@/shared/utils/app-back-stack';
 import type { ComponentProps } from 'react';
 
 vi.mock('@/shared/context/LanguageContext', () => ({
@@ -47,14 +48,54 @@ describe('AppUpdateDialog', () => {
     expect(screen.getByText(/120/)).not.toBeNull();
     expect(screen.getByText('Sửa lỗi sao lưu')).not.toBeNull();
     expect(screen.getByText('Cải thiện hiệu năng')).not.toBeNull();
-    expect(screen.getByText('app_update.later')).not.toBeNull();
+    expect(screen.getByText('app_update.skip_this_version')).not.toBeNull();
   });
 
-  it('hides Later for mandatory updates', () => {
+  it('renders a fallback release note when release notes are empty or blank', () => {
+    renderDialog({
+      latest: { ...latest, releaseNotes: ['', '   '] },
+    });
+
+    expect(screen.getByText('app_update.release_notes')).not.toBeNull();
+    expect(screen.getByText('app_update.default_release_note')).not.toBeNull();
+  });
+
+  it('shows only the update action for mandatory updates', () => {
     renderDialog({ latest: { ...latest, mandatory: true }, mandatory: true });
 
-    expect(screen.queryByText('app_update.later')).toBeNull();
+    expect(screen.queryByText('app_update.skip_this_version')).toBeNull();
+    expect(screen.getByText('app_update.update_now')).not.toBeNull();
     expect(screen.getByText('app_update.mandatory_message')).not.toBeNull();
+  });
+
+  it('does not dismiss when the overlay is clicked or Escape is pressed', () => {
+    const onDismiss = vi.fn();
+    renderDialog({ onDismiss });
+
+    const overlay = screen.getByRole('dialog').parentElement;
+    if (!overlay) throw new Error('Expected update dialog overlay');
+
+    fireEvent.click(overlay);
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(onDismiss).not.toHaveBeenCalled();
+  });
+
+  it('consumes app-level Back handling while mounted', () => {
+    renderDialog();
+
+    expect(consumeAppBackButton()).toBe(true);
+  });
+
+  it('keeps keyboard focus inside the blocking dialog', () => {
+    const outsideButton = document.createElement('button');
+    document.body.append(outsideButton);
+    renderDialog();
+
+    outsideButton.focus();
+
+    expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true);
+    outsideButton.remove();
   });
 
   it('shows determinate download progress and disables actions', () => {
@@ -67,7 +108,9 @@ describe('AppUpdateDialog', () => {
     const progressbar = screen.getByRole('progressbar');
     expect(progressbar.getAttribute('aria-valuenow')).toBe('50');
     expect(screen.getByText('50%')).not.toBeNull();
-    expect((screen.getByText('app_update.later') as HTMLButtonElement).disabled).toBe(true);
+    expect(
+      (screen.getByText('app_update.skip_this_version') as HTMLButtonElement).disabled,
+    ).toBe(true);
     expect((screen.getByText('app_update.updating') as HTMLButtonElement).disabled).toBe(true);
   });
 

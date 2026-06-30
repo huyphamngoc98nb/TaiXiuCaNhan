@@ -38,6 +38,18 @@ During an Android download, the native plugin emits `appUpdateDownloadProgress`.
 
 Required fields are `platform`, `versionName`, `versionCode`, `apkUrl`, and `sha256`. `platform` must be `android`; `versionCode` must be a positive integer. Missing `mandatory` and `releaseNotes` values normalize to `false` and `[]`.
 
+## Update dialog behavior
+
+When the app detects a newer Android version, it displays a blocking update dialog. The dialog always shows the new version and a release-notes list from `latest.json`; when `releaseNotes` is missing, empty, or contains only blank entries, it shows a localized fallback note.
+
+Optional updates require an explicit choice between `Cập nhật` and `Bỏ qua phiên bản này`. Skipping stores that `versionCode`, closes the dialog, and prevents the automatic check from showing the same optional version again. A manual check from Settings ignores the stored skipped version.
+
+Mandatory updates show only `Cập nhật`. For both optional and mandatory updates, clicking outside the dialog, pressing Escape, or pressing Android Back does not close the dialog or navigate away, and keyboard focus remains inside the dialog.
+
+## Release notes
+
+Each `latest.json` should include a `releaseNotes` array. Keep each entry short and user-facing. The field remains optional so older manifests continue to parse; the dialog supplies the fallback text when no usable entries are present.
+
 When `minSupportedVersionCode` is greater than the installed version code, the frontend treats the update as mandatory.
 
 ## Environment and configuration
@@ -85,8 +97,13 @@ The APK is deliberately retained after installer handoff because Android may sti
 - No dialog appears when `latest.versionCode <= current.versionCode`.
 - Dialog appears when `latest.versionCode > current.versionCode`.
 - Release notes are displayed when present.
-- Optional update allows “Để sau”.
-- Mandatory update hides “Để sau”.
+- A fallback release note is displayed when `releaseNotes` is missing or empty.
+- Clicking outside the dialog does not close it.
+- Escape does not close the dialog in web/development builds.
+- Android Back does not close the dialog, navigate away, or exit the app.
+- Optional update requires either `Cập nhật` or `Bỏ qua phiên bản này`.
+- Skipping closes an optional update and suppresses the same version during automatic checks.
+- Mandatory update hides `Bỏ qua phiên bản này` and cannot be bypassed.
 - Clicking “Cập nhật” checks install permission before starting a new native APK download.
 - Progress updates during download.
 - Unknown content length shows indeterminate progress and downloaded bytes.
