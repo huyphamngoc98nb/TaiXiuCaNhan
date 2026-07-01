@@ -7,7 +7,7 @@ import { ReportGranularity, CashflowSummary, CategorySummary, DateRange, PeriodS
 
 import { ReportSummaryCards } from '../components/ReportSummaryCards';
 import { DateRangePicker } from '../components/DateRangePicker';
-import { CashflowBarChart } from '../components/CashflowBarChart';
+import { CashflowTrendChart } from '../components/CashflowTrendChart';
 import { ReportDonutCard } from '../components/ReportDonutCard';
 
 import { useNavigate } from 'react-router-dom';
@@ -281,7 +281,7 @@ export const ReportsPage = () => {
           </div>
         )}
 
-        {!loading && !error && hasReportData && <CashflowBarChart data={periodData} />}
+        {!loading && !error && hasReportData && <CashflowTrendChart data={periodData} />}
 
         {(loading || hasReportData) && (
           <ReportDonutCard

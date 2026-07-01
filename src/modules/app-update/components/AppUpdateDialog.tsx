@@ -172,7 +172,9 @@ export function AppUpdateDialog({
                 >
                   <div
                     className="app-update-progress-value"
-                    style={{ width: `${progress.percent}%` }}
+                    style={{
+                      transform: `scaleX(${Math.min(Math.max(progress.percent, 0), 100) / 100})`,
+                    }}
                   />
                 </div>
               ) : (

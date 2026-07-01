@@ -159,15 +159,43 @@ describe('SQLiteReportRepository', () => {
   it('getCashflowSummary: returns zero totals on empty dataset', async () => {
     mockDb.query.mockResolvedValue({ values: [] });
     const result = await repo.getCashflowSummary(range);
-    expect(result).toEqual({ totalIncome: 0, totalExpense: 0, netAmount: 0 });
+    expect(result).toEqual({
+      grossIncome: 0,
+      grossExpense: 0,
+      totalOffset: 0,
+      netExpense: 0,
+      totalIncome: 0,
+      totalExpense: 0,
+      netAmount: 0,
+    });
   });
 
-  it('getCashflowSummary: computes net amount correctly', async () => {
+  it('getCashflowSummary: reduces expense by budget offsets without inflating income', async () => {
     mockDb.query.mockResolvedValue({
-      values: [{ totalIncome: 5000, totalExpense: 2000 }]
+      values: [{ grossIncome: 10_000, grossExpense: 3_000, totalOffset: 500, netExpense: 2_500 }]
     });
     const result = await repo.getCashflowSummary(range);
-    expect(result).toEqual({ totalIncome: 5000, totalExpense: 2000, netAmount: 3000 });
+    expect(result).toEqual({
+      grossIncome: 10_000,
+      grossExpense: 3_000,
+      totalOffset: 500,
+      netExpense: 2_500,
+      totalIncome: 10_000,
+      totalExpense: 2_500,
+      netAmount: 7_500,
+    });
+  });
+
+  it('getCashflowSummary: never returns a negative net expense', async () => {
+    mockDb.query.mockResolvedValue({
+      values: [{ grossIncome: 1_000, grossExpense: 300, totalOffset: 500, netExpense: 0 }]
+    });
+
+    const result = await repo.getCashflowSummary(range);
+
+    expect(result.netExpense).toBe(0);
+    expect(result.totalExpense).toBe(0);
+    expect(result.netAmount).toBe(1_000);
   });
 
   it('getCashflowSummary: handles date range boundaries', async () => {
@@ -184,7 +212,7 @@ describe('SQLiteReportRepository', () => {
   });
 
   it('getCashflowSummary excludes transfers such as credit card payments', async () => {
-    mockDb.query.mockResolvedValue({ values: [{ totalIncome: 0, totalExpense: 0 }] });
+    mockDb.query.mockResolvedValue({ values: [] });
     await repo.getCashflowSummary(range);
 
     const [sql] = mockDb.query.mock.calls[0];
@@ -192,13 +220,19 @@ describe('SQLiteReportRepository', () => {
     expect(sql).not.toContain("'transfer'");
   });
 
-  it('getCashflowSummary: excludes budget offset income from totals and net cashflow', async () => {
-    mockDb.query.mockResolvedValue({ values: [{ totalIncome: 0, totalExpense: 0 }] });
+  it('getCashflowSummary: applies ordinary total filters but keeps excluded budget offsets', async () => {
+    mockDb.query.mockResolvedValue({ values: [] });
     await repo.getCashflowSummary(range);
 
     const [sql] = mockDb.query.mock.calls[0];
-    expect(sql).toContain('is_budget_offset = 0');
-    expect(sql).toContain("(type <> 'income' OR is_budget_offset = 0)");
+    expect(sql).toContain('deleted_at IS NULL');
+    expect(sql).toMatch(/type = 'income'[\s\S]*is_budget_offset = 0[\s\S]*exclude_from_total = 0/);
+    expect(sql).toMatch(/type = 'expense'[\s\S]*exclude_from_total = 0/);
+    expect(sql).toMatch(/type = 'income'[\s\S]*is_budget_offset = 1[\s\S]*offset_budget_id IS NOT NULL[\s\S]*THEN amount/);
+    expect(sql).toContain('MAX(grossExpense - totalOffset, 0) as netExpense');
+
+    const offsetExpression = sql.split('as totalOffset')[0].split('COALESCE(SUM(CASE').at(-1) || '';
+    expect(offsetExpression).not.toContain('exclude_from_total = 0');
   });
 });
 

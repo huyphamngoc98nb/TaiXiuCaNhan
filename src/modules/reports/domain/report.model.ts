@@ -25,6 +25,11 @@ export interface PeriodSummary {
 }
 
 export interface CashflowSummary {
+  grossIncome: number;
+  grossExpense: number;
+  totalOffset: number;
+  netExpense: number;
+  // Backward-compatible aliases used by existing report, forecast, and export consumers.
   totalIncome: number;
   totalExpense: number;
   netAmount: number;

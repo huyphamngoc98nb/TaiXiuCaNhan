@@ -77,7 +77,9 @@
   background: var(--primary);
   border-radius: inherit;
   height: 100%;
-  transition: width 0.2s ease-out;
+  transform-origin: left center;
+  transition: transform 0.2s ease-out;
+  width: 100%;
 }
 
 .app-update-progress-indeterminate::after {

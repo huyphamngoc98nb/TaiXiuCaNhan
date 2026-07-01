@@ -77,7 +77,7 @@ flowchart TB
   sqliteReport --> db["SQLite DB"]
 
   reportsPage --> summary["ReportSummaryCards"]
-  reportsPage --> trend["CashflowBarChart"]
+  reportsPage --> trend["CashflowTrendChart"]
   reportsPage --> donut["ReportDonutCard"]
   donut --> normalize["normalizeDonutData"]
 

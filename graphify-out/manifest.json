@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\version.config.json": {
-    "mtime": 1782874111.8448305,
-    "ast_hash": "390f3e51dd6e55f5c00fbc0ef6f7350c",
+    "mtime": 1782875641.8658304,
+    "ast_hash": "c5b6c9bfe16bf2345239f0339fbf79bb",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\vite.config.ts": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor.settings.gradle": {
-    "mtime": 1782874056.5708513,
+    "mtime": 1782875618.5117414,
     "ast_hash": "89123bba12682673291b5acd3b34b6db",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\capacitor.build.gradle": {
-    "mtime": 1782874056.5718508,
+    "mtime": 1782875618.5117414,
     "ast_hash": "d2ec47e7a8d4f17876799728f9b8a39a",
     "semantic_hash": ""
   },
@@ -85,12 +85,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.config.json": {
-    "mtime": 1782875381.3949773,
+    "mtime": 1782875617.8869522,
     "ast_hash": "5faad82265b616885f2ca4175082f59a",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\app\\src\\main\\assets\\capacitor.plugins.json": {
-    "mtime": 1782874056.1132343,
+    "mtime": 1782875617.9818356,
     "ast_hash": "8062f9058ba4ac6f81610e29eb707414",
     "semantic_hash": ""
   },
@@ -120,12 +120,12 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\build.gradle": {
-    "mtime": 1782874056.57285,
+    "mtime": 1782875618.5157616,
     "ast_hash": "2af61653d70c95d20802c8b5c433ba90",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\android\\capacitor-cordova-android-plugins\\cordova.variables.gradle": {
-    "mtime": 1782874056.5738504,
+    "mtime": 1782875618.5157616,
     "ast_hash": "d2372a0ae9aa60abb8d03e7f06bf9194",
     "semantic_hash": ""
   },
@@ -969,11 +969,6 @@
     "ast_hash": "dcdd3fe396c5df6905e8e875c102646f",
     "semantic_hash": ""
   },
-  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\components\\CashflowBarChart.tsx": {
-    "mtime": 1782120171.5060058,
-    "ast_hash": "58bbee5975c4d5d52925a8030ac00d4e",
-    "semantic_hash": ""
-  },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\components\\DateRangePicker.tsx": {
     "mtime": 1781254561.60746,
     "ast_hash": "d1440a67b583687b3aa3516774cd6055",
@@ -1005,13 +1000,13 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\domain\\report.model.ts": {
-    "mtime": 1779763988.5442781,
-    "ast_hash": "e2cac9511f0bd50ca7571d78a5b7d2a3",
+    "mtime": 1782890054.8107038,
+    "ast_hash": "041bacb5da6e7d41f5c8131ac04bf20e",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\pages\\ReportsPage.tsx": {
-    "mtime": 1782120641.908756,
-    "ast_hash": "9de48146126431fe109df1c755a5cdfe",
+    "mtime": 1782879474.8651702,
+    "ast_hash": "2bb7cd4dc2ad38f77bd8b93afbabd8e8",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\repositories\\report.repository.ts": {
@@ -1020,8 +1015,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\repositories\\sqlite-report.repository.ts": {
-    "mtime": 1782207750.2979941,
-    "ast_hash": "a768b1559d32c12ee439a1371e10b8a6",
+    "mtime": 1782890229.9515257,
+    "ast_hash": "2a6dbf79eda2fe7b935f90c08057ea82",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\services\\build-date-range.ts": {
@@ -1230,8 +1225,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\DashboardPage.tsx": {
-    "mtime": 1782715783.3613317,
-    "ast_hash": "d9307f0e9f2c8cc1b85e0549fd67ed1d",
+    "mtime": 1782892033.2132237,
+    "ast_hash": "adb2a159de08f3070e19a11629e009f8",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\transactions\\pages\\EditTransactionPage.tsx": {
@@ -1580,8 +1575,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\constants\\translations.ts": {
-    "mtime": 1782810329.5111535,
-    "ast_hash": "db24e937c2c98a469d82a73d462ea6a0",
+    "mtime": 1782879476.6974983,
+    "ast_hash": "64d49696a3fa35a089983f106c7b1865",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\context\\CurrencyContext.tsx": {
@@ -1795,8 +1790,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\financial-calculations.test.ts": {
-    "mtime": 1781510057.0771368,
-    "ast_hash": "ceaa35342655efc9963572d5858c7406",
+    "mtime": 1782890060.1720562,
+    "ast_hash": "84717818d5e78277663c9a8d1f50c85b",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\ime-safe-input.test.tsx": {
@@ -1855,8 +1850,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\reports.test.ts": {
-    "mtime": 1782207739.6870217,
-    "ast_hash": "e32c2d0dcbff30e474c5b8aed7903947",
+    "mtime": 1782890058.4330728,
+    "ast_hash": "c487c11c9a1b45596f2b8f33a3956955",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\reset-local-data.test.ts": {
@@ -1945,8 +1940,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\codegraph.md": {
-    "mtime": 1779781099.100979,
-    "ast_hash": "a4345e048dc0e91b63a24653b0e13228",
+    "mtime": 1782890062.1732638,
+    "ast_hash": "2dc61e7670136d7aa7cf6b9106a84b4c",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\docs\\manual-test-money-keyboard-android.md": {
@@ -2255,8 +2250,8 @@
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\components\\AppUpdateDialog.tsx": {
-    "mtime": 1782810604.9740772,
-    "ast_hash": "2ee290ea6edb6d8bf8bb9032b1479166",
+    "mtime": 1782891761.4834456,
+    "ast_hash": "9b78818fc5f2d9855125fdc9389f9488",
     "semantic_hash": ""
   },
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\app-update\\hooks\\useAppUpdate.ts": {
@@ -2342,6 +2337,16 @@
   "D:\\Personal Project\\TaiXiuCaNhan\\src\\shared\\components\\CurrencyAmountInput.test.tsx": {
     "mtime": 1782875293.4898214,
     "ast_hash": "423cd7185674df6d00592b10e925a8c5",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\modules\\reports\\components\\CashflowTrendChart.tsx": {
+    "mtime": 1782879665.20864,
+    "ast_hash": "b4a4adb64efbc5fc9b355f7fb1f634b2",
+    "semantic_hash": ""
+  },
+  "D:\\Personal Project\\TaiXiuCaNhan\\src\\tests\\cashflow-trend-chart.test.tsx": {
+    "mtime": 1782879666.9311228,
+    "ast_hash": "0d72bb62bc4690e7db5e5bcc32dfe77f",
     "semantic_hash": ""
   }
 }

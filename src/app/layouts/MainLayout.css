@@ -101,6 +101,12 @@
   transform: translateY(3px);
 }
 
+.nav-item:focus-visible {
+  border-radius: 12px;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .nav-item svg,
 .nav-item span {
   transition: transform 0.18s ease, opacity 0.18s ease;
@@ -125,15 +131,20 @@
   min-height: 50px;
   padding: 0;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--surface);
   background: var(--primary);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 2px 6px var(--shadow-color);
   transform: translate(-50%, -50%);
 }
 
 .nav-item--fab.active {
-  color: #ffffff;
+  color: var(--surface);
   transform: translate(-50%, -50%) translateY(-1px);
+}
+
+.nav-item--fab:focus-visible {
+  outline-offset: 3px;
 }
 
 .nav-item--fab svg {

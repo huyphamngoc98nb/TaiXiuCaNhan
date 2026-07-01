@@ -97,7 +97,7 @@ export class SQLiteReportRepository implements IReportRepository {
       timeFormat = '%Y-%W';
     }
 
-    // Period cashflow still excludes budget-offset income so totals/net cashflow stay unchanged.
+    // Period buckets exclude budget-offset income; offsets are applied by aggregate/category summaries.
     const sql = `
       SELECT 
         strftime(?, transaction_date / 1000, 'unixepoch') as period,
@@ -124,30 +124,56 @@ export class SQLiteReportRepository implements IReportRepository {
 
   async getCashflowSummary(range: DateRange): Promise<CashflowSummary> {
     const db = await getDbConnection();
-    
-    // Cashflow totals still exclude budget-offset income so summary cards/net cashflow stay unchanged.
+
+    // Budget offsets reduce reported expense without being counted as regular income.
+    // Unlike regular income/expense, offsets remain effective when excluded from totals,
+    // matching the expense-category report semantics.
     const sql = `
-      SELECT 
-        SUM(CASE WHEN type = 'income' AND is_budget_offset = 0 THEN amount ELSE 0 END) as totalIncome,
-        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as totalExpense
-      FROM transactions
-      WHERE transaction_date >= ? 
-        AND transaction_date <= ?
-        AND type IN ('income', 'expense')
-        AND deleted_at IS NULL
-        AND exclude_from_total = 0
-        AND (type <> 'income' OR is_budget_offset = 0)
+      WITH cashflow AS (
+        SELECT
+          COALESCE(SUM(CASE
+            WHEN type = 'income'
+              AND is_budget_offset = 0
+              AND exclude_from_total = 0
+            THEN amount ELSE 0 END), 0) as grossIncome,
+          COALESCE(SUM(CASE
+            WHEN type = 'expense'
+              AND exclude_from_total = 0
+            THEN amount ELSE 0 END), 0) as grossExpense,
+          COALESCE(SUM(CASE
+            WHEN type = 'income'
+              AND is_budget_offset = 1
+              AND offset_budget_id IS NOT NULL
+            THEN amount ELSE 0 END), 0) as totalOffset
+        FROM transactions
+        WHERE transaction_date >= ?
+          AND transaction_date <= ?
+          AND type IN ('income', 'expense')
+          AND deleted_at IS NULL
+      )
+      SELECT
+        grossIncome,
+        grossExpense,
+        totalOffset,
+        MAX(grossExpense - totalOffset, 0) as netExpense
+      FROM cashflow
     `;
     const { values } = await db.query(sql, [range.startDate, range.endDate]);
     const row = values && values.length > 0 ? values[0] : null;
-    
-    const totalIncome = row?.totalIncome || 0;
-    const totalExpense = row?.totalExpense || 0;
-    
+
+    const grossIncome = row?.grossIncome || 0;
+    const grossExpense = row?.grossExpense || 0;
+    const totalOffset = row?.totalOffset || 0;
+    const netExpense = Math.max(row?.netExpense ?? grossExpense - totalOffset, 0);
+
     return {
-      totalIncome,
-      totalExpense,
-      netAmount: totalIncome - totalExpense
+      grossIncome,
+      grossExpense,
+      totalOffset,
+      netExpense,
+      totalIncome: grossIncome,
+      totalExpense: netExpense,
+      netAmount: grossIncome - netExpense,
     };
   }
 

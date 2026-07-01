@@ -32,8 +32,24 @@ function makeBudget(amount: number): BudgetWithCategory {
 describe('financial calculations', () => {
   it('projects month-end expense and balance from elapsed days', () => {
     const metrics = calculateMonthMetrics({
-      current: { totalIncome: 3_000, totalExpense: 1_000, netAmount: 2_000 },
-      previous: { totalIncome: 2_000, totalExpense: 500, netAmount: 1_500 },
+      current: {
+        grossIncome: 3_000,
+        grossExpense: 1_200,
+        totalOffset: 200,
+        netExpense: 1_000,
+        totalIncome: 3_000,
+        totalExpense: 1_000,
+        netAmount: 2_000,
+      },
+      previous: {
+        grossIncome: 2_000,
+        grossExpense: 600,
+        totalOffset: 100,
+        netExpense: 500,
+        totalIncome: 2_000,
+        totalExpense: 500,
+        netAmount: 1_500,
+      },
       currentRange: monthlyRange,
       totalBalance: 5_000,
       now: new Date(2026, 5, 10, 12, 0, 0, 0),
