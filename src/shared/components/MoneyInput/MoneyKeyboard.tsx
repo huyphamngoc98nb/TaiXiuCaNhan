@@ -11,25 +11,21 @@ type MoneyKeyboardMode = 'number' | 'calculator';
 export interface MoneyKeyboardProps {
   value: string;
   currency: CurrencyCode;
-  onChange: (value: string) => void;
+  onInsert: (key: string) => void;
+  onBackspace: () => void;
+  onReplace: (value: string) => void;
   onDone: () => void;
   className?: string;
 }
 
 const numberKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '000', '0', 'backspace'];
 
-function appendNumberKey(value: string, key: string): string {
-  return `${value}${key}`;
-}
-
-function backspaceNumberValue(value: string): string {
-  return value.slice(0, -1);
-}
-
 export function MoneyKeyboard({
   value,
   currency,
-  onChange,
+  onInsert,
+  onBackspace,
+  onReplace,
   onDone,
   className = '',
 }: MoneyKeyboardProps) {
@@ -39,7 +35,7 @@ export function MoneyKeyboard({
 
   const applyCalculatorValue = (nextValue: string) => {
     void triggerLightHaptic();
-    onChange(nextValue);
+    onReplace(nextValue);
     setStatusText(t('money_keyboard.calculation_applied'));
     setMode('number');
   };
@@ -70,11 +66,11 @@ export function MoneyKeyboard({
                 onClick={() => {
                   void triggerLightHaptic();
                   if (key === 'backspace') {
-                    onChange(backspaceNumberValue(value));
+                    onBackspace();
                     return;
                   }
 
-                  onChange(appendNumberKey(value, key));
+                  onInsert(key);
                 }}
               >
                 {key === 'backspace' ? <Delete size={22} strokeWidth={2.4} /> : key}

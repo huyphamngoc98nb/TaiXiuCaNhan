@@ -28,6 +28,20 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
   async create(
     data: CreateTransactionInput & { id: string; created_at: number; updated_at: number }
   ): Promise<Transaction> {
+    if (data.source_type != null && data.source_id != null && data.source_event != null) {
+      const existing = Array.from(this.transactions.values()).find((candidate) =>
+        candidate.deleted_at === null &&
+        candidate.source_type === data.source_type &&
+        candidate.source_id === data.source_id &&
+        candidate.source_event === data.source_event
+      );
+      if (existing) {
+        throw new Error(
+          'UNIQUE constraint failed: transactions.source_type, transactions.source_id, transactions.source_event'
+        );
+      }
+    }
+
     const transaction: Transaction = {
       id: data.id,
       wallet_id: data.wallet_id,
@@ -40,6 +54,9 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
       exclude_from_total: data.exclude_from_total ?? false,
       is_budget_offset: data.is_budget_offset ?? false,
       offset_budget_id: data.offset_budget_id ?? null,
+      source_type: data.source_type ?? null,
+      source_id: data.source_id ?? null,
+      source_event: data.source_event ?? null,
       transaction_date: data.transaction_date,
       created_at: data.created_at,
       updated_at: data.updated_at,
@@ -74,7 +91,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
 
   async softDelete(id: string, deleted_at: number): Promise<boolean> {
     const transaction = this.transactions.get(id);
-    if (!transaction) return false;
+    if (!transaction || transaction.deleted_at !== null) return false;
 
     this.transactions.set(id, {
       ...transaction,
@@ -92,6 +109,20 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
 
   async getByIdIncludeDeleted(id: string): Promise<Transaction | null> {
     const transaction = this.transactions.get(id);
+    return transaction ? { ...transaction } : null;
+  }
+
+  async getBySource(
+    sourceType: string,
+    sourceId: string,
+    sourceEvent: string
+  ): Promise<Transaction | null> {
+    const transaction = Array.from(this.transactions.values()).find((candidate) =>
+      candidate.deleted_at === null &&
+      candidate.source_type === sourceType &&
+      candidate.source_id === sourceId &&
+      candidate.source_event === sourceEvent
+    );
     return transaction ? { ...transaction } : null;
   }
 

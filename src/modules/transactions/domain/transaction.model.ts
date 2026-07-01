@@ -1,6 +1,12 @@
 export type TransactionType = 'income' | 'expense' | 'transfer';
 
-export interface Transaction {
+export interface TransactionSourceMetadata {
+  source_type?: string | null;
+  source_id?: string | null;
+  source_event?: string | null;
+}
+
+export interface Transaction extends TransactionSourceMetadata {
   id: string;
   wallet_id: string;
   category_id: string;
@@ -26,7 +32,7 @@ export interface Transaction {
   offset_budget_name?: string;
 }
 
-export interface CreateTransactionInput {
+export interface CreateTransactionInput extends TransactionSourceMetadata {
   wallet_id: string;
   category_id: string;
   type: TransactionType;
@@ -40,7 +46,7 @@ export interface CreateTransactionInput {
   transaction_date: number;
 }
 
-export interface UpdateTransactionInput {
+export interface UpdateTransactionInput extends TransactionSourceMetadata {
   wallet_id?: string;
   category_id?: string;
   type?: TransactionType;

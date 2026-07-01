@@ -14,7 +14,9 @@ describe('MoneyKeyboard', () => {
       <MoneyKeyboard
         value=""
         currency="VND"
-        onChange={vi.fn()}
+        onInsert={vi.fn()}
+        onBackspace={vi.fn()}
+        onReplace={vi.fn()}
         onDone={vi.fn()}
       />,
     );
@@ -26,55 +28,61 @@ describe('MoneyKeyboard', () => {
     expect(screen.getByRole('button', { name: 'money_keyboard.done' })).toBeTruthy();
   });
 
-  it('calls onChange when tapping a number key', () => {
-    const onChange = vi.fn();
+  it('calls onInsert when tapping a number key', () => {
+    const onInsert = vi.fn();
 
     render(
       <MoneyKeyboard
         value=""
         currency="VND"
-        onChange={onChange}
+        onInsert={onInsert}
+        onBackspace={vi.fn()}
+        onReplace={vi.fn()}
         onDone={vi.fn()}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: '1' }));
 
-    expect(onChange).toHaveBeenCalledWith('1');
+    expect(onInsert).toHaveBeenCalledWith('1');
   });
 
-  it('appends 000 to the current raw value', () => {
-    const onChange = vi.fn();
+  it('passes 000 to the selection-aware insert callback', () => {
+    const onInsert = vi.fn();
 
     render(
       <MoneyKeyboard
         value="1"
         currency="VND"
-        onChange={onChange}
+        onInsert={onInsert}
+        onBackspace={vi.fn()}
+        onReplace={vi.fn()}
         onDone={vi.fn()}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: '000' }));
 
-    expect(onChange).toHaveBeenCalledWith('1000');
+    expect(onInsert).toHaveBeenCalledWith('000');
   });
 
-  it('backspaces the current raw value', () => {
-    const onChange = vi.fn();
+  it('delegates backspace to the selection-aware callback', () => {
+    const onBackspace = vi.fn();
 
     render(
       <MoneyKeyboard
         value="123"
         currency="VND"
-        onChange={onChange}
+        onInsert={vi.fn()}
+        onBackspace={onBackspace}
+        onReplace={vi.fn()}
         onDone={vi.fn()}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'money_keyboard.backspace' }));
 
-    expect(onChange).toHaveBeenCalledWith('12');
+    expect(onBackspace).toHaveBeenCalledTimes(1);
   });
 
   it('switches to calculator mode', () => {
@@ -82,7 +90,9 @@ describe('MoneyKeyboard', () => {
       <MoneyKeyboard
         value=""
         currency="VND"
-        onChange={vi.fn()}
+        onInsert={vi.fn()}
+        onBackspace={vi.fn()}
+        onReplace={vi.fn()}
         onDone={vi.fn()}
       />,
     );
@@ -93,14 +103,16 @@ describe('MoneyKeyboard', () => {
     expect(screen.getByRole('button', { name: 'money_keyboard.apply' })).toBeTruthy();
   });
 
-  it('applies a valid calculator result to onChange', () => {
-    const onChange = vi.fn();
+  it('applies a valid calculator result with onReplace', () => {
+    const onReplace = vi.fn();
 
     render(
       <MoneyKeyboard
         value="100000"
         currency="VND"
-        onChange={onChange}
+        onInsert={vi.fn()}
+        onBackspace={vi.fn()}
+        onReplace={onReplace}
         onDone={vi.fn()}
       />,
     );
@@ -114,17 +126,19 @@ describe('MoneyKeyboard', () => {
     fireEvent.click(screen.getByRole('button', { name: '0' }));
     fireEvent.click(screen.getByRole('button', { name: 'money_keyboard.apply' }));
 
-    expect(onChange).toHaveBeenCalledWith('125000');
+    expect(onReplace).toHaveBeenCalledWith('125000');
   });
 
   it('keeps decimal results for currencies that allow fraction digits', () => {
-    const onChange = vi.fn();
+    const onReplace = vi.fn();
 
     render(
       <MoneyKeyboard
         value="1"
         currency="USD"
-        onChange={onChange}
+        onInsert={vi.fn()}
+        onBackspace={vi.fn()}
+        onReplace={onReplace}
         onDone={vi.fn()}
       />,
     );
@@ -134,6 +148,6 @@ describe('MoneyKeyboard', () => {
     fireEvent.click(screen.getByRole('button', { name: '4' }));
     fireEvent.click(screen.getByRole('button', { name: 'money_keyboard.apply' }));
 
-    expect(onChange).toHaveBeenCalledWith('0.25');
+    expect(onReplace).toHaveBeenCalledWith('0.25');
   });
 });

@@ -36,6 +36,7 @@ import transactionsExcludeFromTotalSql from './031_transactions_exclude_from_tot
 import walletDebtOrLoanAccountTypeSql from './032_wallet_debt_or_loan_account_type.sql?raw';
 import transactionsBudgetOffsetSql from './033_transactions_budget_offset.sql?raw';
 import backupFilesSql from './034_backup_files.sql?raw';
+import transactionSourceMetadataSql from './035_transaction_source_metadata.sql?raw';
 
 type DbConnection = Awaited<ReturnType<typeof getDbConnection>>;
 
@@ -90,6 +91,7 @@ export const MIGRATIONS: Migration[] = [
   { version: 32, name: '032_wallet_debt_or_loan_account_type',      sql: walletDebtOrLoanAccountTypeSql },
   { version: 33, name: '033_transactions_budget_offset',             sql: transactionsBudgetOffsetSql },
   { version: 34, name: '034_backup_files',                           sql: backupFilesSql },
+  { version: 35, name: '035_transaction_source_metadata',            sql: transactionSourceMetadataSql },
 ];
 
 async function markMigrationDone(

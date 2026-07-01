@@ -138,6 +138,7 @@ function makeDeps(type: LoanType, currentPaid = 0, principal = 1_000_000) {
       softDelete: vi.fn(),
       getById: vi.fn(),
       getByIdIncludeDeleted: vi.fn(),
+      getBySource: vi.fn(),
       getAllReceiptPaths: vi.fn(),
       list: vi.fn(),
     },
@@ -175,6 +176,9 @@ describe('addLoanPayment', () => {
     expect(transactionCreate).toHaveBeenCalledWith(expect.objectContaining({
       type: 'income',
       amount: 250_000,
+      source_type: 'loan_payment',
+      source_id: 'payment-id',
+      source_event: 'payment',
     }));
     await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({
       balance: 250_000,

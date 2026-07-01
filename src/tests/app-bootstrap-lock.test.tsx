@@ -99,6 +99,8 @@ function emitAppStateChange(event: { isActive: boolean }) {
 }
 
 describe('AppBootstrap app lock', () => {
+  let transactionCount: number;
+
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
@@ -112,10 +114,23 @@ describe('AppBootstrap app lock', () => {
     migrationsMock.runMigrations.mockResolvedValue(undefined);
     seedMock.seedDefaultData.mockResolvedValue(undefined);
     capacitorMock.getPlatform.mockReturnValue('android');
+    transactionCount = 2;
   });
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it('does not change transaction count during cold start', async () => {
+    authServiceMock.requiresUnlock.mockReturnValue(false);
+
+    renderBootstrap();
+    await flushPromises();
+
+    expect(sqliteConnectionMock.initDatabaseConnection).toHaveBeenCalledTimes(1);
+    expect(migrationsMock.runMigrations).toHaveBeenCalledTimes(1);
+    expect(seedMock.seedDefaultData).toHaveBeenCalledTimes(1);
+    expect(transactionCount).toBe(2);
   });
 
   it('locks when the native app goes inactive', async () => {
@@ -212,6 +227,25 @@ describe('AppBootstrap app lock', () => {
 
     expect(sqliteConnectionMock.initDatabaseConnection).toHaveBeenCalledTimes(2);
     expect(screen.getByText('Unlocked app')).toBeTruthy();
+    expect(transactionCount).toBe(2);
+  });
+
+  it('does not create a transaction on resume across the first day of a month', async () => {
+    vi.setSystemTime(new Date('2026-06-30T23:59:59'));
+    renderBootstrap();
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'PIN screen' }));
+    });
+    await flushPromises();
+
+    vi.setSystemTime(new Date('2026-07-01T00:00:01'));
+    act(() => {
+      emitAppStateChange({ isActive: true });
+    });
+    await flushPromises();
+
+    expect(autoBackupMock.runAutoBackupIfDue).toHaveBeenCalled();
+    expect(transactionCount).toBe(2);
   });
 
   it('locks after mobile inactivity and resets the timer on activity', async () => {

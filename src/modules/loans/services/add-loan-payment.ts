@@ -95,6 +95,9 @@ export async function addLoanPayment(
       amount: input.amount,
       note: transactionNote,
       transaction_date: input.payment_date,
+      source_type: 'loan_payment',
+      source_id: paymentId,
+      source_event: 'payment',
       created_at: now,
       updated_at: now,
     });

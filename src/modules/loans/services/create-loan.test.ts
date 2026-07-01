@@ -133,6 +133,7 @@ function makeDeps(walletRepoOverride?: IWalletRepository) {
       softDelete: vi.fn(),
       getById: vi.fn(),
       getByIdIncludeDeleted: vi.fn(),
+      getBySource: vi.fn(),
       getAllReceiptPaths: vi.fn(),
       list: vi.fn(),
     },
@@ -301,9 +302,27 @@ describe('createLoan', () => {
       linked_transaction_id: null,
     }));
     expect(transactionCreate).toHaveBeenCalledTimes(1);
+    expect(transactionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      source_type: 'loan',
+      source_id: 'loan-id',
+      source_event: 'opening',
+    }));
     expect(loanUpdateLoan).toHaveBeenCalledWith('loan-id', expect.objectContaining({
       linked_transaction_id: 'transaction-id',
     }));
+  });
+
+  it('does not update wallet balance when opening transaction insert fails', async () => {
+    const { deps, loanUpdateLoan, transactionCreate } = makeDeps();
+    transactionCreate.mockRejectedValueOnce(new Error('transaction insert failed'));
+
+    await expect(createLoan({
+      ...baseInput('lend'),
+      skip_transaction: false,
+    }, deps)).rejects.toThrow('transaction insert failed');
+
+    expect(deps.walletRepo.updateBalanceDelta).not.toHaveBeenCalled();
+    expect(loanUpdateLoan).not.toHaveBeenCalled();
   });
 
   it('does not require a wallet or create a transaction when skip_transaction is true', async () => {

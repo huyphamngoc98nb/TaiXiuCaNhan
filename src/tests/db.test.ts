@@ -132,6 +132,10 @@ describe('Database SQLite Tests', () => {
     expectExecuteContaining('ALTER TABLE loans ADD COLUMN linked_transaction_id');
     expectExecuteContaining('CREATE TABLE IF NOT EXISTS backup_files');
     expectExecuteContaining('idx_backup_files_kind_created');
+    expectExecuteContaining('ALTER TABLE transactions ADD COLUMN source_type TEXT');
+    expectExecuteContaining('ALTER TABLE transactions ADD COLUMN source_id TEXT');
+    expectExecuteContaining('ALTER TABLE transactions ADD COLUMN source_event TEXT');
+    expectExecuteContaining('CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_active_source');
 
     const triggerStatements = mockDb.execute.mock.calls
       .map(([sql]: [string]) => sql)
@@ -158,6 +162,7 @@ describe('Database SQLite Tests', () => {
     expectMigrationMarked(26, '026_loan_linked_transaction');
     expectMigrationMarked(27, '027_loan_date');
     expectMigrationMarked(34, '034_backup_files');
+    expectMigrationMarked(35, '035_transaction_source_metadata');
   });
 
   it('wraps regular migrations in transactions and runs foreign-key rebuilds outside them', async () => {
@@ -277,6 +282,7 @@ describe('Database SQLite Tests', () => {
       false
     );
     expectMigrationMarked(26, '026_loan_linked_transaction');
+    expectNoExecuteContaining('INSERT INTO transactions');
   });
 
   it('skips duplicate ADD COLUMN statements and still completes the migration', async () => {
@@ -294,6 +300,7 @@ describe('Database SQLite Tests', () => {
     expect(mockDb.query).toHaveBeenCalledWith('PRAGMA table_info(transactions)');
     expectMigrationMarked(3, '003_transactions_soft_delete');
     expectMigrationMarked(26, '026_loan_linked_transaction');
+    expectNoExecuteContaining('INSERT INTO transactions');
   });
 
   it('runs foreign-key-off table rebuild migrations outside native transactions', async () => {

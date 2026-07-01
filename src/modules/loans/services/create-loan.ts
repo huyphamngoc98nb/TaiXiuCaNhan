@@ -1,4 +1,5 @@
 import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transaction-runner';
+import { registerCompensation } from '@/core/db/sqlite/transaction';
 import { generateUUID } from '@/shared/utils/generate-uuid';
 import type { Category, CategoryType } from '@/modules/categories/domain/category.model';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
@@ -162,8 +163,14 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
         amount: input.principal,
         note: transactionNote,
         transaction_date: transactionDate,
+        source_type: 'loan',
+        source_id: loanId,
+        source_event: 'opening',
         created_at: now,
         updated_at: now,
+      });
+      registerCompensation(async () => {
+        await deps.transactionRepo.softDelete(transactionId as string, now);
       });
 
       // Loan services write directly to the repository, bypassing
@@ -173,6 +180,11 @@ export async function createLoan(input: CreateLoanInput, deps: CreateLoanDeps): 
         getSourceDelta(transactionType, input.principal),
         now
       );
+      registerCompensation(() => deps.walletRepo.updateBalanceDelta(
+        walletId as string,
+        -getSourceDelta(transactionType, input.principal),
+        now
+      ));
 
       const updatedLoan = await deps.loanRepo.updateLoan(loanId, {
         wallet_id: walletId,

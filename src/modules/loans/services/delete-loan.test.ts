@@ -87,6 +87,7 @@ function makeDeps(
     softDelete: vi.fn(async () => true),
     getById: vi.fn(),
     getByIdIncludeDeleted: vi.fn(async () => transaction),
+    getBySource: vi.fn(),
     getAllReceiptPaths: vi.fn(async () => []),
     list: vi.fn(),
   };

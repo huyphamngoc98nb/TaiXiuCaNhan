@@ -110,6 +110,32 @@ select {
   color: var(--text);
 }
 
+@keyframes money-input-caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.money-input-caret {
+  display: inline-block;
+  flex: 0 0 2px;
+  min-width: 2px;
+  background-color: var(--primary);
+  opacity: 1;
+  animation: money-input-caret-blink 1s steps(1, end) infinite;
+}
+
+html[data-reduce-motion='true'] .money-input-caret {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
 .keyboard-safe-bottom-sheet {
   max-height: min(85dvh, calc(var(--visual-viewport-height) - 24px));
   margin-bottom: var(--keyboard-inset-bottom);

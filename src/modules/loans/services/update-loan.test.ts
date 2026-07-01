@@ -177,6 +177,7 @@ function makeDeps(
       softDelete: transactionSoftDelete,
       getById: transactionGetById,
       getByIdIncludeDeleted: vi.fn(),
+      getBySource: vi.fn(),
       getAllReceiptPaths: vi.fn(),
       list: vi.fn(),
     },
@@ -295,6 +296,9 @@ describe('updateLoan', () => {
       type: 'expense',
       amount: 1_000_000,
       transaction_date: new Date('2026-01-02T00:00:00').getTime(),
+      source_type: 'loan',
+      source_id: 'loan-1',
+      source_event: 'opening',
     }));
     expect(walletUpdateBalanceDelta).toHaveBeenCalledWith(wallet.id, -1_000_000, 789);
     expect(loanUpdateLoan).toHaveBeenCalledWith('loan-1', expect.objectContaining({
@@ -402,6 +406,80 @@ describe('updateLoan', () => {
       linked_transaction_id: 'tx-existing',
     }));
   });
+
+  it('creates only one opening transaction for concurrent updates', async () => {
+    generateUUIDMock
+      .mockReturnValueOnce('tx-concurrent-1')
+      .mockReturnValueOnce('tx-concurrent-2');
+    let currentLoan = makeExistingLoan({
+      wallet_id: null,
+      skip_transaction: true,
+      linked_transaction_id: null,
+    });
+    const walletRepo = new InMemoryWalletRepository([{ ...wallet, balance: 0 }]);
+    const transactionRepo = new InMemoryTransactionRepository();
+    const baseDeps = makeDeps(wallet, currentLoan).deps;
+    baseDeps.walletRepo = walletRepo;
+    baseDeps.transactionRepo = transactionRepo;
+    baseDeps.loanRepo.getLoanById = vi.fn(async () => ({ ...currentLoan }));
+    baseDeps.loanRepo.updateLoan = vi.fn(async (id, data) => {
+      currentLoan = {
+        ...currentLoan,
+        ...data,
+        id,
+        contact_info: data.contact_info ?? null,
+        due_date: data.due_date ?? null,
+        note: data.note ?? null,
+        deleted_at: null,
+      };
+      return { ...currentLoan };
+    });
+
+    const updateInput = input({
+      wallet_id: wallet.id,
+      skip_transaction: false,
+      loan_date: '2026-07-01',
+    });
+    const [first, second] = await Promise.all([
+      updateLoan('loan-1', updateInput, baseDeps),
+      updateLoan('loan-1', updateInput, baseDeps),
+    ]);
+
+    const transactions = await transactionRepo.list({});
+    expect(transactions).toHaveLength(1);
+    expect(transactions[0]).toMatchObject({
+      source_type: 'loan',
+      source_id: 'loan-1',
+      source_event: 'opening',
+    });
+    expect(first.linked_transaction_id).toBe(transactions[0].id);
+    expect(second.linked_transaction_id).toBe(transactions[0].id);
+    await expect(walletRepo.getById(wallet.id)).resolves.toMatchObject({ balance: -1_000_000 });
+  });
+
+  it.each(['settled', 'cancelled'] as const)(
+    'does not create an opening transaction for a %s loan',
+    async (status) => {
+      const { deps, transactionCreate, walletUpdateBalanceDelta, loanUpdateLoan } = makeDeps(
+        wallet,
+        makeExistingLoan({
+          wallet_id: null,
+          skip_transaction: true,
+          linked_transaction_id: null,
+          status,
+        })
+      );
+
+      await expect(updateLoan('loan-1', input({
+        wallet_id: wallet.id,
+        skip_transaction: false,
+      }), deps)).rejects.toThrow();
+
+      expect(transactionCreate).not.toHaveBeenCalled();
+      expect(walletUpdateBalanceDelta).not.toHaveBeenCalled();
+      expect(loanUpdateLoan).not.toHaveBeenCalled();
+    }
+  );
 
   it('validates wallet when skip_transaction is false', async () => {
     const { deps, walletGetById } = makeDeps();

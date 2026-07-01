@@ -1,6 +1,8 @@
 import { sqliteTransactionRunner as runInTransaction } from '@/core/db/transaction-runner';
+import { registerCompensation } from '@/core/db/sqlite/transaction';
 import { generateUUID } from '@/shared/utils/generate-uuid';
 import type { ITransactionRepository } from '@/modules/transactions/repositories/transaction.repository';
+import { createIdempotentSourceTransaction } from '@/modules/transactions/services/create-idempotent-source-transaction';
 import { getSourceDelta } from '@/modules/transactions/services/transaction-wallet-rules';
 import type { IWalletRepository } from '@/modules/wallets/repositories/wallet.repository';
 import type { Loan, UpdateLoanInput } from '../domain/loan.model';
@@ -37,35 +39,42 @@ export async function updateLoan(
   input: UpdateLoanInput,
   deps: UpdateLoanDeps
 ): Promise<Loan> {
-  const existingLoan = await deps.loanRepo.getLoanById(id);
-  if (!existingLoan) throw new Error(defaultText('loans.errors.notFound'));
-
-  const wasSkipping = existingLoan.skip_transaction === true;
-  const willSkip = input.skip_transaction ?? wasSkipping;
-  const walletId = willSkip
-    ? null
-    : input.wallet_id !== undefined
-      ? input.wallet_id
-      : existingLoan.wallet_id;
-
-  validateUpdateLoan({
-    ...input,
-    wallet_id: walletId,
-    skip_transaction: willSkip,
-  });
-
-  if (!willSkip) {
-    if (!walletId) throw new Error('wallet_id is required');
-
-    const wallet = await deps.walletRepo.getById(walletId);
-    if (!wallet) throw new Error(defaultText('loans.errors.walletNotFound'));
-    if (wallet.is_active !== 1) throw new Error(defaultText('loans.errors.walletInactive'));
-  }
-
   const now = Date.now();
-  const loanDate = input.loan_date ?? existingLoan.loan_date ?? msToLocalDate(existingLoan.created_at);
 
   return runInTransaction(async () => {
+    // This read must happen inside the serialized transaction. Reading before
+    // it lets two callers both observe skip_transaction=true and create twice.
+    const existingLoan = await deps.loanRepo.getLoanById(id);
+    if (!existingLoan) throw new Error(defaultText('loans.errors.notFound'));
+
+    const wasSkipping = existingLoan.skip_transaction === true;
+    const willSkip = input.skip_transaction ?? wasSkipping;
+    const isOpeningTransition = wasSkipping && !willSkip;
+    if (isOpeningTransition && existingLoan.status !== 'active') {
+      throw new Error(defaultText('loans.errors.inactive'));
+    }
+
+    const walletId = willSkip
+      ? null
+      : input.wallet_id !== undefined
+        ? input.wallet_id
+        : existingLoan.wallet_id;
+
+    validateUpdateLoan({
+      ...input,
+      wallet_id: walletId,
+      skip_transaction: willSkip,
+    });
+
+    if (!willSkip) {
+      if (!walletId) throw new Error('wallet_id is required');
+
+      const wallet = await deps.walletRepo.getById(walletId);
+      if (!wallet) throw new Error(defaultText('loans.errors.walletNotFound'));
+      if (wallet.is_active !== 1) throw new Error(defaultText('loans.errors.walletInactive'));
+    }
+
+    const loanDate = input.loan_date ?? existingLoan.loan_date ?? msToLocalDate(existingLoan.created_at);
     let linkedTransactionId = existingLoan.linked_transaction_id ?? null;
 
     if (!wasSkipping && willSkip) {
@@ -82,7 +91,7 @@ export async function updateLoan(
         }
       }
       linkedTransactionId = null;
-    } else if (wasSkipping && !willSkip) {
+    } else if (isOpeningTransition) {
       const categoryConfig = LOAN_CREATE_CATEGORY[input.type];
       const categoryId = await resolveLoanCategoryId(
         deps.categoryRepo,
@@ -96,7 +105,7 @@ export async function updateLoan(
         : defaultText('loans.errors.borrowNote').replace('{name}', input.contact_name);
       const transactionDate = dateToMs(loanDate);
 
-      await deps.transactionRepo.create({
+      const transactionResult = await createIdempotentSourceTransaction(deps.transactionRepo, {
         id: transactionId,
         wallet_id: walletId as string,
         category_id: categoryId,
@@ -104,15 +113,42 @@ export async function updateLoan(
         amount: input.principal,
         note: transactionNote,
         transaction_date: transactionDate,
+        source_type: 'loan',
+        source_id: existingLoan.id,
+        source_event: 'opening',
         created_at: now,
         updated_at: now,
       });
-      await deps.walletRepo.updateBalanceDelta(
-        walletId as string,
-        getSourceDelta(transactionType, input.principal),
-        now
-      );
-      linkedTransactionId = transactionId;
+
+      const openingTransaction = transactionResult.transaction;
+      if (transactionResult.created) {
+        registerCompensation(async () => {
+          await deps.transactionRepo.softDelete(openingTransaction.id, now);
+        });
+      }
+      if (
+        openingTransaction.wallet_id !== walletId ||
+        openingTransaction.category_id !== categoryId ||
+        openingTransaction.type !== transactionType ||
+        openingTransaction.amount !== input.principal ||
+        openingTransaction.transaction_date !== transactionDate
+      ) {
+        throw new Error('Existing loan opening transaction does not match the requested loan data');
+      }
+
+      if (transactionResult.created) {
+        await deps.walletRepo.updateBalanceDelta(
+          walletId as string,
+          getSourceDelta(transactionType, input.principal),
+          now
+        );
+        registerCompensation(() => deps.walletRepo.updateBalanceDelta(
+          walletId as string,
+          -getSourceDelta(transactionType, input.principal),
+          now
+        ));
+      }
+      linkedTransactionId = openingTransaction.id;
     }
 
     const loan = await deps.loanRepo.updateLoan(id, {

@@ -121,8 +121,8 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
         statement: `INSERT INTO transactions (
           id, wallet_id, category_id, type, amount, note, receipt_path,
           transaction_date, to_wallet_id, exclude_from_total, is_budget_offset, offset_budget_id,
-          created_at, updated_at, deleted_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          source_type, source_id, source_event, created_at, updated_at, deleted_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         values: [
           row.id,
           row.wallet_id,
@@ -136,6 +136,9 @@ export async function restoreDatabase(payload: RestorableBackupPayload): Promise
           value(row, 'exclude_from_total', 0),
           value(row, 'is_budget_offset', 0),
           value(row, 'offset_budget_id'),
+          value(row, 'source_type'),
+          value(row, 'source_id'),
+          value(row, 'source_event'),
           row.created_at,
           row.updated_at,
           value(row, 'deleted_at'),
